@@ -1,0 +1,10 @@
+# Shopware
+/shopware/.env.*
+
+# Docker
+/docker-compose.yaml
+/cron
+/config
+/.env
+/*.env
+.DS_Store

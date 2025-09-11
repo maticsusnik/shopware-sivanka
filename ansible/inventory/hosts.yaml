@@ -1,0 +1,15 @@
+## Required variables as --extra-vars
+# - docker_compose_path
+all:
+    children:
+        developer:
+            hosts:
+                localhost:
+                    ansible_connection: local
+        development:
+            hosts:
+                shopware_development:
+                    ansible_host: 91.107.219.144
+                    ansible_user: maticsusnik
+                    ansible_port: 65022
+                    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'

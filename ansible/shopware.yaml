@@ -1,0 +1,5 @@
+- hosts: all
+  become: no
+  gather_facts: yes
+  roles:
+      - maticsusnik.common.shopware

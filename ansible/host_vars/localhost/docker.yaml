@@ -1,0 +1,9 @@
+docker_compose_path: ".."
+shopware_docker_image_tag: main
+shopware_docker_image_name: shopware-test
+shopware_docker_image_extras: -dev
+shopware_mariadb_docker_external_port: 3306
+shopware_application_external_port: 80
+
+shopware_docker_env:
+    PHP_IDE_CONFIG: "serverName=sivanka.shopware.localhost"

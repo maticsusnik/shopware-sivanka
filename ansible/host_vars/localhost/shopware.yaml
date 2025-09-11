@@ -1,0 +1,15 @@
+shopware_application_env:
+    APP_ENV: "dev"
+    APP_DEBUG: "true"
+    APP_URL: http://sivanka.shopware.localhost
+    SHOPWARE_HTTP_CACHE_ENABLED: "false"
+    MAILER_URL: smtp://mailhog:1025
+    MAILER_DSN: smtp://mailhog:1025
+    REDIS_URL: redis://redis:6379
+    OPENSEARCH_URL: http://opensearch:9200
+    ADMIN_OPENSEARCH_URL: http://opensearch:9200
+    CACHE_ADAPTER: cache.adapter.redis_tag_aware
+    PORT: 8888
+    HOST: 0.0.0.0
+    TRUSTED_PROXIES: "0.0.0.0/0,127.0.0.1"
+    LOG_FOLDER: "/var/www/html/var/optiweb-logs/"
