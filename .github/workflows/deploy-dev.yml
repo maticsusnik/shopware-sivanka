@@ -1,0 +1,84 @@
+name: Build & Deploy (develop)
+
+on:
+  push:
+    branches: [ "develop" ]
+  workflow_dispatch: {}
+
+concurrency:
+  group: deploy-dev
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  packages: write   # needed to push to GHCR
+
+env:
+  IMAGE: ghcr.io/${{ github.repository }}      # ghcr.io/maticsusnik/shopware-sivanka
+  TAG: ${{ github.sha }}
+  ANSIBLE_DIR: ansible
+
+jobs:
+  build:
+    name: Build & Push to GHCR
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_TOKEN || github.token }}
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push (prod target)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: prod
+          push: true
+          platforms: linux/amd64
+          provenance: false
+          tags: |
+            ${{ env.IMAGE }}:${{ env.TAG }}
+            ${{ env.IMAGE }}:dev-latest
+
+  deploy:
+    name: Ansible Deploy to Dev
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Ansible + docker collection
+        run: |
+          python -m pip install --upgrade pip
+          pip install "ansible-core==2.16.*" "community.docker==3.*"
+
+      - name: Prepare SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEV_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H "${{ secrets.DEV_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Write Ansible vault password
+        run: |
+          echo "${{ secrets.DEV_VAULT_PASSWORD }}" > .vault_pass
+          chmod 600 .vault_pass
+
+      - name: Deploy via Ansible
+        working-directory: ${{ env.ANSIBLE_DIR }}
+        run: |
+          ansible-playbook shopware.yaml \
+            -i inventory/hosts.yaml \
+            -l shopware_development \
+            --diff \
+            --extra-vars "shopware_docker_image_tag=${{ env.TAG }}" \
+            --vault-password-file ../.vault_pass

@@ -1,0 +1,10 @@
+shopware_docker_image_name: "ghcr.io/maticsusnik/shopware-sivanka"
+docker_compose_path: "/srv/projects/sivanka.dev.matic-susnik.com"
+shopware_database_host: "database"
+shopware_database_user: "shopware"
+shopware_database_name: "shopware"
+shopware_mariadb_docker_external_port: 53306
+shopware_application_external_port: 8086
+shopware_mailer_enabled: true
+
+
