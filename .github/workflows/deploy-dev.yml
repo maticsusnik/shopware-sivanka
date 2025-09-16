@@ -31,13 +31,12 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          # Use the built-in GITHUB_TOKEN (works when packages: write is set)
           password: ${{ github.token }}
 
       - name: Set up Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and push
+      - name: Build and push image
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -64,6 +63,7 @@ jobs:
           ansible-galaxy collection install "community.general:>=9.0.0,<10.0.0"
 
       - name: Prepare SSH (write key, add host)
+        shell: bash
         run: |
           set -euo pipefail
           mkdir -p ~/.ssh && chmod 700 ~/.ssh
@@ -71,20 +71,31 @@ jobs:
           sed -i 's/\r$//' ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           : "${{ secrets.DEV_HOST }}"
-          ssh-keyscan -T 15 -t rsa,ecdsa,ed25519 "${{ secrets.DEV_HOST }}" 2>/dev/null >> ~/.ssh/known_hosts || true
+          : "${{ secrets.DEV_SSH_PORT }}"
+          ssh-keyscan -T 15 -p "${{ secrets.DEV_SSH_PORT }}" -t rsa,ecdsa,ed25519 \
+            "${{ secrets.DEV_HOST }}" 2>/dev/null >> ~/.ssh/known_hosts || true
 
       - name: Write Ansible vault password
         run: |
           echo "${{ secrets.DEV_VAULT_PASSWORD }}" > .vault_pass
           chmod 600 .vault_pass
 
+      - name: Connectivity diagnostics
+        shell: bash
+        run: |
+          set -x
+          getent hosts "${{ secrets.DEV_HOST }}" || true
+          (command -v nc >/dev/null && nc -vz -w 10 "${{ secrets.DEV_HOST }}" "${{ secrets.DEV_SSH_PORT }}") || true
+
       - name: Smoke test SSH as deploy
         run: |
-          ssh -o BatchMode=yes -o StrictHostKeyChecking=yes -i ~/.ssh/id_rsa \
-            deploy@${{ secrets.DEV_HOST }} 'echo SSH_OK'
+          ssh -o BatchMode=yes -o StrictHostKeyChecking=yes \
+              -p "${{ secrets.DEV_SSH_PORT }}" \
+              -i ~/.ssh/id_rsa \
+              deploy@${{ secrets.DEV_HOST }} 'echo SSH_OK'
 
       - name: Deploy via Ansible (use deploy user + key)
-        working-directory: ansible
+        working-directory: ${{ env.ANSIBLE_DIR }}
         env:
           ANSIBLE_HOST_KEY_CHECKING: "True"
         run: |
@@ -93,6 +104,7 @@ jobs:
             -l shopware_development \
             -u deploy \
             --private-key ~/.ssh/id_rsa \
+            -e ansible_port=${{ secrets.DEV_SSH_PORT }} \
             --diff \
             --extra-vars "shopware_docker_image_tag=${{ github.sha }}" \
             --vault-password-file ../.vault_pass
