@@ -140,8 +140,8 @@ jobs:
         working-directory: ${{ env.ANSIBLE_DIR }}
         env:
           ANSIBLE_HOST_KEY_CHECKING: "True"
-          # Enforce our key/port and disable agent/other identities
           ANSIBLE_SSH_ARGS: "-o IdentitiesOnly=yes -o PreferredAuthentications=publickey -o StrictHostKeyChecking=yes -o ServerAliveInterval=15 -o ServerAliveCountMax=3 -i ~/.ssh/id_rsa -p ${{ secrets.DEV_SSH_PORT }}"
+          ANSIBLE_COLLECTIONS_PATHS: "${{ github.workspace }}/ansible:/home/runner/.ansible/collections:/usr/share/ansible/collections"
         run: |
           ansible-playbook shopware.yaml \
             -i inventory/hosts.yaml \
