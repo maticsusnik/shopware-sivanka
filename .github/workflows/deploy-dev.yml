@@ -14,7 +14,8 @@ permissions:
   packages: write   # needed to push to GHCR
 
 env:
-  IMAGE: ghcr.io/${{ github.repository }}   # e.g. ghcr.io/maticsusnik/shopware-sivanka
+  # Ensure lowercase image path for GHCR (repos are usually lowercase, this keeps it safe)
+  IMAGE: ghcr.io/${{ github.repository }}
   TAG: ${{ github.sha }}
   ANSIBLE_DIR: ansible
 
@@ -67,18 +68,43 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p ~/.ssh && chmod 700 ~/.ssh
-          printf "%s" "${{ secrets.DEV_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          sed -i 's/\r$//' ~/.ssh/id_rsa
+
+          # --- KEY INPUT OPTIONS ---
+          # Option A (recommended): DEV_SSH_PRIVATE_KEY_B64 contains base64-encoded key
+          # Option B: DEV_SSH_PRIVATE_KEY contains the literal key with newlines
+
+          if [ -n "${{ secrets.DEV_SSH_PRIVATE_KEY_B64 || '' }}" ]; then
+            echo "Using base64-encoded private key from DEV_SSH_PRIVATE_KEY_B64"
+            printf '%s' "${{ secrets.DEV_SSH_PRIVATE_KEY_B64 }}" | base64 -d > ~/.ssh/id_rsa || {
+              echo "::error::Failed to decode DEV_SSH_PRIVATE_KEY_B64"; exit 1; }
+          elif [ -n "${{ secrets.DEV_SSH_PRIVATE_KEY || '' }}" ]; then
+            echo "Using plaintext private key from DEV_SSH_PRIVATE_KEY"
+            # Preserve line breaks exactly, then normalize CRLF if present
+            printf '%s\n' "${{ secrets.DEV_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+            sed -i 's/\r$//' ~/.ssh/id_rsa
+          else
+            echo "::error::No SSH key provided. Set DEV_SSH_PRIVATE_KEY or DEV_SSH_PRIVATE_KEY_B64"
+            exit 1
+          fi
+
           chmod 600 ~/.ssh/id_rsa
+
+          # Sanity checks (do NOT print actual key)
+          echo "Key file size (bytes): $(wc -c < ~/.ssh/id_rsa)"
+          head -n1 ~/.ssh/id_rsa | sed 's/./*/g' || true
+          if ! head -n1 ~/.ssh/id_rsa | grep -Eq 'BEGIN (OPENSSH|RSA) PRIVATE KEY'; then
+            echo "::warning::Private key first line is unexpected. Expected 'BEGIN OPENSSH PRIVATE KEY' (ed25519/new) or 'BEGIN RSA PRIVATE KEY' (old PEM)."
+          fi
 
           HOST="${{ secrets.DEV_HOST }}"
           PORT="${{ secrets.DEV_SSH_PORT }}"
           : "${HOST:?DEV_HOST secret missing}"
           : "${PORT:?DEV_SSH_PORT secret missing}"
 
-          # add host key (try IPv4 then IPv6; don't fail here)
+          # Add host keys (IPv4 then IPv6); don't fail if scanning fails
           ssh-keyscan -4 -T 10 -p "$PORT" -t rsa,ecdsa,ed25519 "$HOST" 2>/dev/null >> ~/.ssh/known_hosts || true
           ssh-keyscan -6 -T 10 -p "$PORT" -t rsa,ecdsa,ed25519 "$HOST" 2>/dev/null >> ~/.ssh/known_hosts || true
+          chmod 644 ~/.ssh/known_hosts
 
       - name: Write Ansible vault password
         run: |
@@ -95,24 +121,32 @@ jobs:
           (command -v nc >/dev/null && nc -vz -w 10 "${{ secrets.DEV_HOST }}" "${{ secrets.DEV_SSH_PORT }}") || true
           timeout 5 bash -lc 'cat </dev/null > /dev/tcp/${{ secrets.DEV_HOST }}/${{ secrets.DEV_SSH_PORT }}' && echo RAW_TCP_OK || echo RAW_TCP_FAIL
 
-      - name: Smoke test SSH as deploy (force IPv4)
+      - name: Smoke test SSH as deploy (force IPv4 and key only)
+        shell: bash
         run: |
-          ssh -4 -v -o ConnectTimeout=10 -o BatchMode=yes -o StrictHostKeyChecking=yes \
-              -p "${{ secrets.DEV_SSH_PORT }}" \
-              -i ~/.ssh/id_rsa \
-              deploy@${{ secrets.DEV_HOST }} 'echo SSH_OK'
+          set -euo pipefail
+          ssh -4 -vvv \
+            -o IdentitiesOnly=yes \
+            -o PreferredAuthentications=publickey \
+            -o ServerAliveInterval=15 -o ServerAliveCountMax=3 \
+            -o ConnectTimeout=10 \
+            -o BatchMode=yes \
+            -o StrictHostKeyChecking=yes \
+            -i ~/.ssh/id_rsa \
+            -p "${{ secrets.DEV_SSH_PORT }}" \
+            deploy@${{ secrets.DEV_HOST }} 'echo SSH_OK'
 
       - name: Deploy via Ansible (use deploy user + key)
         working-directory: ${{ env.ANSIBLE_DIR }}
         env:
           ANSIBLE_HOST_KEY_CHECKING: "True"
+          # Enforce our key/port and disable agent/other identities
+          ANSIBLE_SSH_ARGS: "-o IdentitiesOnly=yes -o PreferredAuthentications=publickey -o StrictHostKeyChecking=yes -o ServerAliveInterval=15 -o ServerAliveCountMax=3 -i ~/.ssh/id_rsa -p ${{ secrets.DEV_SSH_PORT }}"
         run: |
           ansible-playbook shopware.yaml \
             -i inventory/hosts.yaml \
             -l shopware_development \
             -u deploy \
-            --private-key ~/.ssh/id_rsa \
-            -e ansible_port=${{ secrets.DEV_SSH_PORT }} \
             --diff \
             --extra-vars "shopware_docker_image_tag=${{ github.sha }}" \
             --vault-password-file ../.vault_pass
