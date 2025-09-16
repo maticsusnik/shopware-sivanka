@@ -14,8 +14,7 @@ permissions:
   packages: write   # needed to push to GHCR
 
 env:
-  # Ensure lowercase image path for GHCR (repos are usually lowercase, this keeps it safe)
-  IMAGE: ghcr.io/${{ github.repository }}
+  IMAGE: ghcr.io/${{ github.repository }}   # e.g. ghcr.io/owner/repo
   TAG: ${{ github.sha }}
   ANSIBLE_DIR: ansible
 
@@ -56,7 +55,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Ansible + collections
+      - name: Install Ansible + collections (community)
         run: |
           python -m pip install --upgrade pip
           pip install "ansible-core==2.16.*"
@@ -69,31 +68,27 @@ jobs:
           set -euo pipefail
           mkdir -p ~/.ssh && chmod 700 ~/.ssh
 
-          # --- KEY INPUT OPTIONS ---
-          # Option A (recommended): DEV_SSH_PRIVATE_KEY_B64 contains base64-encoded key
-          # Option B: DEV_SSH_PRIVATE_KEY contains the literal key with newlines
-
+          # Prefer base64 secret if provided; else fall back to plaintext secret
           if [ -n "${{ secrets.DEV_SSH_PRIVATE_KEY_B64 || '' }}" ]; then
             echo "Using base64-encoded private key from DEV_SSH_PRIVATE_KEY_B64"
             printf '%s' "${{ secrets.DEV_SSH_PRIVATE_KEY_B64 }}" | base64 -d > ~/.ssh/id_rsa || {
               echo "::error::Failed to decode DEV_SSH_PRIVATE_KEY_B64"; exit 1; }
           elif [ -n "${{ secrets.DEV_SSH_PRIVATE_KEY || '' }}" ]; then
             echo "Using plaintext private key from DEV_SSH_PRIVATE_KEY"
-            # Preserve line breaks exactly, then normalize CRLF if present
             printf '%s\n' "${{ secrets.DEV_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
             sed -i 's/\r$//' ~/.ssh/id_rsa
           else
-            echo "::error::No SSH key provided. Set DEV_SSH_PRIVATE_KEY or DEV_SSH_PRIVATE_KEY_B64"
+            echo "::error::No SSH key provided. Set DEV_SSH_PRIVATE_KEY_B64 (preferred) or DEV_SSH_PRIVATE_KEY"
             exit 1
           fi
 
           chmod 600 ~/.ssh/id_rsa
 
-          # Sanity checks (do NOT print actual key)
+          # Sanity checks (do NOT print the key)
           echo "Key file size (bytes): $(wc -c < ~/.ssh/id_rsa)"
           head -n1 ~/.ssh/id_rsa | sed 's/./*/g' || true
           if ! head -n1 ~/.ssh/id_rsa | grep -Eq 'BEGIN (OPENSSH|RSA) PRIVATE KEY'; then
-            echo "::warning::Private key first line is unexpected. Expected 'BEGIN OPENSSH PRIVATE KEY' (ed25519/new) or 'BEGIN RSA PRIVATE KEY' (old PEM)."
+            echo "::warning::Unexpected private key header."
           fi
 
           HOST="${{ secrets.DEV_HOST }}"
@@ -101,7 +96,7 @@ jobs:
           : "${HOST:?DEV_HOST secret missing}"
           : "${PORT:?DEV_SSH_PORT secret missing}"
 
-          # Add host keys (IPv4 then IPv6); don't fail if scanning fails
+          # Add host keys (IPv4 then IPv6)
           ssh-keyscan -4 -T 10 -p "$PORT" -t rsa,ecdsa,ed25519 "$HOST" 2>/dev/null >> ~/.ssh/known_hosts || true
           ssh-keyscan -6 -T 10 -p "$PORT" -t rsa,ecdsa,ed25519 "$HOST" 2>/dev/null >> ~/.ssh/known_hosts || true
           chmod 644 ~/.ssh/known_hosts
@@ -136,12 +131,27 @@ jobs:
             -p "${{ secrets.DEV_SSH_PORT }}" \
             deploy@${{ secrets.DEV_HOST }} 'echo SSH_OK'
 
+      # ---- IMPORTANT: install your local collection from the repo ----
+      - name: Install local collection "maticsusnik.common" from repo
+        working-directory: ${{ env.ANSIBLE_DIR }}
+        run: |
+          set -euo pipefail
+          # Install collection from 'ansible/' (must contain galaxy.yml)
+          mkdir -p collections
+          ansible-galaxy collection install . -p ./collections --force
+          echo "=== Installed collections at ./collections ==="
+          ansible-galaxy collection list -p ./collections || true
+          echo "=== Sanity check for role path ==="
+          find ./collections -type d -path "*/ansible_collections/maticsusnik/common/roles/shopware" -print
+
       - name: Deploy via Ansible (use deploy user + key)
         working-directory: ${{ env.ANSIBLE_DIR }}
         env:
           ANSIBLE_HOST_KEY_CHECKING: "True"
+          # Use the singular var; value must be the parent dir that contains 'ansible_collections/'
+          ANSIBLE_COLLECTIONS_PATH: "${{ github.workspace }}/ansible/collections:/home/runner/.ansible/collections:/usr/share/ansible/collections"
+          # Enforce our SSH options
           ANSIBLE_SSH_ARGS: "-o IdentitiesOnly=yes -o PreferredAuthentications=publickey -o StrictHostKeyChecking=yes -o ServerAliveInterval=15 -o ServerAliveCountMax=3 -i ~/.ssh/id_rsa -p ${{ secrets.DEV_SSH_PORT }}"
-          ANSIBLE_COLLECTIONS_PATHS: "${{ github.workspace }}/ansible:/home/runner/.ansible/collections:/usr/share/ansible/collections"
         run: |
           ansible-playbook shopware.yaml \
             -i inventory/hosts.yaml \
