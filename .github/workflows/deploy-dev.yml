@@ -68,7 +68,6 @@ jobs:
           set -euo pipefail
           mkdir -p ~/.ssh && chmod 700 ~/.ssh
 
-          # Prefer base64 secret if provided; else fall back to plaintext secret
           if [ -n "${{ secrets.DEV_SSH_PRIVATE_KEY_B64 || '' }}" ]; then
             echo "Using base64-encoded private key from DEV_SSH_PRIVATE_KEY_B64"
             printf '%s' "${{ secrets.DEV_SSH_PRIVATE_KEY_B64 }}" | base64 -d > ~/.ssh/id_rsa || {
@@ -83,20 +82,14 @@ jobs:
           fi
 
           chmod 600 ~/.ssh/id_rsa
-
-          # Sanity checks (do NOT print the key)
           echo "Key file size (bytes): $(wc -c < ~/.ssh/id_rsa)"
           head -n1 ~/.ssh/id_rsa | sed 's/./*/g' || true
-          if ! head -n1 ~/.ssh/id_rsa | grep -Eq 'BEGIN (OPENSSH|RSA) PRIVATE KEY'; then
-            echo "::warning::Unexpected private key header."
-          fi
 
           HOST="${{ secrets.DEV_HOST }}"
           PORT="${{ secrets.DEV_SSH_PORT }}"
           : "${HOST:?DEV_HOST secret missing}"
           : "${PORT:?DEV_SSH_PORT secret missing}"
 
-          # Add host keys (IPv4 then IPv6)
           ssh-keyscan -4 -T 10 -p "$PORT" -t rsa,ecdsa,ed25519 "$HOST" 2>/dev/null >> ~/.ssh/known_hosts || true
           ssh-keyscan -6 -T 10 -p "$PORT" -t rsa,ecdsa,ed25519 "$HOST" 2>/dev/null >> ~/.ssh/known_hosts || true
           chmod 644 ~/.ssh/known_hosts
@@ -131,16 +124,36 @@ jobs:
             -p "${{ secrets.DEV_SSH_PORT }}" \
             deploy@${{ secrets.DEV_HOST }} 'echo SSH_OK'
 
-      # ---- IMPORTANT: install your local collection from the repo ----
+      # Auto-detect, build, and install your local collection (wherever galaxy.yml is)
       - name: Install local collection "maticsusnik.common" from repo
         working-directory: ${{ env.ANSIBLE_DIR }}
+        shell: bash
         run: |
           set -euo pipefail
-          # Install collection from 'ansible/' (must contain galaxy.yml)
-          mkdir -p collections
-          ansible-galaxy collection install . -p ./collections --force
+
+          echo "Searching for galaxy.yml under $(pwd)"
+          COL_GXY=$(find . -maxdepth 4 -type f -name galaxy.yml | head -n1 || true)
+          if [ -z "${COL_GXY}" ]; then
+            echo "::error::No galaxy.yml found under $(pwd). Ensure your collection (with galaxy.yml) is inside the ansible/ tree."
+            exit 1
+          fi
+
+          COL_SRC_DIR="$(dirname "${COL_GXY}")"
+          echo "Found collection source at: ${COL_SRC_DIR}"
+          echo "Contents:"
+          ls -la "${COL_SRC_DIR}"
+
+          mkdir -p ./dist ./collections
+
+          echo "Building collection tarball from ${COL_SRC_DIR} ..."
+          ansible-galaxy collection build "${COL_SRC_DIR}" -o ./dist --force
+
+          echo "Installing built collection ..."
+          ansible-galaxy collection install ./dist/*.tar.gz -p ./collections --force
+
           echo "=== Installed collections at ./collections ==="
           ansible-galaxy collection list -p ./collections || true
+
           echo "=== Sanity check for role path ==="
           find ./collections -type d -path "*/ansible_collections/maticsusnik/common/roles/shopware" -print
 
@@ -148,9 +161,8 @@ jobs:
         working-directory: ${{ env.ANSIBLE_DIR }}
         env:
           ANSIBLE_HOST_KEY_CHECKING: "True"
-          # Use the singular var; value must be the parent dir that contains 'ansible_collections/'
+          # Must point at the directory that CONTAINS the 'ansible_collections/' folder produced above
           ANSIBLE_COLLECTIONS_PATH: "${{ github.workspace }}/ansible/collections:/home/runner/.ansible/collections:/usr/share/ansible/collections"
-          # Enforce our SSH options
           ANSIBLE_SSH_ARGS: "-o IdentitiesOnly=yes -o PreferredAuthentications=publickey -o StrictHostKeyChecking=yes -o ServerAliveInterval=15 -o ServerAliveCountMax=3 -i ~/.ssh/id_rsa -p ${{ secrets.DEV_SSH_PORT }}"
         run: |
           ansible-playbook shopware.yaml \
