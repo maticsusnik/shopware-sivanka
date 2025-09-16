@@ -70,10 +70,15 @@ jobs:
           printf "%s" "${{ secrets.DEV_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           sed -i 's/\r$//' ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          : "${{ secrets.DEV_HOST }}"
-          : "${{ secrets.DEV_SSH_PORT }}"
-          ssh-keyscan -T 15 -p "${{ secrets.DEV_SSH_PORT }}" -t rsa,ecdsa,ed25519 \
-            "${{ secrets.DEV_HOST }}" 2>/dev/null >> ~/.ssh/known_hosts || true
+
+          HOST="${{ secrets.DEV_HOST }}"
+          PORT="${{ secrets.DEV_SSH_PORT }}"
+          : "${HOST:?DEV_HOST secret missing}"
+          : "${PORT:?DEV_SSH_PORT secret missing}"
+
+          # add host key (try IPv4 then IPv6; don't fail here)
+          ssh-keyscan -4 -T 10 -p "$PORT" -t rsa,ecdsa,ed25519 "$HOST" 2>/dev/null >> ~/.ssh/known_hosts || true
+          ssh-keyscan -6 -T 10 -p "$PORT" -t rsa,ecdsa,ed25519 "$HOST" 2>/dev/null >> ~/.ssh/known_hosts || true
 
       - name: Write Ansible vault password
         run: |
@@ -84,12 +89,15 @@ jobs:
         shell: bash
         run: |
           set -x
+          echo "HOST=${{ secrets.DEV_HOST }}"
+          echo "PORT=${{ secrets.DEV_SSH_PORT }}"
           getent hosts "${{ secrets.DEV_HOST }}" || true
           (command -v nc >/dev/null && nc -vz -w 10 "${{ secrets.DEV_HOST }}" "${{ secrets.DEV_SSH_PORT }}") || true
+          timeout 5 bash -lc 'cat </dev/null > /dev/tcp/${{ secrets.DEV_HOST }}/${{ secrets.DEV_SSH_PORT }}' && echo RAW_TCP_OK || echo RAW_TCP_FAIL
 
-      - name: Smoke test SSH as deploy
+      - name: Smoke test SSH as deploy (force IPv4)
         run: |
-          ssh -o BatchMode=yes -o StrictHostKeyChecking=yes \
+          ssh -4 -v -o ConnectTimeout=10 -o BatchMode=yes -o StrictHostKeyChecking=yes \
               -p "${{ secrets.DEV_SSH_PORT }}" \
               -i ~/.ssh/id_rsa \
               deploy@${{ secrets.DEV_HOST }} 'echo SSH_OK'
