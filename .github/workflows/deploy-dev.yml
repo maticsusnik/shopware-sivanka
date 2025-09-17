@@ -68,7 +68,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p ~/.ssh && chmod 700 ~/.ssh
-
+          
           if [ -n "${{ secrets.DEV_SSH_PRIVATE_KEY_B64 || '' }}" ]; then
             printf '%s' "${{ secrets.DEV_SSH_PRIVATE_KEY_B64 }}" | base64 -d > ~/.ssh/id_rsa || {
               echo "::error::Failed to decode DEV_SSH_PRIVATE_KEY_B64"; exit 1; }
@@ -119,7 +119,6 @@ jobs:
             -p "${{ secrets.DEV_SSH_PORT }}" \
             deploy@${{ secrets.DEV_HOST }} 'echo SSH_OK'
 
-      # === Install your PRIVATE collection from GitHub via PAT ===
       - name: Install collection maticsusnik.common (private)
         working-directory: ${{ env.ANSIBLE_DIR }}
         env:
@@ -132,7 +131,8 @@ jobs:
             echo "::error::Secret MATICSUSNIK_COLLECTIONS_PAT is missing (required for private repo)."
             exit 1
           fi
-          URL="git+https://${GH_PAT}@github.com/maticsusnik/ansible-collections.git,ref=${REF}"
+          # The corrected URL with the Git reference
+          URL="git+https://${GH_PAT}@github.com/maticsusnik/ansible-collections.git,${REF}"
           echo "Installing collection from ${URL##*@} ..."
           ansible-galaxy collection install "$URL" -p ./collections --force
 
