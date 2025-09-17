@@ -9,7 +9,7 @@ all:
         development:
             hosts:
                 shopware_development:
-                    ansible_host: 91.107.219.144
+                    ansible_host: 91.98.123.59
                     ansible_user: deploy
                     #ansible_port: 65022
                     ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
