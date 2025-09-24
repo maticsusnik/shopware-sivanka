@@ -1,0 +1,11 @@
+                <field type="custom" name="catalogs" component-name="optiweb-catalog-repeater-editor">
+                    <en-US>
+                        <label>Catalogs</label>
+                    </en-US>
+                    <de-DE>
+                        <label>Kataloge</label>
+                    </de-DE>
+                </field>
+            </field-config>
+            <field-config-repeater name="catalog_repeater_fields">
+                <field type="media" name="image">

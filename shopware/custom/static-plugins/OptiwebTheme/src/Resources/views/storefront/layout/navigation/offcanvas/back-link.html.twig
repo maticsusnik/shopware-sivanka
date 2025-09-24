@@ -1,0 +1,34 @@
+{% sw_extends '@Storefront/storefront/layout/navigation/offcanvas/back-link.html.twig' %}
+
+
+{% if item.parentId == context.salesChannel.navigationCategoryId %}
+    {% set url = path('frontend.menu.offcanvas') %}
+{% else %}
+    {% set url = path('frontend.menu.offcanvas', { navigationId: item.parentId, itemLevel: item.level }) %}
+{% endif %}
+
+{% block layout_navigation_offcanvas_navigation_category_back_link %}
+    <div class="offcanvas-back-link d-flex justify-content-between align-items-center">
+    <a class="nav-item nav-link is-back-link navigation-offcanvas-link js-navigation-offcanvas-link"
+       href="{{ url }}"
+       itemprop="url"
+       title="{{ 'general.back'|trans|striptags }}">
+        {% block layout_navigation_offcanvas_navigation_category_back_link_text %}
+            <span class="navigation-offcanvas-link-icon js-navigation-offcanvas-loading-icon">
+            {% block layout_utilities_offcanvas_close_icon %}
+                {% sw_icon 'arrow-medium-left' style { pack:'solid', size: 'sm' } %}
+            {% endblock %}
+            </span>
+
+            <span itemprop="name">
+            {{ item.translated.name }}
+            </span>
+        {% endblock %}
+    </a>
+    <button class="btn btn-secondary offcanvas-close js-offcanvas-close d-lg-none">
+        {% block utilities_offcanvas_close_icon %}
+            {% sw_icon 'x' style { size: 'md' } %}
+        {% endblock %}
+    </button>
+    </div>
+{% endblock %}

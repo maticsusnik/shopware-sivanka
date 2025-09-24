@@ -1,0 +1,109 @@
+{% sw_extends '@Storefront/storefront/element/cms-element-product-slider.html.twig' %}
+
+{% block element_product_slider_slider %}
+
+    {% set bigSlider = sliderConfig.boxLayout.value === 'image' %}
+    {% set showMoreButton = bigSlider %}
+
+    {% set productSliderOptionsSlider = productSliderOptionsSlider|merge({
+        gutter: bigSlider ? 36 : 16
+    }) %}
+
+    {% set productSliderOptions = {
+        productboxMinWidth: sliderConfig.elMinWidth.value ? sliderConfig.elMinWidth.value : '',
+        slider: productSliderOptionsSlider
+    } %}
+
+    {% set productsList = [] %}
+    {% if sliderConfig.addToCartButtons and isB2B %}
+        {% for product in element.data.products.elements %}
+            {% set isAvailable = not product.isCloseout or (product.stock >= product.minPurchase) %}
+            {% set displayFrom = product.calculatedPrices.count > 1 %}
+            {% set isBuyable = isAvailable and not displayFrom and product.childCount <= 0 %}
+            {% if isBuyable %}
+                {% set productsList = productsList | merge([product.id]) %}
+            {% else %}
+                {# only show "add all products" button if all products are buyable #}
+                {% set productsList = [] %}
+                {% break %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    {% set showAddAllProductsToCartButton = sliderConfig.addToCartButtons and productsList !== [] %}
+
+
+    <div class="base-slider product-slider{% if sliderConfig.border.value %} has-border{% endif %}{% if sliderConfig.navigationArrows.value == "outside" %} has-nav-outside{% endif %}{% if sliderConfig.navigation.value %} has-nav{% endif %}{% if bigSlider %} big-slider{% endif %}"
+         data-product-slider-desktop="true"
+         data-product-slider-options="{{ productSliderOptions|json_encode }}"
+         {% if showAddAllProductsToCartButton %}
+         data-add-all-to-cart="true"
+         data-products="{{ productsList|json_encode }}"
+         {% endif %}
+         role="region"
+         aria-label="{{ 'component.cms.productGallery.ariaLabel'|trans({ '%total%': element.data.products.elements|length })|sw_sanitize }}"
+         tabindex="0">
+
+        {% block element_product_slider_skip_slider %}
+            {{ parent() }}
+        {% endblock %}
+
+        {% block element_product_slider_title %}
+            {% if sliderConfig.title.value %}
+                <div class=" d-flex align-items-center justify-content-between mt-2">
+                    <h2 class="cms-element-title-paragraph">{{ sliderConfig.title.value }}</h2>
+
+                    {% if showAddAllProductsToCartButton %}
+                        <a href="#"
+                           data-add-all-to-cart-button
+                           class="btn btn-primary btn-buy mb-4 d-none d-lg-inline-block btn-add-all-product-to-cart" title="{{ 'optiweb.product.addAllProducts'|trans|sw_sanitize }}">
+                                {{ 'optiweb.product.addAllProducts'|trans|sw_sanitize }}
+                        </a>
+                    {% endif %}
+
+                    {% block element_product_slider_controls_custom %}
+                        {% if productSliderOptions.slider.controls %}
+                            <div class="product-slider-controls-container">
+                                <div class="base-slider-controls" data-product-slider-controls="true" role="navigation">
+                                    <button class="base-slider-controls-prev product-slider-controls-prev" aria-label="{{ 'general.previous'|trans|striptags }}">
+                                        {% sw_icon 'arrow-left' style { pack: 'ow'} %}
+                                    </button>
+                                    <button class="base-slider-controls-next product-slider-controls-next" aria-label="{{ 'general.next'|trans|striptags }}">
+                                        {% sw_icon 'arrow-right' style { pack: 'ow'} %}
+                                    </button>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endblock %}
+                </div>
+            {% endif %}
+        {% endblock %}
+
+        {% block element_product_slider_inner %}
+            {{ parent() }}
+        {% endblock %}
+
+        {% if showAddAllProductsToCartButton %}
+            <div class="mobile-buy-button d-lg-none text-center">
+                <a href="#"
+                   data-add-all-to-cart-button
+                   class="btn btn-primary btn-buy btn-buy-mobile mt-4 d-block d-sm-inline-block btn-add-all-product-to-cart" title="{{ 'optiweb.product.addAllProducts'|trans|sw_sanitize }}">
+                        {{ 'optiweb.product.addAllProducts'|trans|sw_sanitize }}
+                </a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block element_product_slider_inner_item %}
+    <div class="product-slider-item">
+        {% sw_include '@Storefront/storefront/component/product/card/box.html.twig' with {
+            'layout': sliderConfig.boxLayout.value,
+            'displayMode': sliderConfig.displayMode.value,
+            'showBuyButton': sliderConfig.addToCartButtons
+        } %}
+    </div>
+{% endblock %}
+
+{% block element_product_slider_controls %}
+{% endblock %}

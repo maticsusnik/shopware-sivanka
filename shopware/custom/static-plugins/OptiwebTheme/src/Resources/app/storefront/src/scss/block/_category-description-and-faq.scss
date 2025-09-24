@@ -1,0 +1,31 @@
+
+.category-description-and-faq {
+    @include margin('bottom', $general-element-margin, true);
+    @include margin('top', $general-element-margin, true);
+
+    h2 {
+        @include margin('bottom', 24, false);
+    }
+
+    .category-description-and-faq-columns {
+
+        &__content {
+
+            .cms-element-image {
+                height: auto;
+                @include margin('bottom', 24, false);
+
+                > div, img {
+                    width: 100%;
+                }
+            }
+
+            .cms-element-text {
+                p {
+                    @include fontSpecs(16, 24, 400);
+                    margin-bottom: 0.5rem;
+                }
+            }
+        }
+    }
+}

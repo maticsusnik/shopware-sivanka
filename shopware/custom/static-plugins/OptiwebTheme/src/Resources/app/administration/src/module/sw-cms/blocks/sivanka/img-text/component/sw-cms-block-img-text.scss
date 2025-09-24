@@ -1,0 +1,37 @@
+.sw-cms-block-img-text {
+    position: relative;
+    padding: 16px;
+
+    .sw-cms-slot {
+        width: auto;
+        height: auto;
+        display: block;
+    }
+
+    .sw-cms-block-img-text__inner {
+        display: flex;
+        gap: 16px;
+        justify-content: space-between;
+        align-items: center;
+
+        & > div {
+            width: 50%;
+        }
+
+        .sw-cms-block-img-text__image {
+            display: block;
+            width: 50%;
+        }
+
+        .sw-cms-block-img-text__content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            .button-preview {
+                width: auto;
+            }
+        }
+
+    }
+}

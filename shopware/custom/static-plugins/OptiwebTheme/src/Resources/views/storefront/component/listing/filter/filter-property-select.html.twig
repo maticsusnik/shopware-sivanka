@@ -1,0 +1,17 @@
+{% sw_extends '@Storefront/storefront/component/listing/filter/filter-property-select.html.twig' %}
+
+{% block component_filter_multi_select_list_item %}
+    <li data-index="{{ loop.index }}" class="filter-multi-select-list-item filter-property-select-list-item">
+        {% if displayType == 'color' or displayType == 'media' %}
+            {% set color = element.colorHexCode %}
+            {% set media = element.media.url %}
+            {% set name = element.translated.name %}
+            {% set id = element.id %}
+
+            {{ block('component_filter_property_select_preview') }}
+            {{ block('component_filter_property_select_preview_list_item_label_element') }}
+        {% else %}
+            {{ block('component_filter_property_select_preview_list_item') }}
+        {% endif %}
+    </li>
+{% endblock %}

@@ -1,0 +1,23 @@
+.breadcrumb {
+    color: $ow-color-black;
+
+    a {
+        @include fontSpecs(16, 24, 400, false, true);
+        color: inherit;
+        text-decoration: none;
+
+        &:hover {
+            color: inherit;
+            text-decoration: underline;
+        }
+
+        &.is-active {
+            color: $ow-color-grey-7;
+            font-weight: 400;
+        }
+    }
+
+    .icon {
+        color: inherit;
+    }
+}

@@ -1,0 +1,64 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+
+        <service id="OptiwebTheme\Core\Content\Cms\DataResolvers\MainSliderResolver">
+            <tag name="shopware.cms.data_resolver"/>
+        </service>
+
+        <service id="OptiwebTheme\Core\Content\Cms\DataResolvers\ImageTabsResolver">
+            <tag name="shopware.cms.data_resolver"/>
+        </service>
+
+        <service id="OptiwebTheme\Core\Content\Cms\DataResolvers\CatalogsResolver">
+            <tag name="shopware.cms.data_resolver"/>
+        </service>
+
+        <service id="OptiwebTheme\Core\Content\Cms\DataResolvers\CategorySliderResolver">
+            <tag name="shopware.cms.data_resolver"/>
+            <argument type="service" id="category.repository"/>
+        </service>
+
+        <service id="OptiwebTheme\Core\Content\Cms\DataResolvers\CategoryReadMoreResolver">
+            <tag name="shopware.cms.data_resolver"/>
+            <argument type="service" id="Shopware\Core\Framework\Util\HtmlSanitizer"/>
+        </service>
+
+        <service id="OptiwebTheme\Core\Content\Cms\DataResolvers\CategoryNavigationResolver">
+            <tag name="shopware.cms.data_resolver"/>
+            <argument type="service" id="Shopware\Core\Content\Category\Service\NavigationLoader"/>
+            <argument type="service" id="category.repository"/>
+        </service>
+
+        <service id="OptiwebTheme\Storefront\Subscriber\HeaderMenuSubscriber">
+            <argument type="service" id="Shopware\Core\Content\Category\Service\NavigationLoader"/>
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
+        <service id="OptiwebTheme\Storefront\Subscriber\CartLineItemAddedEvent">
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
+        <service id="OptiwebTheme\Storefront\Twig\GlobalTwigVariables" public="false">
+            <argument type="service" id="request_stack"/>
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
+            <tag name="twig.extension"/>
+        </service>
+
+        <service id="OptiwebTheme\Services\ShippingMethodRouteDecorator" decorates="Shopware\Core\Checkout\Shipping\SalesChannel\ShippingMethodRoute">
+            <argument type="service" id="OptiwebTheme\Services\ShippingMethodRouteDecorator.inner" />
+            <argument type="service" id="Shopware\Core\Checkout\Cart\SalesChannel\CartService" />
+            <argument type="service" id="Shopware\Core\Checkout\Cart\Delivery\DeliveryCalculator" />
+        </service>
+
+        <service id="OptiwebTheme\Storefront\Twig\JsonDecodeExtension">
+            <tag name="twig.extension"/>
+        </service>
+
+    </services>
+</container>

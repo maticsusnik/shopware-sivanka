@@ -1,0 +1,11 @@
+{
+  "main.js": {
+    "file": "assets/optiweb-theme-Bnd_bW7g.js",
+    "name": "optiweb-theme",
+    "src": "main.js",
+    "isEntry": true,
+    "css": [
+      "assets/optiweb-theme-43OxWLmo.css"
+    ]
+  }
+}

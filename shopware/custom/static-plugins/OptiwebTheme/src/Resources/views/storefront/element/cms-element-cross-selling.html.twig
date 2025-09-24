@@ -1,0 +1,71 @@
+{% sw_extends '@Storefront/storefront/element/cms-element-cross-selling.html.twig' %}
+
+{% block cms_element_cross_selling_tabs_inner %}
+    {% if not sliderConfig %}
+        {% set sliderConfig = element.fieldConfig.elements %}
+    {% endif %}
+
+    {% if element.data.crossSellings.elements is defined and element.data.crossSellings.elements|filter(item => item.total > 0)|length > 0 %}
+        <div class="product-detail-cross-selling">
+            {% block cms_element_cross_selling_tabs_content %}
+                <div class="product-detail-cross-selling-content">
+                    {% block cms_element_cross_selling_tabs_content_container %}
+                        {% for item in element.data.crossSellings.elements|filter(item => item.total > 0 and item.crossSelling.active == true) %}
+                            {% set crossSelling = item.crossSelling %}
+                            {% set products = item.products %}
+                            {% set id = crossSelling.id %}
+                            {% set position = crossSelling.position %}
+                            {# First cross sell slider is always UPSELL, others are regular cross sell#}
+                            {% set upsellSlider = position === 1 %}
+
+                            <div class="cross-selling-slider {% if upsellSlider %} up-selling {% else %} cross-selling {% endif %}"
+                                 id="cross-selling-slider-{{ id }}"
+                                 aria-labelledby="cross-selling-slider-{{ id }}">
+                                {% set config = {
+                                    addToCartButtons: upsellSlider,
+                                    title: {
+                                        value: crossSelling.name ?: crossSelling.translated.name
+                                    },
+                                    border: {
+                                        value: false
+                                    },
+                                    rotate: {
+                                        value: false
+                                    },
+                                    products: {
+                                        value: products
+                                    },
+                                    boxLayout: {
+                                        value: sliderConfig.boxLayout.value
+                                    },
+                                    elMinWidth: {
+                                        value: sliderConfig.elMinWidth.value
+                                    },
+                                    navigation: {
+                                        value: true
+                                    },
+                                    navigationArrows: {
+                                        value: 'inside'
+                                    },
+                                    displayMode: {
+                                        value: sliderConfig.displayMode.value
+                                    },
+                                    verticalAlign: {
+                                        value: 'flex-start'
+                                    },
+                                    speed: {
+                                        value: 300
+                                    }
+                                } %}
+
+                                {% block cms_element_cross_selling_tabs_content_container_slider %}
+                                    {{ parent() }}
+                                {% endblock %}
+                            </div>
+                        {% endfor %}
+                    {% endblock %}
+                </div>
+            {% endblock %}
+        </div>
+    {% endif %}
+{% endblock %}

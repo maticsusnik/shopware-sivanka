@@ -1,0 +1,45 @@
+{% set seoSchema = '' %}
+{% block element_faq %}
+    {% set faqValues = block.slots.getSlot("content").config.faq.value ?? block.slots.getSlot("faq").config.faq.value %}
+    {% if faqValues %}
+        <div class="ow-faq">
+            <div class="ow-faq__wrapper">
+                {% for key, question in faqValues %}
+                    <div class="ow-faq__single">
+                        <h5 class="ow-faq__single-question">
+                            <span class="ow-faq__single-question-text">{{ question.question }}</span>
+                            <span class="ow-faq__single-question-icon">
+                            {% sw_icon 'caret-down' style { pack: 'ow'} %}
+                        </span>
+                        </h5>
+                        <p class="ow-faq__single-answer">{{ question.answer }}</p>
+                    </div>
+                    {% set seoSchema = seoSchema ~ '{
+                        "@type": "Question",
+                        "name": "' ~ question.question ~ '",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "'~ question.answer ~'"
+                            }
+                        }' %}
+                    {% if not loop.last %}
+                        {% set seoSchema = seoSchema ~ ',' %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        {% block seo_faq_json %}
+            <script type="application/ld+json">
+                {
+                    "@context" : "http://schema.org",
+                    "@type" : "FAQPage",
+                    "mainEntity": [
+                {{ seoSchema|raw }}
+                ]
+            }
+
+
+            </script>
+        {% endblock %}
+    {% endif %}
+{% endblock %}

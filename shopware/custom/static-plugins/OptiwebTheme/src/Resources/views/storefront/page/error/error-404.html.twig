@@ -1,0 +1,23 @@
+{% sw_extends '@Storefront/storefront/page/error/error-404.html.twig' %}
+
+
+{% block base_content %}
+    <main class="error_404">
+        {% block not_found_error_content %}
+            <div class="container">
+                <h1 class="text-center">{{ 'general.404ErrorPageHeader'|trans|sw_sanitize }}</h1>
+                <p class="text-center">{{ 'general.404ErrorDescription'|trans|sw_sanitize }}</p>
+
+                {% block not_found_error_return %}
+                    <div class="text-center">
+                        <a href="{{ path('frontend.home.page') }}"
+                           class="btn btn-link">
+                            {% sw_icon 'arrow-left' style { pack: 'ow'} %}
+                            {{ 'general.404ErrorReturn'|trans|sw_sanitize }}
+                        </a>
+                    </div>
+                {% endblock %}
+            </div>
+        {% endblock %}
+    </main>
+{% endblock %}

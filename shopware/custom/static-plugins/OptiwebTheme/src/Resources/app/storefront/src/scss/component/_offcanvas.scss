@@ -1,0 +1,70 @@
+@include media-breakpoint-down(lg) {
+    .offcanvas {
+        &-footer {
+            background: $ow-color-grey;
+
+            a {
+                @include fontSpecs(14, 20, 400);
+
+                &:hover {
+                    color: $ow-color-base;
+                }
+            }
+        }
+
+        & .offcanvas-close {
+            padding: 1rem;
+            border: 0;
+            width: 3.5rem;
+            height: 3.5rem;
+
+            .icon {
+                width: 1.5rem;
+                height: 1.5rem;
+                color: $ow-color-white;
+            }
+        }
+
+        &-back-link {
+            background: $ow-color-black;
+        }
+    }
+
+
+    .navigation-offcanvas {
+        &-list {
+            padding-top: 1rem;
+        }
+
+        &-list-item {
+            border-top: 0;
+            border-bottom: 1px solid $ow-color-grey-border !important;
+        }
+
+        &-link {
+            @include fontSpecs(14, 20, 400);
+
+            &.is-back-link {
+                line-height: 1.5rem;
+                padding: 1rem;
+                padding-right: 0;
+                border: 0;
+                color: $ow-color-white;
+                @include fontSpecs(16, 24, 600);
+
+                .icon {
+                    color: inherit;
+                }
+            }
+
+            &.is-current-category {
+                color: $ow-color-black;
+
+            }
+        }
+
+        &-actions {
+            display: none;
+        }
+    }
+}

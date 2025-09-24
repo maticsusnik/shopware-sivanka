@@ -1,0 +1,25 @@
+{
+  "base": "/bundles/optiwebtheme/administration/",
+  "entryPoints": {
+    "optiweb-theme": {
+      "css": [
+        "/bundles/optiwebtheme/administration/assets/optiweb-theme-43OxWLmo.css"
+      ],
+      "dynamic": [],
+      "js": [
+        "/bundles/optiwebtheme/administration/assets/optiweb-theme-Bnd_bW7g.js"
+      ],
+      "legacy": false,
+      "preload": []
+    }
+  },
+  "legacy": false,
+  "metadatas": {},
+  "version": [
+    "7.1.0",
+    7,
+    1,
+    0
+  ],
+  "viteServer": null
+}

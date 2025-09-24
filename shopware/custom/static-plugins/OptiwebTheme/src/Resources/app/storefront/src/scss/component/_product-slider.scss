@@ -1,0 +1,88 @@
+@include media-breakpoint-down(md) {
+    .product-slider:not(.js-slider-initialized) {
+        .product-slider-controls-container {
+            display: none;
+        }
+
+        .product-slider-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 16px;
+        }
+
+        &.big-slider {
+            .product-slider-container {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+        }
+    }
+}
+
+.product-slider {
+    .btn-buy {
+        margin-right: 0;
+        margin-left: auto;
+        position: relative;
+
+        &.loading {
+            opacity: 0.5;
+
+            &:before {
+                content: "";
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 1.5rem;
+                height: 1.5rem;
+                border: 2px solid transparent;
+                border-top-color: $ow-color-black;
+                border-radius: 50%;
+                animation: spinner .6s linear infinite;
+                transform: translate(-50%, -50%);
+            }
+        }
+    }
+    .base-slider {
+        &-controls {
+            position: relative;
+            display: flex;
+            margin-bottom: 8px;
+            margin-left: 8px;
+
+            .icon {
+                width: calc(#{$nav-button-size} - 2 * 8px);
+                height: calc(#{$nav-button-size} - 2 * 8px);
+
+                svg {
+                    top: 0;
+                }
+            }
+        }
+
+        &-controls-prev,
+        &-controls-next {
+            position: relative;
+            left: unset;
+            top: unset;
+            right: 0;
+            bottom: 8px;
+            padding: 8px;
+            width: $nav-button-size;
+            height: $nav-button-size;
+            line-height: normal;
+            transform: none;
+            transition: opacity 0.15s ease;
+            cursor: pointer;
+            background: none;
+            border: 1px solid transparent;
+
+            &:hover {
+                border: 1px solid $ow-color-base;
+
+                svg, svg path {
+                    fill: $ow-color-base;
+                }
+            }
+        }
+    }
+}

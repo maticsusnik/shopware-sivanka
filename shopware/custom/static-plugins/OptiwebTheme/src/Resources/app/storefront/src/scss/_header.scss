@@ -1,0 +1,59 @@
+@include media-breakpoint-up(sm) {
+    .header-cart-badge {
+        display: block;
+    }
+}
+
+.header-cart .header-cart-badge,
+.header-wishlist .header-wishlist-badge {
+    color: $ow-color-black;
+}
+
+
+.modal-open .header-search-form .btn {
+    z-index: 1;
+}
+
+.account-menu {
+    &-login {
+        border: 0;
+        padding-bottom: 0;
+    }
+
+    &-header {
+        border: none;
+    }
+
+    &-links {
+        .list-group-item,
+        .btn-link {
+            @include fontSpecs(14, 20, 400);
+            color: $ow-color-black;
+            text-decoration: none;
+
+            &:hover {
+                color: $ow-color-base;
+                background: none;
+
+                .icon {
+                    color: $ow-color-base;
+                }
+            }
+        }
+
+        .icon {
+            width: 1rem;
+            height: 1rem;
+        }
+    }
+
+    &-offcanvas {
+        .offcanvas-footer {
+            display: none;
+        }
+    }
+
+    .dropdown-menu {
+        padding: 1rem 1.5rem;
+    }
+}

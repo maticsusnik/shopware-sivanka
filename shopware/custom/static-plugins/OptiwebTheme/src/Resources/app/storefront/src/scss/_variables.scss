@@ -1,0 +1,59 @@
+$ow-color-black: #000000;
+$ow-color-white: #FFFFFF;
+$ow-color-base: #B4367C;
+$ow-color-grey: #F6F6F6;
+$ow-color-grey-border: #EBEBEB;
+$ow-color-grey-1: $ow-color-grey;
+$ow-color-grey-3: $ow-color-grey-border;
+$ow-color-grey-4: #D9D9D9;
+$ow-color-grey-7: #888;
+$ow-color-grey-9: #303030;
+
+$ow-box-shadow: 0 16px 40px 0 rgba(0, 0, 0, 0.10);
+$assets-path: '/bundles/optiwebtheme/assets';
+
+/**
+ * bootstrap variables
+ */
+:root {
+    --bs-success-rgb: 45, 203, 72;
+}
+
+/**
+ * General sizes
+ */
+$bs-gutter-x: 40px;
+$content-width: 1098px + $bs-gutter-x;
+$header-width: 1366px + $bs-gutter-x;
+$wide-content-width: 1880px + $bs-gutter-x;
+$general-element-margin: 80; //in px
+
+/**
+ * Main slider
+ */
+$nav-button-size: 48px;
+$mobile-description-placeholder-height: 80px;
+
+/**
+ * product card
+ */
+$max-card-img-height: 150px;
+$spacer: 8;
+$spacer-big: 33;
+
+/**
+ * product page
+ */
+$product-buy-spacer: 20px;
+
+/**
+ * checkout
+ */
+$max-price-width: 100px;
+
+
+@keyframes spinner {
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}

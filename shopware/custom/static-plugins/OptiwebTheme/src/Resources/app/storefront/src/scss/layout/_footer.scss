@@ -1,0 +1,106 @@
+
+.social-link {
+
+    &-item {
+        .icon {
+            color: $ow-color-white;
+            width: 32px;
+            height: 32px;
+
+            .linkedin {
+                color: $ow-color-black;
+
+                .bg {
+                    fill: $ow-color-white;
+                }
+            }
+        }
+    }
+
+    &s {
+        margin-inline: -0.5rem;
+    }
+}
+
+.footer-main {
+    background: $ow-color-black;
+    color: $ow-color-white;
+    border-top: 0;
+
+    a, h4 {
+        color: inherit;
+    }
+
+    a {
+        text-decoration: none;
+
+        &:hover {
+            color: $ow-color-base;
+        }
+    }
+
+    p {
+        margin-bottom: 0.5rem;
+    }
+
+    .footer-logo {
+        margin-bottom: 1.5rem;
+
+        .header-logo-picture {
+            margin-inline: 0;
+        }
+    }
+
+    .footer-column {
+        border-bottom: 0;
+
+        @include media-breakpoint-down(lg) {
+            margin-bottom: 2.5rem;
+        }
+
+        @include media-breakpoint-between(sm, lg) {
+            &.col1 {
+                order: 1;
+            }
+            &.col2 {
+                order: 3;
+            }
+            &.col3 {
+                margin-top: 4rem;
+                order: 2;
+            }
+            &.col4 {
+                order: 4;
+            }
+        }
+
+        &s {
+            @include padding('top', 64, true);
+            @include padding('bottom', 64, true);
+        }
+    }
+
+    .footer-column-content-inner {
+        padding: 0;
+    }
+
+    .list-unstyled {
+        margin-block: -6px 0;
+    }
+
+    .footer-link-item {
+        padding-block: 6px;
+        line-height: 1.5;
+    }
+}
+
+.footer-bottom {
+    background: $ow-color-grey-9;
+    color: $ow-color-white;
+    @include fontSpecs(14, 20, 400, false, true);
+
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+}

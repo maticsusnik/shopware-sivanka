@@ -1,0 +1,76 @@
+{% block sw_cms_element_documents_upload_config %}
+    <div class="optiweb-documents-upload-config">
+        <sw-text-field label="Headline" v-model="element.config.title.value"></sw-text-field>
+
+        <sw-tabs>
+            <sw-tabs-item @click.native="activeDocument = index" v-for="(document, index) in computedDocuments" :ref="'tab' + index"
+                          :active="index == activeDocument">
+                Document {{ index + 1 }}
+            </sw-tabs-item>
+        </sw-tabs>
+        <div v-for="(document, index) in computedDocuments">
+            <div v-if="index === activeDocument">
+
+                <sw-number-field numberType="int" :digits="0" label="Order" :copyable="false"
+                                 v-model="element.config.documents.value[index].order"
+                                 :copyableTooltip="false">
+                </sw-number-field>
+
+                <sw-text-field label="Title" :copyable="false" v-model="element.config.documents.value[index].title"
+                               :copyableTooltip="false">
+                </sw-text-field>
+
+                {% block sw_cms_element_document_config_media_upload %}
+                    <sw-cms-mapping-field
+                            v-model:config="element.config.documents.value[index].document"
+                            :label="'Upload document'"
+                            value-types="entity"
+                            entity="media"
+                    >
+                        <sw-media-upload-v2
+                                variant="regular"
+                                :upload-tag="uploadTag"
+                                :source="previewSource(index)"
+                                :allow-multi-select="false"
+                                :default-folder="cmsPageState.pageEntityName"
+                                :caption="'Upload document'"
+                                @media-upload-sidebar-open="onOpenMediaModal"
+                                @media-upload-remove-image="onDocumentRemove(index)"
+                        />
+                    </sw-cms-mapping-field>
+
+                    <sw-upload-listener
+                            :upload-tag="uploadTag"
+                            auto-upload
+                            @media-upload-finish="(item) => onDocumentUpload(item,index)"
+                    />
+                {% endblock %}
+
+                {% block sw_cms_element_document_config_media_modal %}
+                    <sw-media-modal-v2
+                            v-if="mediaModalIsOpen"
+                            variant="full"
+                            :caption="'Upload document'"
+                            :entity-context="cmsPageState.entityName"
+                            :allow-multi-select="false"
+                            :initial-folder-id="cmsPageState.defaultMediaFolderId"
+                            @media-upload-remove-image="onDocumentRemove(index)"
+                            @media-modal-selection-change="(selection) => onSelectionChanges(selection, index)"
+                            @modal-close="onCloseModal"
+                    />
+                {% endblock %}
+
+                <div style="padding-top:32px; border-top:1px solid; margin-top:32px" class="remove">
+                    <mt-button  variant="critical" @click="removeDocument(index)">
+                        Remove this document
+                    </mt-button>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top:32px">
+            <mt-button variant="primary" @click="createNewDocument" >
+                Add new document
+            </mt-button>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% block sw_cms_block_category_description_and_faq %}
+    <div class="sw-cms-block-category-description-and-faq">
+        <div class="sw-cms-block-category-description-and-faq__content">
+            <slot name="headline"></slot>
+            <slot name="image"></slot>
+            <slot name="text"></slot>
+        </div>
+        <div class="sw-cms-block-category-description-and-faq__faq">
+            <slot name="faq"></slot>
+        </div>
+    </div>
+{% endblock %}

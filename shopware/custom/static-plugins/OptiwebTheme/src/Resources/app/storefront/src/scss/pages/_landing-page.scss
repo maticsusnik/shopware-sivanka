@@ -1,0 +1,132 @@
+
+.landing-page {
+    padding-top: 0;
+
+    .cms-breadcrumb {
+        position: relative;
+        z-index: 1;
+
+        nav {
+            padding-top: 1rem;
+            position: absolute;
+            top: 0;
+            left: calc(var(--bs-gutter-x) * 0.5);
+        }
+
+        .breadcrumb {
+            a, .is-active, .icon {
+                color: $ow-color-white;
+            }
+        }
+    }
+
+    &-header {
+        @include margin('bottom', 44, false);
+        position: relative;
+
+        @include media-breakpoint-down(lg) {
+            margin-bottom: 0;
+        }
+
+        &:before {
+            display: block;
+            content: "";
+            background-image: radial-gradient(100% 91.88% at 12.92% 50%, #000 5.42%, rgba(0, 0, 0, 0) 100%);
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 0;
+        }
+
+        .cms-element-text {
+            color: $ow-color-white;
+            @include padding('top', 100, true);
+            @include padding('bottom', 100, true);
+            text-align: center;
+
+            --bs-heading-color: $ow-color-white;
+        }
+    }
+
+    .cms-section-sidebar-main-content,
+    .cms-section-default {
+        a:not(.btn) {
+            color: $ow-color-black;
+
+            &:hover {
+                color: $ow-color-base;
+            }
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+    }
+
+    .cms-element-title-content-button__inner {
+        p {
+            @include fontSpecs(16, 24, 400, false, false);
+        }
+
+        .content-container {
+            padding-block: 0;
+        }
+    }
+
+    table {
+        margin-block: 1rem;
+
+        tbody tr:nth-child(odd) {
+            background-color: $ow-color-grey-1;
+        }
+
+        p {
+            margin: 0;
+        }
+
+        td {
+            padding: 0.75rem;
+        }
+    }
+}
+
+.cms-section-sidebar.sidebar-right {
+    .cms-section-sidebar-main-content {
+        order: 1;
+        margin-bottom: 2rem;
+    }
+
+    .cms-section-sidebar-sidebar-content {
+        order: 2;
+
+        .cms-block-container-row {
+            @include media-breakpoint-down(xl) {
+                margin-right: 0;
+            }
+
+            @include media-breakpoint-down(lg) {
+                margin-inline: 0;
+                text-align: center;
+            }
+        }
+
+        .cms-block-text-button__inner {
+            background-color: $ow-color-grey;
+            padding: 1.5rem 1rem;
+
+            p > a {
+                color: $ow-color-black;
+
+                &:hover {
+                    color: $ow-color-base;
+                }
+            }
+
+            .content-container {
+                padding-block: 0;
+            }
+        }
+    }
+}

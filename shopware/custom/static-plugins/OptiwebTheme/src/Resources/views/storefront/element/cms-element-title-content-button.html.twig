@@ -1,0 +1,13 @@
+{% block cms_element_title_content_button %}
+    {% set contentElement = element.slots.getSlot('content') %}
+    
+    <div class="col-12 cms-element-title-content-button__inner" data-cms-element-id="{{ element.id }}">
+        {% block cms_element_title_content_button_inner %}
+            <{{ contentElement.config.titleType.value }} class="title">{{ contentElement.config.title.value.text }}</{{ contentElement.config.titleType.value }}>
+            <div class="content">{{ contentElement.config.content.value | raw }}</div>
+            {% sw_include "@Storefront/storefront/general/button.html.twig" with {
+                button: contentElement.config.button.value
+            } %}
+        {% endblock %}
+    </div>
+{% endblock %}

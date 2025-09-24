@@ -1,0 +1,117 @@
+{% sw_extends '@Storefront/storefront/layout/footer/footer.html.twig' %}
+
+{% block layout_footer_service_menu %}
+{% endblock %}
+
+{% block layout_footer_vat %}
+{% endblock %}
+
+{% block layout_footer_copyright %}
+
+    <div class="container footer-copyright row justify-content-between">
+        <div class="footer-copyright-text col-auto px-0 px-xxl-3">
+            {{ 'footer.copyrightInfo'|trans|sw_sanitize }}
+        </div>
+
+        <div class="footer-copyright-links col-auto px-0 px-xxl-3">
+            <a href="{{ 'optiweb.privacyPolicyUrl'|trans }}"
+               title="{{ 'optiweb.privacyPolicyText'|trans|sw_sanitize }}"
+               class="footer-copyright-link">
+                {{ 'optiweb.privacyPolicyText'|trans|sw_sanitize }}
+            </a>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block layout_footer_payment_shipping_logos %}
+{% endblock %}
+
+{% block layout_footer_navigation %}
+    <div id="footerColumns" class="row footer-columns justify-content-between"
+    >
+        {% set themeConfig = config('OptiwebTheme').config %}
+
+        {% block layout_footer_navigation_col1 %}
+            <div class="col-lg-auto col-sm-6 col-12 footer-column col1">
+                <div class="footer-logo">
+                    {% sw_include '@Storefront/storefront/layout/header/logo.html.twig' %}
+                </div>
+
+                <div class="footer-column-content-inner">
+                    {{ themeConfig['addressInfo']|raw }}
+                </div>
+            </div>
+        {% endblock %}
+
+        {% block layout_footer_navigation_col2 %}
+            <div class="col-lg-auto col-sm-6 col-12 footer-column col2">
+                <h4 class="footer-column-content-title">
+                    {{ 'optiweb.openingHoursTitle'|trans|sw_sanitize }}
+                </h4>
+                <div class="footer-column-content-inner">
+                    {{ themeConfig['openingHours']|raw }}
+                </div>
+            </div>
+        {% endblock %}
+
+        {% block layout_footer_navigation_columns %}
+
+                {% block layout_footer_navigation_column %}
+                    <div class="col-lg-auto col-sm-6 col-12 footer-column col3">
+                        <h4 class="footer-column-content-title">
+                            {{ 'optiweb.categoriesTitle'|trans|sw_sanitize }}
+                        </h4>
+
+                        {% block layout_footer_navigation_information_content %}
+                            <div class="footer-column-content">
+                                <div class="footer-column-content-inner">
+                                    {% block layout_footer_navigation_information_links %}
+                                        <ul class="list-unstyled">
+                                            {% for treeItem in footer.navigation.tree %}
+                                                {% set category = treeItem.category %}
+                                                {% set name = category.translated.name %}
+
+                                                {% block layout_footer_navigation_information_link_item %}
+                                                    {{ parent() }}
+                                                {% endblock %}
+                                            {% endfor %}
+                                        </ul>
+                                    {% endblock %}
+                                </div>
+                            </div>
+                        {% endblock %}
+                    </div>
+                {% endblock %}
+        {% endblock %}
+
+        {% block layout_footer_navigation_col4 %}
+            <div class="col-lg-auto col-sm-6 col-12 footer-column col4">
+                    <div class="footer-column-content-inner">
+                        <div class="social-links row justify-content-lg-end">
+                            {% if themeConfig['instagramLink'] %}
+                            <a href="{{ themeConfig['instagramLink'] }}" target="_blank" title="Instagram" class="social-link-item col-auto px-2">
+                                {% sw_icon 'instagram' style { pack: 'ow'} %}
+                            </a>
+                            {% endif %}
+                            {% if themeConfig['twitterLink'] %}
+                            <a href="{{ themeConfig['twitterLink'] }}" target="_blank" title="X" class="social-link-item col-auto px-2">
+                                {% sw_icon 'twitter' style { pack: 'ow'} %}
+                            </a>
+                            {% endif %}
+                            {% if themeConfig['facebookLink'] %}
+                            <a href="{{ themeConfig['facebookLink'] }}" target="_blank" title="Facebook" class="social-link-item col-auto px-2">
+                                {% sw_icon 'facebook' style { pack: 'ow'} %}
+                            </a>
+                            {% endif %}
+                            {% if themeConfig['linkedinLink'] %}
+                            <a href="{{ themeConfig['linkedinLink'] }}" target="_blank" title="LinkedIn" class="social-link-item col-auto px-2">
+                                {% sw_icon 'linkedin' style { pack: 'ow'} %}
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+            </div>
+        {% endblock %}
+    </div>
+{% endblock %}

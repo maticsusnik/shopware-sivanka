@@ -1,0 +1,124 @@
+
+.category-navigation {
+    padding: 0;
+    background: $ow-color-grey;
+
+    &-box {
+        padding-inline: 0;
+        width: 100%;
+    }
+
+    &-link {
+        @include fontSpecs(16, 24, 400, false, true);
+        color: $ow-color-grey-9;
+        text-decoration: none;
+        padding-block: 0.75rem;
+        padding-inline: 0;
+        border-bottom: 1px solid $ow-color-grey-4;
+
+        &:hover {
+            background: $ow-color-grey-4;
+        }
+
+        &.is-active {
+            color: $ow-color-black;
+            font-weight: 700;
+        }
+    }
+
+    &-title {
+        @include fontSpecs(20, 32, 700, false, true);
+        color: $ow-color-black;
+        padding-inline: 1rem;
+        border: none;
+
+        &:before {
+            content: "";
+            display: inline-block;
+            vertical-align: middle;
+            width: 1.5rem;
+            height: 1.5rem;
+            background-image: url("#{$assets-path}/images/arrow-left.svg");
+            background-position: 50%;
+            background-repeat: no-repeat;
+            background-size: contain;
+            position: relative;
+        }
+    }
+
+    .category-navigation-entry {
+        border-bottom: none !important;
+        padding-inline: 1rem;
+        margin-top: -1px;
+
+        &:hover, &:focus {
+            background: $ow-color-grey-4;
+        }
+
+        &:last-child .category-navigation-link {
+            border-bottom: 0;
+        }
+    }
+
+    &-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-gap: 1rem;
+        background: none;
+
+        @include media-breakpoint-down(sm) {
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        }
+
+        .category-navigation-entry {
+            background: $ow-color-base;
+            min-height: 150px;
+            padding: 0;
+
+            &:hover {
+                background: $ow-color-grey-9;
+
+                a {
+                    background: none;
+                }
+            }
+
+            a {
+                border-bottom: none;
+                @include fontSpecs(22, 26.4, 700, false, true);
+                display: flex;
+                align-items: flex-end;
+                padding: 1rem;
+                height: 100%;
+            }
+        }
+
+        .category-navigation-grid-title {
+            grid-column: span 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            grid-gap: 1rem;
+            background: none;
+            text-align: center;
+            min-height: 100px;
+
+            & > * {
+                margin: 0 !important;
+                flex: 1 1 50%;
+            }
+
+            &:hover {
+                background: none;
+            }
+
+            h3 {
+                @include fontSpecs(30, 36, 700, false, true);
+            }
+
+            p {
+                @include fontSpecs(26, 31.2, 700, false, true);
+            }
+        }
+    }
+}

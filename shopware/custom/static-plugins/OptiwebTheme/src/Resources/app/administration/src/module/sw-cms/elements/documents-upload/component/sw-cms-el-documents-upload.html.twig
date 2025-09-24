@@ -1,0 +1,16 @@
+{% block sw_cms_element_documents_upload %}
+    <div style="width:100%">
+        <h3>{{ element.config.title.value }}</h3>
+        <ul v-if="sortedDocuments.length" class="documents-component-list">
+            <li v-for="document in sortedDocuments">
+                <div class="content">
+                <p>{{ document.title }}</p>
+                </div>
+            </li>
+        </ul>
+        <div v-else>
+            <sw-alert variant="info">Please insert documents.</sw-alert>
+        </div>
+    </div>
+{% endblock %}
+

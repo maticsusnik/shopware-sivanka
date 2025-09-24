@@ -1,0 +1,45 @@
+{
+    "optiweb": {
+        "toggleMenuText": "Izdelki",
+        "privacyPolicyUrl": "/politika-zasebnosti",
+        "privacyPolicyText": "Politika zasebnosti",
+        "openingHoursTitle": "Odpiralni čas",
+        "categoriesTitle": "Povezave",
+        "showMore": "Preberi več",
+        "showLess": "Skrij",
+        "listing": {
+            "filter": {
+                "show": "Prikaži več",
+                "hide": "Skrij"
+            }
+        },
+        "search": {
+            "headlineSuper": "Rezultati iskanja"
+        },
+        "product": {
+            "inStock": "Na zalogi",
+            "specificationTitle": "Specifikacije",
+            "addAllProducts": "Dodaj vse v košarico",
+            "logIn": "Prijavi se",
+            "logInTitle": "Nakup je omogočen samo prijavljenim strankam"
+        },
+        "checkout": {
+            "logInAlert": "Če želite opraviti nakup, morate biti prijavljeni.",
+            "freeShipping": "Brezplačno",
+            "title": "Oddaj naročilo"
+        }
+    },
+    "prems-one-page-checkout": {
+        "steps": {
+            "step1-headline": "Podatki plačnika",
+            "step2-headline": "Dostava in plačilo",
+            "step3-headline": "Povzetek naročila"
+        },
+        "shipping": {
+            "change": "Uredi"
+        },
+        "billing": {
+            "change": "Uredi"
+        }
+    }
+}

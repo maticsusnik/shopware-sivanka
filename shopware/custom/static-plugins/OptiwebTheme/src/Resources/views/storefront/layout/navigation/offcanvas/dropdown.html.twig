@@ -1,0 +1,26 @@
+{% sw_extends '@Storefront/storefront/layout/navigation/offcanvas/navigation.html.twig' %}
+
+
+{% block utilities_offcanvas_content %}
+    {% block layout_navigation_offcanvas_navigation_actions %}
+        <nav class="nav navigation-offcanvas-actions">
+            {% block layout_navigation_offcanvas_navigation_action_language %}
+                {% sw_include '@Storefront/storefront/layout/header/actions/language-widget.html.twig' with {position: 'offcanvas'} %}
+            {% endblock %}
+
+            {% block layout_navigation_offcanvas_navigation_action_currency %}
+                {% sw_include '@Storefront/storefront/layout/header/actions/currency-widget.html.twig' with {position: 'offcanvas'} %}
+            {% endblock %}
+        </nav>
+    {% endblock %}
+
+    {# Categories are loaded via OffcanvasMenuPlugin #}
+    {% block layout_navigation_offcanvas_navigation_placeholder %}
+        <div class="navigation-offcanvas-containers row">
+            <div class="navigation-offcanvas-container navigation-offcanvas-container-level-1 col-3"></div>
+            <div class="navigation-offcanvas-container-level-2 col-3"></div>
+            <div class="navigation-offcanvas-container-level-3 col-3"></div>
+            <div class="navigation-offcanvas-container-level-4 col-3"></div>
+        </div>
+    {% endblock %}
+{% endblock %}

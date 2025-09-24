@@ -1,0 +1,53 @@
+
+@mixin fontSpecs($fontSize, $lineHeight, $fontWeight: false, $letterSpacing: false, $responsive: false) {
+    font-size: $fontSize + px;
+    line-height: calc(#{$lineHeight} / #{$fontSize});
+    @if ($fontWeight) {
+        font-weight: $fontWeight;
+    }
+
+    @if ($letterSpacing) {
+        letter-spacing: $letterSpacing + px;
+    }
+
+    @if $responsive == true {
+        @include media-breakpoint-down(md) {
+            $fontSize: $fontSize * 0.87;
+            $lineHeight: $lineHeight * 0.87;
+            font-size: $fontSize + px;
+            line-height: calc(#{$lineHeight} / #{$fontSize});
+        }
+    }
+}
+
+// @include margin('bottom', 100, true);
+@mixin margin($direction, $size, $responsive: false) {
+
+    margin-#{$direction}: #{$size}px;
+
+    @if $responsive == true {
+        @include media-breakpoint-down(lg) {
+            margin-#{$direction}: #{($size / 2) + ($size / 4)}px;
+        }
+        @include media-breakpoint-down(md) {
+            margin-#{$direction}: #{$size / 2}px;
+        }
+    }
+
+}
+
+// @include padding('bottom', 100, true);
+@mixin padding($direction, $size, $responsive: false) {
+
+    padding-#{$direction}: #{$size}px;
+
+    @if $responsive == true {
+        @include media-breakpoint-down(lg) {
+            padding-#{$direction}: #{($size / 2) + ($size / 4)}px;
+        }
+        @include media-breakpoint-down(md) {
+            padding-#{$direction}: #{$size / 2}px;
+        }
+    }
+
+}

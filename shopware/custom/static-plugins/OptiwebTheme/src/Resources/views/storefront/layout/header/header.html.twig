@@ -1,0 +1,61 @@
+{% sw_extends '@Storefront/storefront/layout/header/header.html.twig' %}
+
+{% block layout_header_navigation %}
+    <div class="row align-items-center justify-content-between pb-0 pt-3 pb-sm-3">
+        {% block layout_header_logo %}
+            <div class="col-2 header-logo-col">
+                {% sw_include '@Storefront/storefront/layout/header/logo.html.twig' %}
+            </div>
+        {% endblock %}
+
+        {% block layout_header_search %}
+            <div class="col-12 order-2 col-sm order-sm-1 header-search-col pt-3 pt-sm-0">
+                <div class="row justify-content-end">
+                    <div class="col-lg-auto px-0 px-sm-3">
+                        {% sw_include '@Storefront/storefront/layout/header/search.html.twig' %}
+                    </div>
+                </div>
+            </div>
+        {% endblock %}
+
+        {% block layout_header_actions %}
+            <div class="col-auto order-1 col-sm-auto order-sm-2 header-actions-col">
+                <div class="row g-0">
+
+                    {% block layout_header_actions_account %}
+                        {{ parent() }}
+                    {% endblock %}
+
+                    {% if config('core.cart.wishlistEnabled') %}
+                        {% block layout_header_actions_wishlist %}
+                            {{ parent() }}
+                        {% endblock %}
+                    {% endif %}
+
+                    {% block layout_header_actions_cart %}
+                        {{ parent() }}
+                    {% endblock %}
+
+                    {% block layout_header_navigation_toggle %}
+                        <div class="col-auto d-lg-none">
+                            <div class="menu-button">
+                                {% block layout_header_navigation_toggle_tablet_button %}
+                                    <button
+                                            class="btn nav-main-toggle-btn header-actions-btn"
+                                            type="button"
+                                            data-off-canvas-menu-mobile="true"
+                                            aria-label="{{ 'general.menuLink'|trans|striptags }}"
+                                    >
+                                        {% block layout_header_navigation_toggle_tablet_button_icon %}
+                                            {% sw_icon 'list' style { pack: 'ow'} %}
+                                        {% endblock %}
+                                    </button>
+                                {% endblock %}
+                            </div>
+                        </div>
+                    {% endblock %}
+                </div>
+            </div>
+        {% endblock %}
+    </div>
+{% endblock %}

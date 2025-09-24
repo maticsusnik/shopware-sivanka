@@ -1,0 +1,95 @@
+
+[data-ow-read-more] {
+    position: relative;
+
+    .ow-read-more-toggle {
+        position: relative;
+        color: $ow-color-black;
+        text-align: center;
+        margin: 20px 0 0;
+        cursor: pointer;
+
+        &:before,
+        &:after {
+            position: absolute;
+            width: 35%;
+            height: 1px;
+            content: '';
+            top: calc(50% - 1px);
+            left: 0;
+        }
+
+        &:after {
+            right: 0;
+            left: auto;
+        }
+    }
+
+    .cms-element-text {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    &[data-inline="true"] {
+        .ow-read-more-toggle {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            text-align: left;
+            font-weight: 400;
+            text-decoration: underline;
+            padding-left: 0.5rem;
+            padding-bottom: 1rem;
+            background: $ow-color-white;
+
+            &:before {
+                position: absolute;
+                top: 0;
+                left: -16px;
+                content: '...';
+                text-align: right;
+                width: 18px;
+                display: inline-block;
+                height: auto;
+                background: inherit;
+            }
+
+            &:after {
+                content: unset;
+            }
+
+            &:hover {
+                color: $ow-color-base;
+
+                &:before {
+                    color: $ow-color-black;
+                }
+            }
+        }
+
+        &.toggled {
+            .ow-read-more-toggle {
+                position: relative;
+                padding: 0;
+                margin: 10px 0 0;
+
+                &:before {
+                    content: '';
+                    margin: 0;
+                }
+            }
+        }
+    }
+}
+
+.cms-element-read-more-text {
+    border-bottom: 1px solid $ow-color-grey-4;
+    padding-bottom: 1rem;
+    margin-bottom: 1.25rem;
+
+    @include media-breakpoint-down(lg) {
+        border-bottom: 0;
+        margin-bottom: 0;
+    }
+}

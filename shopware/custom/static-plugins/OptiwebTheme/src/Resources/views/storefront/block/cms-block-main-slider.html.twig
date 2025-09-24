@@ -1,0 +1,92 @@
+{% block block_main_slider %}
+    {% set slider = block.slots.getSlot("tabs") %}
+    {% set arrowsPosition = "inside" %}
+    {% set dotPosition = "outside" %}
+    {% set imageDisplayMode = "cover" %} <!-- contain or cover -->
+    {% set blockId = block.id %}
+    {% set slides = slider.data.get("slides") %}
+
+    {% set mainSliderOptions = {
+        slider: {
+            controls: true,
+            nav: true,
+            navPosition: 'bottom',
+            mouseDrag: true,
+            autoplay: true,
+            autoplayButtonOutput: false,
+            autoplayTimeout: 5000,
+            speed: 500,
+            ariaLive: false,
+            autoHeight: true,
+        }
+    } %}
+        <div class="cms-block-main-slider ow-main-slider">
+            <div
+                class="base-slider image-slider {% if arrowsPosition == "outside" %} has-nav-outside{% endif %}{% if dotPosition == "outside" %} has-dots-outside{% endif %}"
+                data-base-slider="true"
+                data-base-slider-options='{{ mainSliderOptions|json_encode }}'
+                role="region"
+                aria-label="Main slider"
+                tabindex="0"
+            >
+            {% block element_image_slider_skip_slider %}
+                {% sw_include '@Storefront/storefront/component/skip-target.html.twig' with {
+                    targetId: blockId,
+                    snippet: 'component.cms.imageGallery.skipImageGallery',
+                } %}
+            {% endblock %}
+
+            <div class="image-slider-container"
+                 data-base-slider-container="true">
+                {% for slide in slides %}
+                    <div class="image-slider-item-container">
+                        <div class="image-slider-item {% if loop.first != true %} is-not-first{% endif %} is-cover "{% if sliderConfig.minHeight.value and sliderConfig.displayMode.value == "cover" %} style="min-height: {{ sliderConfig.minHeight.value|trim|replace({' ':''}) }}"{% endif %}>
+                            {% set attributes = {
+                                'class': 'img-fluid image-slider-image',
+                                'alt':slide.image.translated.alt ?: '',
+                                'title': slide.image.translated.title ?: '',
+                                'tabindex': (slide.image.url ? '-1' : '0'),
+                                'data-object-fit': imageDisplayMode
+                            } %}
+
+                            {% sw_thumbnails 'cms-image-slider-thumbnails' with {
+                                media: slide.image
+                            } %}
+                        </div>
+                        <div class="ow-main-slider__slide-content">
+                            <div class="container">
+                                <div class="ow-main-slider__slide-content-text">
+                                    <h1 class="ow-main-slider__slide-content-title">{{ slide.title }}</h1>
+                                    <p class="ow-main-slider__slide-content-text">{{ slide.text }}</p>
+                                    {% sw_include "@Storefront/storefront/general/button.html.twig" with {
+                                        button: slide.button
+                                    } %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ow-main-slider__slide-description-wrapper">
+                            <div class="ow-main-slider__slide-description">
+                                <p class="ow-main-slider__slide-description-text">{{ slide.description }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            {% block element_image_slider_controls %}
+                    <div class="image-slider-controls-container">
+                        <div class="base-slider-controls"
+                             data-base-slider-controls="true">
+                                <button class="base-slider-controls-prev image-slider-controls-prev{% if arrowsPosition == "outside" %} is-nav-prev-outside{% elseif arrowsPosition == "inside" %} is-nav-prev-inside{% endif %}" aria-label="{{ 'general.previous'|trans|striptags }}">
+                                        {% sw_icon 'arrow-left' style { pack: 'ow'} %}
+                                </button>
+                                <button class="base-slider-controls-next image-slider-controls-next{% if arrowsPosition == "outside" %} is-nav-next-outside{% elseif arrowsPosition == "inside" %} is-nav-next-inside{% endif %}" aria-label="{{ 'general.next'|trans|striptags }}">
+                                        {% sw_icon 'arrow-right' style { pack: 'ow'} %}
+                                </button>
+                        </div>
+                    </div>
+            {% endblock %}
+        </div>
+        {% block element_image_slider_target_after_slider %}
+            <div id="content-after-target-{{ blockId }}"></div>
+        {% endblock %}
+{% endblock %}

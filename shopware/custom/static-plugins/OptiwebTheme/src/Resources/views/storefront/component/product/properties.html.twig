@@ -1,0 +1,30 @@
+{% sw_extends '@Storefront/storefront/component/product/properties.html.twig' %}
+
+{% block component_product_properties_container %}
+    <div class="row product-detail-properties-container">
+        <div class="col-12">
+            {% block component_product_properties_table %}
+                <table class="table product-detail-properties-table">
+                    <tbody>
+                    {# @var product \Shopware\Core\Content\Product\SalesChannel\SalesChannelProductEntity #}
+                    {% for group in product.sortedProperties %}
+                        {% block component_product_properties_table_row %}
+                            <tr class="properties-row">
+                                {% block component_product_properties_item_label %}
+                                    <th class="properties-label">{{ group.translated.name|e }}</th>
+                                {% endblock %}
+
+                                {% block component_product_properties_item_value %}
+                                    <td class="properties-value">
+                                        <span>{{ group.options|map(option => "#{option.translated.name}")|join(', ') }}</span>
+                                    </td>
+                                {% endblock %}
+                            </tr>
+                        {% endblock %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% endblock %}
+        </div>
+    </div>
+{% endblock %}

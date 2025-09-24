@@ -1,0 +1,37 @@
+.optiweb-catalog-repeater-editor {
+    &__item {
+        border: 1px solid #ddd;
+        padding: 10px;
+
+        &s {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 16px;
+        }
+    }
+
+    &__header {
+        margin-bottom: 10px;
+    }
+
+    .sw-media-preview-v2__item {
+        width: 100%;
+    }
+
+    .sw-media-upload-v2__content {
+        margin-bottom: 20px;
+    }
+
+    .sw-media-upload-v2__dropzone {
+        padding: 10px;
+        min-height: 100px;
+    }
+
+    .sw-cms-mapping-field__form-field {
+        margin-top: -25px;
+    }
+
+    .sw-cms-mapping-field__selection {
+        display: none;
+    }
+}

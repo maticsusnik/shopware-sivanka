@@ -1,0 +1,16 @@
+{% block sw_cms_el_config_title_content_button %}
+    <div class="sw-cms-el-config-title-content-button">
+        <sw-text-field v-model="element.config.title.value.text" label="Title"></sw-text-field>
+        <mt-select
+                v-model="element.config.titleType.value"
+                :label="'Title type'"
+                :options="titleTypeOptions"
+        />
+        <mt-text-editor
+                label="Content"
+                :model-value="element.config.content.value"
+                @update:model-value="onInput"
+        />
+        <ow-url v-model="element.config.button.value" label="Button" @input="handleButtonInput"></ow-url>
+    </div>
+{% endblock %}

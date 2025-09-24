@@ -1,0 +1,9 @@
+{% block element_read_more_text %}
+    <div class="cms-element-{{ element.type }}"
+         data-ow-read-more="true"
+         data-lines="2"
+         data-inline="true"
+         data-show-less-button="false">
+        <div class="cms-element-text">{{ element.data.get("description")|raw }}</div>
+    </div>
+{% endblock %}

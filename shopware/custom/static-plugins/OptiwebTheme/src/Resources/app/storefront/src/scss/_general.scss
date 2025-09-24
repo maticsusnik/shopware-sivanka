@@ -1,0 +1,90 @@
+.container, .cms-section .boxed {
+    max-width: $content-width;
+}
+
+.container-main {
+    padding-block: 1rem 0;
+}
+
+header, footer, .nav-main {
+    .container, .cms-section .boxed {
+        max-width: $header-width;
+        margin-inline: auto;
+    }
+}
+
+.add-default-margins {
+    @include margin('bottom', $general-element-margin, true);
+    @include margin('top', $general-element-margin, true);
+}
+
+.btn-primary,
+.btn-outline-primary,
+.btn-secondary,
+.btn-outline-secondary,
+.btn-outline-dark {
+    @include fontSpecs(20, 32, 700, false, true);
+    @include padding('bottom', 12, true);
+    @include padding('top', 12, true);
+    @include padding('left', 24, true);
+    @include padding('right', 24, true);
+}
+
+.btn-grey {
+    color: $ow-color-black;
+    background: $ow-color-grey;
+    @include fontSpecs(16, 24, 700, false, false);
+    @include padding('bottom', 14, false);
+    @include padding('top', 14, false);
+    @include padding('left', 20, false);
+    @include padding('right', 20, false);
+
+    &:hover {
+        color: $ow-color-black;
+        background: $ow-color-grey-4;
+    }
+}
+
+.icon {
+    color: inherit;
+}
+
+.form-check-input {
+    &[type=radio] {
+        border: 1px solid $ow-color-grey-7;
+        background: $ow-color-white;
+        cursor: pointer;
+
+        &:before {
+            content: '';
+            display: block;
+            width: 10px;
+            height: 10px;
+            margin: 2px;
+            background: $ow-color-white;
+            border: 1px solid $ow-color-grey-7;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        &:checked {
+            --bs-form-check-bg-image: none;
+            border: 1px solid $ow-color-black;
+
+            &:before {
+                background: $ow-color-black;
+                border: 1px solid $ow-color-black;
+            }
+        }
+    }
+
+    &[type=checkbox] {
+        border-radius: 0;
+        border-color: $ow-color-black;
+
+        &:checked {
+            background-color: $ow-color-black;
+            border-color: $ow-color-black;
+        }
+    }
+}
