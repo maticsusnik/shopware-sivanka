@@ -1,0 +1,31 @@
+
+.cta-questions {
+
+    .full-width {
+        padding-inline: 0;
+    }
+
+    .cms-block-text-button {
+        @include padding('top', 64, true);
+        @include padding('bottom', 64, true);
+        padding-inline: calc(#{$bs-gutter-x} / 2);
+        max-width: $content-width;
+        margin-right: auto;
+        margin-left: auto;
+        text-align: center;
+    }
+
+    h2, h3, p, a {
+        color: $ow-color-white;
+    }
+
+    p {
+        @include fontSpecs(16, 24, 400, false, false);
+        max-width: 533px;
+        margin-inline: auto;
+    }
+
+    .btn {
+        color: $ow-color-black;
+    }
+}

@@ -1,0 +1,28 @@
+{% sw_extends '@Storefront/storefront/component/product/listing.html.twig' %}
+
+{% block product_listing %}
+    {% set owThemeConfig = config("OptiwebTheme.config") %}
+    {% set absCategories = owThemeConfig.absSearchCategories %}
+    <div class="category-view" data-view="view-grid">
+        {{ parent() }}
+    </div>
+{% endblock %}
+
+{% block element_product_listing_pagination_nav_actions %}
+    <div class="d-flex align-items-center justify-content-between gap-3 mb-lg-4">
+        {% block element_product_listing_sorting %}
+            <div class="col-md-auto d-flex gap-3 align-items-center col-sorting">
+                {{ parent() }}
+            </div>
+        {% endblock %}
+        <div class="col-md-auto col-view">
+            {% block element_product_listing_view %}
+                {% sw_include '@Storefront/storefront/component/category-view.html.twig' with {
+                    view: categoryView,
+                } %}
+            {% endblock %}
+        </div>
+    </div>
+{% endblock %}
+
+

@@ -1,0 +1,18 @@
+{% block sw_cms_element_faq %}
+    <div style="width:100%">
+        <div class="faq-questions" v v-if="element.config.faq.value.length">
+            <ul>
+                <li v-for="question in element.config.faq.value">
+                    <h5>{{ question.question }}</h5>
+                    <div class="answer-wrapper">
+                        {{ question.answer }}
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div style="width:100%" v-else>
+            <sw-alert variant="info">Insert faq questions.</sw-alert>
+        </div>
+    </div>
+{% endblock %}
+

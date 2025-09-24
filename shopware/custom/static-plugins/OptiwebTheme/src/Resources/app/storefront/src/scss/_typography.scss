@@ -1,0 +1,53 @@
+$fontName : "HelveticaNeue";
+
+@font-face {
+    font-family: $fontName;
+    font-style: normal;
+    font-weight: 300;
+    font-display: swap;
+    src: url(/bundles/optiwebtheme/assets/fonts/HelveticaNeue-Light.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: $fontName;
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(/bundles/optiwebtheme/assets/fonts/HelveticaNeue-Regular.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: $fontName;
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url(/bundles/optiwebtheme/assets/fonts/HelveticaNeue-Medium.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: $fontName;
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url(/bundles/optiwebtheme/assets/fonts/HelveticaNeue-Bold.ttf) format('truetype');
+}
+
+h1 {
+    @include fontSpecs(30, 36, 700, false, true);
+}
+
+h2 {
+    @include fontSpecs(26, 31.2, 700, false, true);
+}
+
+h3 {
+    @include fontSpecs(22, 26.4, 700, false, true);
+}
+
+h4 {
+    @include fontSpecs(18, 21.6, 700, false, true);
+}
+
+h5 {
+    @include fontSpecs(16, 24, 700, false, true);
+}

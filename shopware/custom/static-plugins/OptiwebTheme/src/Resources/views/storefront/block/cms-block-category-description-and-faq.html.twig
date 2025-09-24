@@ -1,0 +1,29 @@
+{% block cms_block_category_description_and_faq %}
+    {% set headline = block.slots.getSlot('headline') %}
+    {% set image = block.slots.getSlot('image') %}
+    {% set faq = block.slots.getSlot('faq') %}
+    {% set text = block.slots.getSlot('text') %}
+
+    <div class="container category-description-and-faq" data-cms-element-id="{{ block.id }}">
+        {% block block_headline_inner %}
+            {% sw_include "@Storefront/storefront/element/cms-element-" ~ headline.type ~ ".html.twig" ignore missing with { element:headline } %}
+        {% endblock %}
+        <div class="category-description-and-faq-columns d-md-flex">
+            <div class="category-description-and-faq-columns__content col-md-6 pe-md-3 mb-4 mb-md-0">
+                {% block block_image_inner %}
+                    {% sw_include "@Storefront/storefront/element/cms-element-" ~ image.type ~ ".html.twig" ignore missing with { element:image } %}
+                {% endblock %}
+                {% block block_text_inner %}
+                    <div class="category-description-and-faq-columns__description">
+                        {% sw_include "@Storefront/storefront/element/cms-element-" ~ text.type ~ ".html.twig" ignore missing with { element:text } %}
+                    </div>
+                {% endblock %}
+            </div>
+            <div class="category-description-and-faq-columns__faq col-md-6 ps-md-3">
+                {% block block_faq_inner %}
+                    {% sw_include "@Storefront/storefront/element/cms-element-" ~ faq.type ~ ".html.twig" ignore missing with { element:faq } %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

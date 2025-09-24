@@ -1,0 +1,17 @@
+{% block sw_cms_element_catalogs %}
+    <div class="sw-cms-el-catalogs">
+        <div class="sw-cms-el-catalogs__grid" v-if="element.config.catalogs.value && element.config.catalogs.value.length > 0">
+                <div class="sw-cms-el-catalogs__item" v-for="(catalog, index) in element.config.catalogs.value" :key="index">
+                    <div class="sw-cms-el-catalogs__image" v-if="catalog.media">
+                        <img :src="catalog.media.url" :alt="catalog.title">
+                    </div>
+                    <div class="sw-cms-el-catalogs__title" v-if="catalog.title">
+                        <h3>{{ catalog.title }}</h3>
+                    </div>
+                </div>
+        </div>
+        <div v-else class="sw-cms-el-optiweb-catalogs__placeholder">
+            <sw-alert variant="info">Upload catalogs</sw-alert>
+        </div>
+    </div>
+{% endblock %}

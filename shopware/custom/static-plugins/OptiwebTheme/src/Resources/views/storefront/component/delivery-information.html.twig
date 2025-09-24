@@ -1,0 +1,9 @@
+{% sw_extends '@Storefront/storefront/component/delivery-information.html.twig' %}
+
+{% block component_delivery_information_default %}
+    <link itemprop="availability" href="https://schema.org/InStock">
+    <p class="delivery-information delivery-available">
+        <span class="delivery-status-indicator bg-success"></span>
+        {{ 'optiweb.product.inStock'|trans }}
+    </p>
+{% endblock %}

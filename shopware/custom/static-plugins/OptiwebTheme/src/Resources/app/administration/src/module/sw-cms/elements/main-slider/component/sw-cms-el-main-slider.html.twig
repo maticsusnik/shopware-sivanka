@@ -1,0 +1,20 @@
+{% block sw_cms_element_main_slider %}
+    <div style="width:100%">
+        <ul v-if="sortedSlides.length" class="text-image-slider-component-list">
+            <li v-for="slide in sortedSlides" :style="getSlideBackground(slide)">
+                <div class="content">
+                <h4>{{ slide.aboveTitle }}</h4>
+                <h1>{{ slide.title }}</h1>
+                <p >{{ slide.description }}</p>
+                <div v-if="slide.button" class="main-slider-button-preview">{{ slide.button.text }}</div>
+                </div>
+                <div class="overlay"></div>
+            </li>
+        </ul>
+        <div v-else>
+            <h3>Main slider</h3>
+            <sw-alert variant="info">Please insert slides.</sw-alert>
+        </div>
+    </div>
+{% endblock %}
+

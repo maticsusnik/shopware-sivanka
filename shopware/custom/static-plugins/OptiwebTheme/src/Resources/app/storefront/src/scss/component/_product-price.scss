@@ -1,0 +1,57 @@
+.product-price {
+    margin: 0;
+
+    &-info {
+        margin-top: 0;
+    }
+
+    .list-price {
+        padding: 0;
+    }
+}
+
+.regular-price .list-price,
+.pmc-price .list-price {
+    @include fontSpecs(14, 20, 400, false, false);
+}
+
+.final-price .list-price {
+    @include fontSpecs(16, 24, 700, false, false);
+}
+
+.product-price-info {
+    //@include margin('bottom', $spacer, false);
+    //@include margin('bottom', $spacer-big, true);
+}
+
+.product-price-wrapper {
+    @include margin('top', $spacer, false);
+
+}
+
+.product-price-unit,
+.product-cheapest-price {
+    min-height: unset;
+    height: auto;
+    margin: 0;
+}
+
+.product-price.with-regulation-price,
+.list-price-percentage {
+    display: none;
+}
+
+.ow-has-element-loader {
+    //.product-price-wrapper {
+    .final-price {
+        color: transparent;
+        animation: skeletonShimmer 1.5s linear 0s infinite normal forwards running;
+        background: linear-gradient(to right, #dee2e6 8%, #f8f9fa 18%, #dee2e6 28%);
+        background-size: 800px 100px;
+        * {
+            color: transparent !important;
+        }
+    }
+}
+
+

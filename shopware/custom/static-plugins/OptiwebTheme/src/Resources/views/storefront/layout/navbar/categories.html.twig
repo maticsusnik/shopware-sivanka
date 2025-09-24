@@ -1,0 +1,31 @@
+{% sw_extends '@Storefront/storefront/layout/navbar/categories.html.twig' %}
+
+
+{% block layout_navbar_categories %}
+    {% set navigationMaxDepth = 3 %}
+
+    {% if not level %}
+        {% set level = 0 %}
+    {% endif %}
+
+    <div class="navigation-flyout-categories is-level-{{ level }}">
+        {% for treeItem in navigationTree %}
+            {% set category = treeItem.category %}
+            {% set id = category.id %}
+            {% set name = category.translated.name %}
+            {% set link = category_url(category) %}
+
+            {% block layout_navbar_categories_item %}
+                <div class="navigation-flyout-col">
+                    {% block layout_navbar_categories_item_link %}
+                        {{ parent() }}
+                    {% endblock %}
+
+                    {% block layout_navbar_categories_recoursion %}
+                        {{ parent() }}
+                    {% endblock %}
+                </div>
+            {% endblock %}
+        {% endfor %}
+    </div>
+{% endblock %}

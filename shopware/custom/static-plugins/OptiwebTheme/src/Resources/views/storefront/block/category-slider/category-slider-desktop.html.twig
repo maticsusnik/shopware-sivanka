@@ -1,0 +1,82 @@
+{% set categories = block.slots.getSlot("category").data.get("childCategories") %}
+{% set categorySliderOptions = {
+    slider: {
+        controls: true,
+        nav: false,
+        mouseDrag: true,
+        autoplay: false,
+        speed: 500,
+        ariaLive: false,
+        autoHeight: false,
+        gutter: 16,
+        items: 4.5,
+        responsive: {
+            0: { items: 1 },
+            768: { items: 3 },
+        }
+
+    }
+} %}
+
+{% block category_slider_desktop %}
+    <div
+            class="category-slider d-none d-md-block"
+            data-base-slider="true"
+            data-base-slider-options='{{ categorySliderOptions|json_encode }}'
+            role="region"
+            aria-label="Category slider"
+            tabindex="0">
+        {% sw_include '@Storefront/storefront/component/skip-target.html.twig' with {
+            targetId: block.id,
+            snippet: 'component.cms.imageGallery.skipImageGallery',
+        } %}
+
+        {% block element_image_slider_controls %}
+            <div class="category-slider-controls-container">
+                <div class="category-slider-controls"
+                     data-base-slider-controls="true">
+                    <button class="category-slider-controls-prev image-slider-controls-prev" aria-label="{{ 'general.previous'|trans|striptags }}">
+                        {% sw_icon 'arrow-left' style { pack: 'ow'} %}
+                    </button>
+                    <button class="category-slider-controls-next image-slider-controls-next{" aria-label="{{ 'general.next'|trans|striptags }}">
+                        {% sw_icon 'arrow-right' style { pack: 'ow'} %}
+                    </button>
+                </div>
+            </div>
+        {% endblock %}
+
+        <div class="category-slider-container"
+             data-base-slider-container="true">
+            {% for category in categories %}
+                <div class="category-slider-item">
+                    <a href="{{ category.link }}" class="category-slider-link">
+                        <div class="category-slider-image-wrapper">
+                            <div class="category-slider-icon">
+                                {% if category.category_icon.url %}
+                                    <img src="{{ category.category_icon.url }}" alt="{{ category.category_icon.alt ?? category.name ~
+                                    ' icon' }}">
+                                {% endif %}
+                            </div>
+                            {% if category.media %}
+                                {% sw_thumbnails 'cms-image-slider-thumbnails' with {
+                                    media: category.media
+                                } %}
+                            {% else %}
+                                {% sw_icon 'placeholder' style {
+                                    size: 'fluid'
+                                } %}
+                            {% endif %}
+                            <div class="category-slider-arrow">
+                                {% sw_icon 'caret-right' style { pack:'ow'} %}
+                            </div>
+                        </div>
+                        <div class="content">
+                            <h5>{{ category.name }}</h5>
+                            <div class="description limit-2-rows">{{ category.short_description|raw }}</div>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

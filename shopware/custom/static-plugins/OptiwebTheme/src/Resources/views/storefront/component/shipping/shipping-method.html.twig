@@ -1,0 +1,9 @@
+{% sw_extends '@Storefront/storefront/component/shipping/shipping-method.html.twig' %}
+
+{% block component_shipping_method_image %}
+    {% if (shipping.shippingPrice > 0) %}
+        <div class="shipping-price">{{ shipping.shippingPrice|currency }}</div>
+    {% else %}
+        <div class="shipping-price">{{ 'optiweb.checkout.freeShipping'|trans }}</div>
+    {% endif %}
+{% endblock %}

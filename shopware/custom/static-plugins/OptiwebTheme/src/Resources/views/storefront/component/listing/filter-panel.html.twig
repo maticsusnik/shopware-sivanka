@@ -1,0 +1,44 @@
+{% sw_extends '@Storefront/storefront/component/listing/filter-panel.html.twig' %}
+
+  {% block component_filter_panel_item_price %}
+      {% set price = listing.aggregations.get('price') %}
+      {% if price.max > 0 %}
+          {% sw_include '@Storefront/storefront/component/listing/filter/filter-range.html.twig' with {
+              price: price,
+              sidebar: sidebar,
+              name: 'price',
+              minKey: 'min-price',
+              maxKey: 'max-price',
+              displayName: 'listing.filterPriceDisplayName'|trans|sw_sanitize,
+          } %}
+      {% endif %}
+  {% endblock %}
+
+
+{% block component_filter_panel_item_properties %}
+    {# @var properties \Shopware\Core\Framework\DataAbstractionLayer\Search\AggregationResult\Metric\EntityResult #}
+    {% set properties = listing.aggregations.get('properties') %}
+    {% set hideManufacturerFilter = page.header.extensions.hideManufacturerFilter.status %}
+    {% set propertyManufacturer = page.header.extensions.hideManufacturerFilter.groupId %}
+    {% if not properties.entities is empty %}
+        {% for property in properties.entities %}
+            {% set isPropertyManufacturer = property.id == propertyManufacturer %}
+            {% if isPropertyManufacturer and hideManufacturerFilter %}
+                <div style="width:0;height: 0;overflow: hidden">
+            {% endif %}
+            {% sw_include '@Storefront/storefront/component/listing/filter/filter-property-select.html.twig' with {
+                elements: property.options,
+                sidebar: sidebar,
+                name: 'properties',
+                displayName: property.translated.name,
+                displayType: property.displayType,
+                pluginSelector: 'filter-property-select',
+                propertyName: property.translated.name
+            } %}
+            {% if isPropertyManufacturer and hideManufacturerFilter %}
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endblock %}
+

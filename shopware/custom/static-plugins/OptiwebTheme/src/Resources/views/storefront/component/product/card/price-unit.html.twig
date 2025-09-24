@@ -1,0 +1,47 @@
+{% sw_extends '@Storefront/storefront/component/product/card/price-unit.html.twig' %}
+
+{% block component_product_box_price_tax_info %}
+{% endblock %}
+
+{#{% block component_product_box_price %}#}
+{#    <div class="product-price-wrapper" data-fetch-product="{{ product.productNumber }}">#}
+{#        {% set customFields = product.translated.customFields %}#}
+{#        {% set customPrice = customFields.price.net %}#}
+{#        {% set customPromoPrice = customFields.promoPrice.net %}#}
+
+{#        {% set price = real %}#}
+{#        {% set isListPrice = price.listPrice.percentage > 0 %}#}
+{#        {% set isRegulationPrice = price.regulationPrice != null %}#}
+
+{#        <div class="regular-price product-price{% if isListPrice and not displayFrom and not displayFromVariants %} with-list-price{% endif %}">#}
+{#            {% if customPrice and not displayFrom and not displayFromVariants %}#}
+{#                <span class="list-price list-price-no-line-through">#}
+{#                    <span class="list-price-label">{{ 'optiweb.product.priceVPC'|trans|sw_sanitize }}:</span>#}
+{#                    <span class="list-price-price">{{ customPrice|currency }}</span>#}
+{#                </span>#}
+{#            {% endif %}#}
+{#        </div>#}
+{#        {% if customPromoPrice > 0 %}#}
+{#        <div class="list-price regular-price product-price{% if isListPrice and not displayFrom and not displayFromVariants %} with-list-price{% endif %}">#}
+{#            {% if customPromoPrice and not displayFrom and not displayFromVariants %}#}
+{#                <span class="list-price list-price-no-line-through">#}
+{#                    <span class="list-price-label">{{ 'optiweb.product.pricePromo'|trans|sw_sanitize }}:</span>#}
+{#                    <span class="list-price-price">{{ customPromoPrice|currency }}</span>#}
+{#                </span>#}
+{#            {% endif %}#}
+{#        </div>#}
+{#        {% endif %}#}
+
+{#        <div class="final-price product-price{% if isListPrice and not displayFrom and not displayFromVariants %} with-list-price{% endif %}">#}
+{#            <span class="list-price list-price-no-line-through">#}
+{#                <span class="list-price-label">#}
+{#                    {{ 'optiweb.product.priceFinal'|trans|sw_sanitize }}:#}
+{#                </span>#}
+
+{#                <span class="list-price-price">#}
+{#                    {{ price.unitPrice|currency }}#}
+{#                </span>#}
+{#            </span>#}
+{#        </div>#}
+{#    </div>#}
+{#{% endblock %}#}

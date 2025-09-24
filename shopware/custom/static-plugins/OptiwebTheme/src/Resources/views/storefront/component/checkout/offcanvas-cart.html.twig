@@ -1,0 +1,41 @@
+{% sw_extends '@Storefront/storefront/component/checkout/offcanvas-cart.html.twig' %}
+
+{% block component_offcanvas_cart_header_item_counter %}
+{% endblock %}
+
+{% block component_offcanvas_cart_empty %}
+    {% if customerIsLoggedIn %}
+        {% sw_include '@Storefront/storefront/utilities/alert.html.twig' with {
+            type: 'info',
+            content: 'checkout.emptyCart'|trans|sw_sanitize
+        } %}
+    {% else %}
+        <div class="flashbags">
+            {% sw_include '@Storefront/storefront/utilities/alert.html.twig' with {
+                type:"info",
+                content:'optiweb.checkout.logInAlert'|trans|sw_sanitize
+            } %}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block component_offcanvas_cart_actions %}
+    <div class="offcanvas-cart-actions">
+
+        {% if isCartNotEmpty %}
+            {% block component_offcanvas_cart_actions_checkout %}
+                {{ parent() }}
+            {% endblock %}
+
+            {% block component_offcanvas_cart_actions_cart %}
+                <div class="d-grid mt-2">
+                    <a href="{{ path('frontend.checkout.cart.page') }}"
+                       class="btn btn-outline-secondary"
+                       title="{{ 'checkout.proceedToCart'|trans|striptags }}">
+                        {{ 'checkout.proceedToCart'|trans|sw_sanitize }}
+                    </a>
+                </div>
+            {% endblock %}
+        {% endif %}
+    </div>
+{% endblock %}

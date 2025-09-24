@@ -1,0 +1,53 @@
+{% sw_extends '@Storefront/storefront/component/line-item/type/product.html.twig' %}
+
+{% block component_line_item_type_product_col_quantity %}
+{% endblock %}
+
+{% block component_line_item_type_product_col_unit_price %}
+{% endblock %}
+
+{% block component_line_item_type_product_col_remove %}
+{% endblock %}
+
+{% block component_line_item_type_product_details_container %}
+    <div class="line-item-details-container">
+        {% block component_line_item_type_product_label %}
+            {{ parent() }}
+        {% endblock %}
+
+        {% if lineItem.payload.options is not empty %}
+            {% block component_line_item_type_product_variant_characteristics %}
+                {{ parent() }}
+            {% endblock %}
+        {% endif %}
+
+        {% if lineItem.payload.features is not empty %}
+            {% block component_line_item_type_product_features %}
+                {{ parent() }}
+            {% endblock %}
+        {% endif %}
+
+        {% block component_line_item_type_qty %}
+            <div class="line-item-cart-quantity">
+            {% sw_include '@Storefront/storefront/component/line-item/element/quantity.html.twig' %}
+            </div>
+        {% endblock %}
+
+        <div class="line-item-total-price line-item-price checkout-price">
+            {% sw_include '@Storefront/storefront/component/line-item/element/total-price.html.twig' with {
+                currency: lineItem.order.currency.isoCode
+            } %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block component_line_item_type_product_col_total_price %}
+    <div class="line-item-total-price line-item-price">
+        {% if showRemoveButton and lineItem.removable and nestingLevel < 1 %}
+            {% sw_include '@Storefront/storefront/component/line-item/element/remove.html.twig' %}
+        {% endif %}
+        {% sw_include '@Storefront/storefront/component/line-item/element/total-price.html.twig' with {
+            currency: lineItem.order.currency.isoCode
+        } %}
+    </div>
+{% endblock %}

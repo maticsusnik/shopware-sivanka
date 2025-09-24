@@ -1,0 +1,14 @@
+{% block cms_block_img_text %}
+    {% set image = block.slots.getSlot('image') %}
+    {% set layout = block.customFields.layout %}
+
+    {% if layout is empty %}
+        {% set layout = 'text-right-over-image' %}
+    {% endif %}
+
+    <div class="col-12 cms-block-img-text__inner {{ layout }}" data-cms-element-id="{{ block.id }}">
+        {% block cms_block_img_text_inner %}
+            {% sw_include "@Storefront/storefront/block/img-text-layouts/" ~ layout ~ ".html.twig" ignore missing with { block: block } %}
+        {% endblock %}
+    </div>
+{% endblock %}

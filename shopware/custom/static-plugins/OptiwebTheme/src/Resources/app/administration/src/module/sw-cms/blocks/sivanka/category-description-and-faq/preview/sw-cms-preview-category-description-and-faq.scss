@@ -1,0 +1,35 @@
+.sw-cms-preview-category-description-and-faq {
+    padding: 8px;
+
+    .category-description-and-faq {
+        display: flex;
+        gap: 16px;
+
+        .content, .faq {
+            width: 50%;
+        }
+
+        .content {
+            font-size: 12px;
+
+            .image {
+                height: 40px;
+                width: 100%;
+                background: grey;
+                margin-bottom: 8px;
+            }
+        }
+
+        .faq {
+            div {
+                border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+                padding-bottom: 4px;
+                margin-bottom: 4px;
+
+                &:last-child {
+                    border-bottom: 0;
+                }
+            }
+        }
+    }
+}

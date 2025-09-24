@@ -1,0 +1,41 @@
+{% set config = { sorting: current } %}
+{% set showSorting = (slot.config.showSorting.value is defined) ? slot.config.showSorting.value : true %}
+
+{% block sorting %}
+    {% if showSorting and sortings|length > 0 %}
+        <button
+                class="btn btn-grey sorting-panel-wrapper-toggle d-lg-none"
+                type="button"
+                data-off-canvas-custom="true"
+                data-off-canvas-custom-content="sorting-panel-wrapper"
+                aria-haspopup="true"
+                aria-expanded="false"
+        >
+            {{ 'listing.sortingTitleText'|trans }}
+            {% sw_icon 'arrows-up-down' style { pack: 'ow', size: 'sm' } %}
+        </button>
+
+        <div class="sorting-label d-none d-lg-block">{{ 'listing.sortingTitleText'|trans }}:</div>
+
+        <div id="sorting-panel-wrapper" class="sorting-panel-wrapper d-none d-lg-block">
+            <div class="filter-panel-offcanvas-header d-lg-none">
+                <h2 class="filter-panel-offcanvas-only filter-panel-offcanvas-title">{{ 'listing.sortingTitleText'|trans }}</h2>
+                <button type="button"
+                        class="btn-close filter-panel-offcanvas-only filter-panel-offcanvas-close js-offcanvas-close"
+                        aria-label="listing.filterClose"></button>
+            </div>
+            <div class="panel-content">
+                <div class="sorting"
+                     data-listing-sorting="true"
+                     data-listing-sorting-options="{{ config|json_encode }}">
+                    <select class="sorting form-select" aria-label="{{ 'general.sortingLabel'|trans|striptags }}">
+                        {% for sorting in sortings %}
+                            {% set key = sorting.key %}
+                            <option value="{{ key }}"{% if key == current %} selected{% endif %}>{{ sorting.translated.label|sw_sanitize }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

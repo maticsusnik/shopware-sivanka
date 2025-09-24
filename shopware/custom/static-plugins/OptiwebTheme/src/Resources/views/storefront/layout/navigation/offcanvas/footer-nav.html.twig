@@ -1,0 +1,22 @@
+{% set serviceMenu = header.extensions.headerServiceCategories.items %}
+
+
+{% block offcanvas_footer_menu %}
+    <ul class="offcanvas-footer-navigation-menu d-flex d-lg-none justify-content-evenly align-items-center mb-0 py-2 px-0 list-unstyled">
+        {% for treeItem in serviceMenu.tree %}
+            {% set category = treeItem.category %}
+            {% set id = category.id %}
+            {% set name = category.translated.name %}
+            {% set hasChildren = treeItem.children|length > 0 %}
+            <li class="nav-item nav-item-{{ id }}">
+                <a class="nav-link nav-item-{{ id }}-link root main-navigation-link px-1 py-2"
+                   href="{{ seoUrl('frontend.navigation.page', { navigationId: id }) }}"
+                   {% if category_linknewtab(category) %}target="_blank"{% endif %}
+                   itemprop="url"
+                   title="{{ name }}">
+                    <span itemprop="name" class="main-navigation-link-text">{{ name }}</span>
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

@@ -1,0 +1,115 @@
+{% block optiweb_catalog_repeater_editor %}
+    <div class="optiweb-catalog-repeater-editor">
+        <div class="optiweb-catalog-repeater-editor__header">
+            <h3>Catalogs</h3>
+            <sw-button @click="addCatalog">Add New Catalog</sw-button>
+        </div>
+        <div class="optiweb-catalog-repeater-editor__items">
+            <div class="optiweb-catalog-repeater-editor__item" v-for="(catalog, index) in catalogs" :key="index">
+                <div class="optiweb-catalog-repeater-editor__item-content">
+                    <mt-text-field label="Title" v-model="catalog.title"></mt-text-field>
+
+                    <mt-select
+                            v-model="catalog.linkType"
+                            :label="'Link type'"
+                            :options="linkTypes"
+                            @change="onLinkTypeChange(catalog, $event)"></mt-select>
+
+                    <div v-if="catalog.linkType === 'url'">
+                        <mt-text-field label="Catalog URL" v-model="catalog.url"></mt-text-field>
+                    </div>
+
+                    <div v-if="catalog.linkType === 'document'">
+                        {% block optiweb_catalog_repeater_editor_document_upload %}
+                            <sw-cms-mapping-field
+                                    v-model:config="catalog.document"
+                                    :label="'Upload Document'"
+                                    value-types="entity"
+                                    entity="media">
+                                <sw-media-upload-v2
+                                        variant="regular"
+                                        :upload-tag="getUploadTag(catalog.id, 'document')"
+                                        :source="getPreviewSource(catalog.id, 'document')"
+                                        :allow-multi-select="false"
+                                        :default-folder="cmsPageState.pageEntityName"
+                                        :caption="'Upload Document'"
+                                        @media-upload-sidebar-open="onOpenAnyMediaModal(catalog.id, 'document')"
+                                        @media-upload-remove-image="onMediaRemove(catalog.id, 'document')"></sw-media-upload-v2>
+                            </sw-cms-mapping-field>
+
+                            <sw-upload-listener
+                                    :upload-tag="getUploadTag(catalog.id, 'document')"
+                                    auto-upload
+                                    @media-upload-finish="(item) => onMediaUpload(item, catalog.id, 'document')"></sw-upload-listener>
+                        {% endblock %}
+                    </div>
+
+
+                    {% block optiweb_catalog_repeater_editor_media_upload %}
+                        <sw-cms-mapping-field
+                                v-model:config="catalog.image"
+                                :label="'Upload Image'"
+                                value-types="entity"
+                                entity="media"
+                        >
+                            <sw-media-upload-v2
+                                    variant="regular"
+                                    :upload-tag="getUploadTag(catalog.id, 'image')"
+                                    :source="getPreviewSource(catalog.id, 'image')"
+                                    :allow-multi-select="false"
+                                    :default-folder="cmsPageState.pageEntityName"
+                                    :caption="'Upload Image'"
+                                    @media-upload-sidebar-open="onOpenAnyMediaModal(catalog.id, 'image')"
+                                    @media-upload-remove-image="onMediaRemove(catalog.id, 'image')"></sw-media-upload-v2>
+                        </sw-cms-mapping-field>
+
+                        <sw-upload-listener
+                                :upload-tag="getUploadTag(catalog.id, 'image')"
+                                auto-upload
+                                @media-upload-finish="(item) => onMediaUpload(item, catalog.id, 'image')"></sw-upload-listener>
+                    {% endblock %}
+
+                    {% block optiweb_catalog_repeater_editor_media_modal %}
+                        <sw-media-modal-v2
+                                v-if="activeCatalogForMediaModal === catalog.id"
+                                variant="full"
+                                :caption="'Upload image'"
+                                :entity-context="cmsPageState.entityName"
+                                :allow-multi-select="false"
+                                :initial-folder-id="cmsPageState.defaultMediaFolderId"
+                                @media-upload-remove-image="onMediaRemove(catalog.id, 'image')"
+                                @media-modal-selection-change="(selection) => onMediaSelectionChanges(selection, catalog.id, 'image')"
+                                @modal-close="onCloseAnyMediaModal('image')"></sw-media-modal-v2>
+                    {% endblock %}
+
+                    {% block optiweb_catalog_repeater_editor_document_modal %}
+                        <sw-media-modal-v2
+                                v-if="activeCatalogForDocumentModal === catalog.id"
+                                variant="full"
+                                :caption="'Upload document'"
+                                :entity-context="cmsPageState.entityName"
+                                :allow-multi-select="false"
+                                :initial-folder-id="cmsPageState.defaultMediaFolderId"
+                                @media-upload-remove-image="onMediaRemove(catalog.id, 'document')"
+                                @media-modal-selection-change="(selection) => onMediaSelectionChanges(selection, catalog.id, 'document')"
+                                @modal-close="onCloseAnyMediaModal('document')"></sw-media-modal-v2>
+                    {% endblock %}
+
+                    <sw-number-field
+                            numberType="int"
+                            :digits="0"
+                            label="Priority"
+                            :copyable="false"
+                            v-model="catalog.priority"
+                            :copyableTooltip="false"
+                            @blur="sortCatalogs">
+                    </sw-number-field>
+
+                </div>
+                <div class="optiweb-catalog-repeater-editor__item-footer">
+                    <sw-button @click="removeCatalog(index)">Remove Catalog</sw-button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

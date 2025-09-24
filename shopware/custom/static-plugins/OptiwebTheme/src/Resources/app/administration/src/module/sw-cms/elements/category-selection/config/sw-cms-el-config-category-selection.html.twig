@@ -1,0 +1,14 @@
+{% block sw_cms_el_config_category_selection %}
+    <div class="sw-cms-el-config-category-selection">
+        <sw-text-field v-model="element.config.title.value.text" label="Title"></sw-text-field>
+
+        <sw-category-tree-field
+                :label="'Parent Category'"
+                :criteria="categoryCriteria"
+                :categories-collection="categoryCollection"
+                single-select
+                @selection-add="onCategoryAdd"
+                @selection-remove="onCategoryRemove"
+        />
+    </div>
+{% endblock %}

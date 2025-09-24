@@ -1,0 +1,13 @@
+{% sw_extends '@Storefront/storefront/utilities/offcanvas.html.twig' %}
+
+{% block utilities_offcanvas %}
+
+    {{ parent() }}
+
+    <div class="offcanvas-footer">
+        {% sw_include '@Storefront/storefront/layout/navigation/offcanvas/footer-nav.html.twig' %}
+    </div>
+{% endblock %}
+
+ {% block utilities_offcanvas_close %}
+ {% endblock %}

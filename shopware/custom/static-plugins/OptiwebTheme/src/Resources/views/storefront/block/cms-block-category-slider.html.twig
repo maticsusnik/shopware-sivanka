@@ -1,0 +1,9 @@
+{% block block_category_slider %}
+    {% set title = block.slots.getSlot("category").config.title.value.text %}
+
+    <div class="category-slider-wrapper">
+        <h2 class="cms-element-title-paragraph">{{ title }}</h2>
+        {% sw_include "@Storefront/storefront/block/category-slider/category-slider-desktop.html.twig" %}
+        {% sw_include "@Storefront/storefront/block/category-slider/category-slider-mobile.html.twig" %}
+    </div>
+{% endblock %}

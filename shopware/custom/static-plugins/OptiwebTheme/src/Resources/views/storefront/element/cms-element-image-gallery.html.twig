@@ -1,0 +1,11 @@
+{% sw_extends "@Storefront/storefront/element/cms-element-image-gallery.html.twig" %}
+
+
+{% block element_image_gallery_inner_wrapper %}
+{% set product = page.product %}
+    {% block element_image_gallery_badges %}
+        {% sw_include '@Storefront/storefront/component/product/card/badges.html.twig' %}
+    {% endblock %}
+
+    {{ parent() }}
+{% endblock %}

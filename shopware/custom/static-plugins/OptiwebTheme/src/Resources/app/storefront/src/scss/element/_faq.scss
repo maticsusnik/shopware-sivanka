@@ -1,0 +1,43 @@
+
+.ow-faq {
+    //&__wrapper {
+    //    max-width: 732px;
+    //    margin: auto;
+    //}
+    border-top: 1px solid $ow-color-grey-4;
+
+    &__single {
+        border-bottom: 1px solid $ow-color-grey-4;
+
+        &-question {
+            @include fontSpecs(16, 24, 700);
+            margin: 0;
+            padding-block: 1rem;
+            display: flex;
+            gap: 2rem;
+            justify-content: space-between;
+            align-items: center;
+
+            &:hover {
+                cursor: pointer;
+            }
+
+            .icon {
+                color: $ow-color-black;
+            }
+        }
+
+        &-answer {
+            @include fontSpecs(16, 24, 400);
+            display: none;
+            margin: 0;
+            padding-bottom: 1rem;
+        }
+
+        &.open {
+            p {
+                display: block;
+            }
+        }
+    }
+}

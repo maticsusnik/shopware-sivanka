@@ -107,4 +107,4 @@ if [[ -z "${SHOPWARE_SKIP_ENTITY_SCHEMA_DUMP:-""}" ]] && [[ -f "${ADMIN_ROOT}"/R
 fi
 
 (cd "${ADMIN_ROOT}"/Resources/app/administration && npm run build)
-[[ ${SHOPWARE_SKIP_ASSET_COPY:-""} ]] ||"${BIN_TOOL}" assets:install
+[[ ${SHOPWARE_SKIP_ASSET_COPY:-""} ]] || "${BIN_TOOL}" assets:install

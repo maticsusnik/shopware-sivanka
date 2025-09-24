@@ -1,0 +1,63 @@
+{% sw_extends '@Storefront/storefront/component/listing/filter/filter-multi-select.html.twig' %}
+
+{% block component_filter_multi_select_toggle %}
+    <button class="filter-panel-item-toggle btn{% if sidebar %} btn-block{% endif %}"
+            aria-expanded="true"
+            {% if sidebar %}
+        data-bs-toggle="collapse"
+        data-bs-target="#{{ filterItemId }}"
+    {% else %}
+        data-bs-toggle="dropdown"
+        data-boundary="viewport"
+        data-offset="0,8"
+        aria-haspopup="true"
+            {% endif %}>
+
+        {{ block('component_filter_multi_select_display_name') }}
+        {{ block('component_filter_multi_select_count') }}
+
+        {% block component_filter_multi_select_toggle_icon %}
+            {% sw_icon 'caret-down' style {
+                'pack': 'ow', 'class': 'filter-panel-item-toggle'
+            } %}
+        {% endblock %}
+    </button>
+{% endblock %}
+
+
+{% block component_filter_multi_select_dropdown %}
+    <div class="filter-multi-select-dropdown filter-panel-item-dropdown{% if sidebar %} collapse{% else %} dropdown-menu{% endif %} show"
+         id="{{ filterItemId }}">
+        {% block component_filter_multi_select_list %}
+            <ul class="filter-multi-select-list">
+                {% for element in elements %}
+                    {% block component_filter_multi_select_list_item %}
+                        <li data-index="{{ loop.index }}" class="filter-multi-select-list-item">
+                            {% block component_filter_multi_select_list_item_inner %}
+                                {% sw_include '@Storefront/storefront/component/listing/filter/filter-multi-select-list-item.html.twig' %}
+                            {% endblock %}
+                        </li>
+                    {% endblock %}
+                {% endfor %}
+            </ul>
+            <div data-state="show" class="filter-show-all d-none">
+                <div class="show">
+                    {% sw_icon 'plus' style {
+                        'pack': 'ow', 'class': 'filter-show-all'
+                    } %}
+                    <span class="text">{{ 'optiweb.listing.filter.show'|trans }}</span>
+                </div>
+                <div class="hide">
+                    {% sw_icon 'close' style {
+                        'pack': 'ow', 'class': 'filter-show-all'
+                    } %}
+                    <span class="text">{{ 'optiweb.listing.filter.hide'|trans }}</span>
+                </div>
+            </div>
+        {% endblock %}
+    </div>
+{% endblock %}
+
+
+
+

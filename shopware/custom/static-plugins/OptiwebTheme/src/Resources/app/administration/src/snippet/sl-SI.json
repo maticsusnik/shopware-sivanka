@@ -1,0 +1,13 @@
+{
+    "apps": {
+        "sw-cms": {
+            "detail": {
+                "label":{
+                    "blockCategory": {
+                        "sivanka": "Sivanka"
+                    }
+                }
+            }
+        }
+    }
+}

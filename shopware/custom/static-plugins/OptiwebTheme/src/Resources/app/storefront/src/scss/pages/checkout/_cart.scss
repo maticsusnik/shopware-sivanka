@@ -1,0 +1,222 @@
+.is-ctl-checkout {
+    .container-main {
+        @include padding('top', 40, false);
+        @include padding('bottom', 40, false);
+    }
+}
+
+.checkout-aside {
+    &-container {
+        background: $ow-color-grey-1;
+        padding: $product-buy-spacer;
+    }
+
+    &-summary {
+        background: none;
+        padding: 0;
+
+        &-label, &-value, &-header {
+            margin-bottom: $product-buy-spacer;
+            margin-top: 0 !important;
+        }
+
+        &-value {
+            font-weight: bold;
+        }
+
+        &-total {
+            margin-top: 0;
+            padding-top: $product-buy-spacer;
+        }
+
+        &-list {
+            margin: 0;
+        }
+    }
+}
+
+@include media-breakpoint-down(lg) {
+    .is-act-cartpage .checkout {
+        .checkout-aside {
+            width: 100%;
+            margin-left: 0;
+        }
+    }
+}
+
+.checkout-product-table {
+    &, & .card-body {
+        margin: 0;
+    }
+}
+
+.line-item {
+    padding-block: 1rem 1.5rem;
+    border-bottom: 1px solid $ow-color-grey-4;
+
+    &-label {
+        text-decoration: none;
+        margin-bottom: 0.5rem;
+        display: block;
+        @include fontSpecs(16, 24, 600, false, true);
+
+        &:hover {
+            text-decoration: none;
+        }
+    }
+
+    &-info {
+        width: calc(100% - #{$max-price-width});
+        padding: 0;
+
+        &-img {
+            @include media-breakpoint-down(md) {
+                width: 33%;
+            }
+        }
+    }
+
+    &-details {
+        @include media-breakpoint-down(md) {
+            width: 67%;
+        }
+    }
+
+    &-price {
+        margin-left: auto;
+        margin-right: 0;
+        max-width: $max-price-width;
+        padding: 0;
+        flex-direction: column;
+        justify-content: start;
+        align-items: end;
+    }
+
+    &-remove-button {
+        padding-inline: 1rem;
+        margin-right: -1rem;
+    }
+
+    &-quantity-select-wrapper {
+        width: auto;
+    }
+
+    &-total-price-label,
+    &-quantity-label {
+        display: none;
+    }
+
+    &-total-price.checkout-price {
+        display: none;
+    }
+
+    &-quantity-group {
+        background: $ow-color-white;
+        border-radius: 6px;
+        border: 1px solid $ow-color-grey-4;
+        width: auto;
+
+        .btn-minus {
+            padding-inline: 12px 6px;
+            border: none;
+        }
+
+        .btn-plus {
+            padding-inline: 6px 12px;
+            border: none;
+        }
+
+        .quantity-selector-group-input {
+            padding-block: 12px;
+            border: none;
+            max-width: 30px;
+        }
+    }
+
+    &-img {
+        border: none;
+        height: auto;
+
+        &-container {
+            width: 140px;
+
+            @include media-breakpoint-down(md) {
+                width: 100%;
+            }
+        }
+    }
+
+    &-minicart-quantity {
+        display: none;
+    }
+}
+
+.offcanvas-cart {
+    &-items {
+        margin-top: 0;
+    }
+
+    .line-item {
+        padding-block: 1rem;
+
+        &-info {
+            max-width: calc(100% - #{$max-price-width});
+
+            &-img {
+                width: 33%;
+            }
+        }
+
+        &-label {
+            @include fontSpecs(14, 20, 600, false, false);
+        }
+
+        &-details {
+            width: 67%;
+        }
+
+        &-quantity-row,
+        &-quantity-select-wrapper {
+            padding: 0;
+            width: 100%;
+            margin: 0;
+        }
+
+        &-img-container {
+            width: 100%;
+        }
+
+        &-cart-quantity {
+            display: block;
+            width: 70px;
+
+            .icon {
+                width: 0.75rem;
+                height: 0.75rem;
+
+                > svg {
+                    top: 1px;
+                }
+            }
+        }
+
+        &-quantity-group {
+            .btn-minus {
+                padding-left: 8px;
+            }
+
+            .btn-plus {
+                padding-right: 8px;
+            }
+
+            .quantity-selector-group-input {
+                padding: 0;
+            }
+        }
+    }
+
+    .offcanvas-shipping-info,
+    .offcanvas-cart-tax {
+        display: none;
+    }
+}

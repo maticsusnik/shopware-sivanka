@@ -1,0 +1,16 @@
+{% sw_extends '@Storefront/storefront/component/product/card/box-wishlist.html.twig' %}
+
+{% block component_product_box_info %}
+    <div class="product-info product-wishlist-info">
+
+        <div class="product-info-main">
+            {{ sw_block('component_product_box_product_number') }}
+            {{ sw_block('component_product_box_name') }}
+            {{ sw_block('component_product_box_variant_characteristics') }}
+        </div>
+
+        {{ sw_block('component_product_box_price') }}
+
+        {{ sw_block('component_product_box_action') }}
+    </div>
+{% endblock %}

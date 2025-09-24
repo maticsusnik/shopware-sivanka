@@ -1,0 +1,80 @@
+
+$overlapping-cols: 2; //layout 'text-right-over-image' - for how many cols text overlaps image
+
+.yellow-container {
+    background: $ow-color-base;
+    box-shadow: $ow-box-shadow;
+    @include padding('top', 40, false);
+    @include padding('bottom', 40, false);
+    @include padding('left', 40, true);
+    @include padding('right', 40, true);
+
+    .btn {
+        color: $ow-color-base;
+        background: $ow-color-black;
+    }
+}
+
+.content-container {
+    @include padding('top', 40, false);
+    @include padding('bottom', 40, false);
+
+    @include media-breakpoint-down(md) {
+        padding-inline: 1rem;
+    }
+}
+
+.image-container {
+    .justify-content-start, .align-self-center, .is-stretch {
+        width: 100%;
+    }
+}
+
+.cms-block-text-button__inner,
+.cms-block-img-text__inner {
+    @include media-breakpoint-down(md) {
+        &, & > .container {
+            padding: 0;
+        }
+    }
+}
+
+.cms-block-img-text {
+    @include margin('bottom', $general-element-margin, true);
+    @include margin('top', $general-element-margin, true);
+
+    .overlap-right {
+        @include media-breakpoint-up(md) {
+            flex-wrap: nowrap;
+        }
+
+        .img-col {
+            margin-right: calc(-#{$overlapping-cols} / 12 * 100%);
+
+            img {
+                box-shadow: $ow-box-shadow;
+            }
+        }
+
+        .content-col {
+            z-index: 1;
+        }
+    }
+
+    @include media-breakpoint-down(md) {
+        margin-block: 0;
+
+        .img-col {
+            order: 1;
+        }
+        .content-col {
+            order: 2;
+        }
+    }
+}
+
+.cms-element-title-content-button__inner {
+    p {
+        @include fontSpecs(20, 32, false, 0.3, true);
+    }
+}

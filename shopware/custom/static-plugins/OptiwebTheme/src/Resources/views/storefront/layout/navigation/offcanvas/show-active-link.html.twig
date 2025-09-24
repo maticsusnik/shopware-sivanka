@@ -1,0 +1,23 @@
+{% sw_extends '@Storefront/storefront/layout/navigation/offcanvas/show-active-link.html.twig' %}
+
+
+{% set name = item.translated.name %}
+
+ {% block layout_navigation_offcanvas_navigation_categories_list_current_category_item_link %}
+     <a class="nav-item nav-link navigation-offcanvas-link is-current-category"
+        data-active-id="{{ active.id }}"
+        data-category-level="{{ active.level }}"
+        href="{{ category_url(item) }}"
+        itemprop="url"
+        {% if category_linknewtab(item) %}target="_blank"{% endif %}
+        title="{{ name }}">
+         {% block layout_navigation_offcanvas_navigation_categories_list_current_category_item_text %}
+             <span itemprop="name">
+                {{ 'general.showCategory'|trans({'%category%': name})|sw_sanitize }}
+            </span>
+             <span class="navigation-offcanvas-link-icon">
+                {% sw_icon 'caret-right' style { pack:'ow', size:'xs'} %}
+            </span>
+         {% endblock %}
+     </a>
+ {% endblock %}

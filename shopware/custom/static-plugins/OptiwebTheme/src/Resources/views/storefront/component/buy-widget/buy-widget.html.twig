@@ -1,0 +1,81 @@
+{% sw_extends "@Storefront/storefront/component/buy-widget/buy-widget.html.twig" %}
+
+{% set manufacturer = page.product.manufacturer %}
+
+{% block buy_widget %}
+<div class="product-detail-buy{% if elementId %}-{{ elementId }}{% endif %} js-magnifier-zoom-image-container">
+
+    {% block buy_widget_manufacturer_container %}
+        {% if manufacturer %}
+            {% if manufacturer.link %}
+                <a href="{{ manufacturer.link }}"
+                class="cms-image-link product-detail-manufacturer-link"
+                target="_blank"
+                rel="noreferrer noopener"
+                title="{{ manufacturer.name }}">
+            {% else %}
+                <div class="cms-image-link product-detail-manufacturer-link">
+            {% endif %}
+            {% if manufacturer.media %}
+                <div class="cms-image-container">
+                    {% sw_thumbnails 'cms-image-thumbnails' with {
+                        media: manufacturer.media,
+                        sizes: {
+                            'default': '100px'
+                        },
+                        attributes: {
+                            class: 'cms-image product-detail-manufacturer-logo',
+                            alt: manufacturer.alt,
+                            title: manufacturer.name
+                        }
+                    } %}
+                </div>
+            {% else %}
+                {{ manufacturer.name }}
+            {% endif %}
+
+            {% if manufacturer.link %}
+                </a>
+            {% else %}
+                </div>
+            {% endif %}
+        {% endif %}
+    {% endblock %}
+
+    {% block buy_widget_title_container %}
+        <div class="product-detail-name-container">
+            <h1 class="product-detail-name" itemprop="name">{{ page.product.translated.name }}</h1>
+        </div>
+    {% endblock %}
+
+    {% block buy_widget_rich_snippets %}
+        {{ parent() }}
+    {% endblock %}
+    {% block buy_widget_ordernumber_container %}
+        {{ parent() }}
+    {% endblock %}
+
+    {% block buy_widget_short_description_container %}
+        {% if page.product.translated.customFields.shortDescription %}
+            <div class="product-detail-short-description">
+                {{ page.product.translated.customFields.shortDescription|raw }}
+            </div>
+        {% endif %}
+    {% endblock %}
+
+    {% block buy_widget_buy_container %}
+        {{ parent() }}
+    {% endblock %}
+    {% if config('core.cart.wishlistEnabled') %}
+        {% block buy_widget_wishlist %}
+            {{ parent() }}
+        {% endblock %}
+    {% endif %}
+    </div>
+{% endblock %}
+
+
+{% block buy_widget_price %}{% endblock %}
+{% block buy_widget_tax %}{% endblock %}
+{% block buy_widget_delivery_informations %}{% endblock %}
+

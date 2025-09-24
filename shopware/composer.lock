@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "afe9a564b199104d44781a31f72d42e1",
+    "content-hash": "6b38086b3035501d2808466e51fcd1ab",
     "packages": [
         {
             "name": "async-aws/core",
@@ -3848,6 +3848,107 @@
                 "source": "https://github.com/opensearch-project/opensearch-php/tree/2.3.1"
             },
             "time": "2024-08-27T10:13:25+00:00"
+        },
+        {
+            "name": "optiweb-snippets/optiweb-snippets",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "custom/static-plugins/OptiwebSnippets",
+                "reference": "9d59ca6048fdea2deedb6918afa7ea15378d829f"
+            },
+            "require": {
+                "shopware/core": "~6.7.0"
+            },
+            "type": "shopware-platform-plugin",
+            "extra": {
+                "shopware-plugin-class": "OptiwebSnippets\\OptiwebSnippets",
+                "label": {
+                    "de-DE": "Optiweb snippets plugin",
+                    "en-GB": "Optiweb snippets plugin"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "OptiwebSnippets\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "optiweb-snippets/optiweb-snippets",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "optiweb/custom-fields",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "custom/static-plugins/OptiwebCustomFields",
+                "reference": "55710ef118a0667e3c6540509866202b31c27416"
+            },
+            "require": {
+                "shopware/core": "~6.7.0"
+            },
+            "type": "shopware-platform-plugin",
+            "extra": {
+                "shopware-plugin-class": "OptiwebCustomFields\\OptiwebCustomFields",
+                "label": {
+                    "de-DE": "Optiweb Custom fields",
+                    "en-GB": "Optiweb Custom fields"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "OptiwebCustomFields\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Optiweb",
+                    "homepage": "https://www.optiweb.com"
+                }
+            ],
+            "description": "Optiweb Custom fields plugin",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "optiweb/theme",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "custom/static-plugins/OptiwebTheme",
+                "reference": "f91f9dbfff148ae24a33b3c501ef407ca6aa27fa"
+            },
+            "type": "shopware-platform-plugin",
+            "extra": {
+                "shopware-plugin-class": "OptiwebTheme\\OptiwebTheme",
+                "label": {
+                    "en-GB": "Theme OptiwebTheme plugin"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "OptiwebTheme\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Optiweb theme plugin",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "paragonie/constant_time_encoding",

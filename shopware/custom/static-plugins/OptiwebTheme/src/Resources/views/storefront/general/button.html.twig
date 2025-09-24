@@ -1,0 +1,27 @@
+{% set attribute = "" %}
+{% set link = "" %}
+{% set enableLoading = '' %}
+
+{% if button.type == "external" %}
+    {% set attribute = "target='_blank'" %}
+    {% set link = button.link %}
+{% else %}
+    {% if button.entity === 'category' and button.entityId %}
+        {% set link = seoUrl('frontend.navigation.page', { navigationId: button.entityId }) %}
+    {% elseif button.entity === 'product' and button.entityId %}
+        {% set link = seoUrl('frontend.detail.page', {productId: button.entityId}) %}
+    {% endif %}
+{% endif %}
+
+{% if button.enableLoading %}
+    {% set enableLoading = true %}
+{% endif %}
+
+<a class="btn btn-primary {{ button.className }} {% if enableLoading %}btn-loading{% endif %}" href="{{ link }}">
+    {% if enableLoading %}
+        <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    {% endif %}
+    <span>{{ button.text }}</span>
+</a>

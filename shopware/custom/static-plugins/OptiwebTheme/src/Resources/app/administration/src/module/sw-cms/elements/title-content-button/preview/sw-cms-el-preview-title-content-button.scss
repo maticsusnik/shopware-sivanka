@@ -1,0 +1,29 @@
+.sw-cms-el-preview-title-content-button {
+    text-align: center;
+
+    & > div {
+        position: relative;
+    }
+
+
+    .preview-row {
+        width: 90%;
+        background-color: #d0d0d0;
+        height: 10px;
+        margin: 0 auto 20px;
+
+        &.content {
+            height: 30px;
+        }
+    }
+
+    button {
+        background: #d1d9e0;
+        color: #52667a;
+        border-radius: 3px;
+        text-align: center;
+        font-size: 12px;
+        line-height: 26px;
+        padding-inline: 5px;
+    }
+}

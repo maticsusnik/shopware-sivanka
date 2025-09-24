@@ -1,0 +1,35 @@
+{% block sw_category_detail_information %}
+
+    {% parent() %}
+
+    <sw-card class="sw-product-detail-base__labelling-card" title="Custom settings">
+        <sw-container>
+            <sw-upload-listener
+                    :key="category.id + 'categoryIcon' + 'uploadListener'"
+                    :upload-tag="category.id + 'categoryIcon'"
+                    auto-upload
+                    @media-upload-finish="onSetMediaItem"/>
+            <sw-media-upload-v2
+                    :key="category.id + 'categoryIcon' + 'upload'"
+                    :label="'Category icon'"
+                    variant="regular"
+                    :disabled="!acl.can('category.editor')"
+                    :source="categoryIcon"
+                    :upload-tag="category.id + 'categoryIcon'"
+                    :allow-multi-select="false"
+                    :default-folder="category.getEntityName()"
+                    @media-upload-remove-image="onRemoveMediaItem"/>
+        </sw-container>
+
+        <sw-container>
+            <mt-text-editor
+                    label="Categories grid title (only for pages with category grid)"
+                    :model-value="categoryGridTitle"
+                    @update:model-value="onCategoryGridTitleInput"
+            />
+        </sw-container>
+    </sw-card>
+
+{% endblock %}
+
+

@@ -1,0 +1,15 @@
+<div class="row align-items-center content-row overlap-right">
+    <div class="col-md-9 img-col">
+        <div class="image-container">
+            {% sw_include "@Storefront/storefront/element/cms-element-" ~ image.type ~ ".html.twig" ignore missing with { element: image } %}
+        </div>
+    </div>
+
+    <div class="col-md-5 content-col">
+        <div class="content-container yellow-container">
+            {% sw_include "@Storefront/storefront/element/cms-element-title-content-button.html.twig" with {
+                element: block
+            } %}
+        </div>
+    </div>
+</div>

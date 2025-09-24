@@ -1,0 +1,23 @@
+{% sw_extends '@Storefront/storefront/component/product/description.html.twig' %}
+
+{% block component_product_description_title %}
+    <h4 class="product-detail-description-title">
+        {{ 'detail.tabsDescription'|trans|sw_sanitize }}
+    </h4>
+{% endblock %}
+
+{% block component_product_description_content %}
+    {% block component_product_description_content_text %}
+        {{ parent() }}
+    {% endblock %}
+
+    {% block component_product_specification_title %}
+        <h4 class="product-detail-specification-title">
+            {{ 'optiweb.product.specificationTitle'|trans|sw_sanitize }}
+        </h4>
+    {% endblock %}
+
+    {% block component_product_description_content_properties %}
+        {{ parent() }}
+    {% endblock %}
+{% endblock %}

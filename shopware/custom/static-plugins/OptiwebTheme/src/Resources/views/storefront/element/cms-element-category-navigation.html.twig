@@ -1,0 +1,44 @@
+{% sw_extends '@Storefront/storefront/element/cms-element-category-navigation.html.twig' %}
+{% set active = element.data.children.active %}
+{% set parent = element.data.parent %}
+{% set navigationTitle = element.data.navigationTitle %}
+{% set showDesktopNavOnMobile = navigationTitle != null %}
+
+{% block element_category_navigation %}
+    {% if element.data.children.tree %}
+
+        <div class="cms-element-categories">
+            <button
+                    class="btn btn-grey filter-panel-wrapper-toggle d-lg-none {% if showDesktopNavOnMobile %}d-none{% endif %}"
+                    type="button"
+                    data-off-canvas-custom="true"
+                    data-off-canvas-custom-content="categories-panel-wrapper"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+            >
+                {% sw_icon 'list-view' style { pack: 'ow', size: 'sm' } %}
+                {{ 'listing.categoriesTitleText'|trans }}
+            </button>
+
+            <div id="categories-panel-wrapper" class="categories-panel-wrapper{% if not showDesktopNavOnMobile %} d-none d-lg-block{% endif %}">
+                <div class="filter-panel-offcanvas-header d-lg-none">
+                    <h2 class="filter-panel-offcanvas-only filter-panel-offcanvas-title">{{ 'listing.categoriesTitleText'|trans }}</h2>
+                    <button type="button"
+                            class="btn-close filter-panel-offcanvas-only filter-panel-offcanvas-close js-offcanvas-close"
+                            aria-label="listing.filterClose"></button>
+                </div>
+                <div class="cms-element-{{ element.type }} panel-content">
+                    {% block element_category_navigation_element %}
+                        <div class="category-navigation-box">
+                            {% block element_category_navigation_box %}
+                                {% sw_include '@Storefront/storefront/layout/sidebar/category-navigation.html.twig' with {
+                                    navigationTree: element.data.children.tree, active: active, parent: parent, navigationTitle: navigationTitle
+                                } only %}
+                            {% endblock %}
+                        </div>
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

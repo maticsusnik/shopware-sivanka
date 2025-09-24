@@ -1,0 +1,15 @@
+{% block sw_cms_element_image_tab %}
+    <div style="width:100%">
+        <h2 class="title-preview" v-html="element.config.title.value"></h2>
+        <ul v-if="sortedTabs.length" class="text-image-tabs-component-list">
+            <li v-for="tab in sortedTabs" :style="getTabBackground(tab)">
+                <div class="overlay"></div>
+            </li>
+        </ul>
+        <div v-else>
+            <h3>Image tabs</h3>
+            <sw-alert variant="info">Please insert images.</sw-alert>
+        </div>
+    </div>
+{% endblock %}
+

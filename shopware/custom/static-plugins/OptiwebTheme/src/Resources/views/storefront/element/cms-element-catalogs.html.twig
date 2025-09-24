@@ -1,0 +1,31 @@
+{% block element_catalogs %}
+    {% set element = block.slots.getSlot('catalogs') %}
+    {% set catalogs = element.data.get('catalogsData') %}
+
+    {% if catalogs %}
+        <div class="catalogs-grid">
+            {% for catalog in catalogs %}
+                {% set url = catalog.documentMedia.url ?? catalog.url %}
+                <div class="catalog-item text-center">
+                    <a href="{{ url }}" target="_blank" class="d-flex flex-column justify-content-between">
+                        {% if catalog.image %}
+                            <div class="catalog-image">
+                                {% sw_thumbnails 'cms-image-thumbnails' with {
+                                    media: catalog.image,
+                                    sizes: {
+                                        'default': '200px'
+                                    }
+                                } %}
+                            </div>
+                        {% endif %}
+                        {% if catalog.title %}
+                            <div class="catalog-title d-flex flex-column justify-content-center px-1 py-3">
+                                <h4 class="mb-0">{{ catalog.title }}</h4>
+                            </div>
+                        {% endif %}
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}

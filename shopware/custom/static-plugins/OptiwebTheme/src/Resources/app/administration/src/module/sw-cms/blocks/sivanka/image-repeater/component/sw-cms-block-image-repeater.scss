@@ -1,0 +1,15 @@
+.ow-field {
+    display: block;
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid #D1D9E0;
+}
+
+.ow-header {
+    display: flex;
+
+    > * {
+        width: 100%;
+        margin: 0 12px;
+    }
+}

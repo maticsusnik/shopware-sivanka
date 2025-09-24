@@ -1,0 +1,36 @@
+{% sw_extends '@Storefront/storefront/layout/sidebar/category-navigation.html.twig' %}
+{% block layout_navigation_categories %}
+    {% set navigationMaxDepth = context.salesChannel.navigationCategoryDepth %}
+
+    {% if not level %}
+        {% set level = 0 %}
+    {% endif %}
+
+    {% set activeId = shopware.navigation.id %}
+    {% set activePath = shopware.navigation.pathIdList %}
+
+    {% if parent %}
+        <a class="category-navigation-link category-navigation-title" href="{{ category_url(parent) }}" {% if category_linknewtab(parent) %}target="_blank"{% endif %}>
+            {{ parent.translated.name }}
+        </a>
+    {% endif %}
+
+    {% block layout_navigation_categories_list %}
+        <ul class="category-navigation level-{{ level }}{% if navigationTitle %} category-navigation-grid{% endif %}">
+            {% if navigationTitle %}
+                <div class="category-navigation-grid-title category-navigation-entry">{{ navigationTitle|raw }}</div>
+            {% endif %}
+            {% for item in navigationTree %}
+                {% set categoryId = item.category.id %}
+                {% set categoryName = item.category.translated.name %}
+                {% set categoryType = item.category.type %}
+                {% set categoryUrl = item.category.seoUrl %}
+                {% set categoryLinkNewTab = item.category.shouldOpenInNewTab %}
+
+                {% block layout_navigation_categories_list_entry %}
+                    {{ parent() }}
+                {% endblock %}
+            {% endfor %}
+        </ul>
+    {% endblock %}
+{% endblock %}

@@ -1,0 +1,24 @@
+{% sw_extends '@Storefront/storefront/layout/header/header-minimal.html.twig' %}
+
+
+{% block layout_header_minimal_logo %}
+    <div class="col-5 col-md-3 header-minimal-logo">
+        {% sw_include '@Storefront/storefront/layout/header/logo.html.twig' %}
+    </div>
+{% endblock %}
+
+{% block layout_header_minimal_contact %}
+    <div class="col-md-6 header-minimal-contact">
+        {{ 'header.supportInfo'|trans|sw_sanitize }}
+    </div>
+{% endblock %}
+
+ {% block layout_header_minimal_button %}
+     <div class="col-7  col-md-3 header-minimal-back-to-shop">
+         <a href="{{ path('frontend.home.page') }}"
+            class="btn btn-outline-secondary header-minimal-back-to-shop-button"
+            title="{{ 'checkout.finishButtonBackToShop'|trans|striptags }}">
+             {{ 'checkout.finishButtonBackToShop'|trans|striptags }}
+         </a>
+     </div>
+ {% endblock %}

@@ -1,0 +1,150 @@
+.cms-element-product-slider {
+    @include margin('bottom', $general-element-margin / 2, true);
+    @include margin('top', $general-element-margin / 2, true);
+
+    .cms-element-title-paragraph {
+        @include margin('bottom', 24, true);
+    }
+}
+
+.product-box {
+    .card-body {
+        padding: 0.75rem;
+    }
+
+    .product-image-wrapper {
+        height: $max-card-img-height;
+    }
+
+    .product-image.is-standard {
+        max-height: $max-card-img-height;
+    }
+
+    &.box-standard .stretched-link::after {
+        height: calc($max-card-img-height + var(--bs-card-spacer-y));
+    }
+
+    .product-variant-characteristics .product-variant-characteristics-text,
+    .product-variant-characteristics {
+        min-height: unset;
+        height: auto;
+        margin: 0;
+    }
+
+    .product-number {
+        color: $ow-color-grey-7;
+        @include fontSpecs(16, 24, 400, false, true);
+
+        &-wrapper {
+            position: relative;
+        }
+    }
+
+    .product-wishlist {
+        position: absolute;
+        right: 0;
+        top: 0;
+        margin: 0;
+        height: 24px;
+
+        &-action {
+            vertical-align: middle;
+        }
+    }
+
+    .product-name {
+        @include fontSpecs(18, 25, 400, 0.27, false);
+        height: 48px;
+    }
+
+    .product-image-wrapper,
+    .product-name,
+    .product-number {
+        @include margin('bottom', $spacer, false);
+    }
+
+    .icon {
+        color: $ow-color-black;
+    }
+
+    .product-image-placeholder {
+        margin-inline: auto;
+    }
+
+    .product-action {
+        .btn {
+            @include fontSpecs(16, 24, 700, false, false);
+            @include padding('bottom', 12, true);
+            @include padding('top', 12, true);
+            @include padding('left', 24, true);
+            @include padding('right', 24, true);
+            width: 100%;
+        }
+    }
+}
+
+.big-slider {
+    text-align: center;
+
+    .cms-element-title-paragraph {
+        @include margin('bottom', 30, true);
+        text-align: left;
+    }
+
+    .card-body {
+        padding: #{$spacer-big}px;
+    }
+
+    .product-box {
+        background: $ow-color-grey;
+        border: none;
+    }
+
+    .product-badges {
+        top: calc(#{$spacer-big}px + #{$spacer}px);
+        left: calc(#{$spacer-big}px + #{$spacer}px);
+    }
+
+    .product-image-wrapper,
+    .product-name,
+    .product-number,
+    .product-price-info {
+        @include margin('bottom', $spacer-big, true);
+    }
+
+    .regular-price .list-price,
+    .pmc-price .list-price {
+        @include fontSpecs(18, 24, 400, false, true);
+    }
+
+    .final-price .list-price {
+        @include fontSpecs(22, 26, 700, false, true);
+    }
+
+    .product-number-wrapper {
+        display: none;
+    }
+
+    .product-action {
+        display: block;
+
+        .btn {
+            width: auto;
+        }
+    }
+}
+
+.product-badges {
+    top: 20px;
+    left: 20px;
+
+    .badge-discount {
+        @include fontSpecs(14, 20, 400, false, false);
+        background: $ow-color-black;
+        color: $ow-color-base;
+        padding: 4px 8px;
+        height: auto;
+        display: inline-block;
+        border-radius: 0;
+    }
+}

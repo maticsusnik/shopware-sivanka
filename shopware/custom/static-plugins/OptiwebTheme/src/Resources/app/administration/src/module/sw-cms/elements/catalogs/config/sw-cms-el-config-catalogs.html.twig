@@ -1,0 +1,9 @@
+{% block sw_cms_el_config_catalogs %}
+    <div class="sw-cms-el-config-catalogs">
+
+        <optiweb-catalog-repeater-editor
+            v-model="element.config.catalogs.value"
+            @update="onElementUpdate">
+        </optiweb-catalog-repeater-editor>
+    </div>
+{% endblock %}

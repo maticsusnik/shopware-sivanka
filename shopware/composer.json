@@ -3,6 +3,9 @@
     "type": "project",
     "require": {
         "composer-runtime-api": "^2.0",
+        "optiweb-snippets/optiweb-snippets": "^1.0",
+        "optiweb/custom-fields": "^1.0",
+        "optiweb/theme": "^1.0",
         "shopware/administration": "*",
         "shopware/core": "v6.7.2.1",
         "shopware/elasticsearch": "*",
