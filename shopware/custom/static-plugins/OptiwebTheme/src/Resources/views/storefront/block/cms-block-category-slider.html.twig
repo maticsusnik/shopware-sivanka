@@ -1,9 +1,33 @@
+{# storefront/block/category-slider/category-slider.html.twig (or your block override) #}
 {% block block_category_slider %}
-    {% set title = block.slots.getSlot("category").config.title.value.text %}
+    {% set title     = block.slots.getSlot('category').config.title.value.text %}
+    {% set leftImage = block.slots.getSlot('category').data.get('leftImage') %}
+    {% set hasImage  = leftImage is not null %}
 
-    <div class="category-slider-wrapper">
-        <h2 class="cms-element-title-paragraph">{{ title }}</h2>
-        {% sw_include "@Storefront/storefront/block/category-slider/category-slider-desktop.html.twig" %}
-        {% sw_include "@Storefront/storefront/block/category-slider/category-slider-mobile.html.twig" %}
+    <div class="category-slider-wrapper container">
+        {% if title %}
+            <h2 class="cms-element-title-paragraph">{{ title }}</h2>
+        {% endif %}
+
+        <div class="row g-4 align-items-start">
+
+            {# LEFT: image (col on desktop, full on mobile) #}
+            {% if hasImage %}
+                <div class="col-12 col-md-5 order-1 order-md-1">
+                    <div class="category-slider-left-image">
+                        {% sw_thumbnails 'cms-category-left-image' with {
+                            media: leftImage
+                        } %}
+                    </div>
+                </div>
+            {% endif %}
+
+            {# RIGHT: slider (always rendered) #}
+            <div class="col-12 {{ hasImage ? 'col-md-7' : 'col-md-12' }} order-2 order-md-2">
+                {% sw_include "@Storefront/storefront/block/category-slider/category-slider-desktop.html.twig" %}
+                {% sw_include "@Storefront/storefront/block/category-slider/category-slider-mobile.html.twig" %}
+            </div>
+
+        </div>
     </div>
 {% endblock %}

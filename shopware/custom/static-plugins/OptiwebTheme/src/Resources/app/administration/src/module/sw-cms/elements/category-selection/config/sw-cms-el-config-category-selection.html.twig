@@ -1,14 +1,48 @@
 {% block sw_cms_el_config_category_selection %}
     <div class="sw-cms-el-config-category-selection">
-        <sw-text-field v-model="element.config.title.value.text" label="Title"></sw-text-field>
+        <sw-text-field
+                v-model="element.config.title.value.text"
+                label="Title"
+        />
 
-        <sw-category-tree-field
-                :label="'Parent Category'"
-                :criteria="categoryCriteria"
-                :categories-collection="categoryCollection"
-                single-select
-                @selection-add="onCategoryAdd"
-                @selection-remove="onCategoryRemove"
+        <sw-single-select
+                :label="'Selection mode'"
+                :placeholder="'Choose mode'"
+                :options="selectionModeOptions"
+                v-model:value="selectionModeLocal"
+                show-clearable-button
+        />
+
+        <div v-if="selectionModeLocal === 'single'">
+            <sw-entity-single-select
+                    :label="'Parent category'"
+                    entity="category"
+                    :repository="categoryRepository"
+                    labelProperty="name"
+                    :criteria="categoryCriteria"
+                    :allowCreate="false"
+                    :placeholder="'Select parent category'"
+                    v-model:value="parentCategoryIdLocal"
+                    show-clearable-button
+            />
+        </div>
+
+        <div v-else>
+            <sw-entity-multi-id-select
+                    :label="'Categories'"
+                    entity="category"
+                    :repository="categoryRepository"
+                    labelProperty="name"
+                    :criteria="categoryCriteria"
+                    :placeholder="'Select categories'"
+                    v-model:value="categoryIdsLocal"
+            />
+        </div>
+
+        <sw-media-field
+                :label="'Image'"
+                :allowEmpty="true"
+                v-model:value="imageIdLocal"
         />
     </div>
 {% endblock %}

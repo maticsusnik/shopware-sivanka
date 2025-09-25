@@ -1,7 +1,8 @@
-{% set categories = block.slots.getSlot("category").data.get("childCategories") %}
+{# storefront/block/category-slider/category-slider-mobile.html.twig #}
+{% set categories = block.slots.getSlot('category').data.get('childCategories') %}
 
 {% block category_slider_mobile %}
-    <div class="category-list-container d-flex  flex-column d-md-none">
+    <div class="category-list-container d-flex flex-column d-md-none">
         {% for category in categories %}
             <div class="category-list-item">
                 <a href="{{ category.link }}"
@@ -9,8 +10,7 @@
                     <div class="category-list-content d-flex">
                         <div class="category-list-icon">
                             {% if category.category_icon.url %}
-                                <img src="{{ category.category_icon.url }}" alt="{{ category.category_icon.alt ?? category.name ~
-                                ' icon' }}">
+                                <img src="{{ category.category_icon.url }}" alt="{{ category.category_icon.alt ?? (category.name ~ ' icon') }}">
                             {% endif %}
                         </div>
                         <div class="content">
