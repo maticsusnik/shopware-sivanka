@@ -1,0 +1,34 @@
+{% block element_banners %}
+    {% set data = element.data %}
+    {% if data is not empty %}
+        <section class="cms-element-banners">
+            {% if data.sectionTitle %}
+                <h2 class="cms-element-title-paragraph cms-element-banners__title">{{ data.sectionTitle }}</h2>
+            {% endif %}
+            <div class="cms-element-banners__grid per-row-{{ data.perRow|default(3) }}">
+                {% for banner in data.banners %}
+                    <div class="cms-element-banners__item">
+                        {% if banner.media %}
+                            <a class="cms-element-banners__image" href="{{ banner.link ?: '#' }}" aria-label="{{ banner.text|default('') }}">
+                                {% sw_thumbnails 'cms-banners' with {
+                                    media: banner.media,
+                                    sizes: {
+                                        'xs': '600px',
+                                        'sm': '768px',
+                                        'md': '1024px',
+                                        'lg': '1400px'
+                                    }
+                                } %}
+                                {% if banner.text %}
+                                    <span class="cms-element-banners__badge">{{ banner.text }}</span>
+                                {% endif %}
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+{% endblock %}
+
+

@@ -1,0 +1,52 @@
+{% block sw_cms_el_config_banners %}
+    <div class="sw-cms-el-config-banners">
+        <sw-text-field
+            :label="'Section title'"
+            v-model="element.config.sectionTitle.value"
+            @change="onSectionTitleChange" />
+
+        <sw-single-select
+            :label="'Items per row'"
+            :options="[
+                { value: 1, label: '1 per row' },
+                { value: 2, label: '2 per row' },
+                { value: 3, label: '3 per row' },
+                { value: 4, label: '4 per row' }
+            ]"
+            v-model:value="element.config.perRow.value"
+            @update:value="onPerRowChange" />
+
+        <div class="sw-cms-el-config-banners__header">
+            <h3>Banners</h3>
+            <sw-button @click="addBanner" :disabled="(element.config.banners.value || []).length >= 8">Add new banner</sw-button>
+        </div>
+
+        <div class="sw-cms-el-config-banners__items">
+            <div class="sw-cms-el-config-banners__item" v-for="(banner, index) in element.config.banners.value" :key="banner.id || index">
+                <div class="sw-cms-el-config-banners__item-fields">
+                    <sw-media-field
+                        :label="'Image'"
+                        :allowEmpty="true"
+                        v-model:value="banner.mediaId"
+                        @update:value="() => onBannerMediaChange(banner, banner.mediaId)" />
+
+                    <sw-text-field
+                        :label="'Text'"
+                        v-model="banner.text"
+                        @change="onBannerTextChange" />
+
+                    <sw-url-field
+                        :label="'Link'"
+                        v-model="banner.link"
+                        @change="onBannerLinkChange" />
+                </div>
+                <div class="sw-cms-el-config-banners__item-footer">
+                    <sw-button @click="removeBanner(index)">Remove</sw-button>
+                </div> 
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+

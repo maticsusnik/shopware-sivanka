@@ -13,7 +13,7 @@
 
             {# LEFT: image (col on desktop, full on mobile) #}
             {% if hasImage %}
-                <div class="col-12 col-md-5 order-1 order-md-1">
+                <div class="col-12 col-md-3 order-1 order-md-1">
                     <div class="category-slider-left-image">
                         {% sw_thumbnails 'cms-category-left-image' with {
                             media: leftImage
@@ -23,7 +23,7 @@
             {% endif %}
 
             {# RIGHT: slider (always rendered) #}
-            <div class="col-12 {{ hasImage ? 'col-md-7' : 'col-md-12' }} order-2 order-md-2">
+            <div class="col-12 {{ hasImage ? 'col-md-9' : 'col-md-12' }} order-2 order-md-2">
                 {% sw_include "@Storefront/storefront/block/category-slider/category-slider-desktop.html.twig" %}
                 {% sw_include "@Storefront/storefront/block/category-slider/category-slider-mobile.html.twig" %}
             </div>

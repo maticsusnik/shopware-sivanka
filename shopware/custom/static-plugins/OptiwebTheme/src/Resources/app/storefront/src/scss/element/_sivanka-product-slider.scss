@@ -1,0 +1,81 @@
+// Sivanka product slider element
+.sivanka-product-slider-wrapper {
+  margin-bottom: 2rem;
+  
+  .sivanka-product-slider-left-image {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 8px;
+    
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+  
+  // Fix product slider width issues
+  .cms-element-product-slider {
+    width: 100%;
+    
+    .product-slider-container {
+      width: 100%;
+      
+      .tns-slider {
+        width: 100% !important;
+        
+        .tns-item {
+          width: auto !important;
+          min-width: 200px;
+          flex-shrink: 0;
+        }
+      }
+    }
+    
+    // Ensure product slider items have proper width
+    .product-slider-item {
+      width: 200px;
+      min-width: 200px;
+      flex-shrink: 0;
+    }
+  }
+  
+  // Product slider controls (positioned in title row)
+  .sivanka-product-slider-controls {
+    display: flex;
+    gap: 8px;
+
+    .icon {
+      width: calc(#{$nav-button-size} - 2 * 8px);
+      height: calc(#{$nav-button-size} - 2 * 8px);
+
+      svg {
+        top: 0;
+      }
+    }
+  }
+
+  .sivanka-product-slider-controls-prev,
+  .sivanka-product-slider-controls-next {
+    position: relative;
+    padding: 8px;
+    width: $nav-button-size;
+    height: $nav-button-size;
+    line-height: normal;
+    transform: none;
+    transition: opacity 0.15s ease;
+    cursor: pointer;
+    background: $ow-color-white;
+    border: 1px solid $ow-color-white;
+
+    &:hover {
+      border: 1px solid $ow-color-base;
+
+      svg, svg path {
+        fill: $ow-color-base;
+      }
+    }
+  }
+}

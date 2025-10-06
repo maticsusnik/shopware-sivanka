@@ -1,0 +1,45 @@
+{% block sw_cms_el_config_sivanka_product_slider %}
+    <div class="sw-cms-el-config-sivanka-product-slider">
+        <sw-text-field
+                v-model="element.config.title.value.text"
+                label="Title"
+                @change="$emit('element-update', element)" />
+
+        <sw-single-select
+                :label="'Selection mode'"
+                :placeholder="'Choose mode'"
+                :options="selectionModeOptions"
+                v-model:value="selectionModeLocal"
+                show-clearable-button />
+
+        <div v-if="selectionModeLocal === 'manual'">
+            <sw-entity-multi-id-select
+                    :label="'Products'"
+                    entity="product"
+                    :repository="productRepository"
+                    v-model:value="productIdsLocal" />
+        </div>
+
+        <div v-else>
+            <sw-entity-single-select
+                    :label="'Parent category'"
+                    entity="category"
+                    :repository="categoryRepository"
+                    labelProperty="name"
+                    :criteria="categoryCriteria"
+                    :allowCreate="false"
+                    :placeholder="'Select parent category'"
+                    v-model:value="parentCategoryIdLocal"
+                    show-clearable-button />
+        </div>
+
+        <sw-media-field
+                :label="'Image'"
+                :allowEmpty="true"
+                v-model:value="imageIdLocal" />
+    </div>
+{% endblock %}
+
+
+
+

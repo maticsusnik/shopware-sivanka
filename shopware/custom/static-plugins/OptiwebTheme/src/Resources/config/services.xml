@@ -18,6 +18,14 @@
             <tag name="shopware.cms.data_resolver"/>
         </service>
 
+        <service id="OptiwebTheme\Core\Content\Cms\DataResolvers\BannersResolver">
+            <tag name="shopware.cms.data_resolver"/>
+        </service>
+
+        <service id="OptiwebTheme\Core\Content\Cms\DataResolvers\ProductSliderResolver">
+            <tag name="shopware.cms.data_resolver"/>
+        </service>
+
         <service id="OptiwebTheme\Core\Content\Cms\DataResolvers\CategorySliderResolver">
             <tag name="shopware.cms.data_resolver"/>
             <argument type="service" id="category.repository"/>
