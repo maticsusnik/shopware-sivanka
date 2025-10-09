@@ -1,5 +1,7 @@
 .cms-element-product-listing-actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    .col-md-auto {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
 }
