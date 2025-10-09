@@ -1,81 +1,130 @@
-// Sivanka product slider element
-.sivanka-product-slider-wrapper {
-  margin-bottom: 2rem;
-  
-  .sivanka-product-slider-left-image {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-    border-radius: 8px;
-    
-    img {
-      display: block;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+.cms-block-sivanka-product-slider {
+    max-width: $wide-content-width;
+    margin-inline: auto;
+    padding-inline: 0;
+    margin-bottom: 2rem;
+
+    .icon > svg,
+    .icon > svg path {
+        fill: $ow-color-black;
     }
-  }
-  
-  // Fix product slider width issues
-  .cms-element-product-slider {
-    width: 100%;
-    
-    .product-slider-container {
-      width: 100%;
-      
-      .tns-slider {
-        width: 100% !important;
-        
-        .tns-item {
-          width: auto !important;
-          min-width: 200px;
-          flex-shrink: 0;
+
+    .content {
+        @include fontSpecs(14, 20, 400, false, false);
+
+        p, h5 {
+            margin: 0;
         }
-      }
     }
-    
-    // Ensure product slider items have proper width
-    .product-slider-item {
-      width: 200px;
-      min-width: 200px;
-      flex-shrink: 0;
+
+    .cms-element-title-paragraph {
+        margin-bottom: 2rem;
+        margin-top: 0.6rem;
     }
-  }
-  
-  // Product slider controls (positioned in title row)
-  .sivanka-product-slider-controls {
-    display: flex;
-    gap: 8px;
-
-    .icon {
-      width: calc(#{$nav-button-size} - 2 * 8px);
-      height: calc(#{$nav-button-size} - 2 * 8px);
-
-      svg {
-        top: 0;
-      }
-    }
-  }
-
-  .sivanka-product-slider-controls-prev,
-  .sivanka-product-slider-controls-next {
-    position: relative;
-    padding: 8px;
-    width: $nav-button-size;
-    height: $nav-button-size;
-    line-height: normal;
-    transform: none;
-    transition: opacity 0.15s ease;
-    cursor: pointer;
-    background: $ow-color-white;
-    border: 1px solid $ow-color-white;
-
-    &:hover {
-      border: 1px solid $ow-color-base;
-
-      svg, svg path {
-        fill: $ow-color-base;
-      }
-    }
-  }
 }
+
+.product-slider {
+    &-wrapper {
+        max-width: $content-width;
+        margin-inline: auto;
+    }
+
+    &-item {
+        img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+    }
+
+    &-image-wrapper {
+        position: relative;
+        height: 150px;
+
+    }
+
+    &-arrow {
+        position: absolute;
+        bottom: 1rem;
+        right: 1rem;
+        background: $ow-color-white;
+        font-size: 0;
+        padding: 0.5rem;
+
+        svg {
+            top: 0;
+        }
+    }
+
+    &-icon {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        height: 1.5rem;
+        width: 1.5rem;
+        z-index: 1;
+
+        img {
+            width: 100%;
+        }
+    }
+
+    .content {
+        margin-top: 0.75rem;
+    }
+
+    &-controls {
+        position: relative;
+        height: 0;
+
+        .icon {
+            width: calc(#{$nav-button-size} - 2 * 8px);
+            height: calc(#{$nav-button-size} - 2 * 8px);
+
+            svg {
+                top: 0;
+            }
+        }
+    }
+
+    &-controls-prev {
+        right: $nav-button-size;
+    }
+
+    &-controls-next {
+        right: 0;
+    }
+
+    &-controls-prev,
+    &-controls-next {
+        position: absolute;
+        left: unset;
+        top: unset;
+        bottom: calc(#{$nav-button-size} / 2);
+        padding: 8px;
+        width: $nav-button-size;
+        height: $nav-button-size;
+        line-height: normal;
+        transform: none;
+        transition: opacity 0.15s ease;
+        cursor: pointer;
+        background: $ow-color-white;
+        border: 1px solid $ow-color-white;
+
+        &:hover {
+            border: 1px solid $ow-color-base;
+
+            svg, svg path {
+                fill: $ow-color-base;
+            }
+        }
+    }
+}
+
+

@@ -20,9 +20,9 @@
         max-height: $max-card-img-height;
     }
 
-    &.box-standard .stretched-link::after {
-        height: calc($max-card-img-height + var(--bs-card-spacer-y));
-    }
+    //&.box-standard .stretched-link::after {
+    //    height: calc($max-card-img-height + var(--bs-card-spacer-y));
+    //}
 
     .product-variant-characteristics .product-variant-characteristics-text,
     .product-variant-characteristics {
