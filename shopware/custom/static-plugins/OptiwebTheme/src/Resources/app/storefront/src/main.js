@@ -4,11 +4,9 @@ import OffcanversMenuMobilePlugin from './js/off-canvas-menu-mobile.plugin';
 import OptiwebFaqPlugin from "./js/faq.plugin";
 import OffcanvasCustomPlugin from "./js/offcanvas-custom.plugin";
 import ReadMore from './js/read-more.plugin';
-import CategoryView from './js/category-view.plugin';
 import CategoryFiltersShowMorePlugin from './js/category-filters-show-more.plugin';
 import FilterToggleCheckboxesPlugin from "./js/filter-toggle-checkboxes";
 import StickyBuyBox from "./js/sticky-buy-box";
-// import AddAllToCart from "./js/add-all-to-cart";
 
 const PluginManager = window.PluginManager;
 
@@ -18,12 +16,10 @@ PluginManager.register('OffcanversMenuMobile', OffcanversMenuMobilePlugin, '[dat
 PluginManager.register('OptiwebFaqPlugin', OptiwebFaqPlugin, ".ow-faq");
 PluginManager.register('OffCanvasFilterPlugin', OffcanvasCustomPlugin, '[data-off-canvas-custom]');
 PluginManager.register('ReadMore', ReadMore, '[data-ow-read-more]');
-PluginManager.register('CategoryView', CategoryView, '[data-category-view]');
 PluginManager.register('CategoryFiltersShowMorePlugin', CategoryFiltersShowMorePlugin,'[data-off-canvas-filter-content]');
 PluginManager.deregister("FilterPropertySelect", "[data-filter-property-select]");
 PluginManager.register('FilterPropertySelectPlugin', FilterToggleCheckboxesPlugin,  '[data-filter-property-select]');
 PluginManager.register('StickyBuyBox', StickyBuyBox,  '[data-sticky-buy-box]');
-// PluginManager.register('AddAllToCart', AddAllToCart,  '[data-add-all-to-cart]');
 
 
 

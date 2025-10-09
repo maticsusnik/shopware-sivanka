@@ -1,0 +1,34 @@
+{% block block_content %}
+    {% set element = block.slots.getSlot('products') %}
+    {% set title = element.config.title.value.text %}
+    {% set leftImage = element.data.leftImage %}
+    {% set hasImage = leftImage is not null %}
+
+    <div class="sivanka-product-slider-wrapper container">
+        {% if title %}
+            <h2 class="cms-element-title-paragraph">{{ title }}</h2>
+        {% endif %}
+
+        <div class="row g-4 align-items-start">
+            {# LEFT: image (col on desktop, full on mobile) #}
+            {% if hasImage %}
+                <div class="col-12 col-md-3 order-1 order-md-1">
+                    <div class="sivanka-product-slider-left-image">
+                        {% sw_thumbnails 'cms-product-slider-left-image' with {
+                            media: leftImage
+                        } %}
+                    </div>
+                </div>
+            {% endif %}
+
+            {# RIGHT: slider (always rendered) #}
+            <div class="col-12 {{ hasImage ? 'col-md-9' : 'col-md-12' }} order-2 order-md-2">
+                {% sw_include '@Storefront/storefront/element/cms-element-sivanka-product-slider.html.twig' %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+
+

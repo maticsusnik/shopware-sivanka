@@ -33,8 +33,8 @@ class CartLineItemAddedEvent implements EventSubscriberInterface
         $customer = $context->getCustomer();
         $b2bSc = $this->systemConfigService->get('OptiwebSync.config.customerB2BSubjectGroup') ?? null;
 
-        if (!$customer || $customer->getGroupId() != $b2bSc) {
-            throw new AccessDeniedHttpException('You must be logged in to add products to the cart.');
-        }
+        // if (!$customer || $customer->getGroupId() != $b2bSc) {
+        //     throw new AccessDeniedHttpException('You must be logged in to add products to the cart.');
+        // }
     }
 }

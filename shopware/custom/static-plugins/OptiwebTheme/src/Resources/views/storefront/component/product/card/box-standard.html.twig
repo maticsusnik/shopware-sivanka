@@ -1,6 +1,6 @@
 {% sw_extends '@Storefront/storefront/component/product/card/box-standard.html.twig' %}
 
-{% block component_product_box_wishlist_action %}
+{% block component_product_box_description %}
 {% endblock %}
 
 {% block component_product_box %}
@@ -8,43 +8,5 @@
     {{ parent() }}
 {% endblock %}
 
-{% block component_product_box_info %}
-    <div class="product-info">
 
-        <div class="product-info-main">
-        {% block component_product_box_product_number %}
-                <div class="product-number-wrapper">
-                    <div class="product-number">{{ product.productNumber }}</div>
-
-                    {% if config('core.cart.wishlistEnabled') %}
-                        {% block component_product_box_wishlist %}
-                            {% sw_include '@Storefront/storefront/component/product/card/wishlist.html.twig' with {
-                                size: 'sm',
-                                productId: id
-                            } %}
-                        {% endblock %}
-                    {% endif %}
-                </div>
-        {% endblock %}
-
-        {% block component_product_box_name %}
-            {{ parent() }}
-        {% endblock %}
-
-        {% block component_product_box_variant_characteristics %}
-            {{ parent() }}
-        {% endblock %}
-        </div>
-
-{#        {% block component_product_box_price %}#}
-{#            {% if isB2B %}#}
-{#                {{ parent() }}#}
-{#            {% endif %}#}
-{#        {% endblock %}#}
-
-        {% block component_product_box_action %}
-            {{ parent() }}
-        {% endblock %}
-    </div>
-{% endblock %}
 

@@ -12,9 +12,11 @@
     {% endblock %}
 
     {% block component_product_specification_title %}
-        <h4 class="product-detail-specification-title">
-            {{ 'optiweb.product.specificationTitle'|trans|sw_sanitize }}
-        </h4>
+        {% if product.sortedProperties is defined and product.sortedProperties|length > 0 %}
+            <h4 class="product-detail-specification-title">
+                {{ 'optiweb.product.specificationTitle'|trans|sw_sanitize }}
+            </h4>
+        {% endif %}
     {% endblock %}
 
     {% block component_product_description_content_properties %}

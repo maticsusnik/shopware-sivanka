@@ -1,0 +1,11 @@
+.sw-cms-el-config-banners {
+  &__header { display: flex; justify-content: space-between; align-items: center; margin: 12px 0; }
+  &__items { display: grid; gap: 12px; }
+  &__item { border: 1px solid #d1d9e0; padding: 12px; border-radius: 4px; }
+  &__item-fields { display: grid; gap: 8px; }
+  &__item-footer { display: flex; justify-content: flex-end; }
+}
+
+
+
+

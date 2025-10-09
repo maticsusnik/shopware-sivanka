@@ -1,91 +1,68 @@
 import template from './sw-cms-el-config-category-selection.html.twig';
 
-const {Criteria, EntityCollection} = Shopware.Data;
+const { Criteria } = Shopware.Data;
 
 Shopware.Component.register('sw-cms-el-config-category-selection', {
     template,
-    inject: [
-        'repositoryFactory',
-    ],
-    mixins: [
-        'cms-element'
-    ],
+
+    inject: ['repositoryFactory'],
+    mixins: ['cms-element'],
+
     data() {
         return {
-            mainCategoriesCollection: null,
-            categoryCollection: undefined,
-            selectedCategory: '',
+            selectionModeLocal: 'single', // 'single' | 'multiple'
+            parentCategoryIdLocal: '',
+            categoryIdsLocal: [],
+            imageIdLocal: null,
+            selectionModeOptions: [
+                { label: 'Single parent category', value: 'single' },
+                { label: 'Multiple categories', value: 'multiple' },
+            ],
         };
     },
 
-    created() {
-        this.createdComponent();
-    },
     computed: {
-        mainCategories() {
-            return this.categoryCollection ? this.categoryCollection : [];
-        },
         categoryRepository() {
             return this.repositoryFactory.create('category');
         },
+        // mediaRepository removed since not used
+
         categoryCriteria() {
             const criteria = new Criteria(1, 100);
-            criteria.addFilter(Criteria.range('level', {
-                gte: 1, // Level 1 (Root)
-                lte: 2, // Up to Level 2
-            }));
-
-            if (this.selectedCategory) {
-                criteria.setIds([this.selectedCategory]);
-            }
-
-
+            criteria.addFilter(Criteria.range('level', { gte: 1, lte: 2 }));
             return criteria;
-        }
-
+        },
     },
-    methods: {
-        async createdComponent() {
-            this.selectedCategory = this.element.config.category.value;
 
-            this.categoryCollection = this.getEmptyCategoryCollection();
+    created() {
+        const cfg = this.element?.config || {};
+        const mode = cfg.selectionMode?.value;
+        this.selectionModeLocal = (mode === 'multiple' || mode === 'single') ? mode : 'single';
 
-            if (this.selectedCategory) {
-                try {
-                    const criteria = new Criteria();
-                    criteria.setIds([this.selectedCategory]);
+        this.parentCategoryIdLocal = cfg.parentCategoryId?.value || '';
+        this.categoryIdsLocal = Array.isArray(cfg.categories?.value) ? cfg.categories.value : [];
+        this.imageIdLocal = cfg.image?.value || null;
+    },
 
-                    const result = await this.categoryRepository.search(criteria, Shopware.Context.api);
+    watch: {
+        selectionModeLocal(val) {
+            this.element.config.selectionMode.value = val;
 
-                    if (result.length > 0) {
-                        this.categoryCollection.push(...result);
-                    }
-                } catch (error) {
-                    console.error("Error fetching selected category data:", error);
-                }
-            }
-
+            // remove these two lines if you want to keep both values when toggling
+            if (val === 'single') this.categoryIdsLocal = [];
+            if (val === 'multiple') this.parentCategoryIdLocal = '';
         },
 
-        getEmptyCategoryCollection() {
-            return new EntityCollection(
-                this.categoryRepository.route,
-                this.categoryRepository.entityName,
-                Shopware.Context.api,
-            );
+        parentCategoryIdLocal(val) {
+            this.element.config.parentCategoryId.value = val || '';
         },
 
-        onCategoryAdd(category) {
-            this.selectedCategory = category.id;
-            this.element.config.category.value = category.id;
-            this.element.translated.config.category.value = category.id;
+        categoryIdsLocal(val) {
+            this.element.config.categories.value = Array.isArray(val) ? val : [];
         },
 
-        onCategoryRemove() {
-            this.selectedCategory = '';
-            this.element.config.category.value = '';
-            this.element.translated.config.category.value = '';
+        imageIdLocal(val) {
+            this.element.config.image.value = val || null;
         },
-    }
-
+    },
 });

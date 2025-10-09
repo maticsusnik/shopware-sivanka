@@ -1,0 +1,24 @@
+{% block sw_cms_el_banners %}
+    <div class="sw-cms-el-banners">
+        <div class="sw-cms-el-banners__title" v-if="element.config.sectionTitle.value">
+            {{ element.config.sectionTitle.value }}
+        </div>
+        <div class="sw-cms-el-banners__grid" :class="'per-row-' + element.config.perRow.value">
+            <div class="sw-cms-el-banners__item" v-for="(banner, index) in element.config.banners.value" :key="index">
+                <div class="sw-cms-el-banners__image" v-if="banner.mediaId">
+                    <sw-media-preview-v2 :source="banner.mediaId" size="cover" />
+                </div>
+                <div class="sw-cms-el-banners__body">
+                    <div class="sw-cms-el-banners__text" v-if="banner.text">{{ banner.text }}</div>
+                    <div class="sw-cms-el-banners__link" v-if="banner.link">{{ banner.link }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="sw-cms-el-banners__placeholder" v-if="!(element.config.banners.value && element.config.banners.value.length)">
+            Add new banner
+        </div>
+    </div>
+{% endblock %}
+
+
+
