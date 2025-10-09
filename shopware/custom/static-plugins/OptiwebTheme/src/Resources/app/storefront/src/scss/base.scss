@@ -4,7 +4,6 @@
 @import "typography";
 @import "layout";
 @import "general";
-@import "footer";
 @import "header";
 
 /*
@@ -36,7 +35,6 @@
  * Elements
  * ---------------------------- */
 @import 'element/faq';
-@import 'element/category-view';
 @import 'element/cta-questions';
 @import 'element/documents-upload';
 @import 'element/category-slider';
@@ -55,6 +53,7 @@
 @import 'pages/checkout/checkout';
 @import 'pages/404';
 @import 'pages/landing-page';
+@import 'pages/product-listing';
 
 /*
  * Layout
