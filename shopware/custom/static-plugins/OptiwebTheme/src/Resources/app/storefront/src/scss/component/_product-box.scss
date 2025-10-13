@@ -55,12 +55,17 @@
     .product-name {
         @include fontSpecs(18, 25, 400, 0.27, false);
         height: 48px;
+        text-align: center;
     }
 
     .product-image-wrapper,
     .product-name,
     .product-number {
         @include margin('bottom', $spacer, false);
+    }
+
+    .product-price-info {
+        text-align: center;
     }
 
     .icon {

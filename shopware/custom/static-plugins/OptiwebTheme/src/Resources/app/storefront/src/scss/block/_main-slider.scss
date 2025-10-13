@@ -54,6 +54,20 @@
         height: 100%;
         align-content: center;
 
+        &-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.1));
+            z-index: 1;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+        }
 
         h1, p {
             color: $ow-color-white;
@@ -67,7 +81,7 @@
     &__slide-description {
         position: absolute;
         right: calc(2 * #{$nav-button-size});
-        bottom: -60px;
+        bottom: -50px;
         background: $ow-color-base;
         box-shadow: $ow-box-shadow;
         @include padding('top', 32, true);
@@ -76,9 +90,11 @@
         @include padding('right', 32, true);
         @include fontSpecs(18, 21.6, 700, false, true);
         max-width: 400px;
-
+        color: $ow-color-white;
+        z-index: 3;
         p {
             margin: 0;
+            color: $ow-color-white;
         }
     }
 
