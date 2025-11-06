@@ -50,11 +50,11 @@
                 <div class="category-slider-item">
                     <a href="{{ category.link }}" class="category-slider-link">
                         <div class="category-slider-image-wrapper">
-                            <div class="category-slider-icon">
-                                {% if category.category_icon.url %}
-                                    <img src="{{ category.category_icon.url }}" alt="{{ category.category_icon.alt ?? (category.name ~ ' icon') }}">
-                                {% endif %}
-                            </div>
+{#                            <div class="category-slider-icon">#}
+{#                                {% if category.category_icon.url %}#}
+{#                                    <img src="{{ category.category_icon.url }}" alt="{{ category.category_icon.alt ?? (category.name ~ ' icon') }}">#}
+{#                                {% endif %}#}
+{#                            </div>#}
 
                             {% if category.media %}
                                 {% sw_thumbnails 'cms-image-slider-thumbnails' with { media: category.media } %}

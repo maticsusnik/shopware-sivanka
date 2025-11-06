@@ -1,0 +1,23 @@
+{
+  "base": "/bundles/optiwebproductenquiry/administration/",
+  "entryPoints": {
+    "optiweb-product-enquiry": {
+      "css": [],
+      "dynamic": [],
+      "js": [
+        "/bundles/optiwebproductenquiry/administration/assets/optiweb-product-enquiry-1migtAGX.js"
+      ],
+      "legacy": false,
+      "preload": []
+    }
+  },
+  "legacy": false,
+  "metadatas": {},
+  "version": [
+    "7.1.0",
+    7,
+    1,
+    0
+  ],
+  "viteServer": null
+}

@@ -75,6 +75,26 @@
 {% endblock %}
 
 
+    {% block buy_widget_buy_form %}
+        {% if page.product.active %}
+            {# Check if product is marked as not sellable (set by ProductAvailabilitySubscriber) #}
+            {% set isNotSellable = page.product.customFields._isNotSellable ?? false %}
+            
+            {# Show enquiry button if product is not available OR marked as not sellable #}
+            {% set showEnquiryButton = (not page.product.available) or isNotSellable %}
+            
+            <div class="product-detail-form-container">
+                {# Only show buy button if product is available and not marked as not sellable #}
+                {% if not showEnquiryButton %}
+                    {{ parent() }}
+                {% endif %}
+                {% if showEnquiryButton %}
+                    {% block page_product_detail_enquiry_form_container %}{{ parent() }}{% endblock %}
+                {% endif %}
+            </div>
+        {% endif %}
+    {% endblock %}
+
 {% block buy_widget_price %}{% endblock %}
 {% block buy_widget_tax %}{% endblock %}
 {% block buy_widget_delivery_informations %}{% endblock %}

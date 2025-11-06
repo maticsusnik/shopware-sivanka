@@ -1,0 +1,125 @@
+.quickview-minimal-container {
+    margin-bottom: 1rem;
+    align-items: center;
+
+    // Ensure Bootstrap col-md-6 works properly (50/50 on desktop)
+    .quickview-minimal-image-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .quickview-minimal-image {
+        width: 100%;
+        text-align: center;
+
+        .quickview-minimal-img {
+            max-width: 100%;
+            height: auto;
+        }
+    }
+
+    .quickview-minimal-product-wrapper {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .quickview-minimal-product {
+        width: 100%;
+
+        .quickview-minimal-product-name {
+            margin-bottom: 0.5rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .quickview-minimal-product-number {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+    }
+
+}
+
+.product-enquiry-form {
+    margin-top: 1rem;
+
+    .btn-send-enquiry {
+        width: 100%;
+    }
+}
+
+.product-enquiry-form-listing {
+    .btn-send-enquiry {
+        width: 100%;
+        font-size: 0.875rem;
+    }
+}
+
+// Global form styling - consistent across product page and listing pages
+.cms-element-product-enquiry-form {
+    .form-content {
+        padding: 1rem 0;
+    }
+
+    // Form rows - Bootstrap handles spacing via gutters
+    .form-row {
+        margin-bottom: 1rem;
+
+        // Product row - add bottom border and spacing
+        &.product-row {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+    }
+
+    // Form groups - consistent spacing
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    // Quantity field with unit display - ensure 100% width
+    .qtyField {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        width: 100%;
+
+        .qty {
+            margin-top: 2rem;
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+    }
+
+    // Remove input outline on focus
+    .form-control,
+    .form-select,
+    textarea.form-control {
+        outline: none !important;
+        box-shadow: none !important;
+
+        &:focus {
+            outline: none !important;
+            box-shadow: none !important;
+            border-color: inherit;
+        }
+    }
+
+    // Ensure form elements have consistent spacing
+    .form-control,
+    .form-select {
+        margin-bottom: 0;
+    }
+
+    // Submit button styling
+    .btn-primary[type="submit"] {
+        width: 100%;
+        margin-top: 1rem;
+    }
+}
+
+

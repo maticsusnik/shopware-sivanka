@@ -15,7 +15,8 @@ class OptiwebCustomFields extends Plugin
     {
         parent::install($installContext);
         $context = $installContext->getContext();
-        CustomFieldsManager::create($this->getCustomFieldsConfig(), $this->container, $context);
+        CustomFieldsManager::create
+        ($this->getCustomFieldsConfig(), $this->container, $context);
     }
 
     public function uninstall(UninstallContext $uninstallContext): void
@@ -27,9 +28,13 @@ class OptiwebCustomFields extends Plugin
 
     private function getCustomFieldsConfig(): array
     {
-        return [
+        return array_filter([
             $this->customerCustomFields(),
-        ];
+            $this->productCustomFields(),
+            $this->categoryCustomFields(),
+        ], function($field) {
+            return !empty($field);
+        });
     }
 
     private function customerCustomFields(): array
@@ -87,6 +92,70 @@ class OptiwebCustomFields extends Plugin
         //         ],
         //     ]
         // ];
+    }
+
+    private function productCustomFields(): array
+    {
+        return [
+            'name' => 'custom_product',
+            'config' => [
+                'label' => [
+                    'en-GB' => 'Product Settings',
+                    'sl-SI' => 'Nastavitve izdelka',
+                ],
+            ],
+            'customFields' => [
+                [
+                    'name' => 'custom_product_notSellable',
+                    'type' => CustomFieldTypes::CHECKBOX,
+                    'config' => [
+                        'label' => [
+                            'en-GB' => 'Not Sellable',
+                            'sl-SI' => 'Ni na prodaj',
+                        ],
+                        'customFieldPosition' => 10
+                    ],
+                    'active' => true
+                ]
+            ],
+            'relations' => [
+                [
+                    'entityName' => 'product',
+                ],
+            ]
+        ];
+    }
+
+    private function categoryCustomFields(): array
+    {
+        return [
+            'name' => 'custom_category',
+            'config' => [
+                'label' => [
+                    'en-GB' => 'Category Settings',
+                    'sl-SI' => 'Nastavitve kategorije',
+                ],
+            ],
+            'customFields' => [
+                [
+                    'name' => 'custom_category_notSellable',
+                    'type' => CustomFieldTypes::CHECKBOX,
+                    'config' => [
+                        'label' => [
+                            'en-GB' => 'Not Sellable (All Products in Category)',
+                            'sl-SI' => 'Ni na prodaj (Vsi izdelki v kategoriji)',
+                        ],
+                        'customFieldPosition' => 10
+                    ],
+                    'active' => true
+                ]
+            ],
+            'relations' => [
+                [
+                    'entityName' => 'category',
+                ],
+            ]
+        ];
     }
 
 }

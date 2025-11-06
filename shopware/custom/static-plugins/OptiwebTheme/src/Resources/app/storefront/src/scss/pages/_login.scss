@@ -1,0 +1,233 @@
+.login-container {
+    max-width: 800px;
+    margin: 0 auto;
+    @include padding('top', 40, true);
+    @include padding('bottom', 40, true);
+    @include padding('left', 20, false);
+    @include padding('right', 20, false);
+    background: $ow-color-white;
+}
+
+.card-tabs-registration {
+    border: none;
+    box-shadow: none;
+    background: transparent;
+}
+
+.register-login-tab-navigation {
+    border: none;
+    padding: 0;
+    background: transparent;
+    @include margin('bottom', 40, true);
+}
+
+.register-login-tab-navigation-list {
+    border: none;
+    display: flex;
+    gap: 0;
+    position: relative;
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+.nav-item-login,
+.nav-item-register {
+    flex: 1;
+    position: relative;
+}
+
+.nav-item-register {
+    &::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 1px;
+        height: 60%;
+        background: $ow-color-grey-4;
+    }
+}
+
+.login-tab-navigation-link,
+.register-tab-navigation-link {
+    display: block;
+    @include padding('top', 24, false);
+    @include padding('bottom', 24, false);
+    @include padding('left', 32, false);
+    @include padding('right', 32, false);
+    text-decoration: none;
+    color: $ow-color-black;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s ease;
+    position: relative;
+
+    &:hover {
+        color: $ow-color-black;
+        background: transparent;
+        border-bottom-color: transparent;
+    }
+
+    &.active {
+        color: $ow-color-black;
+        background: transparent;
+        border-bottom: 3px solid $ow-color-base;
+    }
+}
+
+.tabs-title {
+    @include fontSpecs(24, 28.8, 700, false, true);
+    @include margin('bottom', 8, false);
+    color: $ow-color-black;
+    text-transform: uppercase;
+}
+
+.tabs-legend {
+    @include fontSpecs(14, 20, 400, false, false);
+    color: $ow-color-grey-7;
+}
+
+.register-login-tabs-content {
+    background: $ow-color-white;
+    @include padding('top', 40, true);
+    @include padding('bottom', 40, true);
+    @include padding('left', 40, true);
+    @include padding('right', 40, true);
+    border-radius: 0;
+    min-height: 400px;
+}
+
+.card-tabs-registration .card-body {
+    padding: 0;
+}
+
+.tab-pane {
+    display: none;
+
+    &.active {
+        display: block;
+    }
+}
+
+.login-header {
+    @include fontSpecs(26, 31.2, 700, false, true);
+    @include margin('bottom', 32, true);
+    color: $ow-color-black;
+    text-align: left;
+}
+
+.login-form-group {
+    @include margin('bottom', 24, true);
+}
+
+.form-label {
+    display: block;
+    @include fontSpecs(14, 20, 400, false, false);
+    @include margin('bottom', 8, false);
+    color: $ow-color-black;
+    text-align: left;
+}
+
+.login-input {
+    width: 100%;
+    @include padding('top', 12, false);
+    @include padding('bottom', 12, false);
+    @include padding('left', 16, false);
+    @include padding('right', 16, false);
+    @include fontSpecs(16, 24, 400, false, false);
+    border: 1px solid $ow-color-grey-border;
+    border-radius: 0;
+    background: $ow-color-white;
+    color: $ow-color-black;
+    transition: border-color 0.3s ease;
+
+    &:focus {
+        outline: none;
+        border-color: $ow-color-base;
+        box-shadow: 0 0 0 3px rgba(180, 54, 124, 0.1);
+    }
+
+    &::placeholder {
+        color: $ow-color-grey-7;
+    }
+}
+
+.login-password-recover {
+    @include margin('top', 8, false);
+    @include margin('bottom', 24, true);
+    text-align: left;
+}
+
+.login-password-recover-link {
+    color: $ow-color-base;
+    text-decoration: underline;
+    @include fontSpecs(14, 20, 400, false, false);
+
+    &:hover {
+        color: $ow-color-black;
+        text-decoration: underline;
+    }
+}
+
+.login-submit {
+    @include margin('top', 32, true);
+}
+
+.login-submit-button {
+    width: 100%;
+    @include fontSpecs(20, 32, 700, false, true);
+    @include padding('bottom', 12, true);
+    @include padding('top', 12, true);
+    @include padding('left', 24, true);
+    @include padding('right', 24, true);
+    background: $ow-color-base;
+    border: none;
+    border-radius: 0;
+    color: $ow-color-black;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-transform: uppercase;
+
+    &:hover {
+        background: darken($ow-color-base, 10%);
+        color: $ow-color-black;
+    }
+
+    &:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(180, 54, 124, 0.3);
+    }
+
+    span {
+        color: $ow-color-black;
+    }
+}
+
+// Register form styling
+.component-account-register {
+    .card-body {
+        padding: 0;
+    }
+}
+
+// Responsive adjustments
+@include media-breakpoint-down(md) {
+    .login-container {
+        @include padding('left', 16, false);
+        @include padding('right', 16, false);
+    }
+
+    .register-login-tabs-content {
+        @include padding('left', 24, false);
+        @include padding('right', 24, false);
+    }
+
+    .login-tab-navigation-link,
+    .register-tab-navigation-link {
+        @include padding('left', 16, false);
+        @include padding('right', 16, false);
+    }
+}
+

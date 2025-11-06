@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6b38086b3035501d2808466e51fcd1ab",
+    "content-hash": "df5189f8e3113a6dabedb40636a425bc",
     "packages": [
         {
             "name": "async-aws/core",
@@ -3916,6 +3916,45 @@
                 }
             ],
             "description": "Optiweb Custom fields plugin",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "optiweb/product-enquiry",
+            "version": "2.0.0",
+            "dist": {
+                "type": "path",
+                "url": "custom/static-plugins/OptiwebProductEnquiry",
+                "reference": "5eb20686847a66e53c834c16fe46ff0be51f1a99"
+            },
+            "require": {
+                "shopware/core": "~6.7.0"
+            },
+            "type": "shopware-platform-plugin",
+            "extra": {
+                "shopware-plugin-class": "OptiwebProductEnquiry\\OptiwebProductEnquiry",
+                "label": {
+                    "de-DE": "Optiweb Product Enquiry",
+                    "en-GB": "Optiweb Product Enquiry"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "OptiwebProductEnquiry\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Optiweb",
+                    "homepage": "https://www.optiweb.com"
+                }
+            ],
+            "description": "Optiweb Product Enquiry plugin for Shopware 6.7",
             "transport-options": {
                 "symlink": true,
                 "relative": true

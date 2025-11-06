@@ -1,0 +1,87 @@
+<div class="cms-element-{{ element.type }}">
+
+
+    {% set navigationTree = element.data.get('navigation').getVars %}
+    {% set showParentCategory = element.config['showParentCategory'].value %}
+    {% set parentCategory = element.data.get('parentCategory').elements | first %}
+
+    <div class="sivanka-category-navigation-box">
+        {% set curentActiveCategory = page.navigationId %}
+        {% if not curentActiveCategory %}
+            {% set curentActiveCategory = page.header.navigation.active.parentId %}
+        {% endif %}
+
+        {% if not level %}
+            {% set level = 0 %}
+        {% endif %}
+        {% if parentCategory and showParentCategory == "yes" %}
+        <div class="parent-category">
+            {% block layout_navigation_categories_link_parent %}
+                <a class="category-navigation-link"
+                   href="{{ category_url(parentCategory) }}"
+                   {% if category_linknewtab(parentCategory) %}target="_blank"{% endif %}>
+                    {% block layout_navigation_categories_link_parent_name %}
+                        {{ parentCategory.translated.name }}
+                    {% endblock %}
+                </a>
+            {% endblock %}
+        </div>
+        {% endif %}
+        {% block layout_navigation_categories_list %}
+            <ul class="category-navigation level-{{ level }}">
+                {% for item in navigationTree %}
+                    {% if item.id in page.header.navigation.active.parentId %}
+                        {% set curentActiveCategory = page.header.navigation.active.parentId %}
+                    {% endif %}
+                    {% block layout_navigation_categories_list_entry %}
+                        <li class="category-navigation-entry">
+                            {% if (item.id in curentActiveCategory) or (item.id in page.header.navigation.active.parentId) %}
+                                {% if item.type == 'folder' %}
+                                    {% block layout_navigation_categories_folder_children %}
+                                        <span class="category-navigation-link">{{ item.translated.name }}</span>
+                                    {% endblock %}
+                                {% else %}
+                                    {% block layout_navigation_categories_link_children %}
+                                        <a class="category-navigation-link{% if item.id is same as(curentActiveCategory) %} is-active{% endif %}{% if item.category.id in activeResult.path %} in-path{% endif %}"
+                                           href="{{ category_url(item) }}"
+                                           {% if category_linknewtab(item) %}target="_blank"{% endif %}>
+                                            {% block layout_navigation_categories_link_children_name %}
+                                                {{ item.translated.name }}
+                                            {% endblock %}
+                                        </a>
+                                    {% endblock %}
+                                {% endif %}
+                                {% block layout_navigation_categories_recoursion %}
+                                    {% if level < navigationMaxDepth %}
+                                        {% sw_include '@Storefront/storefront/layout/sidebar/category-navigation.html.twig' with {
+                                            navigationTree: item.children,
+                                            activeResult: activeResult,
+                                            level: level + 1
+                                        } only %}
+                                    {% endif %}
+                                {% endblock %}
+                            {% else %}
+                                {% if item.category.type == 'folder' %}
+                                    {% block layout_navigation_categories_text %}
+                                        <span class="category-navigation-link">{{ item.translated.name }}</span>
+                                    {% endblock %}
+                                {% else %}
+                                    {% block layout_navigation_categories_link %}
+                                        <a class="category-navigation-link{% if item.id is same as(activeResult.id) %} is-active{% endif %}"
+                                           href="{{ category_url(item) }}"
+                                           {% if category_linknewtab(item) %}target="_blank"{% endif %}>
+                                            {% block layout_navigation_categories_link_name %}
+                                                {{ item.translated.name }}
+                                            {% endblock %}
+                                        </a>
+                                    {% endblock %}
+                                {% endif %}
+                            {% endif %}
+                        </li>
+                    {% endblock %}
+                {% endfor %}
+            </ul>
+        {% endblock %}
+    </div>
+</div>
+

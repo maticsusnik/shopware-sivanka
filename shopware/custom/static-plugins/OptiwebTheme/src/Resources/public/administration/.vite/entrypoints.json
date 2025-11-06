@@ -3,11 +3,11 @@
   "entryPoints": {
     "optiweb-theme": {
       "css": [
-        "/bundles/optiwebtheme/administration/assets/optiweb-theme-pZ2V7qRW.css"
+        "/bundles/optiwebtheme/administration/assets/optiweb-theme-_c0c1gG9.css"
       ],
       "dynamic": [],
       "js": [
-        "/bundles/optiwebtheme/administration/assets/optiweb-theme-DE1krUGT.js"
+        "/bundles/optiwebtheme/administration/assets/optiweb-theme-fFsmBxWK.js"
       ],
       "legacy": false,
       "preload": []

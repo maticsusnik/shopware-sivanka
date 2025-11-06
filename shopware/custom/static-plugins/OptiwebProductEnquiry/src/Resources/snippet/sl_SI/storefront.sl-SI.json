@@ -1,0 +1,22 @@
+{
+  "optiwebProductEnquiry": {
+    "headline": "Povpraševanje po izdelku",
+    "subject": "Povpraševanje po izdelku",
+    "send": "Pošlji povpraševanje",
+    "close": "Zapri",
+    "form": {
+      "submit": "Pošlji povpraševanje",
+      "commentLabel": "Vaše sporočilo",
+      "commentPlaceholder": "Prosimo, opišite vaše povpraševanje o tem izdelku..."
+    },
+    "success": {
+      "message": "Hvala za vaše povpraševanje. Odgovorili vam bomo v najkrajšem možnem času."
+    },
+    "errors": {
+      "productNotFound": "Izdelek ni najden.",
+      "missingProductId": "ID izdelka manjka.",
+      "missingMailTemplate": "Konfiguracija e-poštne predloge manjka.",
+      "unexpectedError": "Prišlo je do nepričakovane napake. Prosimo, poskusite znova."
+    }
+  }
+}
