@@ -1,0 +1,31 @@
+{% sw_extends '@Storefront/storefront/component/product/card/box-standard.html.twig' %}
+
+{% block component_product_box_action %}
+    {% set configEnquiryForm = config("OptiwebProductEnquiry.config.enquiryForm") %}
+    
+    {# Check if product is marked as not sellable (set by ProductAvailabilitySubscriber) #}
+    {% set isNotSellable = product.customFields._isNotSellable ?? false %}
+    
+    {# Show enquiry button if product is not available OR marked as not sellable #}
+    {% set showEnquiryButton = product.active and configEnquiryForm and ((not product.available) or isNotSellable) %}
+    
+    {# Only show buy button if enquiry button should not show #}
+    {% if not showEnquiryButton %}
+        {{ parent() }}
+    {% endif %}
+    
+    {# Show enquiry button instead of buy button #}
+    {% if showEnquiryButton %}
+        <div class="product-enquiry-form-listing mt-2">
+            <a class="btn btn-light btn-block btn-send-enquiry btn-sm"
+               data-ajax-modal="true"
+               data-url="{{ path('frontend.cms.page', { id: configEnquiryForm, productId: product.id }) }}"
+               href="{{ path('frontend.cms.page', { id: configEnquiryForm, productId: product.id }) }}"
+               title="{{ 'optiwebProductEnquiry.send'|trans|striptags }}">
+                {% sw_icon 'envelope' style { 'class': '', 'size': 'sm' } %}
+                <span class="text">{{ 'optiwebProductEnquiry.send'|trans|striptags }}</span>
+            </a>
+        </div>
+    {% endif %}
+{% endblock %}
+

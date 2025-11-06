@@ -1,31 +1,31 @@
 .is-ctl-error {
     .content-main {
-        background-image: url("#{$assets-path}/404.png");
-        background-repeat: no-repeat;
-        background-position: center;
-        background-size: cover;
-        position: relative;
-
-        &:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(238.15% 91.88% at 12.92% 50%, #000 5.42%, rgba(0, 0, 0, 0.00) 100%);
-            z-index: 0;
-        }
+        //background-image: url("#{$assets-path}/404.png");
+        //background-repeat: no-repeat;
+        //background-position: center;
+        //background-size: cover;
+        //position: relative;
+        //
+        //&:before {
+        //    content: '';
+        //    position: absolute;
+        //    top: 0;
+        //    left: 0;
+        //    width: 100%;
+        //    height: 100%;
+        //    background: radial-gradient(238.15% 91.88% at 12.92% 50%, #000 5.42%, rgba(0, 0, 0, 0.00) 100%);
+        //    z-index: 0;
+        //}
 
         .error_404 {
             z-index: 1;
-            color: $ow-color-white;
+            color: $ow-color-black;
             position: relative;
-            @include margin('top', 150, true);
-            @include margin('bottom', 150, true);
+            @include margin('top', 40, true);
+            @include margin('bottom', 50, true);
 
             h1 {
-                @include fontSpecs(120, 144, 700, false, true);
+                @include fontSpecs(64, 80, 700, false, true);
                 color: inherit;
             }
 

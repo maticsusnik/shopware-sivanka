@@ -73,8 +73,36 @@
                                                 {% set name = category.translated.name %}
 
                                                 {% block layout_footer_navigation_information_link_item %}
-                                                    {{ parent() }}
+                                                    <li class="footer-link-item">
+                                                        {% block layout_footer_navigation_information_link %}
+                                                            {% if category.type == 'folder' %}
+                                                                <div>{{ name }}</div>
+                                                            {% else %}
+                                                                {% set linkUrl = category.seoUrl %}
+                                                                {% if category.type == 'link' %}
+                                                                    {% set checkUrl = category.seoUrl ?: (category.translated.externalLink ?: '') %}
+                                                                    {% if checkUrl and 'ms-link.com' in checkUrl and ('?l=' in checkUrl or '&l=' in checkUrl) %}
+                                                                        {% set urlParts = checkUrl|split('?l=') %}
+                                                                        {% if urlParts|length == 1 %}
+                                                                            {% set urlParts = checkUrl|split('&l=') %}
+                                                                        {% endif %}
+                                                                        {% if urlParts|length > 1 %}
+                                                                            {% set extractedLink = urlParts[1]|split('&')|first|split('#')|first %}
+                                                                            {% set linkUrl = extractedLink %}
+                                                                        {% endif %}
+                                                                    {% endif %}
+                                                                {% endif %}
+                                                                <a class="footer-link"
+                                                                   href="{{ linkUrl }}"
+                                                                   {% if category.shouldOpenInNewTab %}target="_blank"{% endif %}
+                                                                   title="{{ name }}">
+                                                                    {{ name }}
+                                                                </a>
+                                                            {% endif %}
+                                                        {% endblock %}
+                                                    </li>
                                                 {% endblock %}
+
                                             {% endfor %}
                                         </ul>
                                     {% endblock %}

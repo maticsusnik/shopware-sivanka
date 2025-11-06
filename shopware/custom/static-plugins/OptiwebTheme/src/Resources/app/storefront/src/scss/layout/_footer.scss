@@ -6,7 +6,9 @@
             color: $ow-color-white;
             width: 32px;
             height: 32px;
-
+            path {
+                fill:$ow-color-black;
+            }
             .linkedin {
                 color: $ow-color-black;
 

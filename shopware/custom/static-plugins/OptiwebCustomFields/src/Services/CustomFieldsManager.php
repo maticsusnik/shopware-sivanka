@@ -67,7 +67,57 @@ class CustomFieldsManager
             }
         }
 
-        $customFieldSetRepository->upsert($customFieldsGroups, $context);
+        // Create custom field sets first
+        foreach ($customFieldsGroups as $customFieldsGroup) {
+            $customFieldSetData = [
+                'id' => $customFieldsGroup['id'] ?? null,
+                'name' => $customFieldsGroup['name'],
+                'config' => $customFieldsGroup['config'],
+                'active' => true,
+                'global' => false,
+                'position' => 1,
+            ];
+
+            $customFieldSetRepository->upsert([$customFieldSetData], $context);
+
+            // Get the created/updated custom field set ID
+            $criteria = new Criteria();
+            $criteria->addFilter(new \Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter('name', $customFieldsGroup['name']));
+            $customFieldSet = $customFieldSetRepository->search($criteria, $context)->first();
+            
+            if ($customFieldSet) {
+                $customFieldSetId = $customFieldSet->getId();
+                
+                // Create custom fields
+                if (!empty($customFieldsGroup['customFields'])) {
+                    $customFieldData = [];
+                    foreach ($customFieldsGroup['customFields'] as $customField) {
+                        $customFieldData[] = [
+                            'id' => $customField['id'] ?? null,
+                            'name' => $customField['name'],
+                            'type' => $customField['type'],
+                            'config' => $customField['config'],
+                            'active' => $customField['active'],
+                            'customFieldSetId' => $customFieldSetId,
+                        ];
+                    }
+                    $customFieldRepository->upsert($customFieldData, $context);
+                }
+
+                // Create relations
+                if (!empty($customFieldsGroup['relations'])) {
+                    $relationData = [];
+                    foreach ($customFieldsGroup['relations'] as $relation) {
+                        $relationData[] = [
+                            'id' => $relation['id'] ?? null,
+                            'customFieldSetId' => $customFieldSetId,
+                            'entityName' => $relation['entityName'],
+                        ];
+                    }
+                    $customFieldRelationRepository->upsert($relationData, $context);
+                }
+            }
+        }
     }
 
     public static function remove(array $customFields, ContainerInterface $container, Context $context): void

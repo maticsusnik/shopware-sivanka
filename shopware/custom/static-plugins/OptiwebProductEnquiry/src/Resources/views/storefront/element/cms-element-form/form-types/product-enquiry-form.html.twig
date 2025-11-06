@@ -1,0 +1,174 @@
+<form action="{{ path(action) }}"
+      method="post"
+      data-form-csrf-handler="true"
+      data-form-validation="true"
+      data-optiweb-product-enquiry>
+
+    <div class="form-content">
+        {# Product Information Section - 50/50 layout #}
+        <div class="row form-row product-row">
+            <div class="col-12">
+                {% if element.extensions.product %}
+                    {% sw_include '@Storefront/storefront/component/product/quickview/minimal.html.twig'
+                    with {
+                        page: {
+                            product: element.extensions.product,
+                            headline: "optiwebProductEnquiry.headline"|trans
+                        }
+                    } only
+                    %}
+                {% endif %}
+            </div>
+        </div>
+
+        {# First Name and Last Name - 50/50 on desktop #}
+        <div class="row form-row">
+            <div class="col-12 col-md-6">
+                {% block cms_form_product_enquiry_input_first_name %}
+                    {% sw_include '@Storefront/storefront/element/cms-element-form/form-components/cms-element-form-input.html.twig'
+                        with {
+                        fieldName: 'firstName',
+                        required: true,
+                        additionalClass: '',
+                        label: 'account.personalFirstNameLabel',
+                        placeholder: 'account.personalFirstNamePlaceholder'
+                    }
+                    %}
+                {% endblock %}
+            </div>
+            <div class="col-12 col-md-6">
+                {% block cms_form_product_enquiry_input_last_name %}
+                    {% sw_include '@Storefront/storefront/element/cms-element-form/form-components/cms-element-form-input.html.twig'
+                        with {
+                        fieldName: 'lastName',
+                        required: true,
+                        additionalClass: '',
+                        label: 'account.personalLastNameLabel',
+                        placeholder: 'account.personalLastNamePlaceholder'
+                    }
+                    %}
+                {% endblock %}
+            </div>
+        </div>
+
+        {# Email and Phone - 50/50 on desktop #}
+        <div class="row form-row">
+            <div class="col-12 col-md-6">
+                {% block cms_form_product_enquiry_input_email %}
+                    {% sw_include '@Storefront/storefront/element/cms-element-form/form-components/cms-element-form-input.html.twig'
+                        with {
+                        fieldName: 'email',
+                        type: 'email',
+                        required: true,
+                        additionalClass: '',
+                        label: 'account.loginMailLabel',
+                        placeholder: 'account.loginMailPlaceholder'
+                    }
+                    %}
+                {% endblock %}
+            </div>
+            <div class="col-12 col-md-6">
+                {% block cms_form_product_enquiry_input_phone %}
+                    {% sw_include '@Storefront/storefront/element/cms-element-form/form-components/cms-element-form-input.html.twig'
+                        with {
+                        fieldName: 'phone',
+                        required: false,
+                        additionalClass: '',
+                        label: 'account.personalPhoneLabel',
+                        placeholder: 'account.personalPhonePlaceholder'
+                    }
+                    %}
+                {% endblock %}
+            </div>
+        </div>
+
+        {# Quantity - 100% width #}
+        <div class="row form-row">
+            <div class="col-12">
+                <div class="form-group qtyField">
+                    {% block cms_form_product_enquiry_input_qty %}
+                        {% sw_include '@Storefront/storefront/element/cms-element-form/form-components/cms-element-form-input.html.twig'
+                            with {
+                            fieldName: 'productQty',
+                            type: 'number',
+                            required: true,
+                            additionalClass: '',
+                            label: 'detail.dataColumnQuantity',
+                            value: 1,
+                            min: 1,
+                            step: 1
+                        }
+                        %}
+                    {% endblock %}
+                    {% if element.extensions.product and element.extensions.product.unit %}
+                        <div class="qty">{{ element.extensions.product.unit.translated.shortCode }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {# Comment - 100% width #}
+        <div class="row form-row">
+            <div class="col-12">
+                {% block cms_form_product_enquiry_comment_textarea %}
+                    {% sw_include '@Storefront/storefront/element/cms-element-form/form-components/cms-element-form-textarea.html.twig'
+                        with {
+                        rows: 5,
+                        required: false,
+                        fieldName: 'comment',
+                        additionalClass: '',
+                        label: 'optiwebProductEnquiry.form.commentLabel',
+                        placeholder: 'optiwebProductEnquiry.form.commentPlaceholder'
+                    }
+                    %}
+                {% endblock %}
+            </div>
+        </div>
+
+        {# Privacy, Captcha, Required Info, Submit - 100% width each #}
+        <div class="row form-row">
+            <div class="col-12">
+                {% block cms_form_product_enquiry_privacy %}
+                    {% sw_include '@Storefront/storefront/element/cms-element-form/form-components/cms-element-form-privacy.html.twig' %}
+                {% endblock %}
+            </div>
+        </div>
+
+        <div class="row form-row">
+            <div class="col-12">
+                {% block cms_form_product_enquiry_captcha %}
+                    {% sw_include '@Storefront/storefront/component/captcha/base.html.twig' with { 'captchas': config('core.basicInformation.activeCaptchas') } %}
+                {% endblock %}
+            </div>
+        </div>
+
+        <div class="row form-row">
+            <div class="col-12">
+                {% block cms_form_product_enquiry_required_fields_info %}
+                    {% sw_include '@Storefront/storefront/element/cms-element-form/form-components/cms-element-form-info-required.html.twig' %}
+                {% endblock %}
+            </div>
+        </div>
+
+        <div class="row form-row">
+            <div class="col-12">
+                {% block cms_form_product_enquiry_submit %}
+                    {% sw_include '@Storefront/storefront/element/cms-element-form/form-components/cms-element-form-submit.html.twig' %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+
+    {% block cms_form_product_enquiry_hidden_fields %}
+        <div class="form-hidden-fields">
+            <input type="hidden" name="slotId" value="{{ element.id }}"/>
+            {% if element.extensions.product %}
+                <input type="hidden" name="product_id" value="{{ element.extensions.product.id }}"/>
+                <input type="hidden" name="product_name" value="{{ element.extensions.product.translated.name }}"/>
+                <input type="hidden" name="product_number" value="{{ element.extensions.product.productNumber }}"/>
+            {% endif %}
+
+            <input type="submit" class="submit--hidden d-none" />
+        </div>
+    {% endblock %}
+</form>

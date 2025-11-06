@@ -22,13 +22,13 @@
        title="{{ name }}">
         {% block layout_navigation_offcanvas_navigation_categories_list_category_item_link_text %}
             <span class="navigation-offcanvas-label d-flex align-items-center gap-3">
-                {% if item.category.level <= 3 %}
-                    <span class="navigation-offcanvas-icon">
-                        {% if icon.url %}
-                            <img src="{{ icon.url }}" alt="{{ icon.alt ?? category.name ~ ' menu icon' }}">
-                        {% endif %}
-                    </span>
-                {% endif %}
+{#                {% if item.category.level <= 3 %}#}
+{#                    <span class="navigation-offcanvas-icon">#}
+{#                        {% if icon.url %}#}
+{#                            <img src="{{ icon.url }}" alt="{{ icon.alt ?? category.name ~ ' menu icon' }}">#}
+{#                        {% endif %}#}
+{#                    </span>#}
+{#                {% endif %}#}
                 <span itemprop="name">{{ name }}</span>
             </span>
 

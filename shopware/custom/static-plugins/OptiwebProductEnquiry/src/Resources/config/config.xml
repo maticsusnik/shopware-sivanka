@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/platform/master/src/Core/System/SystemConfig/Schema/config.xsd">
+
+    <card>
+        <title>Product enquiry form</title>
+
+        <component name="sw-entity-single-select">
+            <name>enquiryForm</name>
+            <entity>cms_page</entity>
+            <pageType>page</pageType>
+            <label>Choose a page with product enquiry form.</label>
+            <label lang="de-DE">Choose a page with product enquiry form.</label>
+            <placeholder>Assign layout...</placeholder>
+            <placeholder lang="de-DE">Layout zuweisen ...</placeholder>
+        </component>
+
+    </card>
+
+    <card>
+        <title>Product enquiry mail template</title>
+
+        <component name="sw-entity-single-select">
+            <name>mailTemplateType</name>
+            <entity>mail_template_type</entity>
+            <label>Choose a mail template type for customer e-mail.</label>
+        </component>
+
+    </card>
+
+</config>

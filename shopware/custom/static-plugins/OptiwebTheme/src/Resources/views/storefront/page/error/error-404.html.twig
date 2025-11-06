@@ -17,6 +17,27 @@
                         </a>
                     </div>
                 {% endblock %}
+
+                <div class="text-center mt-4">
+                    {% set themeConfig = config('OptiwebTheme').config %}
+                    {% set error404MediaId = themeConfig.error404Image %}
+                    {% if error404MediaId %}
+                        {% set error404MediaCollection = searchMedia([error404MediaId], context.context) %}
+                        {% set error404Media = error404MediaCollection.get(error404MediaId) %}
+                        {% if error404Media %}
+                            {% sw_thumbnails 'error-404-image' with {
+                                media: error404Media,
+                                sizes: {
+                                    'default': '800px'
+                                },
+                                attributes: {
+                                    'class': 'img-fluid',
+                                    'alt': 'general.404ErrorImageAlt'|trans|sw_sanitize
+                                }
+                            } %}
+                        {% endif %}
+                    {% endif %}
+                </div>
             </div>
         {% endblock %}
     </main>

@@ -9,9 +9,12 @@ $overlapping-cols: 2; //layout 'text-right-over-image' - for how many cols text 
     @include padding('left', 40, true);
     @include padding('right', 40, true);
 
+    h3,p {
+        color: $ow-color-white;
+    }
     .btn {
         color: $ow-color-base;
-        background: $ow-color-black;
+        background: $ow-color-white;
     }
 }
 

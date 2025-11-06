@@ -1,0 +1,24 @@
+{% block sw_cms_element_sivanka_category_nav_config %}
+<div class="sw-cms-el-config-sivanka-category-navigation">
+    {% block sw_cms_element_sivanka_category_nav_config_info %}
+        <sw-entity-single-select
+            entity="category"
+            :repository="categoryRepository"
+            labelProperty="name"
+            :criteria="categoryCriteria"
+            :allowCreate="false"
+            :placeholder="'Select Category'"
+            v-model:value="parentCategoryIdLocal"
+            show-clearable-button
+        />
+    {% endblock %}
+    {% block sw_category_grid_field_display_mode %}
+        <sw-single-select
+            :label="'Display parent category in sidebar navigation'"
+            :options="showParentCategoryOptions"
+            v-model:value="showParentCategoryLocal"
+        />
+    {% endblock %}
+</div>
+{% endblock %}
+

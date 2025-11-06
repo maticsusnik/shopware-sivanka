@@ -1,0 +1,28 @@
+{
+    "name": "optiweb/product-enquiry",
+    "description": "Optiweb Product Enquiry plugin for Shopware 6.7",
+    "type": "shopware-platform-plugin",
+    "version": "2.0.0",
+    "license": "MIT",
+    "require": {
+        "shopware/core": "~6.7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "OptiwebProductEnquiry\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Optiweb",
+            "homepage": "https://www.optiweb.com"
+        }
+    ],
+    "extra": {
+        "shopware-plugin-class": "OptiwebProductEnquiry\\OptiwebProductEnquiry",
+        "label": {
+            "de-DE": "Optiweb Product Enquiry",
+            "en-GB": "Optiweb Product Enquiry"
+        }
+    }
+}

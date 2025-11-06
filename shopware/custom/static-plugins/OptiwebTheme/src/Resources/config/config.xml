@@ -42,4 +42,14 @@
         </input-field>
     </card>
 
+    <card>
+        <title>Error pages</title>
+
+        <component name="sw-media-field">
+            <name>error404Image</name>
+            <label>404 Error page image</label>
+        </component>
+
+    </card>
+
 </config>

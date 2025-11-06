@@ -1,0 +1,22 @@
+{
+  "optiwebProductEnquiry": {
+    "headline": "Product Enquiry",
+    "subject": "Product Enquiry",
+    "send": "Send Enquiry",
+    "close": "Close",
+    "form": {
+      "submit": "Send Enquiry",
+      "commentLabel": "Your message",
+      "commentPlaceholder": "Please describe your enquiry about this product..."
+    },
+    "success": {
+      "message": "Thank you for your enquiry. We will get back to you soon."
+    },
+    "errors": {
+      "productNotFound": "Product not found.",
+      "missingProductId": "Product ID is missing.",
+      "missingMailTemplate": "Mail template configuration is missing.",
+      "unexpectedError": "An unexpected error occurred. Please try again."
+    }
+  }
+}
