@@ -79,24 +79,6 @@ class Migration1734567891ProductEnquiryMailTemplate extends MigrationStep
             );
         }
 
-        // Insert German translation
-        $germanLanguageId = $this->getLanguageIdByLocale($connection, 'de-DE');
-        if ($germanLanguageId) {
-            $connection->insert(
-                'mail_template_translation',
-                [
-                    'subject' => 'Produktanfrage Formular',
-                    'description' => 'Produktanfrage Formular Vorlage für Kunden.',
-                    'sender_name' => '{{ salesChannel.name }}',
-                    'content_html' => $this->getRegistrationHtmlTemplateDe(),
-                    'content_plain' => $this->getRegistrationPlainTemplateDe(),
-                    'created_at' => (new \DateTime())->format(Defaults::STORAGE_DATE_TIME_FORMAT),
-                    'mail_template_id' => $mailTemplateId,
-                    'language_id' => $germanLanguageId,
-                ]
-            );
-        }
-
         // Insert Slovenian translation if available
         $slovenianLanguageId = $this->getLanguageIdByLocale($connection, 'sl-SI');
         if ($slovenianLanguageId) {
