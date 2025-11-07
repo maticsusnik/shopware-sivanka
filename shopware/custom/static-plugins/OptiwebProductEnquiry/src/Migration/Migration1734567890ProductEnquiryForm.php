@@ -57,16 +57,6 @@ class Migration1734567890ProductEnquiryForm extends MigrationStep
             ]
         );
 
-        // Add German translation
-        $connection->insert(
-            'mail_template_type_translation',
-            [
-                'mail_template_type_id' => $mailTemplateTypeIdBytes,
-                'name' => 'Produktanfrage Formular',
-                'language_id' => $this->getLanguageIdByLocale($connection, 'de-DE'),
-                'created_at' => (new \DateTime())->format(Defaults::STORAGE_DATE_TIME_FORMAT),
-            ]
-        );
     }
 
     private function getLanguageIdByLocale(Connection $connection, string $locale): string
