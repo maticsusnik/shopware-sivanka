@@ -36,26 +36,14 @@
     position: relative;
 }
 
-.nav-item-register {
-    &::after {
-        content: '';
-        position: absolute;
-        right: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 1px;
-        height: 60%;
-        background: $ow-color-grey-4;
-    }
-}
 
 .login-tab-navigation-link,
 .register-tab-navigation-link {
     display: block;
-    @include padding('top', 24, false);
-    @include padding('bottom', 24, false);
-    @include padding('left', 32, false);
-    @include padding('right', 32, false);
+    @include padding('top', 16, false);
+    @include padding('bottom', 16, false);
+    @include padding('left', 20, false);
+    @include padding('right', 20, false);
     text-decoration: none;
     color: $ow-color-black;
     background: transparent;
@@ -91,10 +79,10 @@
 
 .register-login-tabs-content {
     background: $ow-color-white;
-    @include padding('top', 40, true);
-    @include padding('bottom', 40, true);
-    @include padding('left', 40, true);
-    @include padding('right', 40, true);
+    //@include padding('top', 40, true);
+    //@include padding('bottom', 40, true);
+    //@include padding('left', 40, true);
+    //@include padding('right', 40, true);
     border-radius: 0;
     min-height: 400px;
 }
@@ -185,15 +173,10 @@
     background: $ow-color-base;
     border: none;
     border-radius: 0;
-    color: $ow-color-black;
+    color: $ow-color-white;
     cursor: pointer;
     transition: background-color 0.3s ease;
     text-transform: uppercase;
-
-    &:hover {
-        background: darken($ow-color-base, 10%);
-        color: $ow-color-black;
-    }
 
     &:focus {
         outline: none;
@@ -201,7 +184,7 @@
     }
 
     span {
-        color: $ow-color-black;
+        color: $ow-color-white;
     }
 }
 

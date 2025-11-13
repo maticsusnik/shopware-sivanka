@@ -4,7 +4,7 @@
     @include margin('top', $general-element-margin, true);
 
     h2 {
-        @include margin('bottom', 24, false);
+        @include margin('bottom', 32, false);
     }
 
     .category-description-and-faq-columns {

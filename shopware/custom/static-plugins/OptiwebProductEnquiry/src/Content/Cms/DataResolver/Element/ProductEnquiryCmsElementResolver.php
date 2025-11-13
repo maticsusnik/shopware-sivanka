@@ -52,12 +52,13 @@ class ProductEnquiryCmsElementResolver extends AbstractCmsElementResolver
     private function getProductById(string $productId, \Shopware\Core\Framework\Context $context): ?object
     {
         $criteria = new Criteria();
-        $criteria->addAssociation('categories');
+        // $criteria->addAssociation('categories');
         $criteria->addAssociation('media');
         $criteria->addAssociation('cover');
+        $criteria->addAssociation('cover.media');
         $criteria->addAssociation('options');
-        $criteria->addAssociation('unit');
-        $criteria->addAssociation('manufacturer');
+        // $criteria->addAssociation('unit');
+        // $criteria->addAssociation('manufacturer');
         $criteria->addFilter(new EqualsFilter('product.id', $productId));
 
         return $this->productRepository

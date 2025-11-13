@@ -126,19 +126,18 @@
             box-shadow: none;
             bottom: unset;
             top: 0;
-
+            position: relative;
             &-wrapper {
-                height: $mobile-description-placeholder-height;
+                //min-height: $mobile-description-placeholder-height;
                 overflow: visible;
                 position: relative;
-                top: $nav-button-size;
+                //top: $nav-button-size;
             }
         }
 
         .image-slider-controls-container {
             .base-slider-controls {
-                height: $nav-button-size;
-                top: - #{$mobile-description-placeholder-height};
+                display: none;
             }
 
             .base-slider-controls-prev {
@@ -152,10 +151,13 @@
             }
         }
 
-        .has-dots-outside .tns-nav {
-            height: $nav-button-size;
-            bottom: calc(#{$mobile-description-placeholder-height} + #{$nav-button-size});
-            margin: 0;
+        .has-dots-outside {
+            padding-bottom: 30px;
+            .tns-nav {
+                height: 20px;
+                bottom: 30px;
+                margin: 0;
+            }
         }
     }
 }

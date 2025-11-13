@@ -3,6 +3,8 @@
 {% set productSliderOptions = {
     slider: {
         controls: true,
+        loop: true,
+        Rewind: false,
         nav: false,
         mouseDrag: true,
         autoplay: false,
@@ -10,10 +12,26 @@
         ariaLive: false,
         autoHeight: false,
         gutter: 16,
-        items: 4,
+        items: 2,
         responsive: {
-            0: { items: 1 },
-            768: { items: 3 },
+            xs: {
+                items: 2
+            },
+            sm: {
+                items: 2
+            },
+            md: {
+                items: 3
+            },
+            lg: {
+                items: 4
+            },
+            xl: {
+                items: 4
+            },
+            xxl: {
+                items: 4
+            }
         }
     }
 } %}

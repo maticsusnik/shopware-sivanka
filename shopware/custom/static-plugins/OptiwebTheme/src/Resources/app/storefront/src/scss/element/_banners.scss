@@ -1,6 +1,8 @@
 .cms-element-banners {
     margin-bottom: 24px;
-    &__title { margin: 0 0 12px; }
+    &__title {
+        @include margin('bottom', 32, false);
+    }
     &__grid { display: grid; gap: 16px; align-items: stretch; }
     &__grid.per-row-1 { grid-template-columns: repeat(1, 1fr); }
     &__grid.per-row-2 { grid-template-columns: repeat(2, 1fr); }

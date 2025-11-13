@@ -11,7 +11,8 @@
             "filter": {
                 "show": "Prikaži več",
                 "hide": "Skrij"
-            }
+            },
+            "selectedFilters": "Izbrani filtri"
         },
         "search": {
             "headlineSuper": "Rezultati iskanja"

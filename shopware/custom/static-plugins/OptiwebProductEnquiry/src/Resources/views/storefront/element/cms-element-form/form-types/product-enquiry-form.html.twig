@@ -85,7 +85,6 @@
         {# Quantity - 100% width #}
         <div class="row form-row">
             <div class="col-12">
-                <div class="form-group qtyField">
                     {% block cms_form_product_enquiry_input_qty %}
                         {% sw_include '@Storefront/storefront/element/cms-element-form/form-components/cms-element-form-input.html.twig'
                             with {
@@ -100,10 +99,9 @@
                         }
                         %}
                     {% endblock %}
-                    {% if element.extensions.product and element.extensions.product.unit %}
-                        <div class="qty">{{ element.extensions.product.unit.translated.shortCode }}</div>
-                    {% endif %}
-                </div>
+{#                    {% if element.extensions.product and element.extensions.product.unit %}#}
+{#                        <div class="qty">{{ element.extensions.product.unit.translated.shortCode }}</div>#}
+{#                    {% endif %}#}
             </div>
         </div>
 
