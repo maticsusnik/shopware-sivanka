@@ -1,5 +1,5 @@
 .quickview-minimal-container {
-    margin-bottom: 1rem;
+    margin-bottom: 0;
     align-items: center;
 
     // Ensure Bootstrap col-md-6 works properly (50/50 on desktop)
@@ -7,12 +7,19 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        margin-bottom: 0;
     }
 
     .quickview-minimal-image {
         width: 100%;
         text-align: center;
-
+        height:150px;
+        svg,img {
+            display: block;
+            height: 100% !important;
+            width: 100%;
+            object-fit: contain;
+        }
         .quickview-minimal-img {
             max-width: 100%;
             height: auto;
@@ -42,11 +49,13 @@
 
 }
 
+
 .product-enquiry-form {
     margin-top: 1rem;
 
     .btn-send-enquiry {
         width: 100%;
+        text-decoration: none;
     }
 }
 
@@ -54,6 +63,7 @@
     .btn-send-enquiry {
         width: 100%;
         font-size: 0.875rem;
+        text-decoration: none;
     }
 }
 
@@ -65,7 +75,7 @@
 
     // Form rows - Bootstrap handles spacing via gutters
     .form-row {
-        margin-bottom: 1rem;
+        //margin-bottom: 1rem;
 
         // Product row - add bottom border and spacing
         &.product-row {

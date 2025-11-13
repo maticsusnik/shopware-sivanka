@@ -8,6 +8,27 @@
 {#    </div>#}
 {#{% endblock %}#}
 
+{% block element_product_listing_pagination_nav_top %}{% endblock %}
+{% block element_product_listing_pagination_nav_actions %}
+    <div class="cms-element-product-listing-actions row justify-content-between">
+{#        <div class="col-md-auto">#}
+{#            <div class="filter-panel-active-container-wrapper d-flex gap-3 align-items-baseline" style="display:none;">#}
+{#                <div class="selected-filters-label col-auto d-none d-lg-block">{{ 'optiweb.listing.selectedFilters'|trans }}:</div>#}
+{#                <div class="filter-panel-active-container"></div>#}
+{#            </div>#}
+{#        </div>#}
+
+        <div class="col-md-auto">
+            {% block element_product_listing_sorting %}
+                {% sw_include '@Storefront/storefront/component/sorting.html.twig' with {
+                    current: searchResult.sorting,
+                    sortings: searchResult.availableSortings
+                } %}
+            {% endblock %}
+        </div>
+    </div>
+{% endblock %}
+
 {#{% block element_product_listing_pagination_nav_actions %}#}
 {#    <div class="d-flex align-items-center justify-content-between gap-3 mb-lg-4">#}
 {#        {% block element_product_listing_sorting %}#}
@@ -26,3 +47,24 @@
 {#{% endblock %}#}
 
 
+{% block element_product_listing_wrapper_content %}
+    <div class="filter-panel-active-container-wrapper d-flex gap-3 align-items-baseline" style="display:none;">
+        <div class="selected-filters-label col-auto d-none d-lg-block">{{ 'optiweb.listing.selectedFilters'|trans }}:</div>
+        <div class="filter-panel-active-container"></div>
+    </div>
+
+    {{ parent() }}
+{% endblock %}
+
+       {% block element_product_listing_col %}
+           {% for product in searchResult %}
+               <div class="cms-listing-col col-6 {{ listingColumns }}" role="listitem">
+                   {% block element_product_listing_box %}
+                       {% sw_include '@Storefront/storefront/component/product/card/box.html.twig' with {
+                           layout: boxLayout,
+                           displayMode: displayMode
+                       } %}
+                   {% endblock %}
+               </div>
+           {% endfor %}
+       {% endblock %}

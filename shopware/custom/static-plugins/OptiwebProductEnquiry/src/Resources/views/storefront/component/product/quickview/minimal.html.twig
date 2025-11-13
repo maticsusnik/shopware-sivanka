@@ -28,7 +28,7 @@
         <div class="col-12 col-md-6 quickview-minimal-image-wrapper">
             {% block component_product_quickview_minimal_img %}
                 <div class="quickview-minimal-image">
-                    {% if page.product.cover and page.product.cover.media %}
+                    {% if page.product.media  and page.product.cover.media %}
                         {% sw_thumbnails 'minimal-image-thumbnails' with {
                             media: page.product.cover.media,
                             sizes: {

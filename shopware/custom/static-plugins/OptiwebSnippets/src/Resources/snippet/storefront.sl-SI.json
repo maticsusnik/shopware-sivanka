@@ -159,10 +159,10 @@
     "loginPasswordRecover": "Pozabil sem geslo.",
     "loginRegistrationHeader": "Prijavite se ali ustvarite račun",
     "loginSubmit": "Prijavite se",
-    "tabsLogin": "SIGN IN",
-    "tabsLoginAdditional": "Existing customers sign in here",
-    "tabsRegister": "REGISTRATION",
-    "tabsRegisterAdditional": "Create new account",
+    "tabsLogin": "PRIJAVA",
+    "tabsLoginAdditional": "Prijava za obstoječe stranke",
+    "tabsRegister": "REGISTRACIJA",
+    "tabsRegisterAdditional": "Ustvarite nov račun",
     "loginBadCredentials": "Ni bilo mogoče najti računa, ki se ujema z danimi poverilnicami.",
     "loginThrottled": "Preveč poskusov prijave. Počakajte %seconds% sekund, preden se ponovno prijavite.",
     "registerAdvantagesHeader": "Prednosti prijave:",
@@ -752,7 +752,7 @@
     "includeVatTextPage": "Vse cene vključujejo DDV plus <a href=\"%url%\">stroške pošiljanja</a> in morebitne stroške dostave, če ni navedeno drugače.",
     "excludeVatText": "* Vse cene brez DDV plus <a data-ajax-modal=\"true\" href=\"%url%\" data-url=\"%url%\">stroški pošiljanja</a> in morebitni stroški dostave, če ni navedeno drugače.",
     "excludeVatTextPage": "Vse cene brez. DDV plus <a href=\"%url%\">stroški pošiljanja</a> in morebitni stroški dostave, če ni navedeno drugače.",
-    "copyrightInfo": "Uresničena z Shopware"
+    "copyrightInfo": "© Trgovina ŠIVANKA, vse pravice pridržane"
   },
   "captcha": {
     "googleReCaptcha": {

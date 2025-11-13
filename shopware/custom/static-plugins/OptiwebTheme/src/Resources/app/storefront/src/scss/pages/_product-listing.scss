@@ -5,3 +5,10 @@
         gap: 8px;
     }
 }
+
+.cms-element-product-listing .cms-listing-row {
+    @include media-breakpoint-down(md) {
+        --bs-gutter-x: 15px;
+        --bs-gutter-y: 15px;
+    }
+}

@@ -22,6 +22,7 @@ PluginManager.deregister("FilterPropertySelect", "[data-filter-property-select]"
 PluginManager.register('FilterPropertySelectPlugin', FilterToggleCheckboxesPlugin,  '[data-filter-property-select]');
 PluginManager.register('StickyBuyBox', StickyBuyBox,  '[data-sticky-buy-box]');
 PluginManager.register('LoginPage', LoginPagePlugin, '[data-login-container]');
+PluginManager.override('Listing', () => import("./js/ow-listing.plugin"), '[data-listing]');
 
 
 

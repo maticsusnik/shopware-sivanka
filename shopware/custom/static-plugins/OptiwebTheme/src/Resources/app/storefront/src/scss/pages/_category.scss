@@ -79,6 +79,9 @@
 
 .cms-block-category-navigation {
     @include padding('bottom', 24);
+    @include media-breakpoint-down(md) {
+        padding-bottom: 0;
+    }
 }
 
 .search {
@@ -95,6 +98,41 @@
             border-bottom: 0;
             padding-block: 0.5rem;
             margin: 0;
+        }
+    }
+}
+
+.selected-filters {
+    &-label {
+        text-transform: uppercase;
+        @include fontSpecs(13, 20, 700, 2, false);
+    }
+}
+
+
+.filter-panel-active-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+
+    &-wrapper {
+        margin-bottom: 1.5rem;
+    }
+
+    .btn {
+        border-radius: 7px;
+        padding: 0 10px;
+
+        @include media-breakpoint-down(lg) {
+            font-size: 14px;
+        }
+
+        &.filter-active {
+            border: 1px solid $ow-color-black;
+
+            &:hover {
+                color: $ow-color-black;
+            }
         }
     }
 }

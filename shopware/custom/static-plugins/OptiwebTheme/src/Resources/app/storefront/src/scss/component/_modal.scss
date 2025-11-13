@@ -1,0 +1,10 @@
+.js-pseudo-modal {
+    .modal:has(.product-enquiry-form-block) {
+        .only-close {
+            padding:16px 16px 0;
+        }
+        .modal-body {
+            padding-top: 0;
+        }
+    }
+}
