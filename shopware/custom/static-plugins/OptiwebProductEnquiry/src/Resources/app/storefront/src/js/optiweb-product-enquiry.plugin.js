@@ -12,99 +12,76 @@ export default class OptiwebProductEnquiryPlugin extends FormCmsHandler {
         }
         super.init();
         
-        // Ensure form validation is properly initialized
-        this._initValidation();
+        // Initialize field validation listeners
+        this._initFieldValidation();
     }
     
     /**
-     * Initialize form validation
+     * Initialize field validation listeners
      * @private
      */
-    _initValidation() {
+    _initFieldValidation() {
         const form = this.el;
         if (!form) {
             return;
         }
         
-        // Add HTML5 validation attributes if not already present
-        const requiredFields = form.querySelectorAll('[required]');
-        requiredFields.forEach((field) => {
-            if (field.type === 'email' && !field.hasAttribute('pattern')) {
-                // Email validation is handled by type="email"
-                field.setAttribute('type', 'email');
-            }
+        // Listen to input events to validate fields in real-time
+        const fields = form.querySelectorAll('input, textarea, select');
+        fields.forEach((field) => {
+            // Validate on input (user typing)
+            field.addEventListener('input', () => {
+                this._validateField(field);
+            });
             
-            if (field.type === 'number' && field.name === 'productQty') {
-                if (!field.hasAttribute('min')) {
-                    field.setAttribute('min', '1');
-                }
-                if (!field.hasAttribute('step')) {
-                    field.setAttribute('step', '1');
-                }
-            }
+            // Validate on blur (field loses focus)
+            field.addEventListener('blur', () => {
+                this._validateField(field);
+            });
         });
-        
-        // Add custom validation for quantity field
-        const qtyField = form.querySelector('input[name="productQty"]');
-        if (qtyField) {
-            qtyField.addEventListener('input', () => {
-                this._validateQuantityField(qtyField);
-            });
-            
-            qtyField.addEventListener('invalid', (e) => {
-                this._handleQuantityInvalid(e);
-            });
-        }
     }
     
     /**
-     * Validate quantity field
+     * Validate a single field
      * @param {HTMLElement} field
      * @private
      */
-    _validateQuantityField(field) {
-        const value = parseFloat(field.value);
+    _validateField(field) {
+        // Clear any custom validity that might block submission
+        field.setCustomValidity('');
         
-        if (isNaN(value) || value < 1) {
-            field.setCustomValidity(this._getValidationMessage('quantity', 'invalid'));
-        } else {
-            field.setCustomValidity('');
+        // Clear server error flag when user starts interacting with the field
+        if (field.hasAttribute('data-server-error')) {
+            field.removeAttribute('data-server-error');
         }
-    }
-    
-    /**
-     * Handle quantity field invalid event
-     * @param {Event} e
-     * @private
-     */
-    _handleQuantityInvalid(e) {
-        const field = e.target;
-        const value = parseFloat(field.value);
         
-        if (field.value === '' || field.value === null) {
-            field.setCustomValidity(this._getValidationMessage('quantity', 'required'));
-        } else if (isNaN(value) || value < 1) {
-            field.setCustomValidity(this._getValidationMessage('quantity', 'min'));
-        }
-    }
-    
-    /**
-     * Get validation message
-     * @param {string} field
-     * @param {string} type
-     * @returns {string}
-     * @private
-     */
-    _getValidationMessage(field, type) {
-        const messages = {
-            quantity: {
-                required: 'This field is required.',
-                invalid: 'Please enter a valid quantity.',
-                min: 'Quantity must be at least 1.'
+        // Check if field is valid
+        if (field.checkValidity() && field.value && field.value.trim() !== '') {
+            // Field is valid
+            field.classList.remove('is-invalid');
+            field.classList.add('is-valid');
+            field.removeAttribute('aria-invalid');
+            
+            // Hide error message
+            const errorElement = field.parentElement.querySelector('.invalid-feedback');
+            if (errorElement) {
+                errorElement.style.display = 'none';
             }
-        };
-        
-        return messages[field] && messages[field][type] ? messages[field][type] : 'This field is invalid.';
+        } else if (field.hasAttribute('required') && (!field.value || field.value.trim() === '')) {
+            // Required field is empty
+            field.classList.remove('is-valid');
+            field.classList.add('is-invalid');
+            field.setAttribute('aria-invalid', 'true');
+        } else if (!field.checkValidity()) {
+            // Field is invalid
+            field.classList.remove('is-valid');
+            field.classList.add('is-invalid');
+            field.setAttribute('aria-invalid', 'true');
+        } else {
+            // Field is optional and empty - neutral state
+            field.classList.remove('is-valid', 'is-invalid');
+            field.removeAttribute('aria-invalid');
+        }
     }
 
     _submitForm() {
@@ -148,6 +125,120 @@ export default class OptiwebProductEnquiryPlugin extends FormCmsHandler {
     _getValueFromInput(name) {
         const input = this.el.querySelector(`input[name="${name}"]`);
         return input ? input.value : '';
+    }
+
+    _handleResponse(res) {
+        const response = JSON.parse(res);
+        this.$emitter.publish('onFormResponse', res);
+
+        this.el.dispatchEvent(new CustomEvent('removeLoader'));
+
+        if (response.length > 0) {
+            let changeContent = true;
+            let content = '';
+            
+            for (let i = 0; i < response.length; i += 1) {
+                if (response[i].type === 'danger' || response[i].type === 'info') {
+                    changeContent = false;
+                    
+                    // Handle field-specific errors from server
+                    if (response[i].fieldErrors && typeof response[i].fieldErrors === 'object') {
+                        this._handleFieldErrors(response[i].fieldErrors);
+                    }
+                }
+                content += response[i].alert;
+            }
+
+            // Reset form after successful submission to clear form contents.
+            if (changeContent) {
+                this.el.reset();
+                this._clearAllFieldErrors();
+            }
+
+            this._createResponse(changeContent, content);
+        } else {
+            window.location.reload();
+        }
+    }
+    
+    /**
+     * Handle field-specific errors from server response
+     * @param {Object} fieldErrors
+     * @private
+     */
+    _handleFieldErrors(fieldErrors) {
+        // Mark each field with error from server
+        Object.keys(fieldErrors).forEach((fieldName) => {
+            const field = this.el.querySelector(`[name="${fieldName}"]`);
+            if (field) {
+                // Remove valid state
+                field.classList.remove('is-valid');
+                // Add invalid state
+                field.classList.add('is-invalid');
+                field.setAttribute('aria-invalid', 'true');
+                // Mark as server error - but allow re-validation when user types
+                field.setAttribute('data-server-error', 'true');
+                // Clear any custom validity to allow form submission after fixing
+                field.setCustomValidity('');
+                
+                // Find or create error message element
+                let errorElement = field.parentElement.querySelector('.invalid-feedback');
+                if (!errorElement) {
+                    errorElement = document.createElement('div');
+                    errorElement.className = 'invalid-feedback';
+                    field.parentElement.appendChild(errorElement);
+                }
+                errorElement.textContent = fieldErrors[fieldName];
+                errorElement.style.display = 'block';
+                
+                // Hide any valid feedback
+                const validFeedback = field.parentElement.querySelector('.valid-feedback');
+                if (validFeedback) {
+                    validFeedback.style.display = 'none';
+                }
+            }
+        });
+        
+        // Scroll to first error field
+        const firstErrorField = this.el.querySelector('.is-invalid');
+        if (firstErrorField) {
+            setTimeout(() => {
+                firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                firstErrorField.focus();
+            }, 100);
+        }
+    }
+    
+    /**
+     * Clear all field errors
+     * @private
+     */
+    _clearAllFieldErrors() {
+        const invalidFields = this.el.querySelectorAll('.is-invalid');
+        invalidFields.forEach((field) => {
+            field.classList.remove('is-invalid');
+            field.removeAttribute('aria-invalid');
+            field.removeAttribute('data-server-error');
+            // Clear any custom validity
+            field.setCustomValidity('');
+            
+            const errorElement = field.parentElement.querySelector('.invalid-feedback');
+            if (errorElement) {
+                errorElement.style.display = 'none';
+            }
+        });
+        
+        // Also clear all valid states
+        const validFields = this.el.querySelectorAll('.is-valid');
+        validFields.forEach((field) => {
+            field.classList.remove('is-valid');
+        });
+        
+        // Clear custom validity from all fields to ensure form can be submitted
+        const allFields = this.el.querySelectorAll('input, textarea, select');
+        allFields.forEach((field) => {
+            field.setCustomValidity('');
+        });
     }
 
     _createResponse(changeContent, content) {

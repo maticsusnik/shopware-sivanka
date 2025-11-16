@@ -16,7 +16,8 @@
       "productNotFound": "Product not found.",
       "missingProductId": "Product ID is missing.",
       "missingMailTemplate": "Mail template configuration is missing.",
-      "unexpectedError": "An unexpected error occurred. Please try again."
+      "unexpectedError": "An unexpected error occurred. Please try again.",
+      "checkErrors": "Please check the form for errors."
     }
   }
 }

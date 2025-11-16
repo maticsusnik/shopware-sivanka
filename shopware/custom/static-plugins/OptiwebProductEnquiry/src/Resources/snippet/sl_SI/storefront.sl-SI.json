@@ -16,7 +16,8 @@
       "productNotFound": "Izdelek ni najden.",
       "missingProductId": "ID izdelka manjka.",
       "missingMailTemplate": "Konfiguracija e-poštne predloge manjka.",
-      "unexpectedError": "Prišlo je do nepričakovane napake. Prosimo, poskusite znova."
+      "unexpectedError": "Prišlo je do nepričakovane napake. Prosimo, poskusite znova.",
+      "checkErrors": "Prosimo, preverite obrazec za napake."
     }
   }
 }

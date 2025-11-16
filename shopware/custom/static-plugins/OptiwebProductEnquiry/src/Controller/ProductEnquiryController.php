@@ -47,22 +47,33 @@ class ProductEnquiryController extends StorefrontController
 
         // Validate required fields
         $violations = new ConstraintViolationList();
+        $fieldErrors = [];
         
         $firstNameViolations = $this->validator->validate($data->get('firstName'), [
-            new NotBlank(['message' => $this->trans('error.VIOLATION::FIRST_NAME_IS_BLANK_ERROR')])
+            new NotBlank(['message' => $this->trans('error.VIOLATION::IS_BLANK_ERROR')])
         ]);
         $violations->addAll($firstNameViolations);
+        if ($firstNameViolations->count() > 0) {
+            $fieldErrors['firstName'] = $firstNameViolations->get(0)->getMessage();
+        }
 
         $lastNameViolations = $this->validator->validate($data->get('lastName'), [
-            new NotBlank(['message' => $this->trans('error.VIOLATION::LAST_NAME_IS_BLANK_ERROR')])
+            new NotBlank(['message' => $this->trans('error.VIOLATION::IS_BLANK_ERROR')])
         ]);
         $violations->addAll($lastNameViolations);
+        if ($lastNameViolations->count() > 0) {
+            $fieldErrors['lastName'] = $lastNameViolations->get(0)->getMessage();
+        }
 
         $emailViolations = $this->validator->validate($data->get('email'), [
             new NotBlank(['message' => $this->trans('error.VIOLATION::IS_BLANK_ERROR')]),
             new Email(['message' => $this->trans('error.VIOLATION::INVALID_EMAIL_FORMAT_ERROR')])
         ]);
         $violations->addAll($emailViolations);
+        if ($emailViolations->count() > 0) {
+            // Get the first violation message for email field
+            $fieldErrors['email'] = $emailViolations->get(0)->getMessage();
+        }
 
         $qtyValue = $data->get('productQty');
         if (empty($qtyValue) || $qtyValue <= 0) {
@@ -70,6 +81,9 @@ class ProductEnquiryController extends StorefrontController
                 new NotBlank(['message' => $this->trans('error.VIOLATION::IS_BLANK_ERROR')])
             ]);
             $violations->addAll($qtyViolations);
+            if ($qtyViolations->count() > 0) {
+                $fieldErrors['productQty'] = $qtyViolations->get(0)->getMessage();
+            }
         }
 
         if ($violations->count() > 0) {
@@ -83,10 +97,8 @@ class ProductEnquiryController extends StorefrontController
             return new JsonResponse([
                 [
                     'type' => 'danger',
-                    'alert' => $this->renderView('@Storefront/storefront/utilities/alert.html.twig', [
-                        'type' => 'danger',
-                        'list' => $violationMessages,
-                    ]),
+                    'alert' => $this->trans('optiwebProductEnquiry.errors.checkErrors'),
+                    'fieldErrors' => $fieldErrors,
                 ]
             ]);
         }
