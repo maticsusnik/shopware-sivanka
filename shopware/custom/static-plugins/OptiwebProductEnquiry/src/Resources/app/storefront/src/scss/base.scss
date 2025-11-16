@@ -130,6 +130,29 @@
         width: 100%;
         margin-top: 1rem;
     }
+    
+    // Hide valid feedback when field is invalid
+    .form-control.is-invalid ~ .valid-feedback {
+        display: none !important;
+    }
+    
+    // Remove validation icons (checkmarks and X icons) from inside fields
+    // Bootstrap adds these via background-image, we remove them
+    .form-control.is-valid,
+    .form-control.is-invalid {
+        background-image: none !important;
+        padding-right: inherit !important;
+    }
+    
+    // Ensure valid fields have green border
+    .form-control.is-valid {
+        border-color: #198754 !important;
+    }
+    
+    // Ensure invalid fields have red border
+    .form-control.is-invalid {
+        border-color: #dc3545 !important;
+    }
 }
 
 

@@ -6,5 +6,9 @@
         .modal-body {
             padding-top: 0;
         }
+
+    }
+    .cms-block-product-enquiry-form + .close-enquiry-form {
+        display: none !important;
     }
 }
