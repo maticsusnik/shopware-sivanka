@@ -18,7 +18,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION} | bash -
 RUN apt-get install -y nodejs
 ## Dev only - uncomment when building local for HMR
 ## RUN apt-get xdg-utils
-RUN npm install -g npm@latest
+RUN npm install -g npm@11.6.2
 RUN docker-php-ext-install phar simplexml
 RUN docker-php-ext-enable phar simplexml
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*

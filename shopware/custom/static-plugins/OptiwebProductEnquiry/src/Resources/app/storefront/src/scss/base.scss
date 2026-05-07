@@ -1,28 +1,35 @@
 .quickview-minimal-container {
-    margin-bottom: 0;
+    display: flex;
     align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 0;
 
-    // Ensure Bootstrap col-md-6 works properly (50/50 on desktop)
     .quickview-minimal-image-wrapper {
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-bottom: 0;
+        padding: 0;
     }
 
     .quickview-minimal-image {
         width: 100%;
-        text-align: center;
-        height:150px;
-        svg,img {
-            display: block;
-            height: 100% !important;
-            width: 100%;
+        max-height: 150px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        img {
+            max-width: 100%;
+            max-height: 150px;
+            width: auto;
+            height: auto;
             object-fit: contain;
         }
-        .quickview-minimal-img {
+
+        svg {
             max-width: 100%;
-            height: auto;
+            max-height: 150px;
         }
     }
 
@@ -32,23 +39,18 @@
         justify-content: center;
     }
 
-    .quickview-minimal-product {
-        width: 100%;
-
-        .quickview-minimal-product-name {
-            margin-bottom: 0.5rem;
-            font-size: 1.125rem;
-            font-weight: 600;
-        }
-
-        .quickview-minimal-product-number {
-            font-size: 0.875rem;
-            color: #6c757d;
-        }
+    .quickview-minimal-product-name {
+        font-weight: 600;
+        font-size: 1.125rem;
+        margin-bottom: 0.5rem;
     }
 
+    .quickview-minimal-product-number {
+        font-size: 0.875rem;
+        color: #6c757d;
+        margin-bottom: 0;
+    }
 }
-
 
 .product-enquiry-form {
     margin-top: 1rem;
@@ -67,92 +69,56 @@
     }
 }
 
-// Global form styling - consistent across product page and listing pages
 .cms-element-product-enquiry-form {
     .form-content {
         padding: 1rem 0;
     }
 
-    // Form rows - Bootstrap handles spacing via gutters
-    .form-row {
-        //margin-bottom: 1rem;
-
-        // Product row - add bottom border and spacing
-        &.product-row {
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #dee2e6;
-        }
+    .product-row {
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #dee2e6;
     }
 
-    // Form groups - consistent spacing
-    .form-group {
-        margin-bottom: 1rem;
-    }
-
-    // Quantity field with unit display - ensure 100% width
     .qtyField {
-        position: relative;
         display: flex;
         align-items: center;
+        position: relative;
         gap: 0.5rem;
         width: 100%;
-
-        .qty {
-            margin-top: 2rem;
-            font-size: 0.875rem;
-            color: #6c757d;
-        }
     }
 
-    // Remove input outline on focus
     .form-control,
     .form-select,
     textarea.form-control {
-        outline: none !important;
-        box-shadow: none !important;
+        outline: none;
+        box-shadow: none;
+        margin-bottom: 0;
 
         &:focus {
-            outline: none !important;
-            box-shadow: none !important;
             border-color: inherit;
+            box-shadow: none;
         }
     }
 
-    // Ensure form elements have consistent spacing
-    .form-control,
-    .form-select {
-        margin-bottom: 0;
+    .is-valid {
+        border-color: #198754;
+        background-image: none;
+        padding-right: inherit;
     }
 
-    // Submit button styling
+    .is-invalid {
+        border-color: #dc3545;
+        background-image: none;
+        padding-right: inherit;
+    }
+
+    .is-invalid ~ .valid-feedback {
+        display: none;
+    }
+
     .btn-primary[type="submit"] {
         width: 100%;
         margin-top: 1rem;
     }
-    
-    // Hide valid feedback when field is invalid
-    .form-control.is-invalid ~ .valid-feedback {
-        display: none !important;
-    }
-    
-    // Remove validation icons (checkmarks and X icons) from inside fields
-    // Bootstrap adds these via background-image, we remove them
-    .form-control.is-valid,
-    .form-control.is-invalid {
-        background-image: none !important;
-        padding-right: inherit !important;
-    }
-    
-    // Ensure valid fields have green border
-    .form-control.is-valid {
-        border-color: #198754 !important;
-    }
-    
-    // Ensure invalid fields have red border
-    .form-control.is-invalid {
-        border-color: #dc3545 !important;
-    }
 }
-
-

@@ -1,0 +1,6 @@
+{% sw_extends '@Storefront/storefront/page/checkout/finish/index.html.twig' %}
+
+{% block page_checkout_finish %}
+    {% sw_include '@Storefront/storefront/component/checkout/checkout-steps.html.twig' with { activeStep: 3 } %}
+    {{ parent() }}
+{% endblock %}

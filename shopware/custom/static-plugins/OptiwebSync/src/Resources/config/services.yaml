@@ -1,0 +1,80 @@
+# config/services.yaml or src/Resources/config/services.yaml
+
+services:
+  # Auto-load your entire plugin/service folder
+  OptiwebSync\:
+    resource: '../../*'
+    exclude:
+      - '../../DependencyInjection/'
+      - '../../Entity/'
+      - '../../Migrations/'
+      - '../../Tests/'
+    autowire: true
+    autoconfigure: true
+
+  # Specific helpers (if you want to override anything)
+  OptiwebSync\Helper\ShopwareApiHelper:
+    arguments:
+      $client: '@http_client.raw'
+#      $client: '@http_client'
+    public: true
+
+  http_client.raw:
+    class: Symfony\Contracts\HttpClient\HttpClientInterface
+    factory: ['Symfony\Component\HttpClient\HttpClient', 'create']
+
+  OptiwebSync\Helper\ApiHelper:
+    arguments:
+      $client: '@http_client.raw'
+    public: true
+
+  # Auto-tag all classes that implement the interface
+  _instanceof:
+    OptiwebSync\Service\SyncBase\SyncBaseInterface:
+      tags: ['optiweb.sync_base']
+
+  # SyncCommand with tagged iterator injected
+  OptiwebSync\Command\SyncCommand:
+    arguments:
+      $syncServices: !tagged_iterator 'optiweb.sync_base'
+    tags: ['console.command']
+
+  OptiwebSync\Command\ScheduledTaskUpdateStatusCommand:
+    tags: ['console.command']
+
+  OptiwebSync\Service\Product\ProductSync:
+    autowire: true
+    autoconfigure: true
+
+  OptiwebSync\ScheduledTask\Product\ImportProductsTaskHandler:
+    arguments:
+      $scheduledTaskRepository: '@scheduled_task.repository'
+      $exceptionLogger: '@monolog.logger'
+      $productSync: '@OptiwebSync\Service\Product\ProductSync'
+    tags:
+      - { name: 'messenger.message_handler' }
+
+  OptiwebSync\ScheduledTask\Product\ImportProductPriceTaskHandler:
+    arguments:
+      $scheduledTaskRepository: '@scheduled_task.repository'
+      $exceptionLogger: '@monolog.logger'
+      $productPriceSync: '@OptiwebSync\Service\Product\ProductPriceSync'
+    tags:
+      - { name: 'messenger.message_handler' }
+
+  OptiwebSync\ScheduledTask\Product\ImportProductStockTaskHandler:
+    arguments:
+      $scheduledTaskRepository: '@scheduled_task.repository'
+      $exceptionLogger: '@monolog.logger'
+      $productStockSync: '@OptiwebSync\Service\Product\ProductStockSync'
+    tags:
+      - { name: 'messenger.message_handler' }
+
+  OptiwebSync\ScheduledTask\Order\ExportOrdersTaskHandler:
+    arguments:
+      $scheduledTaskRepository: '@scheduled_task.repository'
+      $exceptionLogger: '@monolog.logger'
+      $exportOrdersSync: '@OptiwebSync\Service\Order\OrderExportSync'
+    tags:
+      - { name: 'messenger.message_handler' }
+

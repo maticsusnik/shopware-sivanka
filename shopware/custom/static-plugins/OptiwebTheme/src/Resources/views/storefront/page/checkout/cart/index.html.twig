@@ -1,13 +1,11 @@
 {% sw_extends '@Storefront/storefront/page/checkout/cart/index.html.twig' %}
 
-{% block page_checkout_cart_add_product_and_shipping %}
-{% endblock %}
-
-{% block page_checkout_cart_add_promotion %}
-{% endblock %}
-
 {% block page_checkout_cart_header %}
+    {% sw_include '@Storefront/storefront/component/checkout/checkout-steps.html.twig' with { activeStep: 1 } %}
     <h1 class="cart-main-header d-inline-block">
         {{ 'checkout.cartHeader'|trans|sw_sanitize }}
     </h1>
+{% endblock %}
+
+{% block page_checkout_cart_add_product_and_shipping %}
 {% endblock %}

@@ -1,0 +1,68 @@
+{% block optiweb_product_enquiry_detail %}
+<sw-page class="optiweb-product-enquiry-detail">
+    {% block optiweb_product_enquiry_detail_header %}
+    <template #smart-bar-header>
+        <h2>{{ $tc('optiwebProductEnquiry.admin.detail.title') }}</h2>
+    </template>
+    {% endblock %}
+
+    {% block optiweb_product_enquiry_detail_actions %}
+    <template #smart-bar-actions>
+        <sw-button @click="goBack">{{ $tc('global.default.cancel') }}</sw-button>
+        <sw-button
+            v-if="enquiry && enquiry.status === 'new'"
+            variant="primary"
+            :is-loading="isSaving"
+            @click="markAsRead"
+        >
+            {{ $tc('optiwebProductEnquiry.admin.detail.markAsRead') }}
+        </sw-button>
+    </template>
+    {% endblock %}
+
+    {% block optiweb_product_enquiry_detail_content %}
+    <template #content>
+        <sw-loader v-if="isLoading" />
+        <template v-else-if="enquiry">
+            <sw-card :title="$tc('optiwebProductEnquiry.admin.detail.customerSection')">
+                <sw-container columns="1fr 1fr" gap="16px">
+                    <sw-text-field :value="enquiry.firstName" :label="$tc('account.personalFirstName')" disabled />
+                    <sw-text-field :value="enquiry.lastName" :label="$tc('account.personalLastName')" disabled />
+                    <sw-text-field :value="enquiry.email" :label="$tc('account.personalMailLabel')" disabled />
+                    <sw-text-field :value="enquiry.phone || '—'" :label="$tc('account.profilePhoneNumber')" disabled />
+                </sw-container>
+            </sw-card>
+
+            <sw-card :title="$tc('optiwebProductEnquiry.admin.detail.productSection')">
+                <sw-container columns="1fr 1fr" gap="16px">
+                    <sw-text-field :value="enquiry.productName" label="Product" disabled />
+                    <sw-text-field :value="enquiry.productNumber" label="Product Number" disabled />
+                    <sw-text-field :value="enquiry.productOption || '—'" label="Variant" disabled />
+                    <sw-text-field :value="String(enquiry.quantity)" label="Quantity" disabled />
+                </sw-container>
+            </sw-card>
+
+            <sw-card v-if="enquiry.message" :title="$tc('optiwebProductEnquiry.admin.detail.messageSection')">
+                <sw-textarea-field :value="enquiry.message" disabled rows="5" />
+            </sw-card>
+
+            <sw-card title="Meta">
+                <sw-container columns="1fr 1fr" gap="16px">
+                    <sw-text-field
+                        :value="enquiry.createdAt | date({ hour: '2-digit', minute: '2-digit' })"
+                        label="Submitted"
+                        disabled
+                    />
+                    <div>
+                        <label>Status</label>
+                        <sw-label :variant="enquiry.status === 'new' ? 'warning' : 'success'" appearance="pill">
+                            {{ $tc('optiwebProductEnquiry.admin.detail.status.' + enquiry.status) }}
+                        </sw-label>
+                    </div>
+                </sw-container>
+            </sw-card>
+        </template>
+    </template>
+    {% endblock %}
+</sw-page>
+{% endblock %}

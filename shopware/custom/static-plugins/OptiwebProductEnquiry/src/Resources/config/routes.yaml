@@ -1,0 +1,3 @@
+optiweb_product_enquiry_storefront:
+  resource: ../../Controller/
+  type: attribute

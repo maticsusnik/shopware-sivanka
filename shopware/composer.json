@@ -6,6 +6,8 @@
         "optiweb-snippets/optiweb-snippets": "^1.0",
         "optiweb/custom-fields": "^1.0",
         "optiweb/product-enquiry": "*",
+        "optiweb/shopware-sync-core": "*",
+        "optiweb/sivanka-sync": "*",
         "optiweb/theme": "^1.0",
         "shopware/administration": "*",
         "shopware/core": "v6.7.2.1",
@@ -31,6 +33,13 @@
         {
             "type": "path",
             "url": "custom/static-plugins/*",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": ".optiweb-vendor/optiweb-shopware-sync-core",
             "options": {
                 "symlink": true
             }

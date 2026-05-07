@@ -1,102 +1,111 @@
-
-body:not(.modal-open) .gallery-slider-row {
-    gap: 1rem;
-    margin-bottom: 1rem;
-
-    > div {
-        width: 100%;
-    }
-
-    .gallery-slider-col {
-        order: 1 !important;
-    }
-
-    .gallery-slider-item img {
-        margin: 0;
-        height: 100%;
-    }
-
-    .tns-inner, #tns2 {
-        width: 100%;
-        margin: 0 !important;
-    }
-
-    .gallery-slider-thumbnails {
-        --gap: 1rem;
-        display: flex;
-        width: 100%;
-        flex-wrap: wrap;
-        gap: var(--gap);
-
-        #tns2-iw {
-            margin: 0;
+.is-ctl-product {
+    .cms-element-image-gallery {
+        .gallery-slider-controls-prev,
+        .gallery-slider-controls-next {
+            border:none !important;
+            z-index:999;
         }
-
-        &-container {
-            width: 100%;
-        }
-
-        &-col {
-            order: 2 !important;
-            padding-right: 20px;
-        }
-
-        &-item {
-            width: calc(25% - var(--gap) + (var(--gap) / 4)) !important;
-            padding-right: 0 !important;
-            padding-bottom: 0 !important;
-            height: auto;
-            border: 1px solid $ow-color-white;
-
-            &.tns-nav-active, &:hover {
-                border: 1px solid $ow-color-base;
-            }
-
-            &-inner {
-                position: relative;
-                height: 0;
-                padding-bottom: calc(82 / 142 * 100%) !important;
-                padding-top: 0;
-                padding-inline: 0 !important;
-                overflow: hidden;
-                border: 0;
-
-                img {
-                    position: absolute;
-                    left: 0;
-                    top: 0;
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                }
-            }
-        }
-    }
-
-    .gallery-slider-col {
-        .gallery-slider-item-container {
-            padding: 0 !important;
-        }
-
         .gallery-slider-item {
-            margin: 0 1px;
-
-            img {
-                width: 100%;
-            }
+            cursor:pointer;
         }
     }
+}
 
-    .base-slider-dots, .gallery-slider-controls {
-        display: none;
+.product-detail-stock-information-wrapper{
+    margin: 0 0 10px 0;
+}
+.product-detail-stock {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    &__text {
+        color: $ow-color-black;
+        @include fontSpecs(14, 20, 400);
     }
+}
 
-    .gallery-slider-single-image {
-        min-height: auto !important;
+.out-of-stock{
+    .dot{
+        background-color: $ow-color-red-stock;
+    }
+}
 
-        img.gallery-slider-image {
-            position: relative;
+.low-stock{
+    .dot{
+        background-color: $ow-color-orange-stock;
+    }
+}
+
+.dot {
+    width: 11px;
+    height: 11px;
+    display: block;
+    background-color: $ow-color-green-stock;
+    border-radius: 100%;
+    position: relative;
+    top: 0;
+}
+
+//fix for iframe slider swipe actions on mobile
+.gallery-slider-item {
+    @include media-breakpoint-down(md) {
+        .overlay{
+            position: absolute;
+            background-color: transparent !important;
+            height: 100%;
             width: 100%;
+            z-index: 99;
         }
+    }
+}
+
+// Gallery thumbnail overrides
+.gallery-slider-thumbnails-item {
+    height: 70px;
+    width: 90px;
+    border: none;
+    cursor: pointer;
+
+    &.tns-nav-active,
+    &:hover {
+        .gallery-slider-thumbnails-item-inner {
+            border-color: $ow-color-base;
+        }
+    }
+}
+
+.gallery-slider-thumbnails-item-inner {
+    border: 1px solid $ow-color-grey-4;
+    border-radius: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+
+    img.gallery-slider-thumbnails-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        max-height: none;
+        max-width: none;
+        flex: none;
+    }
+}
+
+.gallery-slider-thumbnails-controls-prev,
+.gallery-slider-thumbnails-controls-next {
+    border: none !important;
+}
+
+.modal.zoom-modal .image-zoom-container {
+    width: 90%;
+    margin: 0 auto;
+    @include media-breakpoint-down(md) {
+        width: 80%;
+    }
+
+    .gallery-slider-image {
+        max-height: 95%;
     }
 }

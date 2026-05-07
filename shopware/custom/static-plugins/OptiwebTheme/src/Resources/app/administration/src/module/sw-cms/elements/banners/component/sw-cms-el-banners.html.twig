@@ -7,9 +7,15 @@
             <div class="sw-cms-el-banners__item" v-for="(banner, index) in element.config.banners.value" :key="index">
                 <div class="sw-cms-el-banners__image" v-if="banner.mediaId">
                     <sw-media-preview-v2 :source="banner.mediaId" size="cover" />
+                    <div
+                        v-if="banner.text"
+                        class="sw-cms-el-banners__text"
+                        :class="['pos-v-' + (banner.textPositionV || 'bottom'), 'pos-h-' + (banner.textPositionH || 'left')]"
+                        v-html="banner.text">
+                    </div>
                 </div>
-                <div class="sw-cms-el-banners__body">
-                    <div class="sw-cms-el-banners__text" v-if="banner.text">{{ banner.text }}</div>
+                <div class="sw-cms-el-banners__body" v-if="!banner.mediaId">
+                    <div class="sw-cms-el-banners__text" v-if="banner.text" v-html="banner.text"></div>
                     <div class="sw-cms-el-banners__link" v-if="banner.link">{{ banner.link }}</div>
                 </div>
             </div>
@@ -19,6 +25,3 @@
         </div>
     </div>
 {% endblock %}
-
-
-

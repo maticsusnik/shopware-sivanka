@@ -1,7 +1,25 @@
 {% sw_extends '@Storefront/storefront/page/checkout/_page.html.twig' %}
 
+{% block page_checkout_aside_container %}
+    <div class="checkout-aside-container">
+        {% block page_checkout_aside_summary %}
+            <div class="checkout-aside-summary">
+                {% block page_checkout_summary_header %}
+                    <h2 class="checkout-aside-summary-header">
+                        {{ 'checkout.summaryHeader'|trans|sw_sanitize }}
+                    </h2>
+                {% endblock %}
 
-{% block page_checkout_container %}
-    <h1>{{ 'optiweb.checkout.title'|trans }}</h1>
-    {{ parent() }}
+                {% block page_checkout_summary_list %}
+                    <div class="checkout-aside-summary-list-container">
+                        {% block page_checkout_summary_list_container %}
+                            {% sw_include '@Storefront/storefront/page/checkout/summary.html.twig' %}
+                        {% endblock %}
+                    </div>
+                {% endblock %}
+            </div>
+        {% endblock %}
+
+        {% block page_checkout_aside_actions %}{% endblock %}
+    </div>
 {% endblock %}

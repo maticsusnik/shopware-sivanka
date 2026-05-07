@@ -1,28 +1,25 @@
 {
-    "name": "optiweb/product-enquiry",
-    "description": "Optiweb Product Enquiry plugin for Shopware 6.7",
-    "type": "shopware-platform-plugin",
-    "version": "2.0.0",
-    "license": "MIT",
-    "require": {
-        "shopware/core": "~6.7.0"
+  "name": "optiweb/product-enquiry",
+  "description": "Optiweb Product Enquiry plugin for Shopware 6.7",
+  "type": "shopware-platform-plugin",
+  "version": "3.0.0",
+  "license": "MIT",
+  "require": {
+    "shopware/core": "~6.7.0"
+  },
+  "extra": {
+    "shopware-plugin-class": "OptiwebProductEnquiry\\OptiwebProductEnquiry",
+    "label": {
+      "de-DE": "Optiweb Produktanfrage",
+      "en-GB": "Optiweb Product Enquiry"
     },
-    "autoload": {
-        "psr-4": {
-            "OptiwebProductEnquiry\\": "src/"
-        }
-    },
-    "authors": [
-        {
-            "name": "Optiweb",
-            "homepage": "https://www.optiweb.com"
-        }
-    ],
-    "extra": {
-        "shopware-plugin-class": "OptiwebProductEnquiry\\OptiwebProductEnquiry",
-        "label": {
-            "de-DE": "Optiweb Product Enquiry",
-            "en-GB": "Optiweb Product Enquiry"
-        }
+    "description": {
+      "en-GB": "Replaces Add to Cart with an enquiry form when products are out of stock or not sellable."
     }
+  },
+  "autoload": {
+    "psr-4": {
+      "OptiwebProductEnquiry\\": "src/"
+    }
+  }
 }

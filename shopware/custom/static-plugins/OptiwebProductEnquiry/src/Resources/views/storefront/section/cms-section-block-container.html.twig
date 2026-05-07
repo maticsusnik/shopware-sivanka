@@ -2,15 +2,4 @@
 
 {% block section_content_block %}
     {{ parent() }}
-
-    {% if(block is not empty and block.type == 'product-enquiry-form') %}
-        <div class="close-enquiry-form">
-            <button type="button"
-                    class="btn btn-primary btn-close enquiry-form-close d-none"
-                    data-dismiss="modal"
-                    aria-label="Close">
-                <span class="text">{{ "optiwebProductEnquiry.close"|trans|sw_sanitize }}</span>
-            </button>
-        </div>
-    {% endif %}
 {% endblock %}

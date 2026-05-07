@@ -2,10 +2,14 @@
   "base": "/bundles/optiwebproductenquiry/administration/",
   "entryPoints": {
     "optiweb-product-enquiry": {
-      "css": [],
-      "dynamic": [],
+      "css": [
+        "/bundles/optiwebproductenquiry/administration/assets/optiweb-product-enquiry-CA3sZ60G.css"
+      ],
+      "dynamic": [
+        "/bundles/optiwebproductenquiry/administration/assets/en-GB-BT2oDtSP.js"
+      ],
       "js": [
-        "/bundles/optiwebproductenquiry/administration/assets/optiweb-product-enquiry-1migtAGX.js"
+        "/bundles/optiwebproductenquiry/administration/assets/optiweb-product-enquiry-DCKAla3G.js"
       ],
       "legacy": false,
       "preload": []

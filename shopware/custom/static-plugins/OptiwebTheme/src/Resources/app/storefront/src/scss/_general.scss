@@ -1,5 +1,15 @@
 .container, .cms-section .boxed {
     max-width: $content-width;
+    margin-inline: auto;
+}
+
+.cms-section-default .boxed {
+    max-width: $header-width;
+    margin-inline: auto;
+}
+
+.cms-section {
+    overflow: visible;
 }
 
 .container-main {

@@ -1,5 +1,5 @@
 .offcanvas.offcanvas-bottom {
-    max-height: 70%;
+    max-height: 80%;
     border-radius: 0;
     height: auto;
 }
@@ -83,34 +83,33 @@
     border-radius: 0;
 }
 
-.filter-show-all {
-    cursor: pointer;
-    @include margin('bottom', 12);
-    @include margin('top', -8);
-
-    .icon-filter-show-all {
-        @include margin('bottom', 12);
-        color: $ow-color-black;
-    }
-
-    .text {
-        display: inline-block;
-        vertical-align: middle;
-        @include fontSpecs(16, 24, 700, 0.1);
-        color: $ow-color-black;
-    }
-
-    .hide {
-        display: none;
-    }
+.filter-panel-item-toggle {
+    white-space:normal;
+    line-height:1.4;
 }
 
 .filter-multi-select-dropdown {
     border-radius: 0;
-    max-height: none;
+    //max-height: none;
     border: none;
-    overflow: hidden;
+    //overflow: hidden;
     padding: 0;
+
+    /* width */
+    &::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    /* Track */
+    &::-webkit-scrollbar-track {
+        background: white;
+    }
+
+    /* Handle */
+    &::-webkit-scrollbar-thumb {
+        background: #767676;
+        border-radius: 10px;
+    }
 
     .filter-multi-select-list-item.disabled,
     .hidden,
@@ -122,4 +121,33 @@
 
 .btn.filter-panel-wrapper-toggle.d-none {
     display: none;
+}
+
+@media screen and (min-width: 992px) {
+    .cms-block-sidebar-filter {
+        //top: 20px;
+        //position: sticky;
+    }
+}
+
+.offcanvas-filter {
+    overflow: hidden;
+
+    .filter-panel {
+        /* width */
+        &::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        /* Track */
+        &::-webkit-scrollbar-track {
+            background: white;
+        }
+
+        /* Handle */
+        &::-webkit-scrollbar-thumb {
+            background: #767676;
+            border-radius: 10px;
+        }
+    }
 }

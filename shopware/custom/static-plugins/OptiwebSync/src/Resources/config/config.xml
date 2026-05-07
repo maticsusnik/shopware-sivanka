@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/trunk/src/Core/System/SystemConfig/Schema/config.xsd">
+
+
+    <card>
+        <title>Order export</title>
+        <component name="sw-entity-single-select">
+            <name>orderExportState</name>
+            <entity>state_machine_state</entity>
+            <label>Select default order state for export</label>
+        </component>
+
+        <component name="sw-entity-multi-id-select">
+            <name>allowedOrderPaymentStateToExport</name>
+            <entity>state_machine_state</entity>
+            <label>Select allowed order payment state to export</label>
+        </component>
+
+<!--        <component name="sw-entity-single-select">-->
+<!--            <name>creditCardPaymentId</name>-->
+<!--            <entity>payment_method</entity>-->
+<!--            <label>Select credit card payment id</label>-->
+<!--        </component>-->
+
+<!--        <component name="sw-entity-single-select">-->
+<!--            <name>orderPaymentCreditCardStateToExport</name>-->
+<!--            <entity>state_machine_state</entity>-->
+<!--            <label>Select allowed order payment credit card state to export</label>-->
+<!--        </component>-->
+
+<!--        <component name="sw-entity-single-select">-->
+<!--            <name>orderPaymentStatusFailedId</name>-->
+<!--            <entity>state_machine_state</entity>-->
+<!--            <label>Select payment status failed id</label>-->
+<!--        </component>-->
+
+<!--        <component name="sw-entity-single-select">-->
+<!--            <name>paymentMethodInvoice</name>-->
+<!--            <entity>payment_method</entity>-->
+<!--            <label>Select payment method: Invoice</label>-->
+<!--        </component>-->
+
+<!--        <component name="sw-entity-single-select">-->
+<!--            <name>paymentMethodCod</name>-->
+<!--            <entity>payment_method</entity>-->
+<!--            <label>Select payment method: Cash on delivery</label>-->
+<!--        </component>-->
+
+<!--        <component name="sw-entity-single-select">-->
+<!--            <name>paymentMethodDobavnica</name>-->
+<!--            <entity>payment_method</entity>-->
+<!--            <label>Select payment method: Dobavnica</label>-->
+<!--        </component>-->
+
+<!--        <component name="sw-entity-single-select">-->
+<!--            <name>paymentMethodStripe</name>-->
+<!--            <entity>payment_method</entity>-->
+<!--            <label>Select payment method: Stripe</label>-->
+<!--        </component>-->
+
+<!--        <component name="sw-entity-single-select">-->
+<!--            <name>paymentMethodPayapal</name>-->
+<!--            <entity>payment_method</entity>-->
+<!--            <label>Select payment method: Paypal</label>-->
+<!--        </component>-->
+
+<!--        <component name="sw-entity-single-select">-->
+<!--            <name>paymentMethodPayInShop</name>-->
+<!--            <entity>payment_method</entity>-->
+<!--            <label>Select payment method: Pay in shop</label>-->
+<!--        </component>-->
+
+<!--        <component name="sw-entity-single-select">-->
+<!--            <name>shippingMethodPostaBLazic</name>-->
+<!--            <entity>shipping_method</entity>-->
+<!--            <label>Select shipping method: Pošta (blazic)</label>-->
+<!--        </component>-->
+
+<!--        <component name="sw-entity-single-select">-->
+<!--            <name>shippingMethodPostaSlo</name>-->
+<!--            <entity>shipping_method</entity>-->
+<!--            <label>Select shipping method: Pošta SLO</label>-->
+<!--        </component>-->
+
+<!--        <component name="sw-entity-single-select">-->
+<!--            <name>shippingMethodGLS</name>-->
+<!--            <entity>shipping_method</entity>-->
+<!--            <label>Select shipping method: GLS</label>-->
+<!--        </component>-->
+
+<!--        <component name="sw-entity-single-select">-->
+<!--            <name>shippingMethodDPD</name>-->
+<!--            <entity>shipping_method</entity>-->
+<!--            <label>Select shipping method: DPD</label>-->
+<!--        </component>-->
+
+<!--        <component name="sw-entity-single-select">-->
+<!--            <name>shippingMethodPickupLJ</name>-->
+<!--            <entity>shipping_method</entity>-->
+<!--            <label>Select shipping method: Pickup LJ</label>-->
+<!--        </component>-->
+
+<!--        <component name="sw-entity-single-select">-->
+<!--            <name>shippingMethodPickupMB</name>-->
+<!--            <entity>shipping_method</entity>-->
+<!--            <label>Select shipping method: Pickup MB</label>-->
+<!--        </component>-->
+
+<!--        <component name="sw-entity-single-select">-->
+<!--            <name>shippingMethodPickupNM</name>-->
+<!--            <entity>shipping_method</entity>-->
+<!--            <label>Select shipping method: Pickup NM</label>-->
+<!--        </component>-->
+
+<!--        <component name="sw-entity-single-select">-->
+<!--            <name>shippingMethodPickupBrnik</name>-->
+<!--            <entity>shipping_method</entity>-->
+<!--            <label>Select shipping method: Pickup Brnik</label>-->
+<!--        </component>-->
+
+<!--        <component name="sw-entity-single-select">-->
+<!--            <name>shippingMethodRobomatBrnik</name>-->
+<!--            <entity>shipping_method</entity>-->
+<!--            <label>Select shipping method: Robomat Brnik</label>-->
+<!--        </component>-->
+
+<!--        <component name="sw-entity-single-select">-->
+<!--            <name>shippingMethodRobomatLJ</name>-->
+<!--            <entity>shipping_method</entity>-->
+<!--            <label>Select shipping method: Robomat LJ</label>-->
+<!--        </component>-->
+
+<!--        <component name="sw-entity-single-select">-->
+<!--            <name>shippingMethodPosta</name>-->
+<!--            <entity>shipping_method</entity>-->
+<!--            <label>Select shipping method: POŠTA</label>-->
+<!--        </component>-->
+
+<!--        <component name="sw-entity-single-select">-->
+<!--            <name>shippingMethodPogodbenaDostava</name>-->
+<!--            <entity>shipping_method</entity>-->
+<!--            <label>Select shipping method: Pogodbena dostava</label>-->
+<!--        </component>-->
+
+    </card>
+
+</config>

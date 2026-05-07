@@ -1,0 +1,37 @@
+{% block sw_order_list_grid_columns_customer_name %}
+    {% parent() %}
+    <template #column-customFields.optiwebOrderStatus="{ item }">
+        <sw-label v-if="getStatus(item) === 'nodata'" variant="neutral" size="medium" appearance="pill" :ghost="false" :caps="false" :dismissable="true">
+            Ni podatka
+        </sw-label>
+        <sw-label v-if="getStatus(item) === 'waiting'" variant="primary" size="medium" appearance="pill" :ghost="false" :caps="false" :dismissable="true">
+            Čaka na pošiljanje
+        </sw-label>
+        <sw-label v-if="getStatus(item) === 'processing'" variant="warning" size="medium" appearance="pill" :ghost="false" :caps="false" :dismissable="true">
+            V pripravi
+        </sw-label>
+        <sw-label v-if="getStatus(item) === 'partially_shipped'" variant="warning" size="medium" appearance="pill" :ghost="false" :caps="false" :dismissable="true">
+            Delno poslano
+        </sw-label>
+        <sw-label v-if="getStatus(item) === 'partially_sent'" variant="warning" size="medium" appearance="pill" :ghost="false" :caps="false" :dismissable="true">
+            Napaka pri določenih
+        </sw-label>
+        <sw-label v-if="getStatus(item) === 'sent'" variant="warning" size="medium" appearance="pill" :ghost="false" :caps="false" :dismissable="true">
+            Poslano
+        </sw-label>
+        <sw-label v-if="getStatus(item) === 'cancelled'" variant="neutral" size="medium" appearance="pill" :ghost="false" :caps="false" :dismissable="true">
+            Stornirano
+        </sw-label>
+        <sw-label v-if="getStatus(item) === 'done'" variant="success" size="medium" appearance="pill" :ghost="false" :caps="false" :dismissable="true">
+            Obdelano
+        </sw-label>
+        <sw-label v-if="getStatus(item) === 'importedPTH'" variant="success" size="medium" appearance="pill" :ghost="false" :caps="false" :dismissable="true">
+            PTH naročilo
+        </sw-label>
+        <sw-label v-if="getStatus(item) === 'error'" variant="danger" size="medium" appearance="pill" :ghost="false" :caps="false" :dismissable="true">
+            Napaka!
+            <sw-help-text :text="item.customFields.optiwebOrderError" :width="200" tooltipPosition="top" :showDelay="100" :hideDelay="100">
+            </sw-help-text>
+        </sw-label>
+    </template>
+{% endblock %}

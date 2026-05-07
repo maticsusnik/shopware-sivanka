@@ -9,7 +9,7 @@
                 {% for banner in data.banners %}
                     <div class="cms-element-banners__item">
                         {% if banner.media %}
-                            <a class="cms-element-banners__image" href="{{ banner.link ?: '#' }}" aria-label="{{ banner.text|default('') }}">
+                            <a class="cms-element-banners__image" href="{{ banner.link ?: '#' }}" aria-label="{{ banner.text|striptags|default('') }}">
                                 {% sw_thumbnails 'cms-banners' with {
                                     media: banner.media,
                                     sizes: {
@@ -20,7 +20,11 @@
                                     }
                                 } %}
                                 {% if banner.text %}
-                                    <span class="cms-element-banners__badge">{{ banner.text }}</span>
+                                    {% set posV = banner.textPositionV|default('bottom') %}
+                                    {% set posH = banner.textPositionH|default('left') %}
+                                    <div class="cms-element-banners__text pos-v-{{ posV }} pos-h-{{ posH }}">
+                                        {{ banner.text|raw }}
+                                    </div>
                                 {% endif %}
                             </a>
                         {% endif %}
@@ -30,5 +34,3 @@
         </section>
     {% endif %}
 {% endblock %}
-
-

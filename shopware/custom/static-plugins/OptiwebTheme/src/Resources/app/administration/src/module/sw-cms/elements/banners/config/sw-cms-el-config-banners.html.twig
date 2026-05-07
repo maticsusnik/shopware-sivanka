@@ -30,10 +30,32 @@
                         v-model:value="banner.mediaId"
                         @update:value="() => onBannerMediaChange(banner, banner.mediaId)" />
 
-                    <sw-text-field
+                    <sw-text-editor
                         :label="'Text'"
-                        v-model="banner.text"
-                        @change="onBannerTextChange" />
+                        :value="banner.text"
+                        @update:value="(val) => { banner.text = val; onBannerTextChange(); }" />
+
+                    <div class="sw-cms-el-config-banners__position-row">
+                        <sw-single-select
+                            :label="'Vertical position'"
+                            :options="[
+                                { value: 'top', label: 'Top' },
+                                { value: 'middle', label: 'Middle' },
+                                { value: 'bottom', label: 'Bottom' }
+                            ]"
+                            v-model:value="banner.textPositionV"
+                            @update:value="onBannerTextPositionChange" />
+
+                        <sw-single-select
+                            :label="'Horizontal position'"
+                            :options="[
+                                { value: 'left', label: 'Left' },
+                                { value: 'center', label: 'Center' },
+                                { value: 'right', label: 'Right' }
+                            ]"
+                            v-model:value="banner.textPositionH"
+                            @update:value="onBannerTextPositionChange" />
+                    </div>
 
                     <sw-url-field
                         :label="'Link'"
@@ -42,11 +64,8 @@
                 </div>
                 <div class="sw-cms-el-config-banners__item-footer">
                     <sw-button @click="removeBanner(index)">Remove</sw-button>
-                </div> 
+                </div>
             </div>
         </div>
     </div>
 {% endblock %}
-
-
-

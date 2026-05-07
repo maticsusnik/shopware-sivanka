@@ -33,5 +33,22 @@
             }
         }
 
+        &.text-right-over-image {
+            .sw-cms-block-img-text__content {
+                background: $color-shopware-brand-500;
+                padding: 40px;
+
+                button {
+                    background: white;
+                    color: $color-shopware-brand-500;
+                }
+            }
+        }
+
+        &.text-left-next-to-image {
+            .sw-cms-block-img-text__image {
+                order: 2;
+            }
+        }
     }
 }

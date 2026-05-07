@@ -34,6 +34,7 @@ $overlapping-cols: 2; //layout 'text-right-over-image' - for how many cols text 
 }
 
 .cms-block-text-button__inner,
+.cms-block-button__inner,
 .cms-block-img-text__inner {
     @include media-breakpoint-down(md) {
         &, & > .container {
@@ -69,6 +70,7 @@ $overlapping-cols: 2; //layout 'text-right-over-image' - for how many cols text 
 
         .img-col {
             order: 1;
+            margin-right: 0 !important;
         }
         .content-col {
             order: 2;

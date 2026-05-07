@@ -9,6 +9,10 @@ $ow-color-grey-4: #D9D9D9;
 $ow-color-grey-7: #888;
 $ow-color-grey-9: #303030;
 
+$ow-color-red-stock: #F43319;
+$ow-color-green-stock: #2DCB48;
+$ow-color-orange-stock: #F68B1E;
+
 $ow-box-shadow: 0 16px 40px 0 rgba(0, 0, 0, 0.10);
 $assets-path: '/bundles/optiwebtheme/assets';
 
@@ -23,7 +27,7 @@ $assets-path: '/bundles/optiwebtheme/assets';
  * General sizes
  */
 $bs-gutter-x: 40px;
-$content-width: 1098px + $bs-gutter-x;
+$content-width: 1366px + $bs-gutter-x;
 $header-width: 1366px + $bs-gutter-x;
 $wide-content-width: 1880px + $bs-gutter-x;
 $general-element-margin: 80; //in px

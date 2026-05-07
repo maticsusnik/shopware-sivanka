@@ -15,6 +15,12 @@
     @include margin('bottom', 60, true);
 }
 
+.cms-block-other-buy-products-slider, .cms-block-related-products-slider{
+    .cms-element-other-buy-products-slider,
+    .cms-element-related-products-slider {
+        @include margin('bottom', 60, true);
+    }
+}
 
 .product-detail {
     &-manufacturer-logo {
@@ -67,8 +73,11 @@
 
     &-configurator-option-label {
         background: $ow-color-white;
-        padding: 12px;
+        padding:6px 10px;
         @include fontSpecs(16, 24, 400, false, false);
+        &.disabled {
+            text-decoration: none;
+        }
     }
 
     &-quantity-group {
@@ -90,7 +99,8 @@
         .quantity-selector-group-input {
             padding-block: 12px;
             border: none;
-            max-width: 30px;
+            //max-width: 30px;
+            max-width: 80px;
         }
     }
 
@@ -122,8 +132,22 @@
 
 .gallery-slider-col {
     .product-badges {
+        position: relative;
+        top: unset;
+        left: unset;
+        gap: 8px;
+    }
+
+    .product-badges-icons-wrapper {
+        position: absolute;
         top: 10px;
-        left: 10px;
+        left: 30px;
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        pointer-events: none;
+        height:100%;
     }
 
     @include media-breakpoint-up(lg) {
@@ -135,7 +159,11 @@
 }
 
 .product-detail-buy {
-
+    @include media-breakpoint-up(lg) {
+        position: absolute;
+        right:0;
+        top:0;
+    }
     .product-wishlist-action {
         display: flex;
         align-items: center;
@@ -173,6 +201,15 @@
     }
 }
 
+.product-detail-description-text {
+    p {
+        margin-bottom: 1rem;
+    }
+    li > p:last-child {
+        margin-bottom: 0;
+    }
+}
+
 .product-detail-properties-table {
     .properties-row {
         border-bottom: 1px solid $ow-color-grey-4;
@@ -189,8 +226,31 @@
     }
 }
 
-.product-detail-specification-title {
+.product-detail-specification-title, .product-detail-document-title {
     @include margin('top', 40, true);
+}
+
+.product-documents{
+    &__list{
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    &__item{
+        a{
+            @include fontSpecs(16, 24, 400, false, false);
+            text-decoration: none;
+            color: $ow-color-grey-9;
+
+            &:hover{
+                color: $ow-color-black;
+                .product-documents__name{
+                    text-decoration: underline;
+                }
+            }
+        }
+    }
 }
 
 .card-tabs .card-body{

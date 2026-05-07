@@ -1,227 +1,504 @@
+// ============================================================
+// CHECKOUT STEPS PROGRESS BAR
+// ============================================================
+.checkout-steps {
+    @include margin('bottom', 32, true);
 
-.header-minimal-row {
-    border-bottom: 1px solid $ow-color-grey-1;
+    &-list {
+        display: flex;
+        align-items: center;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
 
-    .header-minimal-contact {
-        text-align: center;
+    &-item {
+        display: flex;
+        align-items: center;
+        flex: 1;
 
-        p {
-            margin: 0;
+        &:last-child .checkout-steps-connector {
+            display: none;
+        }
+    }
+
+    &-link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        color: $ow-color-grey-7;
+        pointer-events: none;
+        @include fontSpecs(14, 20, 400, false, false);
+
+        &[href] {
+            pointer-events: auto;
+            &:hover { color: $ow-color-black; }
+        }
+    }
+
+    &-number {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: $ow-color-grey-4;
+        color: $ow-color-white;
+        @include fontSpecs(13, 20, 700, false, false);
+        flex-shrink: 0;
+        transition: background 0.2s;
+    }
+
+    &-label {
+        @include media-breakpoint-down(sm) {
+            display: none;
+        }
+    }
+
+    &-connector {
+        flex: 1;
+        height: 1px;
+        background: $ow-color-grey-4;
+        margin-inline: 8px;
+        transition: background 0.2s;
+    }
+
+    .is-active {
+        .checkout-steps-number {
+            background: $ow-color-base;
+        }
+
+        .checkout-steps-link {
+            color: $ow-color-black;
+            font-weight: 700;
+        }
+    }
+
+    .is-done:not(.is-active) {
+        .checkout-steps-number {
+            background: $ow-color-black;
+        }
+
+        .checkout-steps-link[href] {
+            color: $ow-color-black;
+        }
+
+        .checkout-steps-connector {
+            background: $ow-color-black;
         }
     }
 }
 
+// ============================================================
+// MINIMAL HEADER
+// ============================================================
+.header-minimal-row {
+    border-bottom: 1px solid $ow-color-grey-1;
+    align-items: center;
+    min-height: 64px;
+
+    .header-minimal-contact {
+        text-align: center;
+        align-items: center;
+        justify-content: center;
+        @include fontSpecs(14, 20, 400, false, false);
+        color: $ow-color-grey-7;
+
+        p { margin: 0; }
+    }
+
+    .header-minimal-back-to-shop {
+        text-align: right;
+
+        .btn {
+            @include fontSpecs(14, 20, 700, false, false);
+            @include padding('top', 8, false);
+            @include padding('bottom', 8, false);
+            @include padding('left', 16, false);
+            @include padding('right', 16, false);
+        }
+    }
+}
+
+// ============================================================
+// REGISTER / ADDRESS PAGE
+// ============================================================
+.is-act-checkoutregisterpage {
+    .checkout {
+        padding-top: 0;
+    }
+
+    .address-main-header {
+        @include margin('bottom', 32, true);
+        @include fontSpecs(28, 34, 700, false, true);
+        display: block;
+    }
+}
+
+// ============================================================
+// CONFIRM PAGE
+// ============================================================
 .is-act-confirmpage {
     .checkout {
         padding-top: 0;
     }
 
-    h1 {
-        @include margin('bottom', 43, true);
+    .confirm-main-header {
+        @include margin('bottom', 32, true);
+        @include fontSpecs(28, 34, 700, false, true);
+        display: block;
     }
 }
 
-#one-page-checkout {
-    .step-container {
-        height: 100%;
-        padding: 1rem;
-        background: $ow-color-grey-1;
+.confirm-section {
+    @include margin('bottom', 24, false);
+
+    &-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        @include margin('bottom', 16, false);
+        border-bottom: 1px solid $ow-color-grey-4;
+        @include padding('bottom', 12, false);
     }
 
-    .confirm-tos {
-        .form-check {
-            min-height: 0;
-        }
-
-        .form-check-input.d-none + .form-check-label {
-            display: none;
-        }
+    &-number {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: $ow-color-black;
+        color: $ow-color-white;
+        @include fontSpecs(16, 24, 700, false, false);
+        flex-shrink: 0;
     }
 
-    .checkout-customer-comment-control {
-        label {
-            display: none;
-        }
+    &-title {
+        @include fontSpecs(18, 24, 700, false, false);
+        margin: 0;
+    }
+}
+
+.confirm-address {
+    margin-bottom: 0;
+}
+
+// Payment + Shipping section
+.confirm-payment-shipping {
+    margin-bottom: 0;
+
+    .confirm-shipping {
+        order: 1;
+        @include margin('bottom', 16, false);
+    }
+
+    .confirm-payment {
+        order: 2;
+        margin-bottom: 0;
     }
 
     .card-title {
         border-bottom: 0;
         padding-bottom: 0;
-        margin-bottom: 1.5rem;
-        font-size: 1.25rem;
+        @include margin('bottom', 12, false);
+        @include fontSpecs(16, 24, 700, false, false);
     }
 
-    .checkout-step-headline {
-        font-size: 1.5rem !important;
-
-        .step-icon {
-            width: 2.25rem;
-            height: 2.25rem;
-            background-color: $ow-color-base;
-            background-image: unset;
-            color: $ow-color-black;
-        }
+    .shipping-price {
+        width: 33%;
+        float: right;
+        text-align: right;
+        @include fontSpecs(14, 20, 400, false, false);
     }
 
-    //step 1
-    .checkout-main {
-        padding-right: 0.75rem;
-
-        @include media-breakpoint-down(lg) {
-            padding: 0.5rem 1rem;
-        }
-
-        .confirm-address {
-            margin-bottom: 0;
-        }
-    }
-
-    //step 2
-    .checkout-step-2 {
-        padding-inline: 0.75rem;
-
-        @include media-breakpoint-down(lg) {
-            padding: 0.5rem 1rem;
-        }
-
-        .confirm-payment-shipping {
-            margin-bottom: 0;
-
-            .confirm-shipping {
-                order: 1;
-                margin-bottom: 1rem;
-            }
-
-            .confirm-payment {
-                order: 2;
-                margin-bottom: 0;
-            }
-        }
-
-        .shipping-price {
-            width: 33%;
-            float: right;
-            text-align: right;
+    .shipping-method-description,
+    .payment-method-description {
+        p {
+            color: $ow-color-grey-7;
             @include fontSpecs(14, 20, 400, false, false);
         }
-
-        .shipping-method-description,
-        .payment-method-description {
-            p {
-                color: $ow-color-grey-7;
-                @include fontSpecs(14, 20, 400, false, false);
-            }
-        }
-
-        .payment-method-description {
-            width: 100%;
-        }
     }
 
-    //step 3
-    .checkout-aside {
-        padding-left: 0.75rem;
+    .payment-method-description {
+        width: 100%;
+    }
+}
 
-        @include media-breakpoint-down(lg) {
-            padding: 0.5rem 1rem;
+// TOS checkboxes
+.confirm-tos {
+    .form-check {
+        min-height: 0;
+    }
+
+    .form-check-input.d-none + .form-check-label {
+        display: none;
+    }
+}
+
+// Customer comment textarea
+.checkout-customer-comment-control {
+    label { display: none; }
+
+    textarea {
+        background: transparent;
+        border: 0;
+
+        &:hover, &:focus, &:active {
+            background: $ow-color-white;
         }
+    }
+}
 
-        &-container {
-            padding: 0;
-        }
+// ============================================================
+// CHECKOUT ASIDE — SIDEBAR
+// ============================================================
+.checkout-aside {
+    .card-title {
+        border-bottom: 0;
+        padding-bottom: 0;
+        @include margin('bottom', 8, false);
+        @include fontSpecs(16, 24, 700, false, false);
+    }
+}
 
-        .card-title {
-            margin-bottom: 0.5rem;
-            font-size: 1rem;
-        }
+.checkout-aside-container {
+    padding: 0;
+    background: $ow-color-grey-1;
+    border-radius: 4px;
+}
 
-        .confirm-tos, .checkout-aside-summary, #opc-checkout-additional-area {
+// Products list in aside (checkout address/register page)
+.checkout-aside-products {
+    padding: $product-buy-spacer;
+    padding-top: 0;
+
+    .checkout-aside-product-header {
+        @include fontSpecs(16, 24, 700, false, false);
+        border-top: 1px solid $ow-color-grey-4;
+        @include padding('top', 16, false);
+    }
+
+    .checkout-aside-product-list {
+        .line-item {
+            padding-block: 0.75rem;
             border-bottom: 1px solid $ow-color-grey-4;
-            padding-bottom: 1rem;
-            margin-block: 1rem;
-        }
 
-        .checkout-aside-container .confirm-tos {
-            margin-top: 1rem;
+            &:last-child { border-bottom: none; }
 
-            a {
-                color: $ow-color-black;
-
-                &:hover {
-                    color: $ow-color-base;
-                }
+            // Outer row: image+details | remove+price — single horizontal line
+            > .line-item-row {
+                display: flex;
+                flex-wrap: nowrap;
+                align-items: center;
+                gap: 8px;
             }
-        }
 
-        .checkout-aside-summary {
-            padding-bottom: 0;
-        }
+            // info block: let it grow, not forced to 100% by Bootstrap col-*
+            .line-item-info {
+                flex: 1 !important;
+                width: auto !important;
+                max-width: none !important;
+                min-width: 0;
 
-        .checkout-additional {
-            margin: 0;
-        }
-
-        textarea {
-            background: transparent;
-            border: 0;
-
-            &:hover, &:focus, &:active {
-                background: white;
-            }
-        }
-
-        .confirm-product {
-            .line-item-row {
-                .line-item-info {
-                    margin: 0;
-                }
-
-                .line-item-total-price {
-                    &:not(.checkout-price) {
-                        display: none;
-                    }
-
-                    &.checkout-price {
-                        width: auto;
-                        max-width: 100%;
-
-                        .line-item-total-price-value {
-                            text-align: left;
-                        }
-                    }
+                // Inner row: image left, details right
+                .line-item-row {
+                    flex-wrap: nowrap;
+                    align-items: center;
+                    gap: 8px;
                 }
             }
 
-            .card-body {
-                margin-top: -1rem;
-                margin-bottom: 0;
+            .line-item-img-container {
+                width: 48px;
+                flex-shrink: 0;
+
+                img { width: 100%; height: auto; object-fit: contain; }
+            }
+
+            .line-item-details {
+                flex: 1;
+                min-width: 0;
+            }
+
+            // Quantity inside details (actual class in DOM)
+            .line-item-cart-quantity {
+                margin-top: 2px;
+                @include fontSpecs(13, 18, 400, false, false);
+                color: $ow-color-grey-7;
+
+                .line-item-quantity-row { margin: 0; }
+                .line-item-quantity-label { display: none; }
+                .line-item-quantity-select-wrapper { width: auto; }
+            }
+
+            // Price duplicated inside details — hide it
+            .line-item-total-price.checkout-price { display: none; }
+
+            // Outer price+remove column (no checkout-price class): show both remove btn and price
+            .line-item-total-price.line-item-price:not(.checkout-price) {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-end;
+                flex-shrink: 0;
+                width: auto !important;
+                max-width: none !important;
+                gap: 4px;
+
+                .line-item-total-price-label { display: none; }
+                .line-item-total-price-value {
+                    @include fontSpecs(14, 20, 700, false, false);
+                }
+            }
+
+            // Hide columns not needed in aside
+            .line-item-unit-price,
+            .line-item-tax-price { display: none; }
+
+            .line-item-label { @include fontSpecs(14, 20, 500, false, false); }
+
+            .line-item-details-characteristics {
+                @include fontSpecs(12, 16, 400, false, false);
+
+                .line-item-details-characteristics-option { font-weight: unset; }
             }
         }
+    }
+}
 
-        &-summary-total {
-            padding-top: 1rem;
-            border-top: 1px solid $ow-color-grey-4;
+// Summary area
+.checkout-aside-summary {
+    background: none;
+    padding: $product-buy-spacer;
+    padding-bottom: 0;
+
+    &-header {
+        @include fontSpecs(18, 24, 700, false, false);
+        @include margin('bottom', 16, false);
+        border-bottom: 1px solid $ow-color-grey-4;
+        @include padding('bottom', 12, false);
+    }
+
+    &-label,
+    &-value,
+    &-header-row {
+        @include margin('bottom', 8, false);
+        margin-top: 0 !important;
+    }
+
+    &-value {
+        font-weight: 700;
+    }
+
+    &-list {
+        margin: 0;
+    }
+}
+
+// Grand total with strong visual separator
+// display:contents makes this div layout-transparent so dt.col-7/dd.col-5
+// inside it remain direct flex children of the parent dl.row grid.
+.checkout-aside-summary-grand-total-wrapper {
+    display: contents;
+}
+
+// Visual separator: applied directly to the first total dt/dd pair
+dt.checkout-aside-summary-total,
+dd.checkout-aside-summary-total {
+    border-top: 2px solid $ow-color-black;
+    padding-top: 12px;
+    margin-top: 8px;
+    @include fontSpecs(17, 24, 700, false, false);
+}
+
+// Trust badge strip
+.checkout-aside-trust {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    @include padding('top', 12, false);
+    @include padding('bottom', 8, false);
+    @include padding('left', 20, false);
+    @include padding('right', 20, false);
+    @include fontSpecs(13, 18, 400, false, false);
+    color: $ow-color-grey-7;
+
+    .icon {
+        width: 14px;
+        height: 14px;
+        color: $ow-color-base;
+        flex-shrink: 0;
+    }
+}
+
+// Aside action buttons
+.checkout-aside-action {
+    @include padding('left', 20, false);
+    @include padding('right', 20, false);
+    @include padding('bottom', 20, false);
+    @include padding('top', 8, false);
+
+    &:first-child {
+        padding-top: 20px;
+    }
+
+    .btn-primary {
+        background: $ow-color-base;
+        border-color: $ow-color-base;
+        width: 100%;
+
+        &:hover {
+            background: darken(#B4367C, 8%);
+            border-color: darken(#B4367C, 8%);
         }
+    }
+}
 
-        &-summary-label, &-summary-value, &-summary-header {
-            margin-bottom: 1rem;
+// Product list in aside (confirm page)
+.checkout-aside .confirm-product {
+    .line-item-row {
+        .line-item-info { margin: 0; }
+
+        .line-item-total-price {
+            &:not(.checkout-price) { display: none; }
+
+            &.checkout-price {
+                width: auto;
+                max-width: 100%;
+
+                .line-item-total-price-value {
+                    text-align: left;
+                }
+            }
         }
     }
 
+    .card-body {
+        margin-top: -1rem;
+        margin-bottom: 0;
+    }
+}
+
+// Line items visible in aside
+.checkout-aside {
     .line-item {
         padding-block: 1rem;
 
-        &-cart-quantity, &-tax-price {
+        &-cart-quantity,
+        &-tax-price {
             display: none;
         }
 
         &-label {
             text-decoration: none;
-            @include fontSpecs(16, 24, 400, false, false);
+            @include fontSpecs(15, 22, 400, false, false);
         }
 
         &-details-characteristics {
-            @include fontSpecs(14, 20, 400, false, false);
+            @include fontSpecs(13, 18, 400, false, false);
 
             &-option {
                 font-weight: unset;
@@ -234,6 +511,9 @@
     }
 }
 
+// ============================================================
+// ADDRESS MANAGER MODAL
+// ============================================================
 .address-manager-modal {
     .modal-header {
         padding-top: 1.5rem;
@@ -259,4 +539,71 @@
     .dropdown-menu {
         padding: 0.5rem;
     }
+}
+
+// ============================================================
+// FINISH / SUCCESS PAGE
+// ============================================================
+.is-act-finishpage {
+    .checkout {
+        padding-top: 0;
+    }
+}
+
+.finish-success-card {
+    text-align: center;
+    background: $ow-color-white;
+    border: 1px solid $ow-color-grey-4;
+    border-radius: 4px;
+    @include padding('top', 48, true);
+    @include padding('bottom', 48, true);
+    @include padding('left', 32, false);
+    @include padding('right', 32, false);
+    @include margin('bottom', 32, true);
+    box-shadow: $ow-box-shadow;
+
+    .finish-success-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        background: $ow-color-base;
+        margin: 0 auto;
+        @include margin('bottom', 24, false);
+
+        .icon {
+            width: 36px;
+            height: 36px;
+            color: $ow-color-white;
+        }
+    }
+
+    .finish-header {
+        @include fontSpecs(28, 34, 700, false, true);
+        @include margin('bottom', 12, false);
+        color: $ow-color-black;
+    }
+
+    .finish-ordernumber {
+        @include fontSpecs(16, 24, 400, false, false);
+        @include margin('bottom', 8, false);
+        color: $ow-color-grey-7;
+
+        &-value {
+            color: $ow-color-black;
+            font-weight: 700;
+        }
+    }
+
+    .finish-teaser {
+        @include fontSpecs(14, 20, 400, false, false);
+        color: $ow-color-grey-7;
+        margin: 0;
+    }
+}
+
+.finish-info {
+    @include margin('top', 24, false);
 }

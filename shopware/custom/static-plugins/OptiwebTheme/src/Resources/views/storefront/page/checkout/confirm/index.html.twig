@@ -1,0 +1,46 @@
+{% sw_extends '@Storefront/storefront/page/checkout/confirm/index.html.twig' %}
+
+{% block page_checkout_confirm_header %}
+    {% sw_include '@Storefront/storefront/component/checkout/checkout-steps.html.twig' with { activeStep: 2 } %}
+    <h1 class="confirm-main-header">
+        {{ 'optiweb.checkout.title'|trans|sw_sanitize }}
+    </h1>
+{% endblock %}
+
+{% block page_checkout_confirm_address %}
+    <div class="confirm-section confirm-section--address">
+        <div class="confirm-section-header">
+            <span class="confirm-section-number">1</span>
+            <h2 class="confirm-section-title">{{ 'optiweb.checkout.confirmAddressHeader'|trans|sw_sanitize }}</h2>
+        </div>
+        {{ parent() }}
+    </div>
+{% endblock %}
+
+{% block page_checkout_confirm_payment_shipping %}
+    <div class="confirm-section confirm-section--payment-shipping">
+        <div class="confirm-section-header">
+            <span class="confirm-section-number">2</span>
+            <h2 class="confirm-section-title">{{ 'optiweb.checkout.confirmPaymentShippingHeader'|trans|sw_sanitize }}</h2>
+        </div>
+        {{ parent() }}
+    </div>
+{% endblock %}
+
+{% block page_checkout_confirm_product_table %}
+    <div class="confirm-section confirm-section--products">
+        <div class="confirm-section-header">
+            <span class="confirm-section-number">3</span>
+            <h2 class="confirm-section-title">{{ 'optiweb.checkout.confirmProductsHeader'|trans|sw_sanitize }}</h2>
+        </div>
+        {{ parent() }}
+    </div>
+{% endblock %}
+
+{% block page_checkout_aside_actions %}
+    <div class="checkout-aside-trust">
+        {% sw_icon 'checkmark' style { size: 'xs' } %}
+        <span>{{ 'optiweb.checkout.sslSecure'|trans|sw_sanitize }}</span>
+    </div>
+    {{ parent() }}
+{% endblock %}

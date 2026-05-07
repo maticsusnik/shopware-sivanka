@@ -13,6 +13,7 @@
     }
 
     .product-image-wrapper {
+        position: relative;
         height: $max-card-img-height;
     }
 
@@ -20,9 +21,9 @@
         max-height: $max-card-img-height;
     }
 
-    //&.box-standard .stretched-link::after {
-    //    height: calc($max-card-img-height + var(--bs-card-spacer-y));
-    //}
+    &.box-standard .stretched-link::after {
+        height: calc($max-card-img-height + var(--bs-card-spacer-y));
+    }
 
     .product-variant-characteristics .product-variant-characteristics-text,
     .product-variant-characteristics {
@@ -33,6 +34,7 @@
 
     .product-number {
         color: $ow-color-grey-7;
+        min-height: 24px;
         @include fontSpecs(16, 24, 400, false, true);
 
         &-wrapper {
@@ -46,6 +48,7 @@
         top: 0;
         margin: 0;
         height: 24px;
+        z-index: 999;
 
         &-action {
             vertical-align: middle;

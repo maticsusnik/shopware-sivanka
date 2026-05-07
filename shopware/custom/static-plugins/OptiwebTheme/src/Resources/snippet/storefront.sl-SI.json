@@ -27,7 +27,14 @@
         "checkout": {
             "logInAlert": "Če želite opraviti nakup, morate biti prijavljeni.",
             "freeShipping": "Brezplačno",
-            "title": "Oddaj naročilo"
+            "title": "Oddaj naročilo",
+            "stepCart": "Košarica",
+            "stepCheckout": "Blagajnik",
+            "stepComplete": "Zaključek",
+            "confirmAddressHeader": "Podatki za dostavo",
+            "confirmPaymentShippingHeader": "Dostava in plačilo",
+            "confirmProductsHeader": "Pregled naročila",
+            "sslSecure": "Varno plačilo s SSL šifriranjem"
         }
     },
     "prems-one-page-checkout": {

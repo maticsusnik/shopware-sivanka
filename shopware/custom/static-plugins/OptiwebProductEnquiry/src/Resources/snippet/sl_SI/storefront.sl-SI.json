@@ -1,23 +1,32 @@
 {
-  "optiwebProductEnquiry": {
-    "headline": "Povpraševanje po izdelku",
-    "subject": "Povpraševanje po izdelku",
-    "send": "Pošlji povpraševanje",
-    "close": "Zapri",
-    "form": {
-      "submit": "Pošlji povpraševanje",
-      "commentLabel": "Vaše sporočilo",
-      "commentPlaceholder": "Prosimo, opišite vaše povpraševanje o tem izdelku..."
+    "account": {
+        "personalFirstName": "Ime",
+        "personalLastName": "Priimek",
+        "profilePhoneNumber": "Telefonska številka"
     },
-    "success": {
-      "message": "Hvala za vaše povpraševanje. Odgovorili vam bomo v najkrajšem možnem času."
+    "general": {
+        "privacyPolicyCheckboxLabel": "Strinjam se s <a href=\"/privacy\">politiko zasebnosti</a>."
     },
-    "errors": {
-      "productNotFound": "Izdelek ni najden.",
-      "missingProductId": "ID izdelka manjka.",
-      "missingMailTemplate": "Konfiguracija e-poštne predloge manjka.",
-      "unexpectedError": "Prišlo je do nepričakovane napake. Prosimo, poskusite znova.",
-      "checkErrors": "Prosimo, preverite obrazec za napake."
+    "optiwebProductEnquiry": {
+        "headline": "Povpraševanje o izdelku",
+        "subject": "Povpraševanje o izdelku",
+        "send": "Pošlji povpraševanje",
+        "close": "Zapri",
+        "form": {
+            "submit": "Pošlji povpraševanje",
+            "commentLabel": "Vaše sporočilo",
+            "commentPlaceholder": "Opišite vaše povpraševanje...",
+            "qtyLabel": "Količina"
+        },
+        "success": {
+            "message": "Hvala za povpraševanje, odgovorimo v najkrajšem možnem času."
+        },
+        "errors": {
+            "checkErrors": "Prosimo, preverite napake v obrazcu in poskusite znova.",
+            "productNotFound": "Zahtevanega izdelka ni bilo mogoče najti.",
+            "missingProductId": "Za to povpraševanje ni bil določen noben izdelek.",
+            "missingMailTemplate": "E-poštna predloga ni konfigurirana. Prosimo, kontaktirajte administratorja.",
+            "unexpectedError": "Prišlo je do nepričakovane napake. Prosimo, poskusite znova."
+        }
     }
-  }
 }
