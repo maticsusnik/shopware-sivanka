@@ -1,0 +1,19 @@
+meta {
+  name: get orgs
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{minimaxApiUrl}}api/currentuser/orgs
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+vars:post-response {
+  orgId: res.body[0].OrganisationId
+}

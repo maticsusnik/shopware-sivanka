@@ -3,15 +3,25 @@
 namespace OptiwebSync\Service\Order;
 
 use DateTime;
-use OptiwebSync\Helper\EnvHelper;
-use OptiwebSync\Helper\ApiHelper;
+use Doctrine\DBAL\Connection;
+use OptiwebSync\Client\MinimaxClient;
 use OptiwebSync\Helper\GlobalVariables;
 use OptiwebSync\Helper\OwLogger;
+use OptiwebSync\Helper\ShopwareApiHelper;
 use OptiwebSync\Service\SyncBase\AbstractSyncBase;
 use Shopware\Core\Checkout\Cart\LineItem\LineItem;
+use Shopware\Core\System\SystemConfig\SystemConfigService;
 
 class OrderExportSync extends AbstractSyncBase
 {
+    public function __construct(
+        SystemConfigService $systemConfigService,
+        ShopwareApiHelper $shopwareApiHelper,
+        Connection $connection,
+        private readonly MinimaxClient $minimaxClient,
+    ) {
+        parent::__construct($systemConfigService, $shopwareApiHelper, $connection);
+    }
 
     public function initialize(): void
     {
@@ -60,15 +70,9 @@ class OrderExportSync extends AbstractSyncBase
             $shippingMethodId = $this->prepareShippingData($orderDataInfo);
             if(empty($shippingMethodId)) continue;
 
-            $paymentAndShippingMethod = $this->handlePaymentAndShippingMapping($paymentMethodId, $shippingMethodId);
-
-            $orderUpsertData = $this->prepareOrderData($orderData, $orderDataInfo, $customerData, $paymentAndShippingMethod);
-
-            $dataString = json_encode($orderUpsertData);
-
-            $apiUrl = EnvHelper::read("VASCO_URL", self::class) . $this->getSyncEndpoint();
-            OwLogger::addVisibleLog($this->logger, "Send Entry: order: $id, data:" . $dataString);
-            $response = $this->apiHelper->sendDataToApi($apiUrl, $dataString, 'vasco');
+            $minimaxOrderData = $this->prepareMinimaxOrderData($orderData, $orderDataInfo);
+            OwLogger::addVisibleLog($this->logger, 'Sending order ' . ($orderData['attributes']['orderNumber'] ?? $id) . ' to Minimax');
+            $response = $this->minimaxClient->createOrder($minimaxOrderData);
 
             $this->handleOrderResponse($id, $response);
 
@@ -400,29 +404,107 @@ class OrderExportSync extends AbstractSyncBase
         return $shippingAddress;
     }
 
-    private function handleOrderResponse($id, $response): void
+    private function prepareMinimaxOrderData(array $orderData, array $orderDataInfo): array
     {
-        if($response['status'] === 'ok'){
-            if(($response['error'] == "" || $response['error'] == null) && $response['response'] !== ""){
-                $VascoResponse = $response['response'];
-                $orderUpsertData = [
-                    'customFields' => [
-                        GlobalVariables::CUSTOM_FIELD_OPTIWEB_STATUS => GlobalVariables::STATUS_SENT,
-                        GlobalVariables::CUSTOM_FIELD_OPTIWEB_KEY => json_decode($VascoResponse),
-                    ],
-                ];
-            }else {
-                $orderUpsertData = [
-                    'customFields' => [
-                        GlobalVariables::CUSTOM_FIELD_OPTIWEB_ERROR => $response['error'],
-                    ],
-                ];
+        $orderAttributes       = $orderData['attributes'];
+        $billingAddressId      = $orderAttributes['billingAddressId'] ?? null;
+
+        // Fetch structured billing address
+        $billingAddressApiResponse = $this->shopwareApiHelper
+            ->getShopwareEntryDetailedInformation('order-address/' . $billingAddressId) ?? [];
+        $billingAddressData = $billingAddressApiResponse['attributes'] ?? [];
+
+        // Fallback to the addresses array already loaded in orderDataInfo
+        if (empty($billingAddressData) && $billingAddressId !== null) {
+            foreach ($orderDataInfo['addresses'] as $address) {
+                if ($address['id'] === $billingAddressId) {
+                    $billingAddressData = $address['attributes'];
+                    break;
+                }
             }
-        }else {
+        }
+
+        // Country ISO code for Minimax customer
+        $billingCountryId   = $billingAddressData['countryId'] ?? null;
+        $billingCountryData = $billingCountryId
+            ? $this->shopwareApiHelper->getShopwareEntryDetailedInformation('country/' . $billingCountryId)
+            : [];
+        $countryIso = $billingCountryData['attributes']['iso'] ?? 'SI';
+
+        // Customer identifiers from order customer
+        $orderCustomer = $orderDataInfo['orderCustomer'][0]['attributes'] ?? [];
+        $email  = $orderCustomer['email'] ?? '';
+        $vatIds = $orderCustomer['vatIds'] ?? [];
+        $vatId  = $vatIds[0] ?? '';
+
+        // Customer name: prefer company, fall back to first + last name
+        $company   = trim($billingAddressData['company'] ?? '');
+        $firstName = trim($billingAddressData['firstName'] ?? '');
+        $lastName  = trim($billingAddressData['lastName'] ?? '');
+        $name      = $company !== '' ? $company : trim("$firstName $lastName");
+
+        // Products from existing extraction method
+        $products = $this->prepareProductData($orderDataInfo);
+
+        // Payment/shipping info for the invoice note
+        $paymentMethodId    = $this->preparePaymentData($orderDataInfo);
+        $shippingMethodId   = $this->prepareShippingData($orderDataInfo);
+        $paymentAndShipping = $this->handlePaymentAndShippingMapping(
+            $paymentMethodId  ?? '',
+            $shippingMethodId ?? '',
+        );
+        $note = 'Order: '    . ($orderAttributes['orderNumber'] ?? '')
+            . ' | Payment: '  . ($paymentAndShipping['payment']  ?? '')
+            . ' | Shipping: ' . ($paymentAndShipping['shipping'] ?? '')
+            . ' | '           . ($orderAttributes['customerComment'] ?? '');
+
+        // Map existing Vasco-shaped products to Minimax invoice line shape
+        $lines = [];
+        foreach ($products as $p) {
+            $vatPercent = match ((int) ($p['stopnjaDdv'] ?? 0)) {
+                1       => 9.5,
+                2, 3    => 0.0,
+                default => 22.0,
+            };
+            $lines[] = [
+                'sku'          => (string) ($p['sifra'] ?? ''),
+                'quantity'     => (float)  ($p['kolicina'] ?? 1),
+                'unitPriceNet' => (float)  ($p['prodajnaCena'] ?? 0),
+                'vatPercent'   => $vatPercent,
+            ];
+        }
+
+        return [
+            'customer' => [
+                'name'         => $name,
+                'code'         => $email !== '' ? $email : ($orderAttributes['orderNumber'] ?? uniqid('', true)),
+                'address'      => $billingAddressData['street']  ?? '',
+                'postalCode'   => $billingAddressData['zipcode'] ?? '',
+                'city'         => $billingAddressData['city']    ?? '',
+                'countryIso'   => $countryIso,
+                'vatId'        => $vatId,
+                'subjectToVat' => $vatId !== '',
+            ],
+            'date'  => (new \DateTime($orderAttributes['orderDateTime'] ?? 'now'))->format('Y-m-d'),
+            'note'  => $note,
+            'lines' => $lines,
+        ];
+    }
+
+    private function handleOrderResponse(string $id, array $response): void
+    {
+        if ($response['status'] === 'ok') {
+            $orderUpsertData = [
+                'customFields' => [
+                    GlobalVariables::CUSTOM_FIELD_OPTIWEB_STATUS => GlobalVariables::STATUS_SENT,
+                    GlobalVariables::CUSTOM_FIELD_OPTIWEB_KEY    => $response['invoiceId'],
+                ],
+            ];
+        } else {
             $orderUpsertData = [
                 'customFields' => [
                     GlobalVariables::CUSTOM_FIELD_OPTIWEB_STATUS => GlobalVariables::STATUS_ERROR,
-                    GlobalVariables::CUSTOM_FIELD_OPTIWEB_ERROR => $response,
+                    GlobalVariables::CUSTOM_FIELD_OPTIWEB_ERROR  => $response['error'] ?? 'Unknown Minimax error',
                 ],
             ];
         }
@@ -544,16 +626,6 @@ class OrderExportSync extends AbstractSyncBase
         return 'Order export';
     }
 
-    public function getSyncEndpoint(): string
-    {
-        return 'FA/narociloKupca';
-    }
-
-    public function getSyncArrayKey(): string
-    {
-        return '';
-    }
-
     public function getSyncType(): string
     {
         return 'export';
@@ -561,7 +633,7 @@ class OrderExportSync extends AbstractSyncBase
 
     public function getSyncOrigin(): string
     {
-        return 'vasco';
+        return 'minimax';
     }
 
     public function getSyncCommandNames(): array

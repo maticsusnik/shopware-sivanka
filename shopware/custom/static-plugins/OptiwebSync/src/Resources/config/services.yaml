@@ -12,18 +12,24 @@ services:
     autowire: true
     autoconfigure: true
 
-  # Specific helpers (if you want to override anything)
-  OptiwebSync\Helper\ShopwareApiHelper:
-    arguments:
-      $client: '@http_client.raw'
-#      $client: '@http_client'
-    public: true
-
+  # Raw HTTP client (plain Symfony, no Shopware middleware)
   http_client.raw:
     class: Symfony\Contracts\HttpClient\HttpClientInterface
     factory: ['Symfony\Component\HttpClient\HttpClient', 'create']
 
-  OptiwebSync\Helper\ApiHelper:
+  OptiwebSync\Helper\ShopwareApiHelper:
+    arguments:
+      $client: '@http_client.raw'
+    public: true
+
+  # Improved Shopware API client (Client/ namespace)
+  OptiwebSync\Client\ShopwareClient:
+    arguments:
+      $client: '@http_client.raw'
+    public: true
+
+  # Minimax API client
+  OptiwebSync\Client\MinimaxClient:
     arguments:
       $client: '@http_client.raw'
     public: true
@@ -45,6 +51,9 @@ services:
   OptiwebSync\Service\Product\ProductSync:
     autowire: true
     autoconfigure: true
+    arguments:
+      $minimaxClient: '@OptiwebSync\Client\MinimaxClient'
+      $shopwareClient: '@OptiwebSync\Client\ShopwareClient'
 
   OptiwebSync\ScheduledTask\Product\ImportProductsTaskHandler:
     arguments:
@@ -54,21 +63,11 @@ services:
     tags:
       - { name: 'messenger.message_handler' }
 
-  OptiwebSync\ScheduledTask\Product\ImportProductPriceTaskHandler:
+  OptiwebSync\Service\Order\OrderExportSync:
+    autowire: true
+    autoconfigure: true
     arguments:
-      $scheduledTaskRepository: '@scheduled_task.repository'
-      $exceptionLogger: '@monolog.logger'
-      $productPriceSync: '@OptiwebSync\Service\Product\ProductPriceSync'
-    tags:
-      - { name: 'messenger.message_handler' }
-
-  OptiwebSync\ScheduledTask\Product\ImportProductStockTaskHandler:
-    arguments:
-      $scheduledTaskRepository: '@scheduled_task.repository'
-      $exceptionLogger: '@monolog.logger'
-      $productStockSync: '@OptiwebSync\Service\Product\ProductStockSync'
-    tags:
-      - { name: 'messenger.message_handler' }
+      $minimaxClient: '@OptiwebSync\Client\MinimaxClient'
 
   OptiwebSync\ScheduledTask\Order\ExportOrdersTaskHandler:
     arguments:

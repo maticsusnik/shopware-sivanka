@@ -74,6 +74,8 @@ class BannersResolver extends AbstractCmsElementResolver
                 'media' => $mediaId && isset($mediaById[$mediaId]) ? $mediaById[$mediaId] : null,
                 'text' => $banner['text'] ?? '',
                 'link' => $banner['link'] ?? '',
+                'textPositionV' => $banner['textPositionV'] ?? 'bottom',
+                'textPositionH' => $banner['textPositionH'] ?? 'left',
             ];
         }
 

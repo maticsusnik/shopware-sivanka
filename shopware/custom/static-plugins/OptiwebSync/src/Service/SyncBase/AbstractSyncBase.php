@@ -3,10 +3,8 @@
 namespace OptiwebSync\Service\SyncBase;
 
 use Doctrine\DBAL\Connection;
-use Exception;
 use Monolog\Logger;
-use OptiwebSync\Helper\ApiHelper;
-use OptiwebSync\Helper\EnvHelper;
+use OptiwebSync\Client\ClientInterface;
 use OptiwebSync\Helper\ShopwareApiHelper;
 use OptiwebSync\Helper\GlobalVariables;
 use OptiwebSync\Helper\OwLogger;
@@ -21,6 +19,7 @@ abstract class AbstractSyncBase implements SyncBaseInterface
     protected bool $ignoreHash;
     protected bool $ignoreMedia;
     protected ?string $setId;
+    protected ?ClientInterface $client = null;
     private ?string $lockFile = null;
     private $lockHandle = null;
 
@@ -28,13 +27,9 @@ abstract class AbstractSyncBase implements SyncBaseInterface
         SystemConfigService $systemConfigService,
         ShopwareApiHelper $shopwareApiHelper,
         protected Connection $connection,
-        protected ApiHelper $apiHelper
-    )
-    {
+    ) {
         $this->systemConfigService = $systemConfigService;
         $this->shopwareApiHelper = $shopwareApiHelper;
-        $this->connection = $connection;
-        $this->apiHelper = $apiHelper;
     }
 
     public function sync(array $options): void
@@ -88,60 +83,35 @@ abstract class AbstractSyncBase implements SyncBaseInterface
                     $getMoreData = true;
 
                     while ($getMoreData) {
-                        $params = [
-                            'page' => $count,
-                            'limit' => $getRows,
-                        ];
-                        $apiData = [];
-                        if ($this->getSyncOrigin() == 'vasco') {
-                            $params = $this->addApiParameters([], ["key" => $key, "value" => $value]);
-                            $params['Segment'] = $count;
-                            $params['SegmentSize'] = $getRows;
-                            $apiUrl = $this->apiHelper->addUrlParameters(EnvHelper::read("VASCO_URL", self::class) . $this->getSyncEndpoint(), $params);
-                        } else {
-                            $params = $this->addApiParameters($params, ["key" => $key, "value" => $value]);
-                            $apiUrl = $this->apiHelper->addUrlParameters(EnvHelper::read("PIM_SYNC_API_URL", self::class) . $this->getSyncEndpoint(), $params);
-                        }
-                        $apiData = $this->apiHelper->callApi($apiUrl, $this->getSyncArrayKey(), $this->getSyncOrigin());
+                        $data = $this->fetchPage($count, $getRows, ['key' => $key, 'value' => $value]);
 
                         try {
-
-                            if (isset($apiData['error'])) {
-                                OwLogger::addVisibleLog($this->logger, $apiData['error']);
-                                throw new Exception($apiData['error']);
-                            }
-
-                            OwLogger::addVisibleLog($this->logger, $this->getName() . ": " . $count . " rows from $count.");
-
-                            $data = $apiData['response'] ?? [];
-
                             $dataLength = count($data);
+                            OwLogger::addVisibleLog($this->logger, $this->getName() . ": page $count, $dataLength rows.");
+
                             if ($dataLength > GlobalVariables::BATCH_SIZE) {
                                 OwLogger::addVisibleLog($this->logger, "Importing $dataLength items...");
-
                                 $dataChunk = array_chunk($data, GlobalVariables::BATCH_SIZE);
                                 $dataChunkLength = count($dataChunk);
                                 $i = 1;
                                 foreach ($dataChunk as $chunk) {
-                                    $countInserted = $this->import($chunk, ["key" => $key, "value" => $value]);
+                                    $countInserted = $this->import($chunk, ['key' => $key, 'value' => $value]);
                                     OwLogger::addVisibleLog($this->logger, "$countInserted items synced, chunk $i/$dataChunkLength.");
                                     $i++;
                                 }
                             } else {
-                                $countInserted = $this->import($data, ["key" => $key, "value" => $value]);
+                                $countInserted = $this->import($data, ['key' => $key, 'value' => $value]);
                                 OwLogger::addVisibleLog($this->logger, "$countInserted synced.");
                             }
-
                         } catch (Throwable $error) {
                             OwLogger::error($this->logger, $this->getName() . ' sync error', ['error' => $error->getMessage()]);
                         }
 
-                        if (count($data) == GlobalVariables::BATCH_SIZE) {
+                        if (count($data) === $getRows) {
                             $count++;
                         } else {
                             $getMoreData = false;
                         }
-
                     }
 
                 }
@@ -314,9 +284,9 @@ abstract class AbstractSyncBase implements SyncBaseInterface
         return ["1" => "1"];
     }
 
-    protected function addApiParameters(array $params, array $loopData): array
+    protected function fetchPage(int $page, int $pageSize, array $loopData): array
     {
-        return $params;
+        return [];
     }
 
     protected function import(array $dataArray, array $loopData): int

@@ -16,7 +16,8 @@ class ApiHelper
     public function __construct(HttpClientInterface $client)
     {
         $this->client = $client;
-        $this->pimToken = EnvHelper::read('PIM_SYNC_API_TOKEN', self::class);
+        //$this->pimToken = EnvHelper::read('PIM_SYNC_API_TOKEN', self::class);
+        $this->pimToken = "";
         $this->vascoToken = ['value' => '', 'expiration' => time()];
     }
 

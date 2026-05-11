@@ -8,6 +8,11 @@
 }
 
 .product-box {
+    .product-wishlist-action-circle {
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
     .card-body {
         padding: 0.75rem;
     }
@@ -32,22 +37,8 @@
         margin: 0;
     }
 
-    .product-number {
-        color: $ow-color-grey-7;
-        min-height: 24px;
-        @include fontSpecs(16, 24, 400, false, true);
-
-        &-wrapper {
-            position: relative;
-        }
-    }
-
     .product-wishlist {
-        position: absolute;
-        right: 0;
-        top: 0;
         margin: 0;
-        height: 24px;
         z-index: 999;
 
         &-action {
@@ -62,8 +53,7 @@
     }
 
     .product-image-wrapper,
-    .product-name,
-    .product-number {
+    .product-name {
         @include margin('bottom', $spacer, false);
     }
 
