@@ -1,0 +1,150 @@
+{
+        skip_install_trust
+
+        servers {
+                trusted_proxies static private_ranges
+        }
+
+        {$CADDY_GLOBAL_OPTIONS}
+
+        frankenphp {
+                {$FRANKENPHP_CONFIG}
+        }
+}
+
+{$CADDY_EXTRA_CONFIG}
+
+:80 {
+        root * /var/www/html/public
+
+        encode zstd gzip
+
+        log {
+                output stdout
+                format json
+        }
+
+        # ============================================
+        # Path Matchers
+        # ============================================
+
+        @webpackDevServer {
+                path /webpack-dev-server/*
+        }
+
+        @viteHMR {
+                path /@vite/* /@fs/* /node_modules/*
+        }
+
+        @administration {
+                path /administration/*
+        }
+
+        @theme {
+                path /theme/*
+        }
+
+        @staticAssets {
+                path /media/* /thumbnail/* /bundles/*
+        }
+
+        @phpRoute {
+                not path /theme/* /media/* /thumbnail/* /bundles/*
+                not path /webpack-dev-server/* /administration/*
+                not path /@vite/* /@fs/* /node_modules/*
+                not file {path}
+        }
+
+        # ============================================
+        # Request Handling
+        # ============================================
+
+        handle @webpackDevServer {
+                reverse_proxy http://localhost:9998 {
+                        header_up Host {host}
+                        header_up X-Real-IP {remote_host}
+                        header_up X-Forwarded-For {remote_host}
+                        header_up X-Forwarded-Proto {scheme}
+                        header_up Connection {http.request.header.Connection}
+                        header_up Upgrade {http.request.header.Upgrade}
+                }
+        }
+
+        handle @viteHMR {
+                reverse_proxy http://localhost:5173 {
+                        header_up Host {host}
+                        header_up X-Real-IP {remote_host}
+                        header_up X-Forwarded-For {remote_host}
+                        header_up X-Forwarded-Proto {scheme}
+                        header_up Connection {http.request.header.Connection}
+                        header_up Upgrade {http.request.header.Upgrade}
+                }
+        }
+
+        handle @administration {
+                @admin_file {
+                        file
+                        path /administration/*
+                }
+                handle @admin_file {
+                        file_server
+                }
+
+                reverse_proxy http://localhost:5173 {
+                        header_up Host {host}
+                        header_up X-Real-IP {remote_host}
+                        header_up X-Forwarded-For {remote_host}
+                        header_up X-Forwarded-Proto {scheme}
+                        header_up Connection {http.request.header.Connection}
+                        header_up Upgrade {http.request.header.Upgrade}
+                        transport http {
+                                dial_timeout 1s
+                        }
+                }
+        }
+
+        handle @theme {
+                @theme_file {
+                        file
+                        path /theme/*
+                }
+                handle @theme_file {
+                        file_server
+                }
+
+                reverse_proxy http://localhost:9998 {
+                        header_up Host {host}
+                        header_up X-Real-IP {remote_host}
+                        header_up X-Forwarded-For {remote_host}
+                        header_up X-Forwarded-Proto {scheme}
+                        header_up Connection {http.request.header.Connection}
+                        header_up Upgrade {http.request.header.Upgrade}
+                        transport http {
+                                dial_timeout 1s
+                        }
+                }
+        }
+
+        rewrite @phpRoute index.php
+
+        @frontController {
+                path index.php
+        }
+        php @frontController
+
+        handle @staticAssets {
+                header Cache-Control "public, max-age=31536000, immutable"
+                file_server
+        }
+
+        file_server {
+                hide *.php
+        }
+
+        handle_errors {
+                respond "{err.status_code} {err.status_text}" {err.status_code}
+        }
+
+        {$CADDY_SERVER_EXTRA_DIRECTIVES}
+}
+

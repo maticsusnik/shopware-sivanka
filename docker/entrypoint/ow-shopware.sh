@@ -1,5 +1,8 @@
-# Install packages
-# Rsync
+#!/usr/bin/env bash
+set -e
+
+# Unset base image env vars so Symfony dotenv reads them from .env.local
+unset APP_ENV APP_DEBUG SHOPWARE_HTTP_CACHE_ENABLED SHOPWARE_SKIP_WEBINSTALLER
 
 if [ "$DOCKER_ENTRYPOINT_DISABLE_RSYNC" != true ]; then
   rsync -ahv --delete \
@@ -16,10 +19,10 @@ if [ "$DOCKER_ENTRYPOINT_DISABLE_RSYNC" != true ]; then
       --exclude="/config/*.local.php"
   echo "[INFO] Updated Shopware files.";
 fi
+
 composer install --no-progress --no-interaction || echo "[ERROR] Composer did not complete. Check logs!"
 
-# Run Shopaware commands
 bin/console theme:compile || echo "[ERROR] theme:compile did not complete. Check logs!"
-bin/console cache:clear || echo "[ERROR] cache:clear did not complete. Check logs!"
+php -d opcache.enable_cli=0 bin/console cache:clear || echo "[ERROR] cache:clear did not complete. Check logs!"
 
-find /var/www/html/ \( -path /var/www/html/public/media -o -path /var/www/html/public/thumbnail \) -prune -o \( ! -user application -o ! -group application \) -exec chown application:application {} +
+exec "$@"

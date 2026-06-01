@@ -1,48 +1,45 @@
-# @docs: https://dockerfile.readthedocs.io/en/latest/content/DockerImages/dockerfiles/php-nginx.html
+FROM ghcr.io/shopware/docker-base:8.4-frankenphp
+
+ARG DOCKER_USER=shopware
+ARG DOCKER_GROUP=shopware
+ARG WORKDIR=/var/www/html
 ARG DOCKER_IMAGE_EXTRAS=""
-FROM webdevops/php-nginx${DOCKER_IMAGE_EXTRAS}:8.3
-WORKDIR "/var/www/html/"
 
 ENV DOCKER_ENTRYPOINT_DISABLE_RSYNC=false
 
-## VARIABLES
-ENV TZ="Europe/Ljubljana"
-ENV SERVICE_CRON="true"
-ENV WEB_DOCUMENT_ROOT="/var/www/html/public"
-ENV NODE_VERSION="22.x"
+USER root
 
-## Install required dependencies
-RUN apt-get update -y
-RUN apt-get install -y nano jq curl libxml2-dev vim rsync
-RUN curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION} | bash -
-RUN apt-get install -y nodejs
-## Dev only - uncomment when building local for HMR
-## RUN apt-get xdg-utils
-RUN npm install -g npm@11.6.2
-RUN docker-php-ext-install phar simplexml
-RUN docker-php-ext-enable phar simplexml
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN install-php-extensions @composer
 
-## COPY Entrypoint
-COPY ./docker/entrypoint/* /opt/docker/provision/entrypoint.d
-RUN chmod +x /opt/docker/provision/entrypoint.d/*
+RUN if [ "$DOCKER_IMAGE_EXTRAS" = "-dev" ]; then install-php-extensions xdebug; fi
 
-## COPY Nginx config
-# Delete default configs
-RUN rm -rf /opt/docker/etc/nginx/vhost.common.d/*
-COPY ./config/nginx /opt/docker/etc/nginx/vhost.common.d
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y nodejs jq curl unzip nano vim-tiny rsync \
+    && npm install -g npm@11.6.2 \
+    && if [ "$DOCKER_IMAGE_EXTRAS" = "-dev" ]; then apt-get install -y xdg-utils; fi \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-## COPY PHP config
-COPY ./docker/php/conf.d/*.ini /usr/local/etc/php/conf.d
+RUN \
+	adduser --disabled-password --gecos '' ${DOCKER_USER}; \
+	setcap -r /usr/local/bin/frankenphp; \
+	mkdir -p /tmp/php-opcache; \
+	chown -R ${DOCKER_USER}:${DOCKER_USER} /config/caddy /data/caddy /tmp/php-opcache
 
-## COPY Supervisor config
-COPY ./docker/supervisor/* /opt/docker/etc/supervisor.d
+COPY ./docker/entrypoint/*.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/*.sh
 
-## Shopware
-COPY ./shopware /usr/src/shopware
+COPY ./docker/php/conf.d/*.ini /usr/local/etc/php/conf.d/
 
-WORKDIR /usr/src/shopware
+COPY ./docker/caddy/Caddyfile /etc/caddy/Caddyfile
+RUN chmod 644 /etc/caddy/Caddyfile
 
-RUN composer install --no-interaction --no-scripts
+ENV SERVER_ROOT=${WORKDIR}/public
 
-WORKDIR /var/www/html
+WORKDIR ${WORKDIR}
+
+COPY --chown=${DOCKER_USER}:${DOCKER_USER} ./shopware /usr/src/shopware
+
+USER ${DOCKER_USER}
+
+ENTRYPOINT ["ow-shopware.sh"]
+CMD ["frankenphp", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
