@@ -1,0 +1,14 @@
+{% sw_extends '@Storefront/storefront/layout/header.html.twig' %}
+
+{% block base_header %}
+    {# Topbar rendered full-width BEFORE the constrained header container #}
+    {% sw_include '@Storefront/storefront/layout/header/top-bar.html.twig' %}
+
+    <header class="header-main">
+        {% block base_header_inner %}
+            <div class="container">
+                {% sw_include '@Storefront/storefront/layout/header/header.html.twig' %}
+            </div>
+        {% endblock %}
+    </header>
+{% endblock %}

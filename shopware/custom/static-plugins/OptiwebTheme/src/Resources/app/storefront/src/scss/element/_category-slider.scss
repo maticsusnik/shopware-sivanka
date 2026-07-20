@@ -1,1 +1,319 @@
-// Category slider element styles (leftImage approach removed — using grid layout)
+// ---- Category Slider / Grid ----
+
+.cms-block-category-slider {
+    margin-bottom: 0;
+}
+
+// ---- Shared section header (title left, arrows right) ----
+.sivanka-sec-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 28px;
+
+    h2,
+    .cms-element-title-paragraph {
+        margin: 0;
+        font-family: $sivanka-serif;
+        font-size: 32px;
+        font-weight: 600;
+        line-height: 1.12;
+        color: $sivanka-text;
+
+        @include media-breakpoint-down(md) {
+            font-size: 24px;
+        }
+    }
+}
+
+// ---- Category slider (single instance, scrollable like product slider) ----
+.category-slider-wrapper {
+    position: relative;
+}
+
+.category-slider.sivanka-slider {
+    position: static;
+}
+
+.category-slider-item {
+    height: auto;
+}
+
+// Let card hover shadows escape the track instead of being clipped
+.category-slider {
+    .category-slider-container {
+        overflow: visible;
+    }
+
+    .tns-ovh {
+        padding: 10px 0 26px;
+    }
+}
+
+// Round arrow controls (design .arr)
+.sivanka-slider-controls-container {
+    position: absolute;
+    top: 0;
+    right: calc(#{$bs-gutter-x} / 2); // respect the wrapper's horizontal padding
+    z-index: 2;
+}
+
+.sivanka-slider-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.sivanka-slider-arr {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1.5px solid $sivanka-border;
+    background: $sivanka-white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $sivanka-text;
+    padding: 0;
+    cursor: pointer;
+    line-height: 0;
+    transition: border-color 0.18s, color 0.18s;
+
+    &:hover {
+        border-color: $sivanka-primary;
+        color: $sivanka-primary;
+    }
+
+    &[disabled] {
+        opacity: 0.4;
+        cursor: default;
+    }
+
+    .icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 16px;
+        height: 16px;
+        color: inherit;
+
+        svg {
+            top: 0;
+            width: 16px;
+            height: 16px;
+
+            path {
+                fill: currentColor;
+            }
+        }
+    }
+
+    @include media-breakpoint-down(sm) {
+        width: 32px;
+        height: 32px;
+    }
+}
+
+// Category grid — scrollable horizontal on mobile, grid on desktop
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 18px;
+
+    @include media-breakpoint-down(xl) {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    @include media-breakpoint-down(lg) {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    @include media-breakpoint-down(md) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include media-breakpoint-down(sm) {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+        padding-bottom: 4px;
+        gap: 14px;
+
+        &::-webkit-scrollbar { display: none; }
+    }
+
+    &__item {
+        display: block;
+        text-decoration: none;
+        color: $sivanka-text;
+
+        @include media-breakpoint-down(sm) {
+            flex: 0 0 calc((100% - 14px) / 2);
+            scroll-snap-align: start;
+        }
+
+        &:hover .category-grid__img {
+            box-shadow: 0 14px 30px -16px rgba(160, 43, 107, 0.45);
+
+            img {
+                transform: scale(1.04);
+            }
+        }
+
+        &:hover .category-grid__name {
+            color: $sivanka-primary;
+        }
+    }
+
+    // Image container — square
+    &__img {
+        position: relative;
+        border-radius: $sivanka-r12;
+        overflow: hidden;
+        aspect-ratio: 1 / 1;
+        border: 1px solid $sivanka-border;
+        background: $sivanka-beige;
+        transition: box-shadow 0.25s;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.25s;
+        }
+
+        picture {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        // Gradient overlay for readability (only when a photo is present)
+        &:not(.category-grid__img--placeholder)::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(160, 43, 107, 0.05), rgba(60, 10, 38, 0.24));
+            pointer-events: none;
+        }
+    }
+
+    // No photo available → soft gradient tile; badge stays in the bottom-left corner (per design)
+    &__img--placeholder {
+        background: linear-gradient(160deg, $sivanka-accent 0%, $sivanka-beige 100%);
+    }
+
+    // Icon badge bottom-left of image
+    &__badge {
+        position: absolute;
+        left: 10px;
+        bottom: 10px;
+        width: 38px;
+        height: 38px;
+        border-radius: $sivanka-r8;
+        background: $sivanka-white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: $sivanka-primary;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        z-index: 1;
+
+        .icon, svg {
+            width: 20px;
+            height: 20px;
+            color: $sivanka-primary;
+        }
+
+        img {
+            width: 22px;
+            height: 22px;
+            object-fit: contain;
+            border-radius: 0;
+        }
+    }
+
+    // Category name
+    &__name {
+        font-family: $sivanka-serif;
+        font-size: 17px;
+        font-weight: 600;
+        color: $sivanka-text;
+        margin: 14px 0 4px;
+        line-height: 1.3;
+        transition: color 0.18s;
+    }
+
+    // Category description
+    &__desc {
+        font-family: $sivanka-sans;
+        font-size: 12.5px;
+        color: $sivanka-muted;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+}
+
+// Mobile list view (kept for backwards compat)
+.category-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    &__item {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 12px;
+        border: 1px solid $sivanka-border;
+        border-radius: $sivanka-r8;
+        text-decoration: none;
+        color: $sivanka-text;
+        transition: border-color 0.18s;
+
+        &:hover {
+            border-color: $sivanka-primary;
+            color: $sivanka-primary;
+        }
+    }
+
+    &__icon {
+        width: 40px;
+        height: 40px;
+        border-radius: $sivanka-r8;
+        background: $sivanka-accent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: $sivanka-primary;
+        flex-shrink: 0;
+
+        img { width: 24px; height: 24px; object-fit: contain; }
+        .icon { width: 20px; height: 20px; }
+    }
+
+    &__name {
+        font-family: $sivanka-sans;
+        font-size: 14px;
+        font-weight: 600;
+        flex: 1;
+    }
+
+    &__arrow {
+        color: $sivanka-muted;
+        .icon { width: 18px; height: 18px; }
+    }
+}
+
+// Utility
+.limit-2-rows {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}

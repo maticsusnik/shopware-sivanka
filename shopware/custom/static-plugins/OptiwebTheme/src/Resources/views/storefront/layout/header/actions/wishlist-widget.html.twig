@@ -8,6 +8,7 @@
         <span class="header-wishlist-icon">
             {% sw_icon 'heart' style { pack: 'ow'} %}
         </span>
+        <span class="header-action-label">{{ 'header.wishlist'|trans|striptags }}</span>
     {% endif %}
 
     {% set wishlistStorageOptions = {

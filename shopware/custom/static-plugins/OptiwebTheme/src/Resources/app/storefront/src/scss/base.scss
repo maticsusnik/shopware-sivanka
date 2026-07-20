@@ -41,6 +41,7 @@
 @import 'element/category-slider';
 @import 'element/sivanka-product-slider';
 @import 'element/banners';
+@import 'element/sivanka-hero';
 
 /*
  * Pages
@@ -60,6 +61,7 @@
 /*
  * Layout
  * ---------------------------- */
+@import 'layout/topbar';
 @import 'layout/main-navigation';
 @import 'layout/ow-mega-menu';
 @import 'layout/header';

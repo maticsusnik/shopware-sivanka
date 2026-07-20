@@ -1,8 +1,8 @@
 $ow-color-black: #000000;
 $ow-color-white: #FFFFFF;
-$ow-color-base: #B4367C;
-$ow-color-grey: #F6F6F6;
-$ow-color-grey-border: #EBEBEB;
+$ow-color-base: #A02B6B;
+$ow-color-grey: #F7F3F0;
+$ow-color-grey-border: #E6E2DE;
 $ow-color-grey-1: $ow-color-grey;
 $ow-color-grey-3: $ow-color-grey-border;
 $ow-color-grey-4: #D9D9D9;
@@ -54,6 +54,27 @@ $product-buy-spacer: 20px;
  * checkout
  */
 $max-price-width: 100px;
+
+// ---- Sivanka Design System ----
+$sivanka-white:         #FFFFFF;
+$sivanka-primary:       #A02B6B;
+$sivanka-primary-light: #D05C8C;
+$sivanka-primary-hover: #87245A;
+$sivanka-accent:        #F7DCE7;
+$sivanka-beige:         #F7F3F0;
+$sivanka-text:          #1B1B1B;
+$sivanka-muted:         $sivanka-text;
+$sivanka-border:        #E6E2DE;
+$sivanka-gold:          #E8A100;
+
+$sivanka-serif: "Playfair Display", Georgia, serif;
+$sivanka-sans:  "Inter", sans-serif;
+
+$sivanka-r4:  4px;
+$sivanka-r8:  8px;
+$sivanka-r12: 12px;
+$sivanka-r16: 16px;
+$sivanka-r24: 24px;
 
 
 @keyframes spinner {

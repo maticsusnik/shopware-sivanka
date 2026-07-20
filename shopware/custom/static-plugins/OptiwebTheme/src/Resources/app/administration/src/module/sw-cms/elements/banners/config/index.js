@@ -27,14 +27,21 @@ Component.register('sw-cms-el-config-banners', {
         },
         addBanner() {
             const banners = this.element.config.banners.value || [];
-            if (banners.length >= 8) { return; }
+            if (banners.length >= 3) { return; }
             banners.push({
                 id: Date.now(),
                 media: null,
+                style: 'plain',
+                title: '',
+                eyebrow: '',
                 text: '',
+                description: '',
+                btnLabel: '',
                 textPositionV: 'bottom',
                 textPositionH: 'left',
-                link: ''
+                link: '',
+                bgColor: '#F7DCE7',
+                iconType: 'gift',
             });
             this.element.config.banners.value = [...banners];
             this.onElementUpdate();
@@ -58,6 +65,27 @@ Component.register('sw-cms-el-config-banners', {
             banner.media = null;
             banner.mediaId = mediaId;
             this.onElementUpdate();
-        }
+        },
+        onStyleChange() {
+            this.onElementUpdate();
+        },
+        onTitleChange() {
+            this.onElementUpdate();
+        },
+        onEyebrowChange() {
+            this.onElementUpdate();
+        },
+        onDescriptionChange() {
+            this.onElementUpdate();
+        },
+        onBtnLabelChange() {
+            this.onElementUpdate();
+        },
+        onBgColorChange() {
+            this.onElementUpdate();
+        },
+        onIconTypeChange() {
+            this.onElementUpdate();
+        },
     }
 });

@@ -10,6 +10,9 @@
             aria-expanded="false"
             aria-label="{{ 'account.myAccount'|trans|striptags }}"
             title="{{ 'account.myAccount'|trans|striptags }}">
-        {% sw_icon 'profile' style { pack: 'ow'} %}
+        <span class="header-account-icon">
+            {% sw_icon 'profile' style { pack: 'ow'} %}
+        </span>
+        <span class="header-action-label">{{ 'account.myAccount'|trans|striptags }}</span>
     </button>
 {% endblock %}

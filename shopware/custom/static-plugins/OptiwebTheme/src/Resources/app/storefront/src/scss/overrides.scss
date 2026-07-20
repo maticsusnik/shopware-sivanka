@@ -6,3 +6,21 @@ This file is used to override default SCSS variables from the Shopware Storefron
 Because of the !default flags, theme variable overrides have to be declared beforehand.
 https://getbootstrap.com/docs/5.3/customize/sass/#variable-defaults
 */
+
+// Sivanka brand primary — used by Bootstrap for .btn-primary, focus rings, etc.
+$primary: #A02B6B;
+
+// Base font size — bump the whole storefront up from Shopware's 0.875rem (14px) default
+$font-size-base: 1rem; // 16px
+
+// Base text colour — darker, matches the Sivanka design ($sivanka-text)
+$body-color: #1B1B1B;
+
+// Border radii
+$border-radius:    8px;
+$border-radius-sm: 4px;
+$border-radius-lg: 12px;
+
+// Input focus ring colour
+$input-focus-border-color: #D05C8C;
+$input-focus-box-shadow: 0 0 0 0.2rem rgba(160, 43, 107, 0.15);

@@ -1,4 +1,7 @@
-$fontName : "HelveticaNeue";
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+$fontName: "HelveticaNeue";
 
 @font-face {
     font-family: $fontName;
@@ -30,6 +33,22 @@ $fontName : "HelveticaNeue";
     font-weight: 700;
     font-display: swap;
     src: url(/bundles/optiwebtheme/assets/fonts/HelveticaNeue-Bold.ttf) format('truetype');
+}
+
+body {
+    font-family: $sivanka-sans;
+    color: $sivanka-text;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+    font-family: $sivanka-serif;
+    letter-spacing: -0.01em;
+    line-height: 1.12;
+}
+
+h4, h5 {
+    font-family: $sivanka-sans;
 }
 
 h1 {

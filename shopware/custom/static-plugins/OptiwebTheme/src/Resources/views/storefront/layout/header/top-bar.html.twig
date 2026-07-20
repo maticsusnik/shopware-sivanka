@@ -1,21 +1,32 @@
 {% sw_extends '@Storefront/storefront/layout/header/top-bar.html.twig' %}
 
 {% block layout_header_top_bar %}
-{#    <div class="d-flex justify-content-end align-items-center gap-3 py-2">#}
-{#        {% block layout_header_top_bar_inner %}#}
-{#            {% if header.languages.count > 1 or header.currencies.count > 1 %}#}
-{#                <nav class="top-bar-nav d-flex justify-content-end gap-3"#}
-{#                     aria-label="{{ 'header.topBarAriaLabel'|trans|striptags }}">#}
-{#                    {% block layout_header_top_bar_language %}#}
-{#                        {% sw_include '@Storefront/storefront/layout/header/actions/language-widget.html.twig' %}#}
-{#                    {% endblock %}#}
-
-{#                    {% block layout_header_top_bar_currency %}#}
-{#                        {% sw_include '@Storefront/storefront/layout/header/actions/currency-widget.html.twig' %}#}
-{#                    {% endblock %}#}
-{#                </nav>#}
-{#            {% endif %}#}
-{#        {% endblock %}#}
-{#    </div>#}
+<div class="sivanka-topbar">
+    <div class="container">
+        <span class="tb-item">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M3 7h11v8H3zM14 9h4l3 3v3h-7z"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/>
+            </svg>
+            {{ 'sivanka.topbarDelivery'|trans|default('Brezplačna dostava nad 60 €') }}
+        </span>
+        <span class="tb-item">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/>
+            </svg>
+            {{ 'sivanka.topbarQuality'|trans|default('Vrhunska kakovost za ustvarjalce') }}
+        </span>
+        <span class="tb-item">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M4 13v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="13" width="4" height="6" rx="1.5"/><rect x="17" y="13" width="4" height="6" rx="1.5"/>
+            </svg>
+            {{ 'sivanka.topbarSupport'|trans|default('Z veseljem vam pomagamo') }}
+        </span>
+        <a class="tb-item tb-right" href="{{ path('frontend.home.page') }}">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 0 1 4 1.8c0 1.7-2.5 2-2.5 3.2M12 17.5h.01"/>
+            </svg>
+            {{ 'sivanka.topbarHelp'|trans|default('Pomoč &amp; kontakt') }}
+        </a>
+    </div>
+</div>
 {% endblock %}
-

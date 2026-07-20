@@ -1,33 +1,163 @@
+// ---- Sivanka Newsletter Strip (above footer) ----
+.sivanka-newsletter-strip {
+    background: $sivanka-beige;
+    border-top: 1px solid $sivanka-border;
+    border-bottom: 1px solid $sivanka-border;
+    font-family: $sivanka-sans;
 
-.social-link {
+    .container {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1.6fr;
+        gap: 34px;
+        align-items: center;
+        padding-block: 30px;
+        max-width: $header-width;
+        padding-inline: 28px;
 
-    &-item {
-        .icon {
-            color: $ow-color-white;
-            width: 32px;
-            height: 32px;
-            path {
-                fill:$ow-color-black;
+        @include media-breakpoint-down(lg) {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        @include media-breakpoint-down(md) {
+            grid-template-columns: 1fr;
+            gap: 20px;
+            padding-block: 24px;
+        }
+    }
+
+    .nl-svc {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+
+        @include media-breakpoint-down(lg) {
+            &:nth-child(2) {
+                display: none;
             }
-            .linkedin {
-                color: $ow-color-black;
+        }
 
-                .bg {
-                    fill: $ow-color-white;
-                }
+        @include media-breakpoint-down(md) {
+            display: none;
+        }
+
+        &:first-child {
+            @include media-breakpoint-down(md) {
+                display: flex;
             }
         }
     }
 
-    &s {
-        margin-inline: -0.5rem;
+    // Bigger icon circles
+    .nl-svc-ic {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: $sivanka-white;
+        border: 1px solid $sivanka-border;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: $sivanka-primary;
+        flex-shrink: 0;
+
+        .icon {
+            width: 24px;
+            height: 24px;
+            color: $sivanka-primary;
+
+            path, circle, rect {
+                stroke: $sivanka-primary;
+            }
+        }
+    }
+
+    .nl-svc-text {
+        b {
+            display: block;
+            font-size: 15px;
+            font-weight: 600;
+            color: $sivanka-text;
+        }
+
+        span {
+            font-size: 13px;
+            color: $sivanka-muted;
+        }
+    }
+
+    .nl-block {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .nl-title {
+        font-family: $sivanka-serif;
+        font-size: 18px;
+        font-weight: 600;
+        color: $sivanka-text;
+        display: block;
+    }
+
+    .nl-subtitle {
+        font-size: 13px;
+        color: $sivanka-muted;
+    }
+
+    .nl-form {
+        display: flex;
+        gap: 10px;
+        max-width: 430px;
+
+        input[type="email"] {
+            flex: 1;
+            height: 46px;
+            border: 1.5px solid $sivanka-border;
+            border-radius: $sivanka-r8;
+            padding: 0 16px;
+            font-family: $sivanka-sans;
+            font-size: 14px;
+            background: $sivanka-white;
+            color: $sivanka-text;
+            transition: border-color 0.18s;
+
+            &:focus {
+                outline: none;
+                border-color: $sivanka-primary-light;
+                box-shadow: none;
+            }
+        }
+
+        .btn-nl-submit {
+            white-space: nowrap;
+            background: $sivanka-primary;
+            color: $sivanka-white;
+            font-family: $sivanka-sans;
+            font-size: 14.5px;
+            font-weight: 600;
+            padding: 13px 22px;
+            border-radius: $sivanka-r8;
+            border: none;
+            cursor: pointer;
+            transition: background 0.18s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            &:hover {
+                background: $sivanka-primary-hover;
+            }
+        }
     }
 }
 
+// ---- Sivanka Footer ----
 .footer-main {
-    background: $ow-color-grey;
-    color: $ow-color-black;
+    background: $sivanka-white;
+    color: $sivanka-text;
     border-top: 0;
+    font-family: $sivanka-sans;
+    padding-top: 56px;
 
     a, h4 {
         color: inherit;
@@ -37,7 +167,7 @@
         text-decoration: none;
 
         &:hover {
-            color: $ow-color-base;
+            color: $sivanka-primary;
         }
     }
 
@@ -46,63 +176,243 @@
     }
 
     .footer-logo {
-        margin-bottom: 1.5rem;
+        margin-bottom: 18px;
+        display: block;
+        text-align: left;
 
-        .header-logo-picture {
-            margin-inline: 0;
-        }
-    }
-
-    .footer-column {
-        border-bottom: 0;
-
-        @include media-breakpoint-down(lg) {
-            margin-bottom: 2.5rem;
+        // Override Bootstrap .text-center and .m-auto that come from the base logo template
+        .header-logo-main,
+        .header-logo-main.text-center {
+            text-align: left !important;
         }
 
-        @include media-breakpoint-between(sm, lg) {
-            &.col1 {
-                order: 1;
-            }
-            &.col2 {
-                order: 3;
-            }
-            &.col3 {
-                margin-top: 4rem;
-                order: 2;
-            }
-            &.col4 {
-                order: 4;
-            }
+        .header-logo-main-link {
+            display: inline-flex;
+            justify-content: flex-start;
         }
 
-        &s {
-            @include padding('top', 64, true);
-            @include padding('bottom', 64, true);
+        .header-logo-picture,
+        .header-logo-picture.m-auto {
+            margin-inline: 0 !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            max-width: 100%;
+            max-height: 44px;
+            display: block;
         }
-    }
 
-    .footer-column-content-inner {
-        padding: 0;
-    }
-
-    .list-unstyled {
-        margin-block: -6px 0;
-    }
-
-    .footer-link-item {
-        padding-block: 6px;
-        line-height: 1.5;
+        // Constrain the actual image so it never overflows the footer column
+        .header-logo-main-img {
+            display: block;
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            max-height: 44px;
+            object-fit: contain;
+        }
     }
 }
 
+.footer-column {
+    border-bottom: 0;
+
+    &-content-inner {
+        padding: 0;
+    }
+
+    .footer-column-content-title,
+    h4 {
+        font-size: 13px;
+        font-weight: 600;
+        font-family: $sivanka-sans;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 15px;
+        color: $sivanka-text;
+    }
+
+    .list-unstyled {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-block: 0;
+    }
+
+    .footer-link-item {
+        padding-block: 0;
+        line-height: 1.5;
+    }
+
+    .footer-link {
+        font-size: 15px;
+        color: $sivanka-muted;
+        text-decoration: none;
+
+        &:hover {
+            color: $sivanka-primary;
+        }
+    }
+}
+
+// Social links in footer
+.social-links {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-inline: 0;
+}
+
+.social-link-item {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    border-radius: 50%;
+    border: 1px solid $sivanka-border;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $sivanka-text;
+    transition: background 0.18s, border-color 0.18s, color 0.18s;
+    padding: 0;
+    flex-shrink: 0;
+    overflow: hidden;
+    box-sizing: border-box;
+
+    &:hover {
+        background: $sivanka-primary !important;
+        border-color: $sivanka-primary !important;
+        color: $sivanka-white !important;
+    }
+
+    // Inline social SVG — perfectly centered in the 36px circle
+    .social-svg {
+        display: block;
+        width: 18px;
+        height: 18px;
+        color: inherit;
+    }
+
+    // Center the icon span and force SVG to 18x18 inside a 36px circle (legacy sw_icon fallback)
+    .icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+        line-height: 0;
+
+        svg {
+            display: block;
+            width: 18px !important;
+            height: 18px !important;
+            max-width: 18px;
+            max-height: 18px;
+        }
+    }
+}
+
+// Footer bottom bar
 .footer-bottom {
-    background: $ow-color-grey-9;
-    color: $ow-color-white;
-    @include fontSpecs(14, 20, 400, false, true);
+    background: $sivanka-white;
+    color: $sivanka-muted;
+    border-top: 1px solid $sivanka-border;
+    font-size: 14px;
+    padding-block: 20px;
 
     a {
         color: inherit;
         text-decoration: none;
+
+        &:hover {
+            color: $sivanka-primary;
+        }
+    }
+}
+
+// Footer columns — 4-column CSS Grid, remove Bootstrap row's negative margins
+#footerColumns {
+    display: grid !important;
+    grid-template-columns: 1.6fr 1fr 1fr 0.8fr;
+    gap: 32px;
+    padding-bottom: 44px;
+    border-bottom: 1px solid $sivanka-border;
+    padding-top: 0;
+    // Remove Bootstrap .row negative margins that push col1 outside container
+    margin-inline: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+
+    > [class*="col-"] {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: none;
+        padding-inline: 0 !important;
+    }
+
+    @include media-breakpoint-down(xl) {
+        grid-template-columns: 1.6fr 1fr 1fr 0.8fr;
+    }
+
+    @include media-breakpoint-down(lg) {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    @include media-breakpoint-down(md) {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    @include media-breakpoint-down(sm) {
+        grid-template-columns: 1fr;
+    }
+}
+
+// ---- Footer text consistency ----
+// All footer column headings uniform
+.footer-main {
+    .footer-column-content-title,
+    h4.footer-column-content-title,
+    .footer-column h4 {
+        font-family: $sivanka-sans !important;
+        font-size: 12px !important;
+        font-weight: 700 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.08em !important;
+        color: $sivanka-text !important;
+        margin-bottom: 16px !important;
+    }
+
+    // All body text inside footer columns
+    .footer-column-content-inner,
+    .footer-column-content-inner p,
+    .footer-column-content-inner li,
+    .footer-column-content-inner span,
+    .footer-column-content-inner div {
+        font-family: $sivanka-sans;
+        font-size: 15px;
+        color: $sivanka-muted;
+        line-height: 1.6;
+    }
+
+    // All links in footer columns
+    .footer-column-content-inner a,
+    .footer-link {
+        font-family: $sivanka-sans;
+        font-size: 15px;
+        color: $sivanka-muted !important;
+        text-decoration: none;
+        line-height: 1.6;
+
+        &:hover {
+            color: $sivanka-primary !important;
+        }
+    }
+
+    // Copyright bar text
+    .footer-copyright-text,
+    .footer-copyright-link {
+        font-family: $sivanka-sans;
+        font-size: 14px;
+        color: $sivanka-muted;
     }
 }

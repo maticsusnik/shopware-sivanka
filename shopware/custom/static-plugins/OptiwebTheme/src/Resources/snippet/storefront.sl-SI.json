@@ -37,6 +37,20 @@
             "sslSecure": "Varno plačilo s SSL šifriranjem"
         }
     },
+    "sivanka": {
+        "topbarDelivery": "Brezplačna dostava nad 60 €",
+        "topbarQuality": "Vrhunska kakovost za ustvarjalce",
+        "topbarSupport": "Z veseljem vam pomagamo",
+        "topbarHelp": "Pomoč & kontakt",
+        "nlSvc1Title": "Vprašanja?",
+        "nlSvc1Text": "Z veseljem vam pomagamo",
+        "nlSvc2Title": "Vračilo brez skrbi",
+        "nlSvc2Text": "14 dni za vračilo izdelkov",
+        "nlTitle": "Ostanimo v stiku",
+        "nlSubtitle": "Pridobite navdih, nove izdelke in posebne ugodnosti.",
+        "nlPlaceholder": "Vaš e-naslov",
+        "nlButton": "Naroči se"
+    },
     "prems-one-page-checkout": {
         "steps": {
             "step1-headline": "Podatki plačnika",

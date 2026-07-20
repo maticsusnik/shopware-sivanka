@@ -1,9 +1,80 @@
 {% block block_category_slider %}
     {% set title = block.slots.getSlot("category").config.title.value.text %}
+    {% set categories = block.slots.getSlot("category").data.get("childCategories") %}
+
+    {% set categorySliderOptions = {
+        slider: {
+            controls: true,
+            loop: false,
+            nav: false,
+            mouseDrag: true,
+            autoplay: false,
+            speed: 500,
+            ariaLive: false,
+            autoHeight: false,
+            gutter: 18,
+            items: 2,
+            responsive: {
+                xs: { items: 2 },
+                sm: { items: 3 },
+                md: { items: 4 },
+                lg: { items: 5 },
+                xl: { items: 5 },
+                xxl: { items: 5 }
+            }
+        }
+    } %}
 
     <div class="category-slider-wrapper">
-        <h2 class="cms-element-title-paragraph">{{ title }}</h2>
-        {% sw_include "@Storefront/storefront/block/category-slider/category-slider-desktop.html.twig" %}
-        {% sw_include "@Storefront/storefront/block/category-slider/category-slider-mobile.html.twig" %}
+        <div class="sivanka-sec-head">
+            {% if title %}
+                <h2 class="cms-element-title-paragraph">{{ title }}</h2>
+            {% endif %}
+        </div>
+
+        <div class="category-slider sivanka-slider"
+             data-base-slider="true"
+             data-base-slider-options='{{ categorySliderOptions|json_encode }}'
+             role="region"
+             aria-label="{{ title }}"
+             tabindex="0">
+
+            {% block category_slider_controls %}
+                <div class="sivanka-slider-controls-container">
+                    <div class="sivanka-slider-controls" data-base-slider-controls="true">
+                        <button class="sivanka-slider-arr sivanka-slider-prev" aria-label="{{ 'general.previous'|trans|striptags }}">
+                            {% sw_icon 'arrow-left' style { pack: 'ow'} %}
+                        </button>
+                        <button class="sivanka-slider-arr sivanka-slider-next" aria-label="{{ 'general.next'|trans|striptags }}">
+                            {% sw_icon 'arrow-right' style { pack: 'ow'} %}
+                        </button>
+                    </div>
+                </div>
+            {% endblock %}
+
+            <div class="category-slider-container" data-base-slider-container="true">
+                {% for category in categories %}
+                    <div class="category-slider-item">
+                        <a href="{{ category.link }}" class="category-grid__item">
+                            <div class="category-grid__img{% if not category.media %} category-grid__img--placeholder{% endif %}">
+                                {% if category.media %}
+                                    <img src="{{ category.media.url }}" alt="{{ category.name }}" loading="lazy">
+                                {% endif %}
+                                {% if category.category_icon.url %}
+                                    <span class="category-grid__badge">
+                                        <img src="{{ category.category_icon.url }}"
+                                             alt="{{ category.category_icon.alt ?? (category.name ~ ' icon') }}">
+                                    </span>
+                                {% endif %}
+                            </div>
+                            <div class="category-grid__name">{{ category.name }}</div>
+                            {% if category.short_description %}
+                                <div class="category-grid__desc">{{ category.short_description|raw }}</div>
+                            {% endif %}
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 {% endblock %}

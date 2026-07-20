@@ -1,4 +1,9 @@
 .ow-mega-menu {
+    // No animated bottom-border underline on the mega-menu trigger link
+    .nav-link::after {
+        display: none;
+    }
+
     @media (min-width: 992px) {
         position: static;
         > a.nav-link.active {
@@ -49,7 +54,7 @@
 
                         &.is-active,
                         &:hover {
-                            text-decoration: underline;
+                            text-decoration: none;
                             color: inherit;
                             font-weight: 700;
                         }

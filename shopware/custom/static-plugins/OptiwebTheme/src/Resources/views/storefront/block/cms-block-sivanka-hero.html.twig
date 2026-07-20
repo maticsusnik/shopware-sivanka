@@ -1,0 +1,6 @@
+{% block block_content %}
+    {% set element = block.slots.getSlot('hero') %}
+    <div class="cms-block-sivanka-hero">
+        {% sw_include '@Storefront/storefront/element/cms-element-sivanka-hero.html.twig' %}
+    </div>
+{% endblock %}

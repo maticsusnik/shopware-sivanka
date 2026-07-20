@@ -1,29 +1,27 @@
 {% set categories = block.slots.getSlot("category").data.get("childCategories") %}
 
 {% block category_slider_desktop %}
-    <div class="category-grid d-none d-md-block">
-        <div class="category-grid-container">
-            {% for category in categories %}
-                <div class="category-grid-item">
-                    <a href="{{ category.link }}"
-                       class="category-grid-link d-flex justify-content-between align-items-center">
-                        <div class="category-grid-content d-flex">
-                            <div class="category-grid-icon">
-                                {% if category.category_icon.url %}
-                                    <img src="{{ category.category_icon.url }}" alt="{{ category.category_icon.alt ?? category.name ~ ' icon' }}">
-                                {% endif %}
-                            </div>
-                            <div class="content">
-                                <h5>{{ category.name }}</h5>
-                                <div class="description limit-2-rows">{{ category.short_description|raw }}</div>
-                            </div>
-                        </div>
-                        <div class="category-grid-arrow">
-                            {% sw_icon 'caret-right' style { pack:'ow'} %}
-                        </div>
-                    </a>
+    <div class="category-grid d-none d-md-grid">
+        {% for category in categories %}
+            <a href="{{ category.link }}" class="category-grid__item">
+                <div class="category-grid__img">
+                    {% if category.media %}
+                        <img src="{{ category.media.url }}"
+                             alt="{{ category.name }}"
+                             loading="lazy">
+                    {% endif %}
+                    {% if category.category_icon.url %}
+                        <span class="category-grid__badge">
+                            <img src="{{ category.category_icon.url }}"
+                                 alt="{{ category.category_icon.alt ?? (category.name ~ ' icon') }}">
+                        </span>
+                    {% endif %}
                 </div>
-            {% endfor %}
-        </div>
+                <div class="category-grid__name">{{ category.name }}</div>
+                {% if category.short_description %}
+                    <div class="category-grid__desc">{{ category.short_description|raw }}</div>
+                {% endif %}
+            </a>
+        {% endfor %}
     </div>
 {% endblock %}
