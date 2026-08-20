@@ -67,8 +67,25 @@ $sivanka-muted:         $sivanka-text;
 $sivanka-border:        #E6E2DE;
 $sivanka-gold:          #E8A100;
 
+// Warmer border tones used by the listing/category design mock
+$sivanka-card-border:   #F0EBE6; // product cards, sidebar cards
+$sivanka-input-border:  #EBEBEB; // form inputs, sort select, pagination
+$sivanka-side-hover:    #FAF2F7; // sidebar link / subcategory pill hover
+$sivanka-text-muted:    #6B5560; // secondary copy (descriptions)
+$sivanka-text-soft:     #8A7C74; // meta text (counts, breadcrumb)
+$sivanka-heading-dark:  #2A1420; // deep plum used for prices / h1
+
+// Product-detail design mock
+$sivanka-info-bg:       #FAF1F5; // buy-box info panel
+$sivanka-info-border:   #F2E3EA; // buy-box panel border
+$sivanka-divider:       #F0DBE6; // qty/price row separators
+$sivanka-gallery-bg:    $sivanka-white; // product gallery image frame (cream #FAF7F4 removed)
+$sivanka-qty-border:    #E7CDDA; // quantity stepper border
+$sivanka-in-stock:      #2E7D53; // "Na zalogi" availability label
+
 $sivanka-serif: "Playfair Display", Georgia, serif;
 $sivanka-sans:  "Inter", sans-serif;
+$sivanka-mono:  "Space Mono", monospace;
 
 $sivanka-r4:  4px;
 $sivanka-r8:  8px;

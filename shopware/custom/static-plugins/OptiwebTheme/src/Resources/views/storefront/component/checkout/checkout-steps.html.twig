@@ -1,37 +1,31 @@
 {# Parameters: activeStep = 1 (cart) | 2 (checkout) | 3 (complete) #}
 {% if activeStep is not defined %}{% set activeStep = 1 %}{% endif %}
 
+{% set steps = [
+    { n: 1, label: 'optiweb.checkout.stepCart'|trans|sw_sanitize },
+    { n: 2, label: 'optiweb.checkout.stepCheckout'|trans|sw_sanitize },
+    { n: 3, label: 'optiweb.checkout.stepComplete'|trans|sw_sanitize }
+] %}
+
 <nav class="checkout-steps" aria-label="{{ 'checkout.stepsLabel'|trans|striptags }}">
     <ol class="checkout-steps-list">
-        <li class="checkout-steps-item{% if activeStep > 1 %} is-done{% endif %}{% if activeStep == 1 %} is-active{% endif %}">
-            {% if activeStep > 1 %}
-                <a href="{{ path('frontend.checkout.cart.page') }}" class="checkout-steps-link">
-            {% else %}
-                <span class="checkout-steps-link">
-            {% endif %}
-                <span class="checkout-steps-number">1</span>
-                <span class="checkout-steps-label">{{ 'optiweb.checkout.stepCart'|trans|sw_sanitize }}</span>
-            {% if activeStep > 1 %}
-                </a>
-            {% else %}
+        {% for step in steps %}
+            {% set state = step.n < activeStep ? 'is-done' : (step.n == activeStep ? 'is-active' : 'is-upcoming') %}
+            <li class="checkout-steps-item {{ state }}">
+                <span class="checkout-steps-marker">
+                    <span class="checkout-steps-number">
+                        {% if step.n < activeStep %}
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+                        {% else %}
+                            {{ step.n }}
+                        {% endif %}
+                    </span>
+                    <span class="checkout-steps-label">{{ step.label }}</span>
                 </span>
-            {% endif %}
-            <span class="checkout-steps-connector" aria-hidden="true"></span>
-        </li>
-
-        <li class="checkout-steps-item{% if activeStep > 2 %} is-done{% endif %}{% if activeStep == 2 %} is-active{% endif %}">
-            <span class="checkout-steps-link">
-                <span class="checkout-steps-number">2</span>
-                <span class="checkout-steps-label">{{ 'optiweb.checkout.stepCheckout'|trans|sw_sanitize }}</span>
-            </span>
-            <span class="checkout-steps-connector" aria-hidden="true"></span>
-        </li>
-
-        <li class="checkout-steps-item{% if activeStep == 3 %} is-active{% endif %}">
-            <span class="checkout-steps-link">
-                <span class="checkout-steps-number">3</span>
-                <span class="checkout-steps-label">{{ 'optiweb.checkout.stepComplete'|trans|sw_sanitize }}</span>
-            </span>
-        </li>
+                {% if not loop.last %}
+                    <span class="checkout-steps-connector" aria-hidden="true"></span>
+                {% endif %}
+            </li>
+        {% endfor %}
     </ol>
 </nav>

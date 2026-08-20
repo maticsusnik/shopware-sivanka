@@ -16,14 +16,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 class SyncCommand extends Command
 {
-
     /**
      * @param iterable<SyncBaseInterface> $syncServices
      */
     public function __construct(
         private readonly iterable $syncServices
-    )
-    {
+    ) {
         parent::__construct();
     }
 
@@ -35,55 +33,67 @@ class SyncCommand extends Command
             ->addOption('ignoreHash', 'i', InputOption::VALUE_NONE, 'Ignore hashed values')
             ->addOption('ignoreMedia', 'm', InputOption::VALUE_NONE, 'Ignore media')
             ->addOption('setId', 's', InputOption::VALUE_REQUIRED, 'Limit sync to specific ID/SKU')
+            ->addOption('dry-run', 'd', InputOption::VALUE_NONE, 'Resolve and log everything but write nothing')
             ->setDescription('Sync defined (or all if empty) endpoints in specified order.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $arguments = $input->getArgument('selectedSync');
-        $options = $input->getOptions();
-        if ($options['listAvailable'] || empty($arguments)) {
+        $selectedSync = $input->getArgument('selectedSync');
+
+        if ($input->getOption('listAvailable') || empty($selectedSync)) {
             $this->listAvailableSyncs($output);
+
             return Command::SUCCESS;
         }
 
-        $output->writeln(["[".date("d.m.Y H:i:s", time()) . '] Starting sync.']);
-        $this->executeSync($arguments, $options);
-        $output->writeln(["[".date("d.m.Y H:i:s", time()) . '] Sync END.']);
+        $options = [
+            'test'        => (bool) $input->getOption('test'),
+            'ignoreHash'  => (bool) $input->getOption('ignoreHash'),
+            'ignoreMedia' => (bool) $input->getOption('ignoreMedia'),
+            'dryRun'      => (bool) $input->getOption('dry-run'),
+            'setId'       => $input->getOption('setId'),
+        ];
+
+        $output->writeln('[' . date('d.m.Y H:i:s') . '] Starting sync.' . ($options['dryRun'] ? ' (dry run)' : ''));
+        $this->executeSync((string) $selectedSync, $options);
+        $output->writeln('[' . date('d.m.Y H:i:s') . '] Sync END.');
 
         return Command::SUCCESS;
     }
 
-    private function executeSync(?string $syncClasses, array $options): void
+    /**
+     * @param array<string, mixed> $options
+     */
+    private function executeSync(string $syncClasses, array $options): void
     {
         $selected = array_map('trim', explode(',', strtolower($syncClasses)));
-        /** @var SyncBaseInterface $sync */
+
         foreach ($this->syncServices as $sync) {
-            $validNames = $sync->getSyncCommandNames();
-            if (empty($syncClasses) || !empty(array_intersect($selected, $validNames))) {
+            if (array_intersect($selected, $sync->getSyncCommandNames()) !== []) {
                 $sync->sync($options);
             }
         }
     }
 
-    private function listAvailableSyncs($output): void
+    private function listAvailableSyncs(OutputInterface $output): void
     {
+        $syncs = iterator_to_array($this->syncServices);
+
         $output->writeln('');
         $output->writeln('<info>Available syncs:</info>');
         $output->writeln('--------------------');
 
-        $maxLen = max(array_map(fn($s) => strlen($s->getName()), iterator_to_array($this->syncServices)));
+        $maxLen = $syncs === [] ? 0 : max(array_map(static fn (SyncBaseInterface $s): int => strlen($s->getName()), $syncs));
 
-        foreach ($this->syncServices as $sync) {
-            $name = str_pad($sync->getName(), $maxLen);
+        foreach ($syncs as $sync) {
             $output->writeln(sprintf(
                 ' <fg=green>•</> <comment>%s</comment> <fg=gray>(%s)</>',
-                $name,
+                str_pad($sync->getName(), $maxLen),
                 implode(', ', $sync->getSyncCommandNames())
             ));
         }
 
         $output->writeln('');
     }
-
 }

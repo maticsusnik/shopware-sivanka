@@ -1,0 +1,925 @@
+// ============================================================
+// CHECKOUT FLOW — register (shipping info) + confirm
+// Matches "Sivanka Checkout" and "Sivanka Confirm" designs.
+// ============================================================
+
+// ------------------------------------------------------------
+// Minimal checkout header
+// ------------------------------------------------------------
+.sv-co-header {
+    border-bottom: 1px solid $sivanka-card-border;
+
+    .container { max-width: 1160px; }
+
+    .sv-co-header-row {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        row-gap: 12px;
+        gap: 24px;
+        padding: 22px 0;
+
+        @include media-breakpoint-down(md) {
+            padding: 14px 0;
+            gap: 12px;
+        }
+    }
+
+    .sv-co-logo {
+        flex-shrink: 0;
+        display: inline-flex;
+
+        img { max-height: 46px; width: auto; }
+
+        // A 224px desktop logo plus the pill does not fit a 375px screen
+        @include media-breakpoint-down(md) {
+            img { max-height: 34px; }
+        }
+    }
+
+    .sv-co-contact {
+        margin-left: auto;
+        text-align: right;
+        font-size: 13px;
+        line-height: 1.45;
+        color: $sivanka-text-muted;
+
+        &-title { font-weight: 700; color: $sivanka-text; }
+
+        &-line {
+            a { font-weight: 700; color: $sivanka-primary; }
+            span { color: $sivanka-text-soft; margin-left: 6px; }
+        }
+
+        @include media-breakpoint-down(md) { display: none; }
+    }
+
+    .sv-co-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+        font-weight: 600;
+        font-size: 14px;
+        color: $sivanka-primary;
+        border: 1.5px solid $sivanka-primary;
+        border-radius: 999px;
+        padding: 10px 20px;
+        text-decoration: none;
+        transition: all 0.16s;
+
+        &:hover { background: $sivanka-primary; color: $ow-color-white; }
+    }
+}
+
+// ------------------------------------------------------------
+// Step indicator
+// ------------------------------------------------------------
+.checkout-steps {
+    padding: 36px 0 30px;
+    margin: 0;
+
+    &-list {
+        display: flex;
+        align-items: center;
+        max-width: 640px;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+
+    &-item {
+        display: flex;
+        align-items: center;
+
+        &:not(:last-child) { flex: 1; }
+    }
+
+    &-marker {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    &-number {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 15px;
+        flex-shrink: 0;
+        background: #f2eae0;
+        color: #9a8b83;
+    }
+
+    &-label {
+        font-size: 15px;
+        font-weight: 600;
+        color: #9a8b83;
+        white-space: nowrap;
+    }
+
+    &-connector {
+        flex: 1;
+        height: 2px;
+        min-width: 30px;
+        margin: 0 16px;
+        background: #eadfe6;
+    }
+
+    .is-done {
+        .checkout-steps-number { background: #e6f4ee; color: #2fa36b; }
+        .checkout-steps-label { color: $sivanka-text; }
+        .checkout-steps-connector { background: $sivanka-primary; }
+    }
+
+    .is-active {
+        .checkout-steps-number { background: $sivanka-primary; color: $ow-color-white; }
+        .checkout-steps-label { color: $sivanka-primary; font-weight: 700; }
+    }
+
+    @include media-breakpoint-down(sm) {
+        &-label { display: none; }
+        &-connector { margin: 0 8px; }
+    }
+}
+
+// ------------------------------------------------------------
+// Two-column flow layout — steps + H1 span full width above
+// ------------------------------------------------------------
+.is-act-checkoutregisterpage,
+.is-act-confirmpage {
+    .checkout { padding: 0; }
+
+    .checkout-container {
+        max-width: 1160px;
+        margin: 0 auto !important;
+        padding: 0 32px 48px;
+        display: grid !important;
+        grid-template-columns: 1fr 360px;
+        column-gap: 32px;
+        row-gap: 0;
+        align-items: start;
+
+        @include media-breakpoint-down(lg) {
+            display: block !important;
+            padding-inline: 24px;
+        }
+    }
+
+    .checkout-main {
+        display: contents;
+
+        @include media-breakpoint-down(lg) { display: block; }
+    }
+
+    .flashbags { grid-column: 1 / -1; }
+    .checkout-steps { display: none; }
+
+    .address-main-header,
+    .confirm-main-header {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        display: block;
+        font-family: $sivanka-serif;
+        font-weight: 700;
+        font-size: 34px;
+        line-height: 1.15;
+        color: $sivanka-heading-dark;
+        margin: 36px 0 28px;
+
+        @include media-breakpoint-down(md) { font-size: 27px; }
+    }
+
+    .checkout-aside {
+        grid-column: 2;
+        grid-row: 3 / span 30;
+        align-self: start;
+        justify-self: stretch;
+        position: sticky;
+        top: 20px;
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+
+        @include media-breakpoint-down(lg) {
+            position: static;
+            margin-top: 28px !important;
+        }
+    }
+}
+
+// The left-column content (everything after the H1) sits in column 1
+.is-act-checkoutregisterpage {
+    .register-login-collapse-toogle,
+    .register-form,
+    .login-collapse,
+    #loginCollapse { grid-column: 1; }
+}
+.is-act-confirmpage {
+    .confirm-product,
+    .confirm-section,
+    .checkout-confirm-tos,
+    form[action*="checkout/order"],
+    .confirm-main { grid-column: 1; }
+}
+
+// ------------------------------------------------------------
+// Shared pink summary card (register + confirm)
+// ------------------------------------------------------------
+.is-act-checkoutregisterpage,
+.is-act-confirmpage {
+    .checkout-aside-container {
+        background: $sivanka-info-bg !important;
+        border: 1px solid $sivanka-info-border;
+        border-radius: 18px;
+        padding: 28px;
+    }
+
+    .checkout-aside-summary {
+        background: none;
+        padding: 0;
+    }
+
+    .checkout-aside-summary-header {
+        font-family: $sivanka-serif;
+        font-weight: 700;
+        font-size: 22px;
+        color: $sivanka-heading-dark;
+        margin: 0 0 18px;
+        padding: 0;
+        border: 0;
+    }
+
+    .checkout-aside-summary-list {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: baseline;
+        margin: 0;
+
+        dt, dd {
+            margin: 0;
+            padding: 8px 0;
+            width: auto;
+            max-width: none;
+            flex: none;
+            font-size: 14.5px;
+        }
+
+        dt { text-align: left; color: $sivanka-text-muted; font-weight: 400; }
+        dd { text-align: right; color: $sivanka-text; font-weight: 600; }
+
+        dt.checkout-aside-summary-total,
+        dd.checkout-aside-summary-total {
+            border-top: 1px solid $sivanka-divider;
+            margin-top: 10px;
+            padding-top: 14px;
+            padding-bottom: 2px;
+            color: $sivanka-heading-dark;
+        }
+        dt.checkout-aside-summary-total { font-weight: 700; font-size: 16px; }
+        dd.checkout-aside-summary-total {
+            font-family: $sivanka-serif;
+            font-weight: 700;
+            font-size: 23px;
+            line-height: 1;
+        }
+
+        dt.summary-net, dd.summary-net,
+        dt.summary-tax, dd.summary-tax {
+            font-size: 12.5px;
+            color: $sivanka-text-soft;
+            font-weight: 400;
+            padding: 3px 0;
+        }
+        dt.summary-net, dd.summary-net { padding-top: 7px; }
+    }
+
+    // Shipping cost shown free = green
+    dd.checkout-aside-summary-value.summary-shipping { color: #2fa36b; }
+}
+
+// ------------------------------------------------------------
+// Aside product mini-list (register page)
+// ------------------------------------------------------------
+.is-act-checkoutregisterpage {
+    .checkout-aside-products {
+        padding: 0;
+        margin-top: 18px;
+        border-top: 1px solid $sivanka-divider;
+        padding-top: 14px;
+
+        .checkout-aside-product-header {
+            font-family: $sivanka-mono;
+            font-size: 11px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #9a8b83;
+            border: 0;
+            margin: 0 0 8px;
+            padding: 0;
+        }
+
+        .line-item {
+            padding-block: 8px;
+            border: 0 !important;
+
+            &:last-child { border: 0 !important; }
+
+            .line-item-img-container { width: 48px; }
+            .line-item-img {
+                border-radius: 9px;
+                background: $ow-color-white;
+            }
+            .line-item-label { font-size: 13.5px; font-weight: 600; color: $sivanka-text; }
+            .line-item-total-price-value { font-weight: 700; font-size: 14px; color: $sivanka-heading-dark; }
+            .line-item-remove-button { display: none; }
+        }
+    }
+}
+
+// ------------------------------------------------------------
+// Register (shipping info) form
+// ------------------------------------------------------------
+.is-act-checkoutregisterpage {
+    // Login prompt → pink card
+    .register-login-collapse-toogle {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: $sivanka-info-bg;
+        border: 1px solid $sivanka-info-border;
+        border-radius: 14px;
+        padding: 16px 20px;
+        margin-bottom: 24px;
+
+        .icon {
+            width: 22px;
+            height: 22px;
+            color: $sivanka-primary;
+            flex-shrink: 0;
+        }
+        .icon svg use, .icon svg path { fill: $sivanka-primary; }
+
+        a { font-weight: 600; color: $sivanka-primary; text-decoration: none; }
+        a:hover { color: $sivanka-primary-hover; }
+    }
+
+    // Section cards
+    fieldset.register-personal,
+    fieldset.register-billing,
+    fieldset.register-shipping,
+    .login-card,
+    #loginCollapse .card {
+        border: 1px solid $sivanka-card-border;
+        border-radius: 18px;
+        padding: 28px;
+        margin-bottom: 22px;
+        background: $ow-color-white;
+    }
+    #loginCollapse .card { box-shadow: none; }
+
+    // Section titles
+    .register-personal .card-title,
+    .register-billing .card-title,
+    .register-shipping .card-title,
+    #loginCollapse .card-title {
+        font-family: $sivanka-serif;
+        font-weight: 700;
+        font-size: 20px;
+        color: $sivanka-heading-dark;
+        margin: 0 0 20px;
+        padding: 0;
+        border: 0;
+    }
+
+    // "Vaš naslov" / "Alternativni naslov pošiljanja" are real <legend> elements. A
+    // legend reverts to the UA "sits astride the fieldset border" rendering the moment
+    // it stops being floated — it escaped the card's 28px padding and the card's top
+    // border was drawn straight through the text. Reboot's float keeps it in normal
+    // flow inside the card, so restore it.
+    legend.card-title {
+        float: left;
+        width: 100%;
+    }
+
+    // Form fields
+    .checkout-main {
+        .form-group { margin-bottom: 16px; }
+
+        label,
+        .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #4a545b;
+            margin-bottom: 7px;
+        }
+
+        .form-control,
+        .form-select {
+            height: 46px;
+            border: 1px solid $sivanka-input-border;
+            border-radius: 10px;
+            padding: 0 14px;
+            font-size: 14.5px;
+            box-shadow: none;
+
+            &:focus {
+                border-color: $sivanka-primary;
+                box-shadow: 0 0 0 3px rgba($sivanka-primary, 0.12);
+            }
+        }
+
+        select.form-select { padding-right: 40px; }
+        textarea.form-control { height: auto; min-height: 90px; padding: 12px 14px; }
+    }
+
+    // Checkboxes
+    .form-check-input { accent-color: $sivanka-primary; }
+    .form-check-input:checked {
+        background-color: $sivanka-primary;
+        border-color: $sivanka-primary;
+    }
+    .register-guest-control,
+    .register-different-shipping {
+        margin-top: 4px;
+        .form-check-label { font-size: 13.5px; color: #4a545b; }
+    }
+
+    // Privacy note
+    fieldset.privacy-notice,
+    .register-required-info {
+        border: 0;
+        padding: 0;
+        margin-top: 18px;
+        font-size: 13px;
+        color: $sivanka-text-soft;
+
+        .privacy-notice-title {
+            font-size: 13px;
+            color: $sivanka-text-soft;
+            font-weight: 400;
+            padding: 0;
+            border: 0;
+            float: none;
+            width: auto;
+        }
+        a { color: $sivanka-primary; }
+    }
+
+    // Submit → pink full-width button
+    .register-submit {
+        width: 100%;
+        margin-top: 8px;
+
+        &.col-md-6 { flex: 0 0 100%; max-width: 100%; }
+        &.offset-md-6 { margin-left: 0; }
+
+        .btn {
+            width: 100%;
+            background: $sivanka-primary;
+            border-color: $sivanka-primary;
+            color: $ow-color-white;
+            border-radius: 12px;
+            padding: 15px;
+            font-weight: 600;
+            font-size: 16px;
+            line-height: 1.2;
+
+            &:hover {
+                background: $sivanka-primary-hover;
+                border-color: $sivanka-primary-hover;
+            }
+        }
+    }
+}
+
+// ============================================================
+// CONFIRM PAGE
+// ============================================================
+.is-act-confirmpage {
+    .confirm-main-header-item-counter { display: none; }
+
+    // Numbered section headers
+    .confirm-section {
+        margin-bottom: 34px;
+        grid-column: 1;
+    }
+
+    .confirm-section-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+        padding: 0;
+        border: 0;
+    }
+
+    .confirm-section-number {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: $sivanka-primary;
+        color: $ow-color-white;
+        font-family: $sivanka-mono;
+        font-weight: 700;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .confirm-section-title {
+        font-family: $sivanka-serif;
+        font-weight: 700;
+        font-size: 21px;
+        color: $sivanka-heading-dark;
+        margin: 0;
+    }
+
+    // Address + payment/shipping two-up card grids
+    .confirm-address .row,
+    .confirm-payment-shipping .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin: 0;
+
+        @include media-breakpoint-down(sm) { grid-template-columns: 1fr; }
+    }
+
+    .confirm-address .card-col,
+    .confirm-payment-shipping .col-sm-6 {
+        width: auto;
+        max-width: none;
+        flex: none;
+        padding: 0;
+        margin: 0;
+        // Grid items default to min-width:auto, so a nowrap button inside the card
+        // set a min-content floor wider than the track and burst out of it.
+        min-width: 0;
+    }
+
+    // Long Slovene labels ("Spremeni naslov za obračunavanje") set a nowrap
+    // min-content floor that burst out of a 320px card.
+    .confirm-address .btn,
+    .confirm-payment-shipping .btn,
+    .card-actions .btn {
+        white-space: normal;
+    }
+
+    // The bordered card inside each column
+    .confirm-address .checkout-card,
+    .confirm-payment-shipping .checkout-card {
+        border: 1px solid $sivanka-card-border !important;
+        border-radius: 16px;
+        background: $ow-color-white;
+        box-shadow: none;
+        height: 100%;
+
+        .card-body { padding: 22px; }
+    }
+
+    // Payment first, shipping second (matches design order)
+    .confirm-payment-shipping .confirm-payment { order: 1; }
+    .confirm-payment-shipping .confirm-shipping { order: 2; }
+
+    // Space Mono uppercase labels
+    .confirm-address .card-title,
+    .confirm-payment-shipping .card-title {
+        font-family: $sivanka-mono;
+        font-size: 12px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #9a8b83;
+        font-weight: 400;
+        margin: 0 0 12px;
+        padding: 0;
+        border: 0;
+    }
+
+    // Address text
+    .confirm-address {
+        address,
+        .confirm-address-summary,
+        p {
+            font-size: 14.5px;
+            line-height: 1.7;
+            color: #3c3138;
+            font-style: normal;
+            margin: 0;
+        }
+    }
+
+    // "Spremeni" edit links → pink pill
+    .confirm-address .btn,
+    .address-editor,
+    .confirm-address-editor {
+        display: inline-block;
+        margin-top: 16px;
+        font-size: 13.5px;
+        font-weight: 600;
+        color: $sivanka-primary;
+        background: transparent;
+        border: 1px solid $sivanka-divider;
+        border-radius: 999px;
+        padding: 7px 16px;
+        text-decoration: none;
+
+        &:hover { background: $sivanka-side-hover; color: $sivanka-primary; border-color: $sivanka-divider; }
+    }
+
+    // Payment / shipping radios
+    .payment-method,
+    .shipping-method {
+        border: 0;
+        padding: 0;
+    }
+    .payment-method-radio,
+    .shipping-method-radio {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 4px 0;
+    }
+    .payment-method-input,
+    .shipping-method-input {
+        accent-color: $sivanka-primary;
+        width: 18px;
+        height: 18px;
+        margin-top: 2px;
+        flex-shrink: 0;
+    }
+    .payment-method-label,
+    .shipping-method-label {
+        font-weight: 600;
+        font-size: 14.5px;
+        color: $sivanka-text;
+    }
+    .payment-method-description,
+    .shipping-method-description {
+        font-size: 13px;
+        color: $sivanka-text-soft;
+
+        p { font-size: 13px; color: $sivanka-text-soft; margin: 2px 0 0; }
+    }
+    .shipping-method .shipping-price { color: #2fa36b; font-weight: 600; font-size: 13px; }
+
+    // Order review list
+    .confirm-product {
+        .card,
+        .checkout-product-table {
+            border: 1px solid $sivanka-card-border !important;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: none;
+            background: $ow-color-white;
+        }
+        .card-body { padding: 0; margin: 0; }
+        .cart-table-header,
+        .sv-cart-header { display: none; }
+    }
+
+    .sv-confirm-line {
+        display: grid;
+        grid-template-columns: 64px 1fr 132px 100px;
+        gap: 16px;
+        align-items: center;
+        padding: 18px 22px;
+        border-bottom: 1px solid $sivanka-card-border;
+        list-style: none;
+
+        &:last-child { border-bottom: 0; }
+
+        @include media-breakpoint-down(sm) {
+            grid-template-columns: 56px 1fr auto;
+            grid-template-areas: "thumb meta total" "thumb qty qty";
+            row-gap: 10px;
+        }
+    }
+
+    .sv-confirm-thumb {
+        width: 64px;
+        height: 64px;
+        border-radius: 10px;
+        overflow: hidden;
+        background: #f7f4f1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        @include media-breakpoint-down(sm) { grid-area: thumb; }
+
+        img,
+        .line-item-img { width: 100%; height: 100%; object-fit: contain; }
+        .line-item-icon { width: 34px; height: 34px; color: $sivanka-text-soft; }
+    }
+
+    .sv-confirm-meta {
+        min-width: 0;
+
+        @include media-breakpoint-down(sm) { grid-area: meta; }
+
+        .sv-confirm-name {
+            display: block;
+            font-weight: 600;
+            font-size: 14.5px;
+            color: $sivanka-text;
+            text-decoration: none;
+
+            &:hover { color: $sivanka-primary; }
+        }
+        .sv-confirm-unit {
+            font-size: 12.5px;
+            color: $sivanka-text-soft;
+            margin-top: 3px;
+        }
+        .line-item-details-characteristics {
+            font-size: 12.5px;
+            color: $sivanka-text-soft;
+            margin-top: 2px;
+        }
+    }
+
+    .sv-confirm-qty {
+        display: flex;
+        justify-content: center;
+
+        @include media-breakpoint-down(sm) { grid-area: qty; justify-content: flex-start; }
+
+        .line-item-quantity-row { margin: 0; }
+        .line-item-quantity-label { display: none; }
+        .line-item-quantity-select-wrapper { width: auto; padding: 0; }
+        .line-item-quantity-container { margin: 0; }
+        fieldset { margin: 0; padding: 0; border: 0; }
+
+        .line-item-quantity-group {
+            display: inline-flex;
+            align-items: center;
+            width: auto;
+            border: 1px solid $sivanka-qty-border;
+            border-radius: 9px;
+            background: $ow-color-white;
+            overflow: hidden;
+            flex-wrap: nowrap;
+        }
+        .btn-minus,
+        .btn-plus {
+            width: 32px;
+            height: 36px;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0;
+
+            &:hover { background: $sivanka-side-hover; box-shadow: none; }
+            .icon { color: $sivanka-primary; }
+            .icon > svg { width: 12px; height: 12px; }
+            .icon svg use, .icon svg path { fill: $sivanka-primary !important; stroke: $sivanka-primary; }
+        }
+        .quantity-selector-group-input {
+            width: 34px;
+            max-width: 34px;
+            min-width: 34px;
+            height: 36px;
+            padding: 0;
+            text-align: center;
+            border: 0;
+            background: transparent;
+            font-weight: 600;
+            font-size: 14px;
+            color: $sivanka-text;
+            -moz-appearance: textfield;
+
+            &:focus { box-shadow: none; outline: none; }
+            &::-webkit-outer-spin-button,
+            &::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        }
+    }
+
+    .sv-confirm-total {
+        text-align: right;
+
+        @include media-breakpoint-down(sm) { grid-area: total; }
+
+        .line-item-total-price-label { display: none; }
+        .line-item-total-price-value {
+            font-weight: 700;
+            font-size: 15px;
+            color: $sivanka-heading-dark;
+        }
+    }
+
+    // TOS in aside
+    .sv-confirm-tos {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin-top: 20px;
+        padding: 14px;
+        background: $ow-color-white;
+        border: 1px solid $sivanka-divider;
+        border-radius: 12px;
+        cursor: pointer;
+
+        .form-check-input {
+            width: 18px;
+            height: 18px;
+            margin: 1px 0 0;
+            flex-shrink: 0;
+            accent-color: $sivanka-primary;
+        }
+        .checkout-confirm-tos-label,
+        .checkout-confirm-revocation-label {
+            font-size: 12.5px;
+            line-height: 1.5;
+            color: #5b4650;
+        }
+        .btn-link-inline {
+            color: $sivanka-primary;
+            padding: 0;
+            border: 0;
+            background: none;
+            font-size: inherit;
+            vertical-align: baseline;
+        }
+    }
+    .sv-confirm-tos + .sv-confirm-tos { margin-top: 10px; }
+
+    // Place-order button + SSL
+    .checkout-aside-action,
+    .checkout-aside-action.d-grid {
+        padding: 0;
+        margin-top: 16px;
+
+        .btn,
+        .btn-primary {
+            width: 100%;
+            background: $sivanka-primary;
+            border-color: $sivanka-primary;
+            color: $ow-color-white;
+            border-radius: 12px;
+            padding: 16px;
+            font-weight: 600;
+            font-size: 16px;
+            line-height: 1.2;
+
+            &:hover {
+                background: $sivanka-primary-hover;
+                border-color: $sivanka-primary-hover;
+            }
+        }
+    }
+
+    .checkout-aside-trust { display: none; }
+
+    .sv-ssl-note {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 16px;
+        font-size: 12.5px;
+        color: $sivanka-text-soft;
+
+        svg { flex-shrink: 0; }
+    }
+}
+
+// ============================================================
+//  Register: personal-data title inside its card
+//  Core renders the section title as an <h2> in .card-body, ABOVE the personal
+//  fieldset, while "Vaš naslov" is a <legend> INSIDE its own card. Twig-wise the h2
+//  lives outside the form, and Shopware resolves the checkout register template's
+//  sw_extends chain to the core component, so block overrides do not reach it.
+//  Instead, merge the h2 and the fieldset into one card visually: the h2 becomes the
+//  card's top, the fieldset its body.
+// ============================================================
+.is-act-checkoutregisterpage {
+    .register-card > .card-body > h2.card-title {
+        margin: 0;
+        padding: 28px 28px 0;
+        border: 1px solid $sivanka-card-border;
+        border-bottom: 0;
+        border-radius: 18px 18px 0 0;
+        background: $ow-color-white;
+        font-family: $sivanka-serif;
+        font-size: 20px;
+        font-weight: 700;
+        color: $sivanka-heading-dark;
+    }
+
+    fieldset.register-personal {
+        margin-top: 0;
+        border-top: 0;
+        border-radius: 0 0 18px 18px;
+        padding-top: 20px;
+    }
+}

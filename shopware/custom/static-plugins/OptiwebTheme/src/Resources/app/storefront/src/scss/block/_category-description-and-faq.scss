@@ -11,11 +11,17 @@
 
         &__content {
 
+            // Image sits above the description paragraph, full column width
             .cms-element-image {
+                display: block;
                 height: auto;
+                border-radius: $sivanka-r16;
+                overflow: hidden;
+                margin-inline: auto;
                 @include margin('bottom', 24, false);
 
                 > div, img {
+                    display: block;
                     width: 100%;
                 }
             }

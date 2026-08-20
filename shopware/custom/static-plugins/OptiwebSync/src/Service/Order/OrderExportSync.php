@@ -2,625 +2,64 @@
 
 namespace OptiwebSync\Service\Order;
 
-use DateTime;
 use Doctrine\DBAL\Connection;
+use Monolog\Logger;
 use OptiwebSync\Client\MinimaxClient;
 use OptiwebSync\Helper\GlobalVariables;
 use OptiwebSync\Helper\OwLogger;
-use OptiwebSync\Helper\ShopwareApiHelper;
 use OptiwebSync\Service\SyncBase\AbstractSyncBase;
-use Shopware\Core\Checkout\Cart\LineItem\LineItem;
+use Shopware\Core\Checkout\Cart\Price\Struct\CalculatedPrice;
+use Shopware\Core\Checkout\Cart\Price\Struct\CartPrice;
+use Shopware\Core\Checkout\Order\Aggregate\OrderAddress\OrderAddressEntity;
+use Shopware\Core\Checkout\Order\Aggregate\OrderDelivery\OrderDeliveryEntity;
+use Shopware\Core\Checkout\Order\Aggregate\OrderLineItem\OrderLineItemEntity;
+use Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionEntity;
+use Shopware\Core\Checkout\Order\OrderEntity;
+use Shopware\Core\Framework\Context;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsAnyFilter;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Sorting\FieldSorting;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
 
+/**
+ * Exports paid Shopware orders to Minimax as issued sales orders.
+ *
+ * Reads and writes through the DAL — one query with the associations it needs,
+ * rather than a chain of admin-API round-trips per order.
+ *
+ * Minimax order rows carry prices WITHOUT VAT and cannot carry a VAT rate of
+ * their own (see MinimaxClient), so every row is converted to net here, driven
+ * by the order's own tax status.
+ */
 class OrderExportSync extends AbstractSyncBase
 {
+    /** Tolerance when reconciling the exported row total against the order. */
+    private const RECONCILE_TOLERANCE = 0.02;
+
+    private Context $context;
+
+    /** Minimax item code used for the shipping row; empty = free-text row. */
+    private string $shippingItemCode = '';
+
+    private int $exported = 0;
+    private int $failed = 0;
+    private int $skipped = 0;
+
     public function __construct(
         SystemConfigService $systemConfigService,
-        ShopwareApiHelper $shopwareApiHelper,
         Connection $connection,
         private readonly MinimaxClient $minimaxClient,
+        private readonly EntityRepository $orderRepository,
     ) {
-        parent::__construct($systemConfigService, $shopwareApiHelper, $connection);
+        parent::__construct($systemConfigService, $connection);
     }
 
-    public function initialize(): void
-    {
-        $this->logger = OwLogger::generate("OrderExportSync", "order-export-sync", true);
-    }
-    protected function setExportData(): array
-    {
-        $orderExportState = $this->systemConfigService->get("OptiwebSync.config.orderExportState");
-        $allowedTransactionStateIds = $this->systemConfigService->get("OptiwebSync.config.allowedOrderPaymentStateToExport");
+    // -------------------------------------------------------------------------
+    // SyncBaseInterface
+    // -------------------------------------------------------------------------
 
-        $data = $this->shopwareApiHelper->getShopwareEntries('order', ['id','orderNumber'], function (array $data): array {
-            $map = [];
-            foreach ($data as $item) {
-                $map[$item['attributes']['orderNumber']] = $item['id'];
-            }
-            return $map;
-        },
-            [
-                'type' => 'multi',
-                'operator' => 'and',
-                'queries' => [
-                    ['type' => 'equalsAny', 'field' => 'customFields.optiwebOrderStatus', 'value' =>  [GlobalVariables::STATUS_WAITING, GlobalVariables::STATUS_ERROR, GlobalVariables::STATUS_PARTIALLY_SENT]],
-                    ['type' => 'equals', 'field' => 'stateId', 'value' => $orderExportState],
-                    ['type' => 'equalsAny', 'field' => 'transactions.stateId', 'value' => $allowedTransactionStateIds ],
-                ]
-            ]
-        );
-
-        return $data;
-    }
-    protected function export(array $dataArray, array $loopData): int
-    {
-        $countExported = 0;
-
-        foreach ($dataArray as $id) {
-            $orderData = $this->shopwareApiHelper->getShopwareEntryDetailedInformation('order/' . $id );
-
-            $orderDataInfo = $this->getOrderDataInformation($orderData);
-            $customerData = $this->prepareCustomerData($orderDataInfo);
-
-            if(empty($customerData)) continue;
-
-            $paymentMethodId = $this->preparePaymentData($orderDataInfo);
-            if(empty($paymentMethodId)) continue;
-
-            $shippingMethodId = $this->prepareShippingData($orderDataInfo);
-            if(empty($shippingMethodId)) continue;
-
-            $minimaxOrderData = $this->prepareMinimaxOrderData($orderData, $orderDataInfo);
-            OwLogger::addVisibleLog($this->logger, 'Sending order ' . ($orderData['attributes']['orderNumber'] ?? $id) . ' to Minimax');
-            $response = $this->minimaxClient->createOrder($minimaxOrderData);
-
-            $this->handleOrderResponse($id, $response);
-
-            $countExported++;
-
-        }
-
-        return $countExported;
-    }
-
-    public function checkOrderPaymentMethod($transactions, string $paymentType): bool {
-        if($paymentType == 'creditCard'){
-            $creditCardPaymentId = $this->systemConfigService->get("OptiwebSync.config.creditCardPaymentId");
-            foreach ($transactions as $transaction){
-                if($creditCardPaymentId === $transaction['attributes']['paymentMethodId']) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    private function handleCreditCardPayment($transactions){
-        if(count($transactions) == 1){
-            $isOrderTranslationPaid = $this->checkIfCreditCardOrderTranslationStateIsPaid($transactions[0]);
-            if(!$isOrderTranslationPaid){
-                return false;
-            }
-            return $transactions[0]['attributes']['paymentMethodId'];
-        }else {
-            //if multiple transactions, credit card failed, and we need to find the one that is not failed
-            $paymentStatusFailedId = $this->systemConfigService->get("OptiwebSync.config.orderPaymentStatusFailedId");
-            foreach ($transactions as $transaction) {
-                if ($transaction['attributes']['stateMachineStateId'] !== $paymentStatusFailedId) {
-                    return $transaction['attributes']['paymentMethodId'];
-                }
-            }
-        }
-
-        return false;
-    }
-
-    private function checkIfCreditCardOrderTranslationStateIsPaid($translaction){
-        $allowedCreditCardTransactionStateId = $this->systemConfigService->get("OptiwebSync.config.orderPaymentCreditCardStateToExport");
-        $orderTransactionStateId = $translaction['attributes']['stateId'];
-
-        if($allowedCreditCardTransactionStateId === $orderTransactionStateId) return true;
-
-        return false;
-    }
-
-    private function isJson($string) {
-        json_decode($string);
-        return json_last_error() === JSON_ERROR_NONE;
-    }
-
-    // Method to get and prepare order data
-    private function getOrderDataInformation($orderData)
-    {
-        // Implement the logic to get the order data here…
-        $relationships = $orderData['relationships'];
-        $requestedRelationships = ['currency', 'orderCustomer', 'lineItems', 'stateMachineState', 'transactions','addresses','deliveries'];
-        $additionalOrderData = $this->shopwareApiHelper->getRelationships($relationships, $requestedRelationships);
-        return $additionalOrderData;
-    }
-
-    // Method to get and prepare customer data
-    private function prepareCustomerData($orderDataInfo)
-    {
-        $customerDetails = [];
-        $orderCustomer = $orderDataInfo['orderCustomer'][0]['attributes'];
-        $customerData = $this->shopwareApiHelper->getShopwareEntryDetailedInformation('customer/' . $orderCustomer['customerId'] );
-        $customerCustomFields = $customerData['attributes']['customFields'] ?? null;
-
-        $customerDetails['partnerId'] = $customerCustomFields['vascoSifra'] ?? 0;
-        $customerDetails['prodajalna'] = $customerCustomFields['vascoProdajalnaSifra'] ?? 0;
-
-        return $customerDetails;
-    }
-
-    // Method to get and prepare payment data
-    private function preparePaymentData($orderDataInfo)
-    {
-        $transactions = $orderDataInfo['transactions'];
-        if(!is_array($transactions) || count($transactions) == 0) return null;
-        $isPaymentCreditCard = $this->checkOrderPaymentMethod($transactions,'creditCard');
-        if($isPaymentCreditCard){
-            $payment = $this->handleCreditCardPayment($transactions);
-        }else{
-            $payment = $transactions[0]['attributes']['paymentMethodId'];
-        }
-        return $payment;
-    }
-
-    private function prepareShippingData($orderDataInfo)
-    {
-        $deliveries = $orderDataInfo['deliveries'];
-        if(!is_array($deliveries) || count($deliveries) == 0) return null;
-        $shippingMethodId = $deliveries[0]['attributes']['shippingMethodId'];
-        return $shippingMethodId;
-    }
-
-    private function prepareOrderData($orderData, $orderDataInfo, $customerData, $paymentAndShippingMethod)
-    {
-        // Collect all additional information
-        $orderAttributes = $orderData['attributes'];
-
-        $deliveries = $orderDataInfo['deliveries'];
-
-        $products = $this->prepareProductData($orderDataInfo);
-        // $products = $this->addShippingCostAsLineItem($orderAttributes, $customerData['priceType'], $deliveries, $products);
-
-        $billingAddressId = $orderAttributes['billingAddressId'] ?? null;
-        $billingAddressVersion = $orderAttributes['billingAddressVersionId'] ?? null;
-        $billingAddress = $this->prepareBillingAddressData($orderDataInfo, $billingAddressId, $billingAddressVersion);
-        $shippingAddress = $this->prepareShippingAddressData($orderDataInfo);
-
-        $customerComment = $orderAttributes['customerComment'] ?? "";
-
-        $acNote = $billingAddress . "\n\n" . $shippingAddress . "\n\n" . "Customer comment: " . $customerComment;
-        $ordersToUpsertData = [];
-
-        //get year from $orderAttributes['orderDateTime'], current format is 2025-10-01T14:35:20.555+00:00
-        $orderDate = $orderAttributes['orderDateTime']; // "2025-10-01T14:35:20.555+00:00"
-        $date = new DateTime($orderDate);
-        $year = $date->format('Y');
-
-        $orderCustomFields = $orderAttributes['customFields'] ?? [];
-        $warehouseID = $orderCustomFields['warehouseId'] ?? 1; // default
-        $warehouseID = $warehouseID == 0 ? 2 : $warehouseID;
-
-        $orderUpsertData = [
-            'tipStevilcenja' => 0,
-            'stevilka' => $orderAttributes['orderNumber'],
-            'leto' => $year,
-            'datum' => $orderDate,
-            'partner' => $customerData['partnerId'],
-            'prodajalna' => $customerData['prodajalna'],
-            // 'komercialist' => $warehouseID == 1 ? 49 : 444444,
-            'komercialist' => 100,
-            'vhodniMenu' => $warehouseID,
-            'skladisce' => $warehouseID,
-            'rabat1' => 0,
-            'nastaviKupceveCene' => true,
-            'postavke' => $products,
-        ];
-
-        return $orderUpsertData;
-    }
-
-    private function addShippingCostAsLineItem($order, $priceType, $deliveries, $products){
-
-        $shippingCosts = $order->shippingCosts ?? null;
-
-        if($shippingCosts){
-
-            $shippingMethodId = $deliveries[0]['attributes']['shippingMethodId'] ?? '';
-
-            $shippingPostaSlo = $this->systemConfigService->get("OptiwebSync.config.shippingMethodPostaSlo");
-            $shippingPostaBlazic = $this->systemConfigService->get("OptiwebSync.config.shippingMethodPostaBLazic");
-            $shippingGLS = $this->systemConfigService->get("OptiwebSync.config.shippingMethodGLS");
-            $shippingDPD = $this->systemConfigService->get("OptiwebSync.config.shippingMethodDPD");
-
-            $shippingMethods = [
-                $shippingPostaSlo => 'POŠTNINA PS',
-                $shippingPostaBlazic => 'POŠTNINA',
-                $shippingGLS => 'POŠTNINA GLS',
-                $shippingDPD => 'POŠTNINA DPD',
-            ];
-
-            $shippingMethod = $shippingMethods[$shippingMethodId] ?? '';
-
-            if($shippingMethod){
-                $price = strval($shippingCosts->totalPrice);
-                $number = count($products);
-                if($price > 0) {
-                    $products[] = [
-                        "anNo" => $number + 1,
-                        "acIdent" => $shippingMethod,
-                        "anQty" => "1",
-                        // "anPrice" => $price,
-                        $priceType => $price,
-                        "acName" => "Strošek pošiljanja"
-                    ];
-                }
-            }
-
-        }
-
-        return $products;
-
-    }
-
-    private function prepareProductData($orderDataInfo)
-    {
-        $products = [];
-        $lineItems = $orderDataInfo['lineItems'];
-
-        foreach ($lineItems as $lineItem) {
-            $product = $lineItem['attributes'];
-            $type = $product['type'];
-            if($type != LineItem::PRODUCT_LINE_ITEM_TYPE) continue;
-
-            $payload = $product['payload'];
-            $productNumber = $payload['productNumber'];
-            $qty = $product['quantity'];
-            
-            // Get lineItem unitPrice (may be adjusted with multiplier)
-            $lineItemPrice = (float)$product['unitPrice'];
-            
-            // Try to get prices from customFields (set by OrderLineItemPriceSubscriber)
-            $customFields = $product['customFields'] ?? [];
-            $originalPrice = $customFields['ow_original_price'] ?? null;
-            $customFieldsPrice = $customFields['ow_price'] ?? null;
-            $rabat = $customFields['ow_rabat'] ?? 0;
-
-            // Handle unit product multiplier for comparison
-            $isOpucUnitProduct = $product['payload']['opucUnitProduct']['opucUnitProduct'] ?? false;
-            $adjustedLineItemPrice = $lineItemPrice;
-            if($isOpucUnitProduct){
-                $baseUnit = strtolower($product['payload']['opucUnitProduct']['baseUnit']) ?? false;
-                $multiplier = in_array($baseUnit, ['m2', 'm', 'cent'], true) ? 10000 : 1;
-                $qty = $qty / $multiplier;
-                $adjustedLineItemPrice = $lineItemPrice * $multiplier;
-            }
-
-            // Use customFields price if available and matches lineItem price (within tolerance)
-            if ($originalPrice !== null) {
-                $customFieldsPriceFloat = $customFieldsPriceFloatToCompare = (float)$originalPrice;
-                if($rabat > 0){
-                    $customFieldsPriceFloatToCompare = $customFieldsPriceFloat * (1 - ($rabat / 100)) ;
-                }
-                if (abs($customFieldsPriceFloatToCompare - $adjustedLineItemPrice) < 0.01) {
-                    $priceToUse = $customFieldsPriceFloat;
-                } else {
-                    if($rabat > 0){
-                        $priceToUse = round($adjustedLineItemPrice / (1 - ($rabat / 100)),4);
-                    } else {
-                        $priceToUse = $adjustedLineItemPrice;
-                    }
-                }
-            } else {
-                if($rabat > 0){
-                    $priceToUse = round($adjustedLineItemPrice / (1 - ($rabat / 100)),4);
-                } else {
-                    $priceToUse = $adjustedLineItemPrice;
-                }
-            }
-
-            // Calculate price with VAT (22%)
-            $prodajnaCena = round($priceToUse, 4);
-            $prodajnaCenaZDdv = round($prodajnaCena * 1.22, 4);
-
-            $products[] = [
-                "sifra" => $productNumber,
-                "kolicina" => strval($qty),
-                'prodajnaCena' => strval($prodajnaCena),
-                'prodajnaCenaZDdv' => strval($prodajnaCenaZDdv),
-                'rabat1' => $rabat, // cenikZaKupca v kolikor je rabat vrnjen v klicu ga zpišite
-                'stopnjaDdv' => 0, // 0 = 22%, 1=9,5%, 2=0,0%, 3=5%
-            ];
-        }
-        return $products;
-    }
-
-    private function prepareBillingAddressData($orderDataInfo, $billingAddressId, $billingAddressVersion)
-    {
-        $billingAddressApiResponse = $this->shopwareApiHelper->getShopwareEntryDetailedInformation('order-address/' . $billingAddressId ) ?? null;
-        $billingAddressData = $billingAddressApiResponse['attributes'] ?? null;
-        if($billingAddressId && $billingAddressVersion && empty($billingAddressData)) {
-            foreach ($orderDataInfo['addresses'] as $address) {
-                if ($address['id'] === $billingAddressId && $address['attributes']['versionId'] === $billingAddressVersion) {
-                    $billingAddressData = $address['attributes'];
-                    break;
-                }
-            }
-        }
-
-        $billingCountryId = $billingAddressData['countryId'];
-        $billingCountryData = $this->shopwareApiHelper->getShopwareEntryDetailedInformation('country/' . $billingCountryId );
-        $billingCountry = $billingCountryData['attributes']['name'];
-
-        $orderCustomer = $orderDataInfo['orderCustomer'];
-        $customerEmail = $orderCustomer[0]['attributes']['email'] ?? '';
-        $customerVats = $orderCustomer[0]['attributes']['vatIds'] ?? [];
-        $customerVat = '';
-        if(count($customerVats) > 0) {
-            $customerVat = $customerVats[0] ?? '';
-        }
-
-        $billingAddress = "Billing address: \n"
-            . $billingAddressData['firstName'] . " "
-            . $billingAddressData['lastName'] . "\n"
-            . $billingAddressData['street'] . "\n"
-            . $billingAddressData['zipcode'] . " "
-            . $billingAddressData['city'] . "\n"
-            . $billingCountry . "\n"
-            . $billingAddressData['phoneNumber'] . "\n"
-            . $customerEmail . "\n"
-            . $billingAddressData['company'] . "\n"
-            . $billingAddressData['department'] . "\n"
-            . $customerVat . "\n";
-        return $billingAddress;
-    }
-
-    private function prepareShippingAddressData($orderDataInfo)
-    {
-        $shippingAddressData = $this->shopwareApiHelper->getSingleRelationship($orderDataInfo['deliveries'][0],'shippingOrderAddress');
-        $shippingAddress = $shippingAddressData[0]['attributes'];
-        $shippingCountryId = $shippingAddress['countryId'];
-        $shippingCountryData = $this->shopwareApiHelper->getShopwareEntryDetailedInformation('country/' . $shippingCountryId );
-        $shippingCountry = $shippingCountryData['attributes']['name'];
-
-        $orderCustomer = $orderDataInfo['orderCustomer'];
-        $customerEmail = $orderCustomer[0]['attributes']['email'] ?? '';
-
-        $shippingAddress = "Shipping address: \n"
-            . $shippingAddress['firstName'] . " "
-            . $shippingAddress['lastName'] . "\n"
-            . $shippingAddress['street'] . "\n"
-            . $shippingAddress['zipcode'] . " "
-            . $shippingAddress['city'] . "\n"
-            . $shippingCountry . "\n"
-            . $shippingAddress['phoneNumber'] . "\n"
-            . $customerEmail . "\n"
-            . $shippingAddress['company'] . "\n"
-            . $shippingAddress['department'];
-        return $shippingAddress;
-    }
-
-    private function prepareMinimaxOrderData(array $orderData, array $orderDataInfo): array
-    {
-        $orderAttributes       = $orderData['attributes'];
-        $billingAddressId      = $orderAttributes['billingAddressId'] ?? null;
-
-        // Fetch structured billing address
-        $billingAddressApiResponse = $this->shopwareApiHelper
-            ->getShopwareEntryDetailedInformation('order-address/' . $billingAddressId) ?? [];
-        $billingAddressData = $billingAddressApiResponse['attributes'] ?? [];
-
-        // Fallback to the addresses array already loaded in orderDataInfo
-        if (empty($billingAddressData) && $billingAddressId !== null) {
-            foreach ($orderDataInfo['addresses'] as $address) {
-                if ($address['id'] === $billingAddressId) {
-                    $billingAddressData = $address['attributes'];
-                    break;
-                }
-            }
-        }
-
-        // Country ISO code for Minimax customer
-        $billingCountryId   = $billingAddressData['countryId'] ?? null;
-        $billingCountryData = $billingCountryId
-            ? $this->shopwareApiHelper->getShopwareEntryDetailedInformation('country/' . $billingCountryId)
-            : [];
-        $countryIso = $billingCountryData['attributes']['iso'] ?? 'SI';
-
-        // Customer identifiers from order customer
-        $orderCustomer = $orderDataInfo['orderCustomer'][0]['attributes'] ?? [];
-        $email  = $orderCustomer['email'] ?? '';
-        $vatIds = $orderCustomer['vatIds'] ?? [];
-        $vatId  = $vatIds[0] ?? '';
-
-        // Customer name: prefer company, fall back to first + last name
-        $company   = trim($billingAddressData['company'] ?? '');
-        $firstName = trim($billingAddressData['firstName'] ?? '');
-        $lastName  = trim($billingAddressData['lastName'] ?? '');
-        $name      = $company !== '' ? $company : trim("$firstName $lastName");
-
-        // Products from existing extraction method
-        $products = $this->prepareProductData($orderDataInfo);
-
-        // Payment/shipping info for the invoice note
-        $paymentMethodId    = $this->preparePaymentData($orderDataInfo);
-        $shippingMethodId   = $this->prepareShippingData($orderDataInfo);
-        $paymentAndShipping = $this->handlePaymentAndShippingMapping(
-            $paymentMethodId  ?? '',
-            $shippingMethodId ?? '',
-        );
-        $note = 'Order: '    . ($orderAttributes['orderNumber'] ?? '')
-            . ' | Payment: '  . ($paymentAndShipping['payment']  ?? '')
-            . ' | Shipping: ' . ($paymentAndShipping['shipping'] ?? '')
-            . ' | '           . ($orderAttributes['customerComment'] ?? '');
-
-        // Map existing Vasco-shaped products to Minimax invoice line shape
-        $lines = [];
-        foreach ($products as $p) {
-            $vatPercent = match ((int) ($p['stopnjaDdv'] ?? 0)) {
-                1       => 9.5,
-                2, 3    => 0.0,
-                default => 22.0,
-            };
-            $lines[] = [
-                'sku'          => (string) ($p['sifra'] ?? ''),
-                'quantity'     => (float)  ($p['kolicina'] ?? 1),
-                'unitPriceNet' => (float)  ($p['prodajnaCena'] ?? 0),
-                'vatPercent'   => $vatPercent,
-            ];
-        }
-
-        return [
-            'customer' => [
-                'name'         => $name,
-                'code'         => $email !== '' ? $email : ($orderAttributes['orderNumber'] ?? uniqid('', true)),
-                'address'      => $billingAddressData['street']  ?? '',
-                'postalCode'   => $billingAddressData['zipcode'] ?? '',
-                'city'         => $billingAddressData['city']    ?? '',
-                'countryIso'   => $countryIso,
-                'vatId'        => $vatId,
-                'subjectToVat' => $vatId !== '',
-            ],
-            'date'  => (new \DateTime($orderAttributes['orderDateTime'] ?? 'now'))->format('Y-m-d'),
-            'note'  => $note,
-            'lines' => $lines,
-        ];
-    }
-
-    private function handleOrderResponse(string $id, array $response): void
-    {
-        if ($response['status'] === 'ok') {
-            $orderUpsertData = [
-                'customFields' => [
-                    GlobalVariables::CUSTOM_FIELD_OPTIWEB_STATUS => GlobalVariables::STATUS_SENT,
-                    GlobalVariables::CUSTOM_FIELD_OPTIWEB_KEY    => $response['invoiceId'],
-                ],
-            ];
-        } else {
-            $orderUpsertData = [
-                'customFields' => [
-                    GlobalVariables::CUSTOM_FIELD_OPTIWEB_STATUS => GlobalVariables::STATUS_ERROR,
-                    GlobalVariables::CUSTOM_FIELD_OPTIWEB_ERROR  => $response['error'] ?? 'Unknown Minimax error',
-                ],
-            ];
-        }
-
-        $this->shopwareApiHelper->upsertData('order/', $orderUpsertData, false, $id);
-    }
-
-    private function handlePaymentAndShippingMapping($paymentId, $shippingId): array
-    {
-        //payment
-        $paymentInvoice = $this->systemConfigService->get("OptiwebSync.config.paymentMethodInvoice");
-        $paymentCod = $this->systemConfigService->get("OptiwebSync.config.paymentMethodCod");
-        $paymentDobavnica = $this->systemConfigService->get("OptiwebSync.config.paymentMethodDobavnica");
-        $paymentStripe = $this->systemConfigService->get("OptiwebSync.config.paymentMethodStripe");
-        $paymentPayapal = $this->systemConfigService->get("OptiwebSync.config.paymentMethodPayapal");
-        $paymentPayInShop = $this->systemConfigService->get("OptiwebSync.config.paymentMethodPayInShop");
-
-        //shipping
-        $shippingPostaSlo = $this->systemConfigService->get("OptiwebSync.config.shippingMethodPostaSlo");
-        $shippingGLS = $this->systemConfigService->get("OptiwebSync.config.shippingMethodGLS");
-        $shippingDPD = $this->systemConfigService->get("OptiwebSync.config.shippingMethodDPD");
-        $shippingPickupLJ = $this->systemConfigService->get("OptiwebSync.config.shippingMethodPickupLJ");
-        $shippingPickupMB = $this->systemConfigService->get("OptiwebSync.config.shippingMethodPickupMB");
-        $shippingPickupNM = $this->systemConfigService->get("OptiwebSync.config.shippingMethodPickupNM");
-        $shippingPickupBrnik = $this->systemConfigService->get("OptiwebSync.config.shippingMethodPickupBrnik");
-        $shippingRobomatBrnik = $this->systemConfigService->get("OptiwebSync.config.shippingMethodRobomatBrnik");
-        $shippingRobomatLj = $this->systemConfigService->get("OptiwebSync.config.shippingMethodRobomatLJ");
-        $shippingPOSTA = $this->systemConfigService->get("OptiwebSync.config.shippingMethodPosta");
-        $shippingPodgodbenaDostava = $this->systemConfigService->get("OptiwebSync.config.shippingMethodPogodbenaDostava");
-
-        $paymentMap = [
-            $paymentInvoice => 'PR',
-            $paymentCod => 'PP',
-            $paymentDobavnica => 'DO',
-            $paymentStripe => 'PY',
-            $paymentPayapal => 'PAL',
-            $paymentPayInShop => 'PG',
-        ];
-
-        $shippingMap = [
-            $shippingPostaSlo => '20',
-            $shippingGLS => '10',
-            $shippingDPD => '07',
-            $shippingPickupLJ => '98',
-            $shippingPickupMB => '96',
-            $shippingPickupNM => '97',
-            $shippingPickupBrnik => '99',
-            $shippingRobomatBrnik => '93',
-            $shippingRobomatLj => '94',
-            $shippingPOSTA => '38',
-            $shippingPodgodbenaDostava => 'PD',
-        ];
-
-        return [
-            'payment' => array_key_exists($paymentId, $paymentMap) ? $paymentMap[$paymentId] : '',
-            'shipping' => array_key_exists($shippingId, $shippingMap) ? $shippingMap[$shippingId] : '',
-        ];
-
-    }
-
-    private function reorderLineItems($lineItems) {
-        // Step 1: Create a map of items by their id
-        $itemMap = [];
-        foreach ($lineItems as $item) {
-            $itemMap[$item['id']] = $item;
-        }
-
-        // Step 2: Reorder the items based on parentId
-        $orderedItems = [];
-        $visited = [];
-
-        foreach ($lineItems as $item) {
-            if (!isset($item['attributes']['parentId']) && !isset($visited[$item['id']])) {
-                $this->addItemWithChildren($orderedItems, $item, $itemMap, $visited);
-            }
-        }
-
-        return $orderedItems;
-    }
-
-    private function addItemWithChildren(&$orderedItems, $item, $itemMap, &$visited) {
-        if (isset($visited[$item['id']])) {
-            return;
-        }
-        $visited[$item->id] = true;
-
-        // Add the item to the ordered list
-        $orderedItems[] = $item;
-
-        // Collect children and separate those with productNumber "NANOSLEPILA"
-        $children = [];
-        $nanoslepilaChildren = [];
-
-        foreach ($itemMap as $child) {
-            if (isset($child['attributes']['parentId']) && $child['attributes']['parentId'] == $item->id) {
-                // @phpstan-ignore-next-line
-                if (isset($child['attributes']['payload']['productNumber']) && $child['attributes']['payload']['productNumber'] == "NANOSLEPILA") {
-                    $nanoslepilaChildren[] = $child;
-                } else {
-                    $children[] = $child;
-                }
-            }
-        }
-
-        // Add regular children first
-        foreach ($children as $child) {
-            $this->addItemWithChildren($orderedItems, $child, $itemMap, $visited);
-        }
-
-        // Add "NANOSLEPILA" children last
-        foreach ($nanoslepilaChildren as $child) {
-            $this->addItemWithChildren($orderedItems, $child, $itemMap, $visited);
-        }
-    }
-
-    //INTERFACE METHODS
     public function getName(): string
     {
         return 'Order export';
@@ -643,7 +82,470 @@ class OrderExportSync extends AbstractSyncBase
 
     protected function getLockTtl(): int
     {
-        return 120;
+        return 600;
     }
 
+    protected function createLogger(): Logger
+    {
+        return OwLogger::generate('OrderExportSync', 'order-export-sync', true);
+    }
+
+    protected function initialize(): void
+    {
+        $this->context          = Context::createDefaultContext();
+        $this->shippingItemCode = trim((string) ($this->systemConfigService->get('OptiwebSync.config.shippingItemCode') ?? ''));
+    }
+
+    // -------------------------------------------------------------------------
+    // Selecting orders
+    // -------------------------------------------------------------------------
+
+    /**
+     * @return array<int, OrderEntity>
+     */
+    protected function setExportData(): array
+    {
+        $orderExportState = (string) ($this->systemConfigService->get('OptiwebSync.config.orderExportState') ?? '');
+        $allowedTxStates  = $this->systemConfigService->get('OptiwebSync.config.allowedOrderPaymentStateToExport');
+        $allowedTxStates  = is_array($allowedTxStates) ? array_values(array_filter($allowedTxStates)) : [];
+
+        // Without both settings the filter would be meaningless. Say so loudly
+        // instead of quietly exporting nothing (or everything) forever.
+        if ($orderExportState === '' || $allowedTxStates === []) {
+            OwLogger::error($this->logger, 'Order export is not configured', [
+                'orderExportState'                  => $orderExportState !== '' ? $orderExportState : 'MISSING',
+                'allowedOrderPaymentStateToExport'  => $allowedTxStates !== [] ? $allowedTxStates : 'MISSING',
+            ]);
+
+            return [];
+        }
+
+        $criteria = new Criteria();
+        $criteria->addFilter(new EqualsAnyFilter('customFields.' . GlobalVariables::CUSTOM_FIELD_OPTIWEB_STATUS, [
+            GlobalVariables::STATUS_WAITING,
+            GlobalVariables::STATUS_ERROR,
+            GlobalVariables::STATUS_PARTIALLY_SENT,
+        ]));
+        $criteria->addFilter(new EqualsFilter('stateId', $orderExportState));
+        $criteria->addFilter(new EqualsAnyFilter('transactions.stateId', $allowedTxStates));
+
+        $criteria->addAssociation('currency');
+        $criteria->addAssociation('orderCustomer');
+        $criteria->addAssociation('lineItems');
+        $criteria->addAssociation('billingAddress.country');
+        $criteria->addAssociation('deliveries.shippingOrderAddress.country');
+        $criteria->addAssociation('deliveries.shippingMethod');
+        $criteria->addAssociation('transactions.paymentMethod');
+
+        $criteria->addSorting(new FieldSorting('orderDateTime', FieldSorting::ASCENDING));
+        $criteria->setLimit(GlobalVariables::BATCH_SIZE);
+
+        /** @var array<int, OrderEntity> $orders */
+        $orders = $this->orderRepository->search($criteria, $this->context)->getEntities()->getElements();
+
+        return array_values($orders);
+    }
+
+    /**
+     * @param array<int, OrderEntity> $dataArray
+     */
+    protected function export(array $dataArray, array $loopData): int
+    {
+        $exportEnabled = (bool) $this->systemConfigService->get('OptiwebSync.config.enableOrderExport');
+
+        if (!$exportEnabled && !$this->dryRun) {
+            OwLogger::addVisibleLog(
+                $this->logger,
+                'Order export is disabled (OptiwebSync.config.enableOrderExport) — running as a dry run instead. '
+                . 'No orders will be sent to Minimax.'
+            );
+        }
+
+        $send = $exportEnabled && !$this->dryRun;
+
+        foreach ($dataArray as $order) {
+            // A per-order guard: one unexportable order must not take the batch
+            // down with it.
+            try {
+                $this->exportOrder($order, $send);
+            } catch (\Throwable $e) {
+                ++$this->failed;
+                OwLogger::error($this->logger, 'Order ' . $order->getOrderNumber() . ' export failed', ['error' => $e->getMessage()]);
+                $this->markOrder($order, GlobalVariables::STATUS_ERROR, null, $e->getMessage());
+            }
+        }
+
+        $this->logClientWarnings();
+        OwLogger::addVisibleLog($this->logger, sprintf(
+            'Order export totals: %d exported, %d failed, %d skipped.',
+            $this->exported,
+            $this->failed,
+            $this->skipped,
+        ));
+
+        return $this->exported;
+    }
+
+    private function exportOrder(OrderEntity $order, bool $send): void
+    {
+        $orderNumber = (string) $order->getOrderNumber();
+        $customFields = $order->getCustomFields() ?? [];
+
+        // Already in Minimax: never risk a second document for the same order.
+        $existingKey = $customFields[GlobalVariables::CUSTOM_FIELD_OPTIWEB_KEY] ?? null;
+        if (!empty($existingKey)) {
+            ++$this->skipped;
+            OwLogger::addVisibleLog($this->logger, "Order $orderNumber already exported (Minimax id $existingKey) — skipping.");
+            $this->markOrder($order, GlobalVariables::STATUS_SENT, (string) $existingKey, null);
+
+            return;
+        }
+
+        $transaction = $this->latestTransaction($order);
+        $delivery    = $this->latestDelivery($order);
+
+        if ($transaction === null) {
+            ++$this->skipped;
+            OwLogger::warning($this->logger, "Order $orderNumber has no payment transaction — not exported.");
+
+            return;
+        }
+
+        $orderData = $this->buildOrderData($order, $transaction, $delivery);
+
+        if (!$send) {
+            $payload = $this->minimaxClient->buildOrderPayload($orderData);
+            OwLogger::addVisibleLog($this->logger, "DRY RUN — order $orderNumber payload:");
+            OwLogger::addLog($this->logger, 'Minimax payload', ['payload' => $payload]);
+            OwLogger::addVisibleLog($this->logger, (string) json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+
+            return;
+        }
+
+        OwLogger::addVisibleLog($this->logger, "Sending order $orderNumber to Minimax.");
+        $response = $this->minimaxClient->createOrder($orderData);
+
+        if (($response['status'] ?? '') === 'ok') {
+            ++$this->exported;
+            $this->markOrder($order, GlobalVariables::STATUS_SENT, (string) $response['orderId'], null);
+            OwLogger::addVisibleLog($this->logger, "Order $orderNumber exported as Minimax order " . $response['orderId'] . '.');
+
+            return;
+        }
+
+        ++$this->failed;
+        $error = (string) ($response['error'] ?? 'Unknown Minimax error');
+        OwLogger::error($this->logger, "Order $orderNumber export rejected", ['error' => $error]);
+        $this->markOrder($order, GlobalVariables::STATUS_ERROR, null, $error);
+    }
+
+    // -------------------------------------------------------------------------
+    // Payload building
+    // -------------------------------------------------------------------------
+
+    /**
+     * Build the neutral order array consumed by MinimaxClient::createOrder().
+     */
+    private function buildOrderData(
+        OrderEntity $order,
+        OrderTransactionEntity $transaction,
+        ?OrderDeliveryEntity $delivery,
+    ): array {
+        $orderNumber = (string) $order->getOrderNumber();
+        $taxStatus   = (string) $order->getTaxStatus();
+
+        $billing  = $this->addressData($order->getBillingAddress());
+        $shipping = $this->addressData($delivery?->getShippingOrderAddress());
+
+        $orderCustomer = $order->getOrderCustomer();
+        $email         = trim((string) $orderCustomer?->getEmail());
+        $vatIds        = $orderCustomer?->getVatIds() ?? [];
+        $vatId         = trim((string) ($vatIds[0] ?? ''));
+
+        $paymentName  = (string) $transaction->getPaymentMethod()?->getName();
+        $shippingName = (string) $delivery?->getShippingMethod()?->getName();
+
+        $lines = $this->lineItemRows($order, $taxStatus);
+        $lines = array_merge($lines, $this->shippingRows($order, $taxStatus, $shippingName));
+
+        $this->reconcile($order, $lines, $orderNumber);
+
+        $note = implode(' | ', array_filter([
+            'Order: ' . $orderNumber,
+            $paymentName !== '' ? 'Payment: ' . $paymentName : '',
+            $shippingName !== '' ? 'Shipping: ' . $shippingName : '',
+            $order->getCustomerComment() !== null && $order->getCustomerComment() !== ''
+                ? 'Comment: ' . $order->getCustomerComment()
+                : '',
+        ]));
+
+        $orderDate = $order->getOrderDateTime();
+
+        return [
+            'date'        => $orderDate->format('Y-m-d'),
+            'year'        => (int) $orderDate->format('Y'),
+            'reference'   => $orderNumber,
+            'note'        => $note,
+            'currencyIso' => (string) ($order->getCurrency()?->getIsoCode() ?? 'EUR'),
+            'customer'    => [
+                'name'       => $billing['name'] !== '' ? $billing['name'] : ($email !== '' ? $email : $orderNumber),
+                'email'      => $email,
+                // Minimax has no e-mail field on a customer, and Code is unique
+                // per organisation — so the e-mail doubles as the lookup key.
+                'code'       => $email !== '' ? $email : $orderNumber,
+                'address'    => $billing['address'],
+                'postalCode' => $billing['postalCode'],
+                'city'       => $billing['city'],
+                'countryIso' => $billing['countryIso'] !== '' ? $billing['countryIso'] : 'SI',
+                'vatId'      => $vatId,
+            ],
+            'recipient'   => [
+                'name'       => $shipping['name'],
+                'address'    => $shipping['address'],
+                'postalCode' => $shipping['postalCode'],
+                'city'       => $shipping['city'],
+                'countryIso' => $shipping['countryIso'],
+            ],
+            'lines'       => $lines,
+        ];
+    }
+
+    /**
+     * Every top-level line item as a Minimax row, at net unit prices.
+     *
+     * Promotions, credits and custom items are included as free-text rows: they
+     * change what the customer paid, so leaving them out would hand Minimax a
+     * document that cannot be reconciled against the shop.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function lineItemRows(OrderEntity $order, string $taxStatus): array
+    {
+        $lineItems = $order->getLineItems()?->getElements() ?? [];
+
+        // Only top-level rows: children of a container line item are already
+        // accounted for by their parent's price.
+        $lineItems = array_filter($lineItems, static fn (OrderLineItemEntity $item): bool => $item->getParentId() === null);
+
+        usort($lineItems, static fn (OrderLineItemEntity $a, OrderLineItemEntity $b): int => $a->getPosition() <=> $b->getPosition());
+
+        $rows = [];
+
+        foreach ($lineItems as $lineItem) {
+            $price = $lineItem->getPrice();
+            if ($price === null) {
+                continue;
+            }
+
+            $payload  = $lineItem->getPayload() ?? [];
+            $quantity = (float) $lineItem->getQuantity();
+
+            $rows[] = [
+                'sku'             => trim((string) ($payload['productNumber'] ?? '')),
+                'name'            => (string) ($lineItem->getLabel() ?? ''),
+                'quantity'        => $quantity !== 0.0 ? $quantity : 1.0,
+                'unitPrice'       => $this->netUnitPrice($price, $taxStatus),
+                'discountPercent' => 0.0,
+            ];
+        }
+
+        return $rows;
+    }
+
+    /**
+     * The shipping cost as its own row, net.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function shippingRows(OrderEntity $order, string $taxStatus, string $shippingName): array
+    {
+        $shippingCosts = $order->getShippingCosts();
+        $total         = $shippingCosts->getTotalPrice();
+
+        if (abs($total) < 0.0001) {
+            return [];
+        }
+
+        $net = $taxStatus === CartPrice::TAX_STATE_GROSS
+            ? $total - $shippingCosts->getCalculatedTaxes()->getAmount()
+            : $total;
+
+        return [[
+            // A Minimax order row inherits its VAT rate from the referenced item
+            // and has no rate of its own. With shippingItemCode configured the
+            // row resolves to a real item and is taxed correctly; without it the
+            // row goes over as free text and carries no VAT rate at all.
+            'sku'             => $this->shippingItemCode,
+            'name'            => $shippingName !== '' ? $shippingName : 'Poštnina',
+            'quantity'        => 1.0,
+            'unitPrice'       => round($net, 4),
+            'discountPercent' => 0.0,
+        ]];
+    }
+
+    /**
+     * Net unit price for a calculated price, according to the order's tax status.
+     *
+     * A gross order stores gross unit prices, so the row has to be divided down
+     * by its own tax rate; a net or tax-free order already stores net.
+     */
+    private function netUnitPrice(CalculatedPrice $price, string $taxStatus): float
+    {
+        $unitPrice = $price->getUnitPrice();
+
+        if ($taxStatus !== CartPrice::TAX_STATE_GROSS) {
+            return round($unitPrice, 4);
+        }
+
+        $rate = 0.0;
+        foreach ($price->getTaxRules() as $taxRule) {
+            $rate = $taxRule->getTaxRate();
+            break;
+        }
+
+        if ($rate <= 0.0) {
+            return round($unitPrice, 4);
+        }
+
+        return round($unitPrice / (1 + ($rate / 100)), 4);
+    }
+
+    /**
+     * Warn when the exported rows do not add up to the order's net total.
+     *
+     * Cheap insurance: a rounding or tax-status mistake shows up here as a
+     * logged discrepancy instead of as a bookkeeping problem weeks later.
+     *
+     * @param array<int, array<string, mixed>> $lines
+     */
+    private function reconcile(OrderEntity $order, array $lines, string $orderNumber): void
+    {
+        $rowTotal = 0.0;
+        foreach ($lines as $line) {
+            $rowTotal += ((float) $line['unitPrice']) * ((float) $line['quantity']);
+        }
+
+        $expected = $order->getTaxStatus() === CartPrice::TAX_STATE_GROSS
+            ? $order->getAmountNet()
+            : $order->getAmountTotal();
+
+        if (abs($rowTotal - $expected) > self::RECONCILE_TOLERANCE) {
+            OwLogger::warning($this->logger, sprintf(
+                'Order %s: exported rows total %.4f but the order net total is %.4f (difference %.4f).',
+                $orderNumber,
+                $rowTotal,
+                $expected,
+                $rowTotal - $expected,
+            ));
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Order association helpers
+    // -------------------------------------------------------------------------
+
+    /**
+     * The most recent payment transaction.
+     *
+     * An order can hold several (a failed attempt followed by a successful one),
+     * and the association is not ordered — so pick by creation time rather than
+     * trusting whichever happens to come first.
+     */
+    private function latestTransaction(OrderEntity $order): ?OrderTransactionEntity
+    {
+        $transactions = $order->getTransactions()?->getElements() ?? [];
+        if ($transactions === []) {
+            return null;
+        }
+
+        usort(
+            $transactions,
+            static fn (OrderTransactionEntity $a, OrderTransactionEntity $b): int => $a->getCreatedAt() <=> $b->getCreatedAt()
+        );
+
+        return end($transactions) ?: null;
+    }
+
+    private function latestDelivery(OrderEntity $order): ?OrderDeliveryEntity
+    {
+        $deliveries = $order->getDeliveries()?->getElements() ?? [];
+        if ($deliveries === []) {
+            return null;
+        }
+
+        usort(
+            $deliveries,
+            static fn (OrderDeliveryEntity $a, OrderDeliveryEntity $b): int => $a->getCreatedAt() <=> $b->getCreatedAt()
+        );
+
+        return end($deliveries) ?: null;
+    }
+
+    /**
+     * Flatten an order address, preferring the company name over the person's.
+     *
+     * @return array{name: string, address: string, postalCode: string, city: string, countryIso: string}
+     */
+    private function addressData(?OrderAddressEntity $address): array
+    {
+        if ($address === null) {
+            return ['name' => '', 'address' => '', 'postalCode' => '', 'city' => '', 'countryIso' => ''];
+        }
+
+        $company = trim((string) $address->getCompany());
+        $person  = trim(trim((string) $address->getFirstName()) . ' ' . trim((string) $address->getLastName()));
+
+        return [
+            'name'       => $company !== '' ? $company : $person,
+            'address'    => trim((string) $address->getStreet()),
+            'postalCode' => trim((string) $address->getZipcode()),
+            'city'       => trim((string) $address->getCity()),
+            'countryIso' => trim((string) $address->getCountry()?->getIso()),
+        ];
+    }
+
+    // -------------------------------------------------------------------------
+    // Write-back
+    // -------------------------------------------------------------------------
+
+    /**
+     * Record the export outcome on the order's custom fields.
+     *
+     * The existing custom fields are merged explicitly so a partial write can
+     * never drop another plugin's keys, and a successful export clears any error
+     * left over from a previous attempt.
+     */
+    private function markOrder(OrderEntity $order, string $status, ?string $minimaxId, ?string $error): void
+    {
+        if ($this->dryRun) {
+            return;
+        }
+
+        $customFields = $order->getCustomFields() ?? [];
+        $customFields[GlobalVariables::CUSTOM_FIELD_OPTIWEB_STATUS] = $status;
+
+        if ($minimaxId !== null) {
+            $customFields[GlobalVariables::CUSTOM_FIELD_OPTIWEB_KEY] = $minimaxId;
+        }
+
+        $customFields[GlobalVariables::CUSTOM_FIELD_OPTIWEB_ERROR] = $error;
+
+        try {
+            $this->orderRepository->update([[
+                'id'           => $order->getId(),
+                'customFields' => $customFields,
+            ]], $this->context);
+        } catch (\Throwable $e) {
+            OwLogger::error($this->logger, 'Could not write export status back to order ' . $order->getOrderNumber(), [
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    private function logClientWarnings(): void
+    {
+        foreach ($this->minimaxClient->takeWarnings() as $warning) {
+            OwLogger::warning($this->logger, 'Minimax: ' . $warning);
+        }
+    }
 }

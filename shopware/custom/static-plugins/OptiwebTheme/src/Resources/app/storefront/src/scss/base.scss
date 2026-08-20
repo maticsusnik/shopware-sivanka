@@ -53,10 +53,12 @@
 @import 'pages/product-detail/cross-selling';
 @import 'pages/checkout/cart';
 @import 'pages/checkout/checkout';
+@import 'pages/checkout/checkout-flow';
 @import 'pages/404';
 @import 'pages/landing-page';
 @import 'pages/product-listing';
 @import 'pages/login';
+@import 'pages/account';
 
 /*
  * Layout
@@ -66,3 +68,8 @@
 @import 'layout/ow-mega-menu';
 @import 'layout/header';
 @import 'layout/footer';
+
+/*
+ * Responsive corrections — must stay LAST so it can override the partials above
+ * ---------------------------- */
+@import 'responsive';

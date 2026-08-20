@@ -124,3 +124,41 @@
         }
     }
 }
+
+.ow-mega-menu {
+    // ============================================================
+    //  Mega-menu hover reliability (desktop)
+    //  Core's NavbarPlugin opens the dropdown on a 125ms debounce and closes it from a
+    //  `mouseleave` on the whole navbar. Two geometry problems made that flaky:
+    //
+    //   1. The trigger was only 18px tall inside a 50px navbar row, so a pointer already
+    //      moving downward left it before the 125ms elapsed — `_isMouseOver` flipped false
+    //      and the menu never opened at all.
+    //   2. The navbar box ended at 174px while the flyout started at 178px, leaving a ~4px
+    //      band where the hovered element was the hero section. Crossing it fired the
+    //      navbar's mouseleave and closed a menu that had just opened.
+    // ============================================================
+    @media (min-width: 992px) {
+        // (1) Let the trigger fill the navbar row so a moving pointer stays on it long
+        //     enough for the debounce to fire.
+        > .mega-menu-link,
+        > .nav-link.mega-menu-link {
+            display: flex;
+            align-items: center;
+            align-self: stretch;
+            padding-block: 1rem;
+        }
+
+        // (2) Bridge the dead band. The flyout is a descendant of both the <li> and the
+        //     navbar, so extending its hit area upward keeps the pointer "inside" the
+        //     navbar for the whole trip from trigger to menu.
+        .dropdown-menu.show::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: -22px;
+            height: 22px;
+        }
+    }
+}

@@ -7,6 +7,7 @@ services:
     exclude:
       - '../../DependencyInjection/'
       - '../../Entity/'
+      - '../../Migration/'
       - '../../Migrations/'
       - '../../Tests/'
     autowire: true
@@ -17,12 +18,8 @@ services:
     class: Symfony\Contracts\HttpClient\HttpClientInterface
     factory: ['Symfony\Component\HttpClient\HttpClient', 'create']
 
-  OptiwebSync\Helper\ShopwareApiHelper:
-    arguments:
-      $client: '@http_client.raw'
-    public: true
-
-  # Improved Shopware API client (Client/ namespace)
+  # Shopware admin API client — used for the few writes that go through the
+  # sync API (product upserts) rather than the DAL.
   OptiwebSync\Client\ShopwareClient:
     arguments:
       $client: '@http_client.raw'
@@ -68,6 +65,7 @@ services:
     autoconfigure: true
     arguments:
       $minimaxClient: '@OptiwebSync\Client\MinimaxClient'
+      $orderRepository: '@order.repository'
 
   OptiwebSync\ScheduledTask\Order\ExportOrdersTaskHandler:
     arguments:
@@ -77,3 +75,8 @@ services:
     tags:
       - { name: 'messenger.message_handler' }
 
+  OptiwebSync\Storefront\Subscriber\OrderListener:
+    arguments:
+      $orderRepository: '@order.repository'
+    tags:
+      - { name: 'kernel.event_subscriber' }

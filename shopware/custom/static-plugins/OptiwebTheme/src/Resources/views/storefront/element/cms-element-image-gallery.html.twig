@@ -2,6 +2,12 @@
 
 {% block element_image_gallery_inner %}
 
+    {# mouseDrag is deliberately NOT enabled here. tiny-slider does not suppress the
+       click that ends a mouse drag, and the whole gallery column is the zoom-modal
+       trigger (`[data-zoom-modal]`), so dragging the main image with a mouse both moved
+       the slide AND opened the zoom popup. Touch swipe works natively (touch:true is
+       tiny-slider's default) and the arrows cover pointer devices. Re-enabling mouseDrag
+       needs a JS guard that swallows the post-drag click. #}
     {% set gallerySliderOptions = gallerySliderOptions|replace_recursive({
         thumbnailSlider: {
             items: 6,

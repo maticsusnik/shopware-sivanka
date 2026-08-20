@@ -1,11 +1,13 @@
 {% sw_extends '@Storefront/storefront/page/checkout/confirm/index.html.twig' %}
 
 {% block page_checkout_confirm_header %}
-    {% sw_include '@Storefront/storefront/component/checkout/checkout-steps.html.twig' with { activeStep: 2 } %}
     <h1 class="confirm-main-header">
         {{ 'optiweb.checkout.title'|trans|sw_sanitize }}
     </h1>
 {% endblock %}
+
+{# TOS is relocated into the summary aside (checkbox stays bound via form="confirmOrderForm") #}
+{% block page_checkout_confirm_tos %}{% endblock %}
 
 {% block page_checkout_confirm_address %}
     <div class="confirm-section confirm-section--address">
@@ -38,9 +40,38 @@
 {% endblock %}
 
 {% block page_checkout_aside_actions %}
-    <div class="checkout-aside-trust">
-        {% sw_icon 'checkmark' style { size: 'xs' } %}
+    {# Terms of service — checkbox bound to the order form by id #}
+    <label class="sv-confirm-tos" for="tos">
+        <input type="checkbox"
+               class="checkout-confirm-tos-checkbox form-check-input{% if formViolations.getViolations('/tos') is not empty %} is-invalid{% endif %}"
+               required="required"
+               id="tos"
+               form="confirmOrderForm"
+               name="tos">
+        <span class="checkout-confirm-tos-label">
+            {% set cmsPath = 'frontend.cms.page' %}
+            {% set tosOpen = '<button type="button" class="checkout-confirm-terms-modal btn btn-link-inline" data-ajax-modal="true" data-url="' ~ path(cmsPath, { id: config('core.basicInformation.tosPage') }) ~ '">' %}
+            {% set revOpen = '<button type="button" class="btn btn-link-inline" data-ajax-modal="true" data-url="' ~ path(cmsPath, { id: config('core.basicInformation.revocationPage') }) ~ '">' %}
+            Prebral sem in sprejemam {{ tosOpen|raw }}splošne pogoje{{ '</button>'|raw }} ter {{ revOpen|raw }}politiko odpovedi{{ '</button>'|raw }}.
+        </span>
+    </label>
+
+    {% if page.showRevocation() %}
+        <label class="sv-confirm-tos" for="revocation">
+            <input type="checkbox"
+                   class="checkout-confirm-revocation-checkbox form-check-input{% if formViolations.getViolations('/revocation') is not empty %} is-invalid{% endif %}"
+                   required="required"
+                   id="revocation"
+                   form="confirmOrderForm"
+                   name="revocation">
+            <span class="checkout-confirm-revocation-label">{{ 'checkout.confirmRevocationTerms'|trans() }}</span>
+        </label>
+    {% endif %}
+
+    {{ parent() }}
+
+    <div class="sv-ssl-note">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2fa36b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
         <span>{{ 'optiweb.checkout.sslSecure'|trans|sw_sanitize }}</span>
     </div>
-    {{ parent() }}
 {% endblock %}

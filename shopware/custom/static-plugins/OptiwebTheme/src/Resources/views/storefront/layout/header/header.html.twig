@@ -11,6 +11,25 @@
             </div>
         {% endblock %}
 
+        {# Below sm the search bar is collapsed, so it needs a trigger. It lives in the
+           header rather than the bottom bar, which is deliberately kept to four icons. #}
+        {% block layout_header_search_toggle %}
+            <div class="col-auto order-1 d-sm-none header-search-toggle-col">
+                <button class="btn header-actions-btn header-search-toggle-btn collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#searchCollapse"
+                        aria-expanded="false"
+                        aria-controls="searchCollapse"
+                        aria-label="{{ 'header.searchButton'|trans|striptags }}">
+                    <svg class="header-search-toggle-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="7"></circle>
+                        <path d="m21 21-4.3-4.3"></path>
+                    </svg>
+                </button>
+            </div>
+        {% endblock %}
+
         {% block layout_header_search %}
             <div class="col-12 order-2 col-sm order-sm-1 header-search-col">
                 {% sw_include '@Storefront/storefront/layout/header/search.html.twig' %}

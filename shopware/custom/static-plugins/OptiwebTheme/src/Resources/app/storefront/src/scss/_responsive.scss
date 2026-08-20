@@ -1,0 +1,455 @@
+// ============================================================
+//  Responsive corrections — imported LAST on purpose
+//  These override component partials, so they must win on source order rather
+//  than by sprinkling !important through the component files.
+// ============================================================
+
+// Touch ergonomics. WCAG 2.5.8 asks for a 24x24 CSS-px minimum target; the spec's
+// exception for links inside a sentence is why inline prose links are left alone.
+// Scoped to < lg so 768-991px tablets — which are touch devices — are covered too.
+@include media-breakpoint-down(lg) {
+
+    // Radios / checkboxes ship at 16-18px across the checkout
+    .form-check-input,
+    .payment-method-input,
+    .shipping-method-input,
+    .checkout-confirm-tos-checkbox {
+        width: 1.5rem;
+        height: 1.5rem;
+        min-width: 1.5rem;
+        min-height: 1.5rem;
+        margin-top: 0;
+    }
+
+    // min-height only — changing `display` here would rearrange the payment/shipping
+    // labels, which carry the price and description as children.
+    .form-check-label {
+        min-height: 1.5rem;
+    }
+
+    // Standalone utility links — pad to a 24px tap height without moving the text
+    .footer-link,
+    .footer-copyright-link,
+    .breadcrumb a,
+    .breadcrumb .breadcrumb-link,
+    .cart-continue-link,
+    .sv-cart-name,
+    .sivanka-topbar .tb-item,
+    .sv-co-contact a {
+        display: inline-flex;
+        align-items: center;
+        min-height: 24px;
+    }
+}
+
+// Full-width action buttons must be allowed to wrap their label rather than clip it
+@include media-breakpoint-down(sm) {
+    #confirmFormSubmit,
+    .begin-checkout-btn,
+    .btn-buy {
+        white-space: normal;
+    }
+}
+
+// Core pins the thumbnail arrows at left/right:-25px on the underneath layout, which
+// pushed them past the page edge once the gallery column met the container inset.
+.is-ctl-product {
+    .gallery-slider-thumbnails-container.is-underneath .gallery-slider-thumbnails-controls-prev {
+        left: 0;
+    }
+
+    .gallery-slider-thumbnails-container.is-underneath .gallery-slider-thumbnails-controls-next {
+        right: 0;
+    }
+}
+
+// The shipping price is a child of the method's <label>, so without an explicit
+// layout it landed on top of the method name and broke mid-word ("Brezplačn/o").
+// The method name is a bare text node — an anonymous flex item, which ignores
+// `order` — so a float is what actually keeps the price on the name's line.
+.shipping-method-label,
+.payment-method-label {
+    display: block;
+    width: 100%;
+
+    .shipping-price {
+        float: right;
+        margin-left: 10px;
+        white-space: nowrap;
+    }
+
+    .shipping-method-description,
+    .payment-method-description {
+        clear: both;
+    }
+}
+
+// Footer bottom bar: centre-stack instead of leaving a stray link hanging left
+@include media-breakpoint-down(sm) {
+    .footer-bottom .container {
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        text-align: center;
+    }
+}
+
+// The discount field and its button do not fit side by side on a phone
+@include media-breakpoint-down(sm) {
+    .cart-promo-form {
+        .cart-promo-input {
+            flex: 1 1 100%;
+            width: 100%;
+        }
+
+        .cart-promo-btn {
+            flex: 1 1 100%;
+            padding-block: 12px;
+        }
+    }
+}
+
+// ============================================================
+//  Mobile bottom action bar (< md)
+//  The four header icons move to a fixed app-style bar. They are only repositioned
+//  in CSS — the markup stays inside the header, so the account dropdown, cart
+//  offcanvas, wishlist counter and menu toggle keep every existing JS binding.
+// ============================================================
+$bottom-bar-height: 58px;
+
+// 768–991px keeps the icons in the header: even them up and centre each one there.
+@include media-breakpoint-between(md, lg) {
+    .header-actions-col > .row {
+        gap: 4px;
+    }
+
+    .header-actions-btn {
+        justify-content: center;
+    }
+}
+
+@include media-breakpoint-down(md) {
+    .header-actions-col {
+        position: fixed;
+        z-index: 1030;
+        inset: auto 0 0 0;
+        width: 100% !important;
+        max-width: none !important;
+        flex: 0 0 auto !important;
+        display: block !important;
+        background: $sivanka-white;
+        border-top: 1px solid $sivanka-border;
+        box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.06);
+        // keep clear of the iOS home indicator
+        padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+
+        > .row {
+            display: flex !important;
+            gap: 0 !important;
+            flex-wrap: nowrap;
+            align-items: stretch;
+            margin: 0;
+        }
+
+        // Four equal columns — this is what fixes the uneven, off-centre spacing
+        > .row > .col-auto,
+        > .row > [class*="col-"] {
+            flex: 1 1 0 !important;
+            width: auto !important;
+            max-width: none !important;
+            min-width: 0;
+            padding: 0 !important;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-actions-btn,
+        .account-menu-btn,
+        .header-cart-btn,
+        .header-wishlist-btn,
+        .nav-main-toggle-btn {
+            width: 100%;
+            height: $bottom-bar-height;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            margin: 0;
+        }
+
+        // Core's `.btn .icon > svg { top: 6px }` nudges every glyph down, which reads as
+        // mis-centred once the buttons are this tall.
+        .btn .icon > svg,
+        .icon > svg {
+            top: 0;
+        }
+
+        // Badges hug the glyph rather than the full-width button
+        .header-cart,
+        .header-wishlist {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .header-cart-badge,
+        .header-wishlist-badge {
+            right: auto;
+            left: 50%;
+            margin-left: 6px;
+            top: 8px;
+        }
+    }
+
+    // Reserve the bar's height so it never covers page content
+    body {
+        padding-bottom: calc(#{$bottom-bar-height} + env(safe-area-inset-bottom, 0px));
+    }
+
+    // The account menu opens from a button pinned to the bottom edge, so it has to
+    // open upward and stay inside the viewport.
+    .account-menu-dropdown.dropdown-menu {
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+
+    // The listing's floating sort pill would sit under the bar
+    .sorting-panel-wrapper-toggle {
+        bottom: calc(#{$bottom-bar-height} + env(safe-area-inset-bottom, 0px) + 0.75rem) !important;
+    }
+
+    // The cookie banner is also fixed to the bottom and sits on a higher layer, so it
+    // covered the bar completely — the nav would be untappable until consent. Stack it
+    // above instead so both stay usable.
+    .cookie-permission-container {
+        bottom: calc(#{$bottom-bar-height} + env(safe-area-inset-bottom, 0px));
+    }
+}
+
+// ============================================================
+//  Stacked img-text block: square off the corners
+//  Side by side the card overlaps the photo and the radii read as intentional;
+//  stacked they are two separate slabs and the rounding looks accidental.
+// ============================================================
+@include media-breakpoint-down(md) {
+    .cms-block-img-text__inner {
+        .yellow-container,
+        .content-container {
+            border-radius: 0;
+        }
+
+        .image-container,
+        .image-container img,
+        .image-container .cms-image,
+        .cms-element-image,
+        .cms-element-image img,
+        .cms-element-image picture {
+            border-radius: 0;
+        }
+    }
+}
+
+// ---- Phone search toggle (the search bar itself is collapsed below sm) ----
+.header-search-toggle-col {
+    margin-left: auto;
+}
+
+.header-search-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: $sivanka-text;
+
+    .header-search-toggle-svg {
+        width: 22px;
+        height: 22px;
+        display: block;
+    }
+
+    &[aria-expanded="true"] {
+        color: $sivanka-primary;
+    }
+}
+
+// Core sets `.offcanvas.offcanvas-start .offcanvas-close { justify-content: space-between;
+// flex-direction: row-reverse }` for its label-plus-icon close button. That outranks a
+// two-class selector, so the glyph sat off-centre in the round icon button. Matched at
+// the same specificity here, and this file loads last.
+.offcanvas.offcanvas-start .offcanvas-close,
+.offcanvas.offcanvas-end .offcanvas-close {
+    justify-content: center;
+    flex-direction: row;
+}
+
+// ============================================================
+//  Mobile listing controls: Sort inline, Filter floating (< lg)
+//  These were the other way round — the floating pill is the control people reach for
+//  while scrolling, and that is Filter, not Sort.
+// ============================================================
+@include media-breakpoint-down(lg) {
+
+    // Sort drops into the flow, directly under the "Kategorije" button, styled to match it
+    .sorting-panel-wrapper-toggle {
+        position: static !important;
+        left: auto !important;
+        bottom: auto !important;
+        transform: none !important;
+        z-index: auto !important;
+        display: flex !important;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        width: 100%;
+        min-height: 54px;
+        margin: 0;
+        padding: 0.75rem 1.25rem !important;
+        border-radius: $sivanka-r8 !important;
+        background: $ow-color-grey !important;
+        color: $sivanka-text !important;
+        font-size: 15px;
+        font-weight: 600;
+
+        .icon {
+            color: $sivanka-text !important;
+            flex-shrink: 0;
+
+            svg { top: 0; }
+        }
+
+        &:hover,
+        &:focus {
+            background: $ow-color-grey-4 !important;
+            color: $sivanka-text !important;
+        }
+    }
+
+    // …and Filter takes over the floating pill
+    .filter-panel-wrapper-toggle[data-off-canvas-filter] {
+        position: fixed;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: calc(#{$bottom-bar-height} + env(safe-area-inset-bottom, 0px) + 0.75rem);
+        z-index: 5;
+        width: auto;
+        min-height: 0;
+        margin: 0;
+        padding: 0.6rem 2rem;
+        border: 0;
+        border-radius: 50px;
+        background: $ow-color-grey-9;
+        color: $ow-color-white;
+        font-size: 15px;
+        font-weight: 600;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.22);
+
+        .icon {
+            color: $ow-color-white;
+
+            svg { top: 0; }
+        }
+
+        &:hover,
+        &:focus {
+            background: $ow-color-black;
+            color: $ow-color-white;
+        }
+    }
+
+    // Back-to-top has to clear the bar AND the floating Filter pill stacked above it.
+    // Bar 58 + 12 gap + pill 42 = 112, so this leaves ~40px of air above the pill.
+    .scroll-up-button {
+        bottom: calc(#{$bottom-bar-height} + env(safe-area-inset-bottom, 0px) + 6rem) !important;
+    }
+}
+
+// ============================================================
+//  Pagination on one row (< sm)
+//  7 items x 40px + 6 x 8px gap = 328px, which wrapped inside a 280px column.
+//  36px items with a 4px gap come to 276px and fit.
+// ============================================================
+@include media-breakpoint-down(sm) {
+    .cms-element-product-listing .pagination {
+        flex-wrap: nowrap;
+        gap: 4px;
+
+        .page-item {
+            flex: 0 0 auto;
+        }
+
+        .page-link {
+            min-width: 36px;
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+        }
+    }
+}
+
+// ============================================================
+//  Landing-with-sidebar pages: content before the category nav (< lg)
+//  Scoped with :has() to the sections whose sidebar holds the category-navigation
+//  element. The product listing uses the same sidebar layout, and there the sidebar
+//  carries the Kategorije / Sort controls, which must stay at the top.
+// ============================================================
+@include media-breakpoint-down(lg) {
+    .cms-section-sidebar > .row:has(.cms-element-sivanka-category-navigation) {
+        .cms-section-sidebar-main-content {
+            order: 1;
+        }
+
+        .cms-section-sidebar-sidebar-content {
+            order: 2;
+        }
+    }
+}
+
+// ============================================================
+//  .form-check laid out as a flex row
+//  Bootstrap's contract is `padding-left: 1.5em` on the wrapper plus
+//  `float: left; margin-left: -1.5em` on the input — the negative margin is what pulls
+//  the control back into the reserved gutter. The theme lays several of these out as
+//  flex rows with no padding, so the negative margin had nothing to cancel it and hung
+//  the radio outside its card (2px on desktop, ~34px on mobile). Opt out of the float
+//  model instead of trying to patch the offsets.
+// ============================================================
+.confirm-payment-shipping .form-check,
+.confirm-address .form-check,
+.checkout-confirm-tos .form-check,
+.address-manager-modal .form-check,
+.payment-method-radio,
+.shipping-method-radio {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding-left: 0;
+
+    > .form-check-input {
+        float: none;
+        margin-left: 0;
+        margin-right: 0;
+        flex: 0 0 auto;
+    }
+
+    > .form-check-label {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+}
+
+// A <legend> reverts to the UA "sits astride the fieldset border" rendering as soon as
+// it stops being floated, which pushes it outside the card padding. The checkout-scoped
+// fix did not reach /account/register, so keep it global.
+legend.card-title {
+    float: left;
+    width: 100%;
+}

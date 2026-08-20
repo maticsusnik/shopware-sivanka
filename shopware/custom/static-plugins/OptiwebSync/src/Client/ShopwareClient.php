@@ -303,15 +303,6 @@ class ShopwareClient implements ClientInterface
         }
     }
 
-    public function getDefaultSalesChannelId(): string
-    {
-        return $this->getShopwareId('sales-channel', [[
-            'type'  => 'equals',
-            'field' => 'name',
-            'value' => GlobalVariables::DEFAULT_SALES_CHANNEL,
-        ]]);
-    }
-
     public function getDefaultCurrencyId(): string
     {
         return $this->getShopwareId('currency', [[

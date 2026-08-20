@@ -1,4 +1,4 @@
-// ---- Sivanka Newsletter Strip (above footer) ----
+// ---- Sivanka Local Service Strip (above footer) ----
 .sivanka-newsletter-strip {
     background: $sivanka-beige;
     border-top: 1px solid $sivanka-border;
@@ -7,19 +7,21 @@
 
     .container {
         display: grid;
-        grid-template-columns: 1fr 1fr 1.6fr;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 34px;
         align-items: center;
+        justify-items: center;
         padding-block: 30px;
         max-width: $header-width;
         padding-inline: 28px;
 
         @include media-breakpoint-down(lg) {
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
         @include media-breakpoint-down(md) {
-            grid-template-columns: 1fr;
+            grid-template-columns: minmax(0, 1fr);
+            justify-items: start;
             gap: 20px;
             padding-block: 24px;
         }
@@ -29,22 +31,6 @@
         display: flex;
         gap: 16px;
         align-items: center;
-
-        @include media-breakpoint-down(lg) {
-            &:nth-child(2) {
-                display: none;
-            }
-        }
-
-        @include media-breakpoint-down(md) {
-            display: none;
-        }
-
-        &:first-child {
-            @include media-breakpoint-down(md) {
-                display: flex;
-            }
-        }
     }
 
     // Bigger icon circles
@@ -82,71 +68,6 @@
         span {
             font-size: 13px;
             color: $sivanka-muted;
-        }
-    }
-
-    .nl-block {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .nl-title {
-        font-family: $sivanka-serif;
-        font-size: 18px;
-        font-weight: 600;
-        color: $sivanka-text;
-        display: block;
-    }
-
-    .nl-subtitle {
-        font-size: 13px;
-        color: $sivanka-muted;
-    }
-
-    .nl-form {
-        display: flex;
-        gap: 10px;
-        max-width: 430px;
-
-        input[type="email"] {
-            flex: 1;
-            height: 46px;
-            border: 1.5px solid $sivanka-border;
-            border-radius: $sivanka-r8;
-            padding: 0 16px;
-            font-family: $sivanka-sans;
-            font-size: 14px;
-            background: $sivanka-white;
-            color: $sivanka-text;
-            transition: border-color 0.18s;
-
-            &:focus {
-                outline: none;
-                border-color: $sivanka-primary-light;
-                box-shadow: none;
-            }
-        }
-
-        .btn-nl-submit {
-            white-space: nowrap;
-            background: $sivanka-primary;
-            color: $sivanka-white;
-            font-family: $sivanka-sans;
-            font-size: 14.5px;
-            font-weight: 600;
-            padding: 13px 22px;
-            border-radius: $sivanka-r8;
-            border: none;
-            cursor: pointer;
-            transition: background 0.18s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-
-            &:hover {
-                background: $sivanka-primary-hover;
-            }
         }
     }
 }

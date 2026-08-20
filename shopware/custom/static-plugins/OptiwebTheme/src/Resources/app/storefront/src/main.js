@@ -5,8 +5,8 @@ import OptiwebFaqPlugin from "./js/faq.plugin";
 import OffcanvasCustomPlugin from "./js/offcanvas-custom.plugin";
 import ReadMore from './js/read-more.plugin';
 import CategoryFiltersShowMorePlugin from './js/category-filters-show-more.plugin';
-import StickyBuyBox from "./js/sticky-buy-box";
 import LoginPagePlugin from "./js/login-page.plugin";
+import SearchClearPlugin from "./js/search-clear.plugin";
 
 const PluginManager = window.PluginManager;
 
@@ -17,8 +17,8 @@ PluginManager.register('OptiwebFaqPlugin', OptiwebFaqPlugin, ".ow-faq");
 PluginManager.register('OffCanvasFilterPlugin', OffcanvasCustomPlugin, '[data-off-canvas-custom]');
 PluginManager.register('ReadMore', ReadMore, '[data-ow-read-more]');
 PluginManager.register('CategoryFiltersShowMorePlugin', CategoryFiltersShowMorePlugin,'[data-off-canvas-filter-content]');
-PluginManager.register('StickyBuyBox', StickyBuyBox,  '[data-sticky-buy-box]');
 PluginManager.register('LoginPage', LoginPagePlugin, '[data-login-container]');
+PluginManager.register('SearchClear', SearchClearPlugin, '[data-search-widget]');
 PluginManager.override('Listing', () => import("./js/ow-listing.plugin"), '[data-listing]');
 PluginManager.register('OwMegaMenu', () => import('./js/ow-mega-menu.plugin'), '[data-ow-mega-menu="true"]');
 

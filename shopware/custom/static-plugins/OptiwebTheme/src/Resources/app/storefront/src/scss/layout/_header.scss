@@ -20,7 +20,10 @@
         padding: 0 !important;
         margin-bottom: 0 !important;
 
-        @include media-breakpoint-down(sm) {
+        // The search column goes full-width from md down, so the row has to be
+        // allowed to wrap at the same breakpoint — otherwise it is laid out on the
+        // same line as the actions and overhangs the viewport.
+        @include media-breakpoint-down(md) {
             flex-wrap: wrap;
         }
     }
@@ -84,11 +87,6 @@
             order: 3;
             flex: 0 0 100%;
             max-width: 100%;
-            padding-top: 10px;
-        }
-
-        @include media-breakpoint-down(sm) {
-            display: none;
         }
 
         .row {
@@ -97,6 +95,13 @@
     }
 
     max-width: 100%;
+
+    // Padding sits on the collapse, not the column, so a closed search adds no height
+    @include media-breakpoint-down(md) {
+        #searchCollapse {
+            padding-top: 10px;
+        }
+    }
 
     &-form {
         position: relative;
@@ -114,13 +119,19 @@
             transition: border-color 0.18s;
 
             &::placeholder {
-                color: #aba49e !important;
+                color: $sivanka-text-soft !important;
             }
 
+            &:hover:not(:focus) {
+                border-color: #D9D3CE !important;
+                cursor: text;
+            }
+
+            // Keep a subtle focus ring for a11y instead of the browser outline
             &:focus {
                 outline: none;
-                border-color: $sivanka-primary-light !important;
-                box-shadow: none;
+                border-color: $sivanka-primary !important;
+                box-shadow: 0 0 0 3px rgba(160, 43, 107, 0.15);
             }
         }
 
@@ -156,6 +167,28 @@
                 stroke: currentColor;
                 fill: none;
             }
+
+            // Loading — the spinner takes the glyph's place, the field stays editable
+            &.is-loading-indicator-before {
+                background: $sivanka-primary !important;
+                opacity: 1;
+
+                .header-search-svg {
+                    display: none;
+                }
+
+                .loader {
+                    margin: 0;
+                    border-color: rgba(255, 255, 255, 0.4);
+                    border-top-color: $sivanka-white;
+                }
+            }
+        }
+
+        // Hovering anywhere over the field darkens the submit button, matching the
+        // magenta hover used across the theme.
+        &:hover .header-search-btn:not(:disabled) {
+            background: $sivanka-primary-hover !important;
         }
 
         // Close button — hidden by default, shown by JS when input has text
@@ -174,7 +207,7 @@
             justify-content: center;
             border: none;
             padding: 0;
-            z-index: 6;
+            z-index: 7; // sit above the submit button
             cursor: pointer;
 
             &:not(.d-none) {
@@ -185,15 +218,93 @@
                 background: $sivanka-primary-hover !important;
             }
 
+            // Center the X glyph inside the button, sized to match the magnifier
+            .header-close-icon {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 18px;
+                height: 18px;
+                line-height: 0;
+                svg {
+                    top:0;
+                }
+            }
+
             .icon, svg {
-                width: 16px;
-                height: 16px;
+                display: block;
+                width: 18px;
+                height: 18px;
 
                 path {
                     stroke: $sivanka-white !important;
                 }
             }
         }
+
+        // Filled — the close button is active (input has text), so hide the magnifier
+        // submit button and never show two magenta boxes in the same slot.
+        &:has(.header-close-btn:not(.d-none)) .header-search-btn {
+            display: none !important;
+        }
+
+        // Loading wins over filled: the spinner needs the slot back.
+        &:has(.header-search-btn.is-loading-indicator-before) {
+            .header-search-btn {
+                display: flex !important;
+            }
+
+            .header-close-btn {
+                display: none !important;
+            }
+        }
+    }
+}
+
+// Search-suggest dropdown — keep each result on ONE line (product image /
+// name / price) and the "show all results" row (link + total count) inline.
+// The `.header-search-col .row { display:block }` rule above cascades into the
+// suggest markup (which uses Bootstrap `.row`) and would otherwise stack them.
+.header-search-col .search-suggest {
+    background: $sivanka-white;
+    border: 1px solid $sivanka-border;
+    border-radius: $sivanka-r8;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+
+    // "No results" — a single, non-clickable meta row
+    .search-suggest-no-result {
+        font-family: $sivanka-sans;
+        font-size: 14px;
+        color: $sivanka-text-soft;
+        pointer-events: none;
+    }
+
+    .row {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+    }
+
+    .search-suggest-product-name {
+        min-width: 0; // allow the name column to shrink/ellipsize instead of wrapping the price away
+
+        a,
+        .search-suggest-product-name-link {
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+
+    .search-suggest-product-price {
+        white-space: nowrap;
+        text-align: right;
+    }
+
+    .search-suggest-total .row {
+        justify-content: space-between;
     }
 }
 
@@ -311,22 +422,28 @@
         }
     }
 
-    &-badge {
+    // Count badge. Written as a descendant selector (`.header-cart .header-cart-badge`)
+    // so it outranks Bootstrap's `.badge.bg-primary.rounded-pill` utilities, which
+    // are all `!important` at (0,1,0) and were fighting the pink counter styling.
+    .header-cart-badge {
         position: absolute !important;
-        top: 0 !important;
-        right: 14px !important;
-        background: $sivanka-primary !important;
+        top: 6px !important;
+        right: -2px !important;
+        left: auto !important;
+        box-sizing: border-box !important;
+        min-width: 16px !important;
+        width: auto !important;
+        height: 16px !important;
+        padding: 0 4px !important;
+        background-color: $sivanka-primary !important;
         color: $sivanka-white !important;
         font-size: 10px !important;
         font-weight: 700 !important;
-        min-width: 16px;
-        height: 16px;
+        line-height: 1 !important;
         border-radius: 8px !important;
         display: flex !important;
-        align-items: center;
-        justify-content: center;
-        padding: 0 3px !important;
-        line-height: 1;
+        align-items: center !important;
+        justify-content: center !important;
 
         &:empty {
             display: none !important;
@@ -364,8 +481,8 @@
 
     &-badge {
         position: absolute !important;
-        top: 0 !important;
-        right: 14px !important;
+        top: -3px !important;
+        right: -3px !important;
         background: $sivanka-primary !important;
         color: $sivanka-white !important;
         font-size: 10px !important;

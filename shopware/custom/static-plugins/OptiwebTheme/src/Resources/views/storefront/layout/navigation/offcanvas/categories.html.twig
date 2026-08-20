@@ -11,6 +11,17 @@
     <div class="navigation-offcanvas-content{% if isRoot %} navigation-offcanvas-root{% endif %}">
         {% if not isRoot %}
             {% sw_include '@Storefront/storefront/layout/navigation/offcanvas/back-link.html.twig' with { item: active } %}
+        {% else %}
+            {# The theme suppresses the default offcanvas close button, and the back-link
+               that carries one only renders when nested — so the root level needs its own
+               header or there is no way to close the menu but tapping the backdrop. #}
+            <div class="offcanvas-back-link offcanvas-root-head">
+                <span class="offcanvas-root-title">{{ 'optiweb.navigation.menuTitle'|trans|default('Kategorije') }}</span>
+                <button class="btn btn-secondary offcanvas-close js-offcanvas-close d-lg-none"
+                        aria-label="{{ 'general.offcanvasCloseMenu'|trans|striptags }}">
+                    {% sw_icon 'x' style { size: 'md' } %}
+                </button>
+            </div>
         {% endif %}
 
         <ul class="list-unstyled navigation-offcanvas-list">

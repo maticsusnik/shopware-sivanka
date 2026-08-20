@@ -1,7 +1,6 @@
 {% sw_extends '@Storefront/storefront/page/checkout/address/index.html.twig' %}
 
 {% block page_checkout_address_header %}
-    {% sw_include '@Storefront/storefront/component/checkout/checkout-steps.html.twig' with { activeStep: 2 } %}
     <h1 class="address-main-header">
         {{ 'checkout.addressHeader'|trans|sw_sanitize }}
     </h1>

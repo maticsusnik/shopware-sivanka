@@ -3,8 +3,14 @@
 }
 
 .cms-element-buy-box {
-    padding: $product-buy-spacer;
-    background: $ow-color-grey-1;
+    padding: 40px;
+    background: $sivanka-info-bg;
+    border: 1px solid $sivanka-info-border;
+    border-radius: 20px;
+
+    @include media-breakpoint-down(md) {
+        padding: 24px;
+    }
 }
 
 .cms-block-gallery-buybox {
@@ -159,11 +165,6 @@
 }
 
 .product-detail-buy {
-    @include media-breakpoint-up(lg) {
-        position: absolute;
-        right:0;
-        top:0;
-    }
     .product-wishlist-action {
         display: flex;
         align-items: center;
@@ -258,5 +259,454 @@
 
     .offcanvas-footer {
         display: none;
+    }
+}
+
+// ============================================================
+//  Sivanka Product Detail — matches "Sivanka Product.dc.html"
+// ============================================================
+.is-ctl-product {
+
+    // ---- 50 / 50 columns like the design (Shopware defaults to col-lg-7 / col-lg-5) ----
+    @include media-breakpoint-up(lg) {
+        .cms-block-gallery-buybox {
+            // Capped at $bs-gutter-x: a wider gutter makes the row overhang the
+            // container inset and the page scrolls sideways by the difference.
+            .cms-block-container-row {
+                --bs-gutter-x: #{$bs-gutter-x};
+            }
+
+            .col-lg-7.product-detail-media,
+            .col-lg-5.product-detail-buy {
+                flex: 0 0 50%;
+                max-width: 50%;
+                width: 50%;
+            }
+        }
+    }
+
+    // ---- GALLERY: main image framed in a rounded, bordered warm SQUARE card ----
+    // Scoped to .gallery-slider-col so the fullscreen zoom modal (a sibling
+    // .zoom-modal-wrapper inside .cms-element-image-gallery) keeps its DEFAULT styling.
+    .gallery-slider-col {
+
+        // The frame belongs on the slider CONTAINER, not on the slides. A border on a
+        // slide travels with the carousel, so it visibly slid in and out while changing
+        // images. Both branches of the core template — .gallery-slider-item (multi-image)
+        // and .gallery-slider-single-image — sit inside .gallery-slider, so framing that
+        // covers both and stays put.
+        .gallery-slider {
+            border: 1px solid $sivanka-card-border;
+            border-radius: 20px;
+            background: $sivanka-gallery-bg;
+            padding: 24px;
+            overflow: hidden;
+        }
+
+        // Slides carry no chrome of their own — they just centre their image inside the
+        // frame. The square aspect-ratio stays here so the slides still drive its height.
+        .gallery-slider-single-image,
+        .gallery-slider-item {
+            border: 0;
+            border-radius: 0;
+            background: transparent;
+            padding: 0;
+            aspect-ratio: 1 / 1;
+            min-height: 0 !important;
+            height: auto !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        // Image contained within the square frame
+        .gallery-slider-single-image img,
+        .gallery-slider-item img,
+        .gallery-slider-image {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+        }
+
+        // Arrows over the main image, on top of the frame. tiny-slider already ships
+        // touch/drag swipe (controls:true in the element's slider options), so this is
+        // only about making the arrows visible and hittable.
+        .gallery-slider-controls-prev,
+        .gallery-slider-controls-next {
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 2;
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            border: 1px solid $sivanka-card-border;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.92);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            color: $sivanka-text;
+            opacity: 0;
+            transition: opacity 0.18s, border-color 0.18s, color 0.18s;
+
+            .icon,
+            svg {
+                width: 18px;
+                height: 18px;
+                color: inherit;
+            }
+
+            svg { top: 0; }
+            svg path { fill: currentColor; }
+
+            &:hover,
+            &:focus-visible {
+                border-color: $sivanka-primary;
+                color: $sivanka-primary;
+            }
+
+            &[disabled] {
+                opacity: 0 !important;
+                pointer-events: none;
+            }
+        }
+
+        .gallery-slider-controls-prev { left: 14px; }
+        .gallery-slider-controls-next { right: 14px; }
+
+        // Reveal on hover on pointer devices; always visible where hover is unavailable
+        .gallery-slider:hover .gallery-slider-controls-prev:not([disabled]),
+        .gallery-slider:hover .gallery-slider-controls-next:not([disabled]),
+        .gallery-slider-controls-prev:focus-visible,
+        .gallery-slider-controls-next:focus-visible {
+            opacity: 1;
+        }
+
+        @media (hover: none) {
+            .gallery-slider-controls-prev:not([disabled]),
+            .gallery-slider-controls-next:not([disabled]) {
+                opacity: 1;
+            }
+        }
+
+        // Thumbnails: square, rounded, pink border when active
+        .gallery-slider-thumbnails-item {
+            height: auto;
+            width: auto;
+            aspect-ratio: 1 / 1;
+        }
+
+        .gallery-slider-thumbnails-item-inner {
+            border: 1px solid $sivanka-card-border;
+            border-radius: 12px;
+        }
+
+        .gallery-slider-thumbnails-item.tns-nav-active .gallery-slider-thumbnails-item-inner,
+        .gallery-slider-thumbnails-item:hover .gallery-slider-thumbnails-item-inner {
+            border: 2px solid $sivanka-primary;
+        }
+    }
+
+    // ---- INFO / BUY BOX ----
+    .product-detail-name {
+        font-family: $sivanka-serif;
+        font-size: 34px;
+        font-weight: 700;
+        line-height: 1.15;
+        color: $sivanka-heading-dark;
+        margin-bottom: 8px;
+
+        @include media-breakpoint-down(md) {
+            font-size: 28px;
+        }
+    }
+
+    .product-detail-ordernumber-container {
+        font-size: 13.5px;
+        color: $sivanka-text-soft;
+        margin-bottom: 20px;
+
+        .product-detail-ordernumber-label {
+            color: $sivanka-text-soft;
+        }
+    }
+
+    .product-detail-short-description {
+        font-size: 15.5px;
+        line-height: 1.65;
+        color: $sivanka-text;
+        margin-bottom: 28px;
+    }
+
+    // Shopware crams qty + price + stock + add-to-cart into ONE .buy-widget-container
+    // row. The design borders ONLY the qty/price line, with stock + button below it.
+    // So we border just the two first-line columns (qty col-4 + price col-8) and
+    // leave the stock (col-12) and button (col-12) outside the frame.
+    .buy-widget-container {
+        border: none;
+        --bs-gutter-y: 0;
+        row-gap: 0;
+        align-items: stretch; // equal height so the two borders line up
+        margin-bottom: 0;
+    }
+
+    .buy-widget-container > fieldset.col-4,
+    .buy-widget-container > .col-8.text-end {
+        border-top: 1px solid $sivanka-divider;
+        border-bottom: 1px solid $sivanka-divider;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        margin-top: 0;
+        display: flex;
+        align-items: center;
+    }
+
+    .buy-widget-container > .col-8.text-end {
+        justify-content: flex-end;
+    }
+
+    // Quantity stepper
+    .product-detail-quantity-group {
+        border: 1px solid $sivanka-qty-border;
+        border-radius: 10px;
+        background: $sivanka-white;
+        overflow: hidden;
+
+        .btn-minus,
+        .btn-plus {
+            color: $sivanka-primary;
+            background: transparent;
+
+            .icon {
+                color: $sivanka-primary;
+            }
+
+            &:hover,
+            &:focus {
+                background: $sivanka-side-hover;
+                color: $sivanka-primary;
+            }
+        }
+
+        .quantity-selector-group-input {
+            font-weight: 600;
+            color: $sivanka-text;
+        }
+    }
+
+    .buy-widget-container .input-group-text {
+        background: transparent;
+        border: none;
+        color: $sivanka-text-soft;
+        font-size: 14px;
+    }
+
+    // Price — Playfair, large, deep plum
+    .product-detail-price-container .product-price,
+    .product-detail-price-container .product-price-wrapper .product-price {
+        font-family: $sivanka-serif;
+        font-size: 30px;
+        font-weight: 700;
+        color: $sivanka-heading-dark;
+    }
+
+    // Stock indicator — sits BELOW the bordered qty/price box (design)
+    .product-detail-delivery-information {
+        margin-top: 24px;
+        margin-bottom: 22px;
+    }
+
+    // In-stock reads green so availability registers at a glance; out-of-stock keeps
+    // the theme's existing treatment.
+    .delivery-information {
+        margin: 0;
+        font-size: 14px;
+        line-height: 21px;
+        color: $sivanka-heading-dark;
+    }
+
+    .delivery-information.delivery-available {
+        color: $sivanka-in-stock;
+
+        // The dot ships as Bootstrap .bg-success (bright green); match the label
+        // so the two greens don't fight.
+        .delivery-status-indicator {
+            background-color: $sivanka-in-stock !important;
+        }
+    }
+
+    // Add-to-cart button — solid brand pink, radius 12
+    .btn-buy {
+        background: $sivanka-primary;
+        border-color: $sivanka-primary;
+        border-radius: 12px;
+        padding: 16px 20px;
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 1.25;
+
+        &:hover,
+        &:focus,
+        &:active {
+            background: $sivanka-primary-hover !important;
+            border-color: $sivanka-primary-hover !important;
+        }
+
+        // cart icon 22px like the design (base rule blows it up to 2rem)
+        .icon {
+            width: 22px !important;
+            height: 22px !important;
+            margin-right: 4px;
+
+            svg {
+                width: 22px;
+                height: 22px;
+                top: 0;
+            }
+        }
+    }
+
+    // Wishlist link below the cart button — pink text + heart, centered
+    .product-wishlist-btn {
+        justify-content: center;
+        color: $sivanka-primary;
+        margin-top: 16px;
+
+        .icon,
+        .icon-wishlist {
+            color: $sivanka-primary !important;
+        }
+
+        .product-wishlist-btn-content-sm {
+            color: $sivanka-primary;
+            font-weight: 600;
+        }
+
+        &:hover {
+            color: $sivanka-primary-hover;
+
+            .icon,
+            .icon-wishlist,
+            .product-wishlist-btn-content-sm {
+                color: $sivanka-primary-hover !important;
+            }
+        }
+    }
+
+    // ---- DESCRIPTION ("Opis") ----
+    .product-detail-description-title {
+        font-family: $sivanka-serif;
+        font-size: 26px;
+        font-weight: 700;
+        color: $sivanka-heading-dark;
+        margin-bottom: 18px;
+    }
+
+    .product-detail-description-text {
+        font-size: 15.5px;
+        line-height: 1.8;
+        color: $sivanka-text-muted;
+    }
+
+    // ---- RELATED / CROSS-SELLING ("Podobni izdelki") ----
+    .cross-selling-tab-title,
+    .product-cross-selling-tab-navigation-title,
+    .cms-element-cross-selling .product-slider-title {
+        font-family: $sivanka-serif;
+        font-size: 28px;
+        font-weight: 700;
+        color: $sivanka-heading-dark;
+    }
+}
+// ============================================================
+//  Product detail: description in the right column, sticky gallery (lg+)
+//  The description/reviews block is a SIBLING of the gallery-buybox block, not a child
+//  of the buy column, so it cannot simply be nested. Both blocks are children of the
+//  same `.cms-section-default.boxed`, so that container becomes the grid and the two
+//  wrapper levels go `display: contents` — their children (media col, buy col) then
+//  participate in it directly and the description can be placed under the buy box.
+// ============================================================
+@include media-breakpoint-up(lg) {
+    .is-ctl-product .cms-section-default.boxed:has(.cms-block-gallery-buybox) {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        // Rows 1-2 size to the right column's content; row 3 is an empty spacer that
+        // soaks up whatever the (taller) gallery needs, so the gallery's height cannot
+        // push the description away from the add-to-cart. Row 4 is full-width content.
+        grid-template-rows: min-content min-content auto min-content;
+        column-gap: 48px;
+        align-items: start;
+
+        > .cms-block-gallery-buybox {
+            display: contents;
+        }
+
+        > .cms-block-gallery-buybox > .cms-block-container,
+        > .cms-block-gallery-buybox > .cms-block-container > .cms-block-container-row {
+            display: contents;
+        }
+
+        // `position: sticky` creates a stacking context, so the fixed zoom modal (z-index
+        // 1055) that lives inside the gallery is trapped inside it. The buy column is
+        // later in DOM order at the same level, so its content painted over the modal.
+        // (`.cms-block-gallery-buybox { z-index: 1 }` used to lift the whole gallery
+        // block above it, but `display: contents` above means that element no longer
+        // generates a box, so its z-index is inert.) Lift the gallery's stacking context
+        // above the modal layer, but only while a modal is actually open.
+        .product-detail-media:has(.modal.show) {
+            z-index: 1060;
+        }
+
+        // Left column: the gallery, sticky through the whole right-hand stack
+        .product-detail-media {
+            grid-column: 1;
+            // Spans the buy box AND the description so those two size the rows; kept in
+            // row 1 the tall gallery would inflate row 1 and push the description far
+            // below the add-to-cart.
+            grid-row: 1 / span 3;
+            position: sticky;
+            top: 20px;
+            align-self: start;
+            width: auto !important;
+            max-width: none !important;
+            flex: none !important;
+            padding-inline: 0;
+        }
+
+        // Right column, row 1: name, price, stepper, stock, add to cart, wishlist
+        .product-detail-buy {
+            grid-column: 2;
+            grid-row: 1;
+            width: auto !important;
+            max-width: none !important;
+            flex: none !important;
+            padding-inline: 0;
+        }
+
+        // Right column, row 2: description + specifications, under the buy box
+        > .cms-block-product-description-reviews {
+            grid-column: 2;
+            grid-row: 2;
+            margin-top: 32px;
+        }
+
+        // Anything else (cross-selling) spans the full width below
+        > .cms-block-cross-selling {
+            grid-column: 1 / -1;
+            grid-row: 4;
+        }
+
+        // The description was centred at 797px for a full-width block; in a half-width
+        // column it should simply fill it.
+        .product-detail-description,
+        .product-detail-tabs,
+        .product-detail-tab-navigation {
+            max-width: none;
+            width: auto;
+        }
     }
 }
