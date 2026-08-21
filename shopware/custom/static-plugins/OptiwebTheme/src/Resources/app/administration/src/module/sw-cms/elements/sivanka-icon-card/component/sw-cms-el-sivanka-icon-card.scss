@@ -1,0 +1,46 @@
+@import "../../../sivanka-service-shared";
+
+.sw-cms-el-sivanka-icon-card {
+    height: 100%;
+    padding: 14px;
+    border: 1px solid $sivanka-cms-border;
+    border-radius: 8px;
+    background: #fff;
+
+    &__icon {
+        display: inline-block;
+        margin-bottom: 8px;
+        padding: 2px 8px;
+        font-size: 10px;
+        font-weight: 700;
+        border-radius: 4px;
+        background: $sivanka-cms-tint;
+        color: $sivanka-cms-primary;
+    }
+
+    &__title {
+        margin: 0 0 4px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    &__text {
+        margin: 0;
+        font-size: 12px;
+        line-height: 1.45;
+        color: $sivanka-cms-muted;
+    }
+
+    &.is--fact {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: $sivanka-cms-tint;
+        border-color: transparent;
+
+        .sw-cms-el-sivanka-icon-card__icon {
+            margin-bottom: 0;
+            background: #fff;
+        }
+    }
+}

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace OptiwebTheme\Core\Content\Cms\DataResolvers;
 
+use Shopware\Core\Content\Category\CategoryCollection;
 use Shopware\Core\Content\Category\CategoryDefinition;
 use Shopware\Core\Content\Category\CategoryEntity;
 use Shopware\Core\Content\Cms\Aggregate\CmsSlot\CmsSlotEntity;
@@ -81,12 +82,17 @@ class CategorySliderResolver extends AbstractCmsElementResolver
         $domain = $resolverContext->getSalesChannelContext()->getSalesChannel()->getDomains()->first();
         $baseUrl = $domain ? rtrim((string) $domain->getUrl(), '/') : '';
 
-        // Categories
+        // Categories — rendered in the same order as the category tree in the
+        // administration. Shopware stores that order as an `afterCategoryId` linked
+        // list, which `CategoryCollection::sortByPosition()` resolves; a plain DAL
+        // query would otherwise come back in an arbitrary order.
         $items = [];
         $entitiesResult = $result->get('categories');
         if ($entitiesResult) {
-            /** @var CategoryEntity $category */
-            foreach ($entitiesResult->getEntities() as $category) {
+            /** @var CategoryCollection $categories */
+            $categories = $entitiesResult->getEntities();
+
+            foreach ($this->sortCategories($slot, $categories) as $category) {
                 $translated = $category->getTranslated();
                 $seoPath = $category->getSeoUrls()->first()?->getSeoPathInfo() ?? '';
                 $link = $seoPath ? $baseUrl . '/' . ltrim($seoPath, '/') : $baseUrl;
@@ -165,6 +171,35 @@ class CategorySliderResolver extends AbstractCmsElementResolver
         } catch (\Exception) {
             return null;
         }
+    }
+
+    /**
+     * Keeps the storefront order identical to what the editor sees:
+     *
+     * - "single" (all children of one parent) follows the category tree order from the
+     *   administration. Shopware stores that as an `afterCategoryId` linked list, which
+     *   `CategoryCollection::sortByPosition()` resolves — a plain DAL query returns rows
+     *   in an arbitrary order.
+     * - "multiple" follows the order the categories were picked in the CMS element,
+     *   because `Criteria::setIds()` does not preserve the id order either.
+     *
+     * @return list<CategoryEntity>
+     */
+    private function sortCategories(CmsSlotEntity $slot, CategoryCollection $categories): array
+    {
+        if ($this->getSelectionMode($slot) === 'multiple') {
+            $sorted = [];
+            foreach ($this->getMultipleCategoryIds($slot) as $id) {
+                $category = $categories->get($id);
+                if ($category instanceof CategoryEntity) {
+                    $sorted[] = $category;
+                }
+            }
+
+            return $sorted;
+        }
+
+        return array_values($categories->sortByPosition()->getElements());
     }
 
     private function getSelectionMode(CmsSlotEntity $slot): string

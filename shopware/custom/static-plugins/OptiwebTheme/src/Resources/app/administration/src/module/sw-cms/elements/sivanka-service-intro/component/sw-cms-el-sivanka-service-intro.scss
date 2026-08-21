@@ -1,0 +1,31 @@
+@import "../../../sivanka-service-shared";
+
+.sw-cms-el-sivanka-service-intro {
+    &__eyebrow {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: $sivanka-cms-primary;
+    }
+
+    &__headline {
+        margin: 0 0 8px;
+        font-size: 22px;
+        font-weight: 600;
+        line-height: 1.2;
+    }
+
+    &__lead {
+        margin: 0;
+        font-size: 13px;
+        line-height: 1.5;
+        color: $sivanka-cms-muted;
+    }
+
+    &.is--cta &__headline {
+        font-size: 18px;
+    }
+}

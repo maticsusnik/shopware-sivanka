@@ -1,13 +1,11 @@
 {% block sw_cms_block_layout_config_css_class %}
     <mt-select
             v-if="shouldShowLayoutSelectionField"
-            v-model="block.customFields.layout"
             :label="'Layout Options'"
             :options="layoutOptions"
-            :disabled="false"
-            @change="onChangeLayoutOption"
+            :model-value="layoutValue"
+            @update:model-value="onChangeLayoutOption"
     />
 
     {% parent() %}
 {% endblock %}
-

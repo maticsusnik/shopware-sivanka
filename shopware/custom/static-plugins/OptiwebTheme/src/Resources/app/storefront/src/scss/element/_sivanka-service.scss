@@ -1,0 +1,370 @@
+// ---- Sivanka service (storitve) CMS elements ----
+// Values taken from the design handoff in ~/Desktop/Sivanka_storetve_blocks.
+
+.sivanka-icon {
+    flex: 0 0 auto;
+}
+
+/* ---------- sivanka-service-intro ---------- */
+.sivanka-intro {
+    &__eyebrow {
+        display: block;
+        margin-bottom: 14px;
+        font-family: $sivanka-mono;
+        font-size: 11.5px;
+        font-weight: 700;
+        line-height: 17px;
+        letter-spacing: 1.61px;
+        text-transform: uppercase;
+        color: $sivanka-primary;
+    }
+
+    &__headline {
+        margin: 0 0 18px;
+        font-family: $sivanka-serif;
+        font-weight: 600;
+        color: $sivanka-text;
+    }
+
+    &__lead {
+        margin: 0;
+        color: $sivanka-text-lead;
+        text-wrap: pretty;
+    }
+
+    &--hero {
+        .sivanka-intro__headline {
+            font-size: 46px;
+            line-height: 53px;
+            letter-spacing: -0.92px;
+
+            @include media-breakpoint-down(lg) {
+                font-size: 34px;
+                line-height: 40px;
+                letter-spacing: -0.5px;
+            }
+        }
+
+        .sivanka-intro__lead {
+            max-width: 560px;
+            font-size: 16.5px;
+            line-height: 27.5px;
+        }
+    }
+
+    &--cta {
+        .sivanka-intro__headline {
+            margin-bottom: 10px;
+            font-size: 28px;
+            line-height: 34px;
+            letter-spacing: -0.28px;
+            color: $sivanka-heading-dark;
+        }
+
+        .sivanka-intro__lead {
+            max-width: 620px;
+            font-size: 15px;
+            line-height: 24px;
+        }
+    }
+
+    &--plain .sivanka-intro__headline {
+        font-size: 32px;
+        line-height: 38px;
+        letter-spacing: -0.32px;
+    }
+}
+
+/* ---------- sivanka-service-actions ---------- */
+// Reuses the theme-wide .sivanka-btn-primary / .sivanka-btn-outline buttons.
+.sivanka-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px;
+
+    @include media-breakpoint-down(md) {
+        .sivanka-actions__btn {
+            flex: 1 1 100%;
+        }
+    }
+}
+
+/* ---------- sivanka-icon-card ---------- */
+.sivanka-icon-card {
+    height: 100%;
+
+    &__title {
+        margin: 0;
+    }
+
+    &__text {
+        margin: 0;
+        color: $sivanka-text-muted;
+        text-wrap: pretty;
+    }
+
+    &--card {
+        padding: 28px;
+        background: $sivanka-white;
+        border: 1px solid $sivanka-card-border;
+        border-radius: $sivanka-r16;
+
+        .sivanka-icon-card__icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 46px;
+            height: 46px;
+            margin-bottom: 18px;
+            border-radius: $sivanka-r12;
+            background: $sivanka-accent-soft;
+            color: $sivanka-primary;
+        }
+
+        .sivanka-icon-card__title {
+            margin-bottom: 10px;
+            font-family: $sivanka-serif;
+            font-size: 21px;
+            font-weight: 600;
+            line-height: 25px;
+        }
+
+        .sivanka-icon-card__text {
+            font-size: 14.5px;
+            line-height: 24px;
+        }
+    }
+
+    &--fact {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 22px 26px;
+        background: $sivanka-surface-tint;
+        border-radius: $sivanka-r16;
+
+        .sivanka-icon-card__icon {
+            flex: 0 0 46px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 46px;
+            height: 46px;
+            border-radius: $sivanka-r12;
+            background: $sivanka-white;
+            color: $sivanka-primary;
+        }
+
+        .sivanka-icon-card__title {
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 24px;
+        }
+
+        .sivanka-icon-card__text {
+            font-size: 13.5px;
+            line-height: 20px;
+        }
+    }
+}
+
+/* ---------- sivanka-step-card ---------- */
+.sivanka-step-card {
+    height: 100%;
+    padding: 28px;
+    background: $sivanka-white;
+    border: 1px solid $sivanka-border;
+    border-radius: $sivanka-r16;
+
+    &__number {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        margin-bottom: 18px;
+        border-radius: 50%;
+        background: $sivanka-primary;
+        color: $sivanka-white;
+        font-family: $sivanka-mono;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    &__title {
+        margin: 0 0 8px;
+        font-size: 17px;
+        font-weight: 600;
+        line-height: 24px;
+    }
+
+    &__text {
+        margin: 0;
+        font-size: 14.5px;
+        line-height: 24px;
+        color: $sivanka-text-muted;
+        text-wrap: pretty;
+    }
+}
+
+/* ---------- sivanka-service-card ---------- */
+.sivanka-service-card {
+    display: block;
+    height: 100%;
+    overflow: hidden;
+    background: $sivanka-white;
+    border: 1px solid $sivanka-card-border;
+    border-radius: $sivanka-r16;
+    color: $sivanka-text;
+    text-decoration: none;
+    transition: border-color 0.18s;
+
+    &:hover,
+    &:focus {
+        border-color: $sivanka-accent-border;
+        color: $sivanka-text;
+        text-decoration: none;
+    }
+
+    &__image {
+        display: block;
+        width: 100%;
+        object-fit: cover;
+    }
+
+    &__head {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    &__icon {
+        flex: 0 0 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 42px;
+        height: 42px;
+        border-radius: 11px;
+        background: $sivanka-accent-soft;
+        color: $sivanka-primary;
+    }
+
+    &__title {
+        margin: 0;
+        font-family: $sivanka-serif;
+        font-weight: 600;
+    }
+
+    &__text {
+        margin: 12px 0 16px;
+        font-size: 14.5px;
+        line-height: 24px;
+        color: $sivanka-text-muted;
+        text-wrap: pretty;
+    }
+
+    &__link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        color: $sivanka-primary;
+    }
+
+    /* wide — image column left, copy right (services overview) */
+    &--wide {
+        border-radius: 18px;
+
+        &.sivanka-service-card--has-media {
+            display: grid;
+            grid-template-columns: 264px 1fr;
+
+            @include media-breakpoint-down(sm) {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .sivanka-service-card__media {
+            display: flex;
+            align-items: center;
+            padding: 22px 0 22px 22px;
+
+            @include media-breakpoint-down(sm) {
+                padding: 22px 22px 0;
+            }
+        }
+
+        .sivanka-service-card__image {
+            width: 220px;
+            height: 220px;
+            border-radius: 14px;
+
+            @include media-breakpoint-down(sm) {
+                width: 100%;
+                height: 200px;
+            }
+        }
+
+        .sivanka-service-card__body {
+            display: flex;
+            flex-direction: column;
+            padding: 26px 28px;
+
+            @include media-breakpoint-up(sm) {
+                padding-left: 4px;
+            }
+        }
+
+        &:not(.sivanka-service-card--has-media) .sivanka-service-card__body {
+            padding-left: 28px;
+        }
+
+        .sivanka-service-card__title {
+            font-size: 22px;
+            line-height: 26px;
+        }
+
+        .sivanka-service-card__link {
+            margin-top: auto;
+            margin-left: auto;
+        }
+    }
+
+    /* compact — cross links, no copy */
+    &--compact {
+        display: flex;
+        flex-direction: column;
+
+        .sivanka-service-card__image {
+            aspect-ratio: 16 / 9;
+        }
+
+        .sivanka-service-card__body {
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 18px 22px;
+        }
+
+        .sivanka-service-card__title {
+            font-size: 19px;
+            line-height: 24px;
+        }
+
+        .sivanka-service-card__icon {
+            flex-basis: auto;
+            width: auto;
+            height: auto;
+            background: none;
+        }
+
+        .sivanka-service-card__link-label {
+            @include visually-hidden;
+        }
+    }
+}

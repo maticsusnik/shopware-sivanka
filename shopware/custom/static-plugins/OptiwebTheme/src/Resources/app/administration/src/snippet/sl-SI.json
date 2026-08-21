@@ -2,11 +2,141 @@
     "apps": {
         "sw-cms": {
             "detail": {
-                "label":{
+                "label": {
                     "blockCategory": {
-                        "sivanka": "Sivanka"
+                        "sivanka": "Sivanka",
+                        "sivanka-storitve": "Sivanka storitve"
                     }
                 }
+            }
+        }
+    },
+    "sw-cms": {
+        "blocks": {
+            "sivanka": {
+                "sivankaServiceHero": {
+                    "label": "Storitev: naslovni del"
+                },
+                "sivankaServiceFeatures": {
+                    "label": "Storitev: kaj vključuje"
+                },
+                "sivankaServiceSteps": {
+                    "label": "Storitev: kako poteka"
+                },
+                "sivankaServiceFacts": {
+                    "label": "Storitev: informacije"
+                },
+                "sivankaServiceLinks": {
+                    "label": "Storitev: druge storitve"
+                },
+                "sivankaServiceGrid": {
+                    "label": "Storitve: seznam"
+                },
+                "sivankaServiceCta": {
+                    "label": "Storitev: poziv k dejanju"
+                }
+            }
+        },
+        "elements": {
+            "sivankaServiceIntro": {
+                "label": "Storitev: uvod",
+                "config": {
+                    "label": {
+                        "eyebrow": "Nadnaslov",
+                        "headline": "Naslov",
+                        "lead": "Opis",
+                        "headlineLevel": "Raven naslova",
+                        "headlineLevelH1": "H1 – glavni naslov strani",
+                        "headlineLevelH2": "H2 – naslov razdelka",
+                        "headlineLevelH3": "H3 – podnaslov",
+                        "variant": "Različica",
+                        "variantHero": "Naslovni del (velik naslov)",
+                        "variantCta": "Poziv k dejanju (manjši naslov)",
+                        "variantPlain": "Navaden razdelek"
+                    },
+                    "helpText": {
+                        "headlineLevel": "Na vsaki strani naj bo samo en H1."
+                    }
+                }
+            },
+            "sivankaServiceActions": {
+                "label": "Storitev: gumbi",
+                "config": {
+                    "label": {
+                        "primaryLabel": "Glavni gumb – besedilo",
+                        "primaryUrl": "Glavni gumb – povezava",
+                        "secondaryLabel": "Drugi gumb – besedilo",
+                        "secondaryUrl": "Drugi gumb – povezava",
+                        "newTab": "Odpri v novem zavihku"
+                    },
+                    "helpText": {
+                        "secondaryLabel": "Če polje pustite prazno, se drugi gumb ne prikaže."
+                    }
+                }
+            },
+            "sivankaIconCard": {
+                "label": "Storitev: kartica z ikono",
+                "config": {
+                    "label": {
+                        "icon": "Ikona",
+                        "title": "Naslov",
+                        "text": "Opis",
+                        "variant": "Različica",
+                        "variantCard": "Kartica (bela, z obrobo)",
+                        "variantFact": "Informacija (vodoravna, obarvana)"
+                    },
+                    "helpText": {
+                        "variant": "»Kartica« se uporablja v bloku »kaj vključuje«, »informacija« v bloku »informacije«."
+                    }
+                }
+            },
+            "sivankaStepCard": {
+                "label": "Storitev: korak",
+                "config": {
+                    "label": {
+                        "number": "Številka koraka",
+                        "title": "Naslov",
+                        "text": "Opis"
+                    },
+                    "helpText": {
+                        "number": "Številko vpišete ročno, ker Shopware elementu ne pove njegovega zaporedja."
+                    }
+                }
+            },
+            "sivankaServiceCard": {
+                "label": "Storitev: kartica s sliko",
+                "config": {
+                    "label": {
+                        "media": "Slika",
+                        "icon": "Ikona",
+                        "title": "Naslov",
+                        "text": "Opis",
+                        "url": "Povezava",
+                        "linkLabel": "Besedilo povezave",
+                        "variant": "Različica",
+                        "variantWide": "Široka (slika levo, opis desno)",
+                        "variantCompact": "Ozka (samo naslov in povezava)"
+                    },
+                    "helpText": {
+                        "text": "Opis se prikaže samo pri široki različici.",
+                        "variant": "»Široka« se uporablja v bloku »Storitve: seznam«, »ozka« v bloku »druge storitve«."
+                    }
+                }
+            },
+            "sivankaIcons": {
+                "ruler": "Meter",
+                "calculator": "Kalkulator",
+                "fabric": "Blago",
+                "home": "Trgovina / dom",
+                "shirt": "Oblačilo",
+                "scissors": "Škarje",
+                "needle": "Igla",
+                "bag": "Torba",
+                "zipper": "Zadrga",
+                "button": "Gumb",
+                "wrench": "Orodje",
+                "clock": "Ura",
+                "arrow": "Puščica"
             }
         }
     }

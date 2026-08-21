@@ -1,0 +1,26 @@
+{% block block_sivanka_service_hero %}
+    {% set imageSlot = block.slots.getSlot('image') %}
+    {% set hasImage = imageSlot and imageSlot.data and imageSlot.data.media %}
+
+    <div class="col-12 cms-block-sivanka-service-hero">
+        <div class="sivanka-service-hero{% if hasImage %} sivanka-service-hero--has-media{% endif %}">
+            <div class="sivanka-service-hero__text">
+                {% sw_include '@Storefront/storefront/block/sivanka-service/slot.html.twig' with {
+                    slotName: 'intro',
+                    slotClass: 'sivanka-service-hero__intro'
+                } %}
+                {% sw_include '@Storefront/storefront/block/sivanka-service/slot.html.twig' with {
+                    slotName: 'actions',
+                    slotClass: 'sivanka-service-hero__actions'
+                } %}
+            </div>
+
+            {% if hasImage %}
+                {% sw_include '@Storefront/storefront/block/sivanka-service/slot.html.twig' with {
+                    slotName: 'image',
+                    slotClass: 'sivanka-service-hero__media'
+                } %}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

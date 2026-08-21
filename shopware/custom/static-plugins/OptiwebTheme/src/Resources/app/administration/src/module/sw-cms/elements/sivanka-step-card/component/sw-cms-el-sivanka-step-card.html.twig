@@ -1,0 +1,9 @@
+{% block sw_cms_el_sivanka_step_card %}
+<div class="sw-cms-el-sivanka-step-card">
+    <span class="sw-cms-el-sivanka-step-card__number">{{ element.config.number.value }}</span>
+    <p class="sw-cms-el-sivanka-step-card__title">{{ element.config.title.value }}</p>
+    <p v-if="element.config.text.value" class="sw-cms-el-sivanka-step-card__text">
+        {{ element.config.text.value }}
+    </p>
+</div>
+{% endblock %}

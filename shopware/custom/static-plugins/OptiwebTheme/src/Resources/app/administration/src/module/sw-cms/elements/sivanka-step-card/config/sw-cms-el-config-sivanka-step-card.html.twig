@@ -1,0 +1,28 @@
+{% block sw_cms_el_config_sivanka_step_card %}
+<div class="sw-cms-el-config-sivanka-step-card">
+    {% block sw_cms_el_config_sivanka_step_card_number %}
+    <mt-text-field
+        v-model="element.config.number.value"
+        :label="$tc('sw-cms.elements.sivankaStepCard.config.label.number')"
+        :help-text="$tc('sw-cms.elements.sivankaStepCard.config.helpText.number')"
+        @update:model-value="onChange"
+    />
+    {% endblock %}
+
+    {% block sw_cms_el_config_sivanka_step_card_title %}
+    <mt-text-field
+        v-model="element.config.title.value"
+        :label="$tc('sw-cms.elements.sivankaStepCard.config.label.title')"
+        @update:model-value="onChange"
+    />
+    {% endblock %}
+
+    {% block sw_cms_el_config_sivanka_step_card_text %}
+    <mt-textarea
+        v-model="element.config.text.value"
+        :label="$tc('sw-cms.elements.sivankaStepCard.config.label.text')"
+        @update:model-value="onChange"
+    />
+    {% endblock %}
+</div>
+{% endblock %}

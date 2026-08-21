@@ -2,11 +2,141 @@
     "apps": {
         "sw-cms": {
             "detail": {
-                "label":{
+                "label": {
                     "blockCategory": {
-                        "sivanka": "Sivanka"
+                        "sivanka": "Sivanka",
+                        "sivanka-storitve": "Sivanka services"
                     }
                 }
+            }
+        }
+    },
+    "sw-cms": {
+        "blocks": {
+            "sivanka": {
+                "sivankaServiceHero": {
+                    "label": "Service: hero"
+                },
+                "sivankaServiceFeatures": {
+                    "label": "Service: what's included"
+                },
+                "sivankaServiceSteps": {
+                    "label": "Service: how it works"
+                },
+                "sivankaServiceFacts": {
+                    "label": "Service: facts"
+                },
+                "sivankaServiceLinks": {
+                    "label": "Service: other services"
+                },
+                "sivankaServiceGrid": {
+                    "label": "Services: overview"
+                },
+                "sivankaServiceCta": {
+                    "label": "Service: call to action"
+                }
+            }
+        },
+        "elements": {
+            "sivankaServiceIntro": {
+                "label": "Service: intro",
+                "config": {
+                    "label": {
+                        "eyebrow": "Eyebrow",
+                        "headline": "Headline",
+                        "lead": "Lead text",
+                        "headlineLevel": "Headline level",
+                        "headlineLevelH1": "H1 – main page heading",
+                        "headlineLevelH2": "H2 – section heading",
+                        "headlineLevelH3": "H3 – subheading",
+                        "variant": "Variant",
+                        "variantHero": "Hero (large headline)",
+                        "variantCta": "Call to action (smaller headline)",
+                        "variantPlain": "Plain section"
+                    },
+                    "helpText": {
+                        "headlineLevel": "Use only one H1 per page."
+                    }
+                }
+            },
+            "sivankaServiceActions": {
+                "label": "Service: buttons",
+                "config": {
+                    "label": {
+                        "primaryLabel": "Primary button – label",
+                        "primaryUrl": "Primary button – link",
+                        "secondaryLabel": "Secondary button – label",
+                        "secondaryUrl": "Secondary button – link",
+                        "newTab": "Open in a new tab"
+                    },
+                    "helpText": {
+                        "secondaryLabel": "Leave empty to hide the secondary button."
+                    }
+                }
+            },
+            "sivankaIconCard": {
+                "label": "Service: icon card",
+                "config": {
+                    "label": {
+                        "icon": "Icon",
+                        "title": "Title",
+                        "text": "Text",
+                        "variant": "Variant",
+                        "variantCard": "Card (white, bordered)",
+                        "variantFact": "Fact (horizontal, tinted)"
+                    },
+                    "helpText": {
+                        "variant": "\"Card\" is used by the \"what's included\" block, \"fact\" by the \"facts\" block."
+                    }
+                }
+            },
+            "sivankaStepCard": {
+                "label": "Service: step",
+                "config": {
+                    "label": {
+                        "number": "Step number",
+                        "title": "Title",
+                        "text": "Text"
+                    },
+                    "helpText": {
+                        "number": "Entered manually because Shopware does not expose a slot's position to the element."
+                    }
+                }
+            },
+            "sivankaServiceCard": {
+                "label": "Service: image card",
+                "config": {
+                    "label": {
+                        "media": "Image",
+                        "icon": "Icon",
+                        "title": "Title",
+                        "text": "Text",
+                        "url": "Link",
+                        "linkLabel": "Link label",
+                        "variant": "Variant",
+                        "variantWide": "Wide (image left, text right)",
+                        "variantCompact": "Compact (title and link only)"
+                    },
+                    "helpText": {
+                        "text": "The text is only rendered by the wide variant.",
+                        "variant": "\"Wide\" is used by the \"Services: overview\" block, \"compact\" by the \"other services\" block."
+                    }
+                }
+            },
+            "sivankaIcons": {
+                "ruler": "Ruler",
+                "calculator": "Calculator",
+                "fabric": "Fabric",
+                "home": "Store / home",
+                "shirt": "Garment",
+                "scissors": "Scissors",
+                "needle": "Needle",
+                "bag": "Bag",
+                "zipper": "Zipper",
+                "button": "Button",
+                "wrench": "Tool",
+                "clock": "Clock",
+                "arrow": "Arrow"
             }
         }
     }

@@ -3,25 +3,50 @@
         <div class="sw-cms-el-banners__title" v-if="element.config.sectionTitle.value">
             {{ element.config.sectionTitle.value }}
         </div>
+
         <div class="sw-cms-el-banners__grid" :class="'per-row-' + element.config.perRow.value">
-            <div class="sw-cms-el-banners__item" v-for="(banner, index) in element.config.banners.value" :key="index">
-                <div class="sw-cms-el-banners__image" v-if="banner.mediaId">
-                    <sw-media-preview-v2 :source="banner.mediaId" size="cover" />
+            <div
+                class="sw-cms-el-banners__item"
+                :class="'is--' + effectiveStyle(banner, index)"
+                v-for="(banner, index) in banners"
+                :key="banner.id || index">
+
+                <div
+                    class="sw-cms-el-banners__image"
+                    v-if="effectiveStyle(banner, index) !== 'accent-icon'"
+                    :style="banner.mediaId ? null : { background: '#f0ebe6' }">
+                    <sw-media-preview-v2 v-if="banner.mediaId" :source="banner.mediaId" size="cover" />
                     <div
-                        v-if="banner.text"
-                        class="sw-cms-el-banners__text"
+                        v-if="effectiveStyle(banner, index) === 'plain' && banner.text"
+                        class="sw-cms-el-banners__overlay"
                         :class="['pos-v-' + (banner.textPositionV || 'bottom'), 'pos-h-' + (banner.textPositionH || 'left')]"
                         v-html="banner.text">
                     </div>
                 </div>
-                <div class="sw-cms-el-banners__body" v-if="!banner.mediaId">
-                    <div class="sw-cms-el-banners__text" v-if="banner.text" v-html="banner.text"></div>
-                    <div class="sw-cms-el-banners__link" v-if="banner.link">{{ banner.link }}</div>
+
+                <div
+                    class="sw-cms-el-banners__accent"
+                    v-else
+                    :style="{ background: banner.bgColor || '#F7DCE7' }">
+                    <span class="sw-cms-el-banners__icon">{{ banner.iconType || 'gift' }}</span>
                 </div>
+
+                <div class="sw-cms-el-banners__body" v-if="effectiveStyle(banner, index) !== 'plain'">
+                    <span class="sw-cms-el-banners__eyebrow" v-if="banner.eyebrow">{{ banner.eyebrow }}</span>
+                    <span class="sw-cms-el-banners__name" v-if="banner.title">{{ banner.title }}</span>
+                    <span class="sw-cms-el-banners__text" v-if="banner.description">{{ banner.description }}</span>
+                    <span class="sw-cms-el-banners__btn" v-if="banner.btnLabel">{{ banner.btnLabel }}</span>
+                    <span class="sw-cms-el-banners__link" v-if="banner.text && effectiveStyle(banner, index) === 'accent-icon'">
+                        {{ banner.text }}
+                    </span>
+                </div>
+
+                <span class="sw-cms-el-banners__badge">{{ bannerLabel(banner, index) }}</span>
             </div>
         </div>
-        <div class="sw-cms-el-banners__placeholder" v-if="!(element.config.banners.value && element.config.banners.value.length)">
-            Add new banner
+
+        <div class="sw-cms-el-banners__placeholder" v-if="!banners.length">
+            Add a banner in the element settings
         </div>
     </div>
 {% endblock %}

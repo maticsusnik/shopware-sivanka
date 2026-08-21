@@ -1,0 +1,14 @@
+{% block block_sivanka_service_cta %}
+    <div class="col-12 cms-block-sivanka-service-cta">
+        <div class="sivanka-service-cta">
+            {% sw_include '@Storefront/storefront/block/sivanka-service/slot.html.twig' with {
+                slotName: 'intro',
+                slotClass: 'sivanka-service-cta__text'
+            } %}
+            {% sw_include '@Storefront/storefront/block/sivanka-service/slot.html.twig' with {
+                slotName: 'actions',
+                slotClass: 'sivanka-service-cta__actions'
+            } %}
+        </div>
+    </div>
+{% endblock %}

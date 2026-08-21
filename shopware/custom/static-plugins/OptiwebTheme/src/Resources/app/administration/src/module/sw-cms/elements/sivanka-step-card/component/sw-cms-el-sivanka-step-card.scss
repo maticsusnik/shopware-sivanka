@@ -1,0 +1,36 @@
+@import "../../../sivanka-service-shared";
+
+.sw-cms-el-sivanka-step-card {
+    height: 100%;
+    padding: 14px;
+    border: 1px solid $sivanka-cms-border;
+    border-radius: 8px;
+    background: #fff;
+
+    &__number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        margin-bottom: 8px;
+        border-radius: 50%;
+        background: $sivanka-cms-primary;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    &__title {
+        margin: 0 0 4px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    &__text {
+        margin: 0;
+        font-size: 12px;
+        line-height: 1.45;
+        color: $sivanka-cms-muted;
+    }
+}

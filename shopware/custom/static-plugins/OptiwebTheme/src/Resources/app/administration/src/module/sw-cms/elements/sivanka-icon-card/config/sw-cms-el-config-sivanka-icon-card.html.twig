@@ -1,0 +1,38 @@
+{% block sw_cms_el_config_sivanka_icon_card %}
+<div class="sw-cms-el-config-sivanka-icon-card">
+    {% block sw_cms_el_config_sivanka_icon_card_icon %}
+    <mt-select
+        v-model="element.config.icon.value"
+        :label="$tc('sw-cms.elements.sivankaIconCard.config.label.icon')"
+        :options="iconOptions"
+        @update:model-value="onChange"
+    />
+    {% endblock %}
+
+    {% block sw_cms_el_config_sivanka_icon_card_title %}
+    <mt-text-field
+        v-model="element.config.title.value"
+        :label="$tc('sw-cms.elements.sivankaIconCard.config.label.title')"
+        @update:model-value="onChange"
+    />
+    {% endblock %}
+
+    {% block sw_cms_el_config_sivanka_icon_card_text %}
+    <mt-textarea
+        v-model="element.config.text.value"
+        :label="$tc('sw-cms.elements.sivankaIconCard.config.label.text')"
+        @update:model-value="onChange"
+    />
+    {% endblock %}
+
+    {% block sw_cms_el_config_sivanka_icon_card_variant %}
+    <mt-select
+        v-model="element.config.variant.value"
+        :label="$tc('sw-cms.elements.sivankaIconCard.config.label.variant')"
+        :help-text="$tc('sw-cms.elements.sivankaIconCard.config.helpText.variant')"
+        :options="variantOptions"
+        @update:model-value="onChange"
+    />
+    {% endblock %}
+</div>
+{% endblock %}

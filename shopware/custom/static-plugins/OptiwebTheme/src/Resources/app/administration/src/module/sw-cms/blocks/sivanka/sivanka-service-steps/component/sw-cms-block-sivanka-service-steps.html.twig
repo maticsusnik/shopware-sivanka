@@ -1,0 +1,16 @@
+{% block sw_cms_block_sivanka_service_steps %}
+<div class="sw-cms-block-sivanka-service-steps">
+    <div class="sw-cms-block-sivanka-service-steps__slot sw-cms-block-sivanka-service-steps__slot--heading">
+        <slot name="heading">{% block sw_cms_block_sivanka_service_steps_slot_heading %}{% endblock %}</slot>
+    </div>
+    <div class="sw-cms-block-sivanka-service-steps__slot sw-cms-block-sivanka-service-steps__slot--stepOne">
+        <slot name="stepOne">{% block sw_cms_block_sivanka_service_steps_slot_stepone %}{% endblock %}</slot>
+    </div>
+    <div class="sw-cms-block-sivanka-service-steps__slot sw-cms-block-sivanka-service-steps__slot--stepTwo">
+        <slot name="stepTwo">{% block sw_cms_block_sivanka_service_steps_slot_steptwo %}{% endblock %}</slot>
+    </div>
+    <div class="sw-cms-block-sivanka-service-steps__slot sw-cms-block-sivanka-service-steps__slot--stepThree">
+        <slot name="stepThree">{% block sw_cms_block_sivanka_service_steps_slot_stepthree %}{% endblock %}</slot>
+    </div>
+</div>
+{% endblock %}

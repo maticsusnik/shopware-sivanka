@@ -1,0 +1,13 @@
+{% block sw_cms_block_sivanka_service_facts %}
+<div class="sw-cms-block-sivanka-service-facts">
+    <div class="sw-cms-block-sivanka-service-facts__slot sw-cms-block-sivanka-service-facts__slot--factOne">
+        <slot name="factOne">{% block sw_cms_block_sivanka_service_facts_slot_factone %}{% endblock %}</slot>
+    </div>
+    <div class="sw-cms-block-sivanka-service-facts__slot sw-cms-block-sivanka-service-facts__slot--factTwo">
+        <slot name="factTwo">{% block sw_cms_block_sivanka_service_facts_slot_facttwo %}{% endblock %}</slot>
+    </div>
+    <div class="sw-cms-block-sivanka-service-facts__slot sw-cms-block-sivanka-service-facts__slot--factThree">
+        <slot name="factThree">{% block sw_cms_block_sivanka_service_facts_slot_factthree %}{% endblock %}</slot>
+    </div>
+</div>
+{% endblock %}

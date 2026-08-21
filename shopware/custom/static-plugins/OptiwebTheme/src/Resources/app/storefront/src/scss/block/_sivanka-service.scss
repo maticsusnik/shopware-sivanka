@@ -1,0 +1,190 @@
+// ---- Sivanka service (storitve) CMS blocks ----
+// The blocks render inside the core `.cms-block-container-row.row` wrapper, so each
+// block template contributes a single `.col-12`. Widths therefore come from the CMS
+// section (boxed / full width) — these partials only own the inner layout.
+
+/* shared heading slot (core "text" element) */
+.sivanka-service__heading {
+    h2,
+    .h2 {
+        margin: 0 0 28px;
+        font-family: $sivanka-serif;
+        font-size: 32px;
+        font-weight: 600;
+        line-height: 38px;
+        letter-spacing: -0.32px;
+    }
+
+    &--sm h2,
+    &--sm .h2 {
+        margin-bottom: 20px;
+        font-size: 26px;
+        line-height: 31px;
+        letter-spacing: -0.26px;
+    }
+
+    .cms-element-text {
+        // The core text element adds its own wrapper; keep spacing on the heading itself.
+        margin: 0;
+    }
+}
+
+/* ---------- hero ---------- */
+.sivanka-service-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 48px;
+    align-items: center;
+    padding-bottom: 60px;
+
+    // Two columns only when the image slot actually holds media.
+    &--has-media {
+        grid-template-columns: minmax(0, 640px) minmax(0, 1fr);
+
+        @include media-breakpoint-down(lg) {
+            grid-template-columns: minmax(0, 1fr);
+            gap: 28px;
+        }
+    }
+
+    &__actions {
+        margin-top: 28px;
+    }
+
+    &__media {
+        overflow: hidden;
+        border-radius: $sivanka-r24;
+        box-shadow: $ow-box-shadow;
+
+        // The core "image" element nests the picture in an alignment wrapper that
+        // shrinks to the intrinsic width; stretch the whole chain to the frame.
+        .cms-element-image,
+        .cms-element-alignment,
+        .cms-image-container,
+        picture {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        img {
+            display: block;
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            object-fit: cover;
+        }
+    }
+}
+
+/* ---------- features (what's included) ---------- */
+.sivanka-service-features {
+    padding-bottom: 60px;
+
+    &__grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 22px;
+
+        @include media-breakpoint-down(md) {
+            grid-template-columns: minmax(0, 1fr);
+        }
+    }
+}
+
+/* ---------- steps (how it works) ---------- */
+// The cream panel is rounded so the block also works inside a boxed CMS section.
+// Put the section in "full width" mode for an edge-to-edge band.
+.sivanka-service-steps {
+    background: $sivanka-beige;
+    border-radius: $sivanka-r24;
+
+    &__inner {
+        padding: 56px 40px;
+
+        @include media-breakpoint-down(md) {
+            padding: 36px 24px;
+        }
+    }
+
+    &__grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 22px;
+
+        @include media-breakpoint-down(md) {
+            grid-template-columns: minmax(0, 1fr);
+        }
+    }
+
+    // On the cream panel the "fact" cards turn white so they stay readable.
+    .sivanka-icon-card--fact {
+        background: $sivanka-white;
+        border: 1px solid $sivanka-border;
+
+        .sivanka-icon-card__icon {
+            background: $sivanka-accent-soft;
+        }
+    }
+}
+
+/* ---------- facts ---------- */
+.sivanka-service-facts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+    padding: 56px 0 60px;
+
+    @include media-breakpoint-down(md) {
+        grid-template-columns: minmax(0, 1fr);
+        padding: 36px 0 40px;
+    }
+}
+
+/* ---------- links (other services) ---------- */
+.sivanka-service-links {
+    padding-bottom: 64px;
+
+    &__grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 22px;
+
+        @include media-breakpoint-down(md) {
+            grid-template-columns: minmax(0, 1fr);
+        }
+    }
+}
+
+/* ---------- grid (services overview) ---------- */
+.sivanka-service-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+    padding-bottom: 64px;
+
+    @include media-breakpoint-down(lg) {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* ---------- cta ---------- */
+.sivanka-service-cta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    margin-bottom: 64px;
+    padding: 38px 44px;
+    background: linear-gradient(160deg, #FBE0EE, #F6CFE1);
+    border-radius: 20px;
+
+    @include media-breakpoint-down(md) {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 28px;
+
+        &__actions {
+            width: 100%;
+        }
+    }
+}

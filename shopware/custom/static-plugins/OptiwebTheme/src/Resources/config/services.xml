@@ -50,6 +50,10 @@
             <tag name="shopware.cms.data_resolver"/>
         </service>
 
+        <service id="OptiwebTheme\Core\Content\Cms\DataResolvers\SivankaServiceCardResolver">
+            <tag name="shopware.cms.data_resolver"/>
+        </service>
+
         <service id="OptiwebTheme\Storefront\Subscriber\HeaderMenuSubscriber">
             <argument type="service" id="Shopware\Core\Content\Category\Service\NavigationLoader"/>
             <tag name="kernel.event_subscriber"/>

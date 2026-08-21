@@ -1,0 +1,11 @@
+{# Renders a single CMS slot of a Sivanka service block.
+   Expects: block, slotName and (optionally) slotClass in the context. #}
+{% block sivanka_service_slot %}
+    {% set element = block.slots.getSlot(slotName) %}
+
+    {% if element %}
+        <div class="{{ slotClass|default('sivanka-service__slot') }}" data-cms-element-id="{{ element.id }}">
+            {% sw_include '@Storefront/storefront/element/cms-element-' ~ element.type ~ '.html.twig' ignore missing %}
+        </div>
+    {% endif %}
+{% endblock %}

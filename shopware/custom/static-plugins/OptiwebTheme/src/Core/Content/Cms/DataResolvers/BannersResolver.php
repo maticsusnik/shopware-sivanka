@@ -76,7 +76,10 @@ class BannersResolver extends AbstractCmsElementResolver
                 'link'          => $banner['link'] ?? '',
                 'textPositionV' => $banner['textPositionV'] ?? 'bottom',
                 'textPositionH' => $banner['textPositionH'] ?? 'left',
-                'style'         => $banner['style'] ?? 'plain',
+                // Passed through untouched: an empty style means "never picked", which
+                // lets the storefront fall back to the design layout for that position.
+                // Defaulting to 'plain' here would make that distinction impossible.
+                'style'         => $banner['style'] ?? '',
                 'title'         => $banner['title'] ?? '',
                 'eyebrow'       => $banner['eyebrow'] ?? '',
                 'description'   => $banner['description'] ?? '',

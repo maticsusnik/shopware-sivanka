@@ -1,0 +1,19 @@
+{% block block_sivanka_service_features %}
+    <div class="col-12 cms-block-sivanka-service-features">
+        <div class="sivanka-service-features">
+            {% sw_include '@Storefront/storefront/block/sivanka-service/slot.html.twig' with {
+                slotName: 'heading',
+                slotClass: 'sivanka-service__heading'
+            } %}
+
+            <div class="sivanka-service-features__grid">
+                {% for slotName in ['cardOne', 'cardTwo', 'cardThree'] %}
+                    {% sw_include '@Storefront/storefront/block/sivanka-service/slot.html.twig' with {
+                        slotName: slotName,
+                        slotClass: 'sivanka-service-features__item'
+                    } %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

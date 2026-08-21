@@ -1,0 +1,5 @@
+@import "../../../../sivanka-service-shared";
+
+.sw-cms-block-sivanka-service-facts {
+    @include sivanka-service-block-grid(repeat(3, minmax(0, 1fr)));
+}
