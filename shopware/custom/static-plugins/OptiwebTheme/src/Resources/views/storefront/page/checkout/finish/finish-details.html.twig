@@ -1,0 +1,57 @@
+{% sw_extends '@Storefront/storefront/page/checkout/finish/finish-details.html.twig' %}
+
+{% block page_checkout_finish_data %}
+    <div class="finish-success-card">
+        <div class="finish-success-icon" aria-hidden="true">
+            {% sw_icon 'checkmark' style { size: 'xl' } %}
+        </div>
+
+        {% block page_checkout_finish_header %}
+            <h1 class="finish-header">
+                {% if page.changedPayment == true %}
+                    {{ 'checkout.finishUpdateHeader'|trans|sw_sanitize }}
+                {% else %}
+                    {{ 'checkout.finishHeader'|trans({
+                        '%shop%': config('core.basicInformation.shopName')
+                    })|sw_sanitize }}
+                {% endif %}
+            </h1>
+        {% endblock %}
+
+        {% block page_checkout_finish_hidden_information_line_items %}
+            {% sw_include '@Storefront/storefront/component/checkout/hidden-line-items-information.html.twig' with {
+                cart: page.order,
+                lineItems: page.order.lineItems,
+            } %}
+        {% endblock %}
+
+        {% block page_checkout_finish_subtitle %}
+            {% if page.changedPayment == true %}
+                <p class="finish-order-subtitle">
+                    {{ 'checkout.finishPaymentHeader'|trans({'%paymentName%': page.order.transactions.last.paymentMethod.translated.name})|sw_sanitize }}
+                </p>
+            {% endif %}
+        {% endblock %}
+
+        {% block page_checkout_finish_ordernumber %}
+            {# The snippet ends in a dangling "#" ("Vaša številka naročila: #") which reads
+               wrong once the number moves to its own line, so strip it off the label. #}
+            <p class="finish-ordernumber" data-order-number="{{ page.order.orderNumber }}">
+                <span class="finish-ordernumber-label">
+                    {{ 'checkout.finishInfoOrdernumber'|trans|trim|trim('#')|trim|sw_sanitize }}
+                </span>
+                <strong class="finish-ordernumber-value">{{ page.order.orderNumber }}</strong>
+            </p>
+        {% endblock %}
+
+        {% block page_checkout_finish_content %}
+            <div class="finish-content">
+                {% block page_checkout_finish_teaser %}
+                    {% if page.changedPayment != true %}
+                        <p class="finish-teaser">{{ 'checkout.finishInfoConfirmationMail'|trans|sw_sanitize }}</p>
+                    {% endif %}
+                {% endblock %}
+            </div>
+        {% endblock %}
+    </div>
+{% endblock %}

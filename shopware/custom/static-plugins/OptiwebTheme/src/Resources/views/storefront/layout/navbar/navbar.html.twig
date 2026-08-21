@@ -1,192 +1,84 @@
 {% sw_extends '@Storefront/storefront/layout/navbar/navbar.html.twig' %}
 
-{% set serviceMenu = header.extensions.headerServiceCategories.items %}
-{% set mainCategoryId = header.extensions.navigationCategory.id %}
+{% block layout_navbar_menu_home %}{% endblock %}
 
-{% block layout_navbar %}
-    <div class="container d-none d-lg-block">
-        <div class="menu-wrapper row justify-content-between">
+{% block layout_navbar_menu_items %}
+    {% for treeItem in header.navigation.tree %}
 
-            {% set navbarOptions = {
-                pathIdList: shopware.navigation.pathIdList
-            } %}
+        {% set category = treeItem.category %}
+        {% set id = category.id %}
+        {% set name = category.translated.name %}
+        {% set hasChildren = treeItem.children|length > 0 %}
 
-            <!-- test fly -->
-{#            {% set entryPointCatgoryId = "01965cc737c4725eb878d2d63849cf93" %}#}
-{#            {{ dump() }}#}
-{#            <nav class="navbar navbar-expand-lg main-navigation-menu"#}
-{#                 id="main-navigation-menu"#}
-{#                 itemscope="itemscope"#}
-{#                 itemtype="https://schema.org/SiteNavigationElement"#}
-{#                 data-navbar="true"#}
-{#                 data-navbar-options="{{ navbarOptions|json_encode }}"#}
-{#                 aria-label="{{ 'header.navigationAriaLabel'|trans|striptags }}">#}
-{#                <div class="collapse navbar-collapse" id="main_nav">#}
-{#                    <ul class="navbar-nav main-navigation-menu-list flex-wrap">#}
-{#                        {% set homeLabel = context.salesChannel.translated.homeName|default('general.homeLink'|trans) %}#}
+        {% set isMegaMenu = false %}
+        {% set megaMenuClass = "" %}
 
+        {% if loop.index == 1 %}
+            {% set isMegaMenu = true %}
+            {% set megaMenuClass = "ow-mega-menu" %}
+        {% endif %}
 
-{#                            {% for treeItem in header.navigation.tree %}#}
-{#                                {% set category = treeItem.category %}#}
-{#                                {% set id = category.id %}#}
-{#                                {% set name = category.translated.name %}#}
-{#                                {% set hasChildren = treeItem.children|length > 0 %}#}
-
-{#                                    {% if category.type == 'folder' %}#}
-{#                                        <li class="nav-item nav-item-{{ id }}">#}
-{#                                            <a class="nav-link nav-item-{{ id }}-link root main-navigation-link p-2{% if hasChildren %} dropdown-toggle{% endif %}"#}
-{#                                               href="#"#}
-{#                                               {% if hasChildren %}data-bs-toggle="dropdown"{% endif %}#}
-{#                                               data-flyout-menu-trigger="{{ id }}"#}
-{#                                               itemprop="url"#}
-{#                                               title="{{ name }}">#}
-{#                                                <span itemprop="name" class="main-navigation-link-text">{{ name }}</span>#}
-{#                                            </a>#}
-
-{#                                            {% if hasChildren %}#}
-{#                                                <div class="dropdown-menu w-100 p-4">#}
-{#                                                    {% sw_include '@Storefront/storefront/layout/navbar/content.html.twig' with {#}
-{#                                                        themeIconConfig: themeIconConfig,#}
-{#                                                        navigationTree: treeItem,#}
-{#                                                        level: level+1,#}
-{#                                                        page: page#}
-{#                                                    } only %}#}
-{#                                                </div>#}
-{#                                            {% endif %}#}
-{#                                        </li>#}
-{#                                    {% else %}#}
-{#                                        <li class="nav-item nav-item-{{ id }} {% if hasChildren %}dropdown position-static{% endif %}">#}
-{#                                            <a class="nav-link nav-item-{{ id }}-link root main-navigation-link p-2{% if hasChildren %} dropdown-toggle{% endif %}"#}
-{#                                               href="{{ category.seoUrl }}"#}
-{#                                               {% if hasChildren %}data-bs-toggle="dropdown"{% endif %}#}
-{#                                                    {% if category.shouldOpenInNewTab %}target="_blank"{% endif %}#}
-{#                                               itemprop="url"#}
-{#                                               title="{{ name }}">#}
-{#                                                <span itemprop="name" class="main-navigation-link-text">{{ name }}</span>#}
-{#                                            </a>#}
-{#                                            {% if hasChildren %}#}
-{#                                                <div class="dropdown-menu w-100 p-4">#}
-{#                                                    {% sw_include '@Storefront/storefront/layout/navbar/content.html.twig' with {#}
-{#                                                        themeIconConfig: themeIconConfig,#}
-{#                                                        navigationTree: treeItem,#}
-{#                                                        level: level+1,#}
-{#                                                        page: page#}
-{#                                                    } only %}#}
-{#                                                </div>#}
-{#                                            {% endif %}#}
-{#                                        </li>#}
-{#                                    {% endif %}#}
-{#                            {% endfor %}#}
-{#                    </ul>#}
-{#                </div>#}
-{#            </nav>#}
-{#            <!-- test -->#}
-
-            {% block layout_navbar_nav_element_main %}
-                <div class="navbar main-menu col-auto">
-                    {% block layout_header_navigation_toggle_tablet %}
-                        <div class="nav-main-toggle">
-                            {% block layout_header_navigation_toggle_tablet_button %}
-                                <button
-                                        class="btn nav-main-toggle-btn header-actions-btn nav-link"
-                                        type="button"
-                                        data-off-canvas-menu-desktop="true"
-                                        data-main-category="{{ mainCategoryId }}"
-                                        aria-label="{{ 'general.menuLink'|trans|striptags }}"
-                                >
-                                    {{ 'optiweb.toggleMenuText'|trans|striptags }} {% sw_icon 'expand' style { pack: 'ow', size: 'xs'} %}
-                                </button>
-
-                                {% block base_offcanvas_navigation_desktop %}
-                                {% if header.navigation %}
-                                    <div class="d-none js-navigation-offcanvas-initial-content-desktop navigation-desktop">
-                                        {% block base_offcanvas_navigation_inner %}
-                                            {% sw_include '@Storefront/storefront/layout/navigation/offcanvas/dropdown.html.twig' with { navigation: header.navigation } %}
-                                        {% endblock %}
-                                    </div>
-                                {% endif %}
-                            {% endblock %}
-                            {% endblock %}
+        {% block layout_navbar_menu_item %}
+            {% if category.type == 'folder' %}
+                <li class="nav-item nav-item-{{ id }} {% if isMegaMenu %}{{ megaMenuClass }}{% endif %}" {% if isMegaMenu %}data-{{ megaMenuClass }}="true"{% endif %}>
+                    {% if isMegaMenu %}
+                        <div class="nav-link nav-item-{{ id }}-link root main-navigation-link p-2{% if hasChildren %} dropdown-toggle{% endif %}">
+                            <span itemprop="name" class="main-navigation-link-text">{{ name }} {% if hasChildren %}{% sw_icon 'expand' style { pack: 'ow', size: 'xs'} %}{% endif %}</span>
                         </div>
-                    {% endblock %}
-                </div>
-            {% endblock %}
+                    {% else %}
+                        <a class="nav-link nav-item-{{ id }}-link root main-navigation-link p-2{% if hasChildren %} dropdown-toggle{% endif %}"
+                           href="#"
+                           {% if hasChildren %}data-bs-toggle="dropdown"{% endif %}
+                           data-flyout-menu-trigger="{{ id }}"
+                           itemprop="url"
+                           title="{{ name }}">
+                            <span itemprop="name" class="main-navigation-link-text">{{ name }} {% if hasChildren %}{% sw_icon 'expand' style { pack: 'ow', size: 'xs'} %}{% endif %}</span>
+                        </a>
+                    {% endif %}
 
-            {% block layout_navbar_nav_element %}
-                <nav class="navbar navbar-expand-lg main-navigation-menu col-auto"
-                     id="main-navigation-menu"
-                     itemscope="itemscope"
-                     itemtype="https://schema.org/SiteNavigationElement"
-                     data-navbar="true"
-                     data-navbar-options="{{ navbarOptions|json_encode }}"
-                     aria-label="{{ 'header.navigationAriaLabel'|trans|striptags }}">
-                    <div class="collapse navbar-collapse" id="main_nav">
-                        <ul class="navbar-nav main-navigation-menu-list flex-wrap">
 
-                            {% block layout_navbar_menu_items %}
+                    {% if hasChildren %}
+                        <div class="dropdown-menu w-100 p-4">
+                            {% sw_include '@Storefront/storefront/layout/navbar/content.html.twig' with {
+                                themeIconConfig: themeIconConfig,
+                                navigationTree: treeItem,
+                                level: level+1,
+                                page: page
+                            } only %}
+                        </div>
+                    {% endif %}
+                </li>
+            {% else %}
+                <li class="nav-item nav-item-{{ id }} {% if hasChildren %}dropdown position-static{% endif %} {% if isMegaMenu %}{{ megaMenuClass }}{% endif %}" {% if isMegaMenu %}data-{{ megaMenuClass }}="true"{% endif %}>
 
-                                {% for treeItem in serviceMenu.tree %}
-                                    {% set category = treeItem.category %}
-                                    {% set id = category.id %}
-                                    {% set name = category.translated.name %}
-                                    {% set hasChildren = treeItem.children|length > 0 %}
+                    {% if isMegaMenu %}
+                        <div class="nav-link nav-item-{{ id }}-link root main-navigation-link p-2 mega-menu-link {% if hasChildren %} dropdown-toggle{% endif %}">
+                            {% sw_icon 'nav-button' style { pack: 'ow', size: 'xs'} %}
+                            <span itemprop="name" class="main-navigation-link-text">{{ name }}</span>
+                        </div>
+                    {% else %}
+                        <a class="nav-link nav-item-{{ id }}-link root main-navigation-link p-2{% if hasChildren %} dropdown-toggle{% endif %}"
+                           href="{{ seoUrl('frontend.navigation.page', { navigationId: id }) }}"
+                           {% if hasChildren %}data-bs-toggle="dropdown"{% endif %}
+                                {% if category_linknewtab(category) %}target="_blank"{% endif %}
+                           itemprop="url"
+                           title="{{ name }}">
+                            <span itemprop="name" class="main-navigation-link-text">{{ name }} {% if hasChildren %}{% sw_icon 'expand' style { pack: 'ow', size: 'xs'} %}{% endif %}</span>
+                        </a>
+                    {% endif %}
 
-                                    {% block layout_navbar_menu_item %}
-                                        {% if category.type == 'folder' %}
-                                            <li class="nav-item nav-item-{{ id }}">
-                                                <a class="nav-link nav-item-{{ id }}-link root main-navigation-link p-2{% if hasChildren %} dropdown-toggle{% endif %}"
-                                                   href="#"
-                                                   {% if hasChildren %}data-bs-toggle="dropdown"{% endif %}
-                                                   data-flyout-menu-trigger="{{ id }}"
-                                                   itemprop="url"
-                                                   title="{{ name }}">
-                                                <span itemprop="name"
-                                                      class="main-navigation-link-text">{{ name }} {% if hasChildren %}{% sw_icon 'expand' style { pack: 'ow', size: 'xs'} %}{% endif %}</span>
-                                                </a>
-
-                                                {% if hasChildren %}
-                                                    <div class="dropdown-menu w-100 p-4">
-                                                        {% sw_include '@Storefront/storefront/layout/navbar/content.html.twig' with {
-                                                            themeIconConfig: themeIconConfig,
-                                                            navigationTree: treeItem,
-                                                            level: level+1,
-                                                            page: page
-                                                        } only %}
-                                                    </div>
-                                                {% endif %}
-                                            </li>
-                                        {% else %}
-                                            <li class="nav-item nav-item-{{ id }} {% if hasChildren %}dropdown position-static{% endif %}">
-                                                <a class="nav-link nav-item-{{ id }}-link root main-navigation-link p-2{% if hasChildren %} dropdown-toggle{% endif %}"
-                                                   href="{{ seoUrl('frontend.navigation.page', { navigationId: id }) }}"
-                                                   {% if hasChildren %}data-bs-toggle="dropdown"{% endif %}
-                                                        {% if category_linknewtab(category) %}target="_blank"{% endif %}
-                                                   itemprop="url"
-                                                   title="{{ name }}">
-                                                <span itemprop="name"
-                                                      class="main-navigation-link-text">{{ name }} {% if hasChildren %}{% sw_icon 'expand' style { pack: 'ow', size: 'xs'} %}{% endif %}</span>
-                                                </a>
-                                                {% if hasChildren %}
-                                                    <div class="dropdown-menu w-100 p-4">
-                                                        {% sw_include '@Storefront/storefront/layout/navbar/content.html.twig' with {
-                                                            themeIconConfig: themeIconConfig,
-                                                            navigationTree: treeItem,
-                                                            level: level+1,
-                                                            page: page
-                                                        } only %}
-                                                    </div>
-                                                {% endif %}
-                                            </li>
-                                        {% endif %}
-                                    {% endblock %}
-                                {% endfor %}
-                            {% endblock %}
-                        </ul>
-                    </div>
-                </nav>
-            {% endblock %}
-        </div>
-    </div>
-
-    <div class="navigation-offcanvas-desktop-placeholder"></div>
+                    {% if hasChildren %}
+                        <div class="dropdown-menu w-100 p-4">
+                            {% sw_include '@Storefront/storefront/layout/navbar/content.html.twig' with {
+                                themeIconConfig: themeIconConfig,
+                                navigationTree: treeItem,
+                                level: level+1,
+                                page: page
+                            } only %}
+                        </div>
+                    {% endif %}
+                </li>
+            {% endif %}
+        {% endblock %}
+    {% endfor %}
 {% endblock %}

@@ -1,21 +1,27 @@
 {% sw_extends '@Storefront/storefront/layout/header/top-bar.html.twig' %}
 
 {% block layout_header_top_bar %}
-{#    <div class="d-flex justify-content-end align-items-center gap-3 py-2">#}
-{#        {% block layout_header_top_bar_inner %}#}
-{#            {% if header.languages.count > 1 or header.currencies.count > 1 %}#}
-{#                <nav class="top-bar-nav d-flex justify-content-end gap-3"#}
-{#                     aria-label="{{ 'header.topBarAriaLabel'|trans|striptags }}">#}
-{#                    {% block layout_header_top_bar_language %}#}
-{#                        {% sw_include '@Storefront/storefront/layout/header/actions/language-widget.html.twig' %}#}
-{#                    {% endblock %}#}
+<div class="sivanka-topbar">
+    <div class="container">
+        <div class="tb-marquee">
+            <div class="tb-marquee-track">
+                <div class="tb-marquee-group">
+                    {% sw_include '@Storefront/storefront/layout/header/top-bar-items.html.twig' %}
+                </div>
+                {# Duplicate purely for the seamless mobile loop — hidden from AT and
+                   from the desktop layout. #}
+                <div class="tb-marquee-group tb-marquee-clone" aria-hidden="true">
+                    {% sw_include '@Storefront/storefront/layout/header/top-bar-items.html.twig' %}
+                </div>
+            </div>
+        </div>
 
-{#                    {% block layout_header_top_bar_currency %}#}
-{#                        {% sw_include '@Storefront/storefront/layout/header/actions/currency-widget.html.twig' %}#}
-{#                    {% endblock %}#}
-{#                </nav>#}
-{#            {% endif %}#}
-{#        {% endblock %}#}
-{#    </div>#}
+        <a class="tb-item tb-right" href="{{ path('frontend.home.page') }}">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 0 1 4 1.8c0 1.7-2.5 2-2.5 3.2M12 17.5h.01"/>
+            </svg>
+            {{ 'sivanka.topbarHelp'|trans|default('Pomoč &amp; kontakt') }}
+        </a>
+    </div>
+</div>
 {% endblock %}
-

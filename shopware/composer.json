@@ -6,6 +6,7 @@
         "optiweb-snippets/optiweb-snippets": "^1.0",
         "optiweb/custom-fields": "^1.0",
         "optiweb/product-enquiry": "*",
+        "optiweb/sync": "*",
         "optiweb/theme": "^1.0",
         "shopware/administration": "*",
         "shopware/core": "v6.7.2.1",
@@ -69,6 +70,9 @@
                 "https://raw.githubusercontent.com/shopware/recipes/flex/main/index.json",
                 "flex://defaults"
             ]
+        },
+        "runtime": {
+            "dotenv_overload": true
         }
     }
 }

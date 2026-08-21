@@ -1,0 +1,31 @@
+{# Parameters: activeStep = 1 (cart) | 2 (checkout) | 3 (complete) #}
+{% if activeStep is not defined %}{% set activeStep = 1 %}{% endif %}
+
+{% set steps = [
+    { n: 1, label: 'optiweb.checkout.stepCart'|trans|sw_sanitize },
+    { n: 2, label: 'optiweb.checkout.stepCheckout'|trans|sw_sanitize },
+    { n: 3, label: 'optiweb.checkout.stepComplete'|trans|sw_sanitize }
+] %}
+
+<nav class="checkout-steps" aria-label="{{ 'checkout.stepsLabel'|trans|striptags }}">
+    <ol class="checkout-steps-list">
+        {% for step in steps %}
+            {% set state = step.n < activeStep ? 'is-done' : (step.n == activeStep ? 'is-active' : 'is-upcoming') %}
+            <li class="checkout-steps-item {{ state }}">
+                <span class="checkout-steps-marker">
+                    <span class="checkout-steps-number">
+                        {% if step.n < activeStep %}
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+                        {% else %}
+                            {{ step.n }}
+                        {% endif %}
+                    </span>
+                    <span class="checkout-steps-label">{{ step.label }}</span>
+                </span>
+                {% if not loop.last %}
+                    <span class="checkout-steps-connector" aria-hidden="true"></span>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ol>
+</nav>

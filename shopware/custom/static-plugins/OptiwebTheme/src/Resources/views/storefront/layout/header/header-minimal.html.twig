@@ -1,24 +1,34 @@
 {% sw_extends '@Storefront/storefront/layout/header/header-minimal.html.twig' %}
 
+{% block layout_header %}
+    <header class="header-minimal sv-co-header">
+        <div class="container">
+            <div class="sv-co-header-row">
+                {% block layout_header_minimal_logo %}
+                    <a href="{{ path('frontend.home.page') }}" class="sv-co-logo">
+                        {% sw_include '@Storefront/storefront/layout/header/logo.html.twig' %}
+                    </a>
+                {% endblock %}
 
-{% block layout_header_minimal_logo %}
-    <div class="col-5 col-md-3 header-minimal-logo">
-        {% sw_include '@Storefront/storefront/layout/header/logo.html.twig' %}
-    </div>
+                {% block layout_header_minimal_contact %}
+                    <div class="sv-co-contact">
+                        <div class="sv-co-contact-title">{{ 'optiweb.checkout.orderQuestions'|trans|sw_sanitize }}</div>
+                        <div class="sv-co-contact-line">
+                            <a href="tel:{{ 'optiweb.checkout.supportPhone'|trans|striptags|replace({' ': ''}) }}">{{ 'optiweb.checkout.supportPhone'|trans|sw_sanitize }}</a>
+                            <span>{{ 'optiweb.checkout.supportHours'|trans|sw_sanitize }}</span>
+                        </div>
+                    </div>
+                {% endblock %}
+
+                {% block layout_header_minimal_button %}
+                    <a href="{{ path('frontend.home.page') }}"
+                       class="sv-co-back"
+                       title="{{ 'optiweb.checkout.backToShop'|trans|striptags }}">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+                        {{ 'optiweb.checkout.backToShop'|trans|sw_sanitize }}
+                    </a>
+                {% endblock %}
+            </div>
+        </div>
+    </header>
 {% endblock %}
-
-{% block layout_header_minimal_contact %}
-    <div class="col-md-6 header-minimal-contact">
-        {{ 'header.supportInfo'|trans|sw_sanitize }}
-    </div>
-{% endblock %}
-
- {% block layout_header_minimal_button %}
-     <div class="col-7  col-md-3 header-minimal-back-to-shop">
-         <a href="{{ path('frontend.home.page') }}"
-            class="btn btn-outline-secondary header-minimal-back-to-shop-button"
-            title="{{ 'checkout.finishButtonBackToShop'|trans|striptags }}">
-             {{ 'checkout.finishButtonBackToShop'|trans|striptags }}
-         </a>
-     </div>
- {% endblock %}

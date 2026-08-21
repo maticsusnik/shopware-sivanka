@@ -10,6 +10,9 @@ use Shopware\Core\Content\Cms\DataResolver\CriteriaCollection;
 use Shopware\Core\Content\Cms\DataResolver\Element\AbstractCmsElementResolver;
 use Shopware\Core\Content\Cms\DataResolver\Element\ElementDataCollection;
 use Shopware\Core\Content\Cms\DataResolver\ResolverContext\ResolverContext;
+use Shopware\Core\Content\Media\Core\Application\AbstractMediaUrlGenerator;
+use Shopware\Core\Content\Media\Core\Params\UrlParams;
+use Shopware\Core\Content\Media\Core\Params\UrlParamsSource;
 use Shopware\Core\Content\Media\MediaDefinition;
 use Shopware\Core\Content\Media\MediaEntity;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
@@ -18,6 +21,10 @@ use Shopware\Core\Framework\Struct\ArrayStruct;
 
 class CategorySliderResolver extends AbstractCmsElementResolver
 {
+    public function __construct(private readonly AbstractMediaUrlGenerator $mediaUrlGenerator)
+    {
+    }
+
     public function getType(): string
     {
         return 'category-selection';
@@ -89,7 +96,7 @@ class CategorySliderResolver extends AbstractCmsElementResolver
                     'short_description' => $translated['short_description'] ?? '',
                     'link'              => $link,
                     'media'             => $category->getMedia(),
-                    'category_icon'     => $category->getCustomFields()['categoryIcon'] ?? null,
+                    'category_icon'     => $this->resolveIcon($category),
                 ];
             }
         }
@@ -110,6 +117,55 @@ class CategorySliderResolver extends AbstractCmsElementResolver
     // -----------------
     // Helpers (match new config keys)
     // -----------------
+
+    /**
+     * The `categoryIcon` custom field holds a snapshot of the media entity taken in the
+     * administration, so its `url` is frozen to whatever domain was configured at upload
+     * time (it still pointed at the old dev host). Only `path` is stable, so rebuild the
+     * absolute url from it through the media url generator.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function resolveIcon(CategoryEntity $category): ?array
+    {
+        $icon = $category->getCustomFields()['categoryIcon'] ?? null;
+
+        if (!is_array($icon)) {
+            return null;
+        }
+
+        $path = $icon['path'] ?? null;
+        if (!is_string($path) || $path === '') {
+            // no usable path -> drop the stale absolute url rather than hotlinking a foreign host
+            unset($icon['url']);
+
+            return $icon;
+        }
+
+        $id = $icon['id'] ?? $path;
+        $updatedAt = $this->parseDate($icon['updatedAt'] ?? null) ?? $this->parseDate($icon['createdAt'] ?? null);
+
+        $urls = $this->mediaUrlGenerator->generate([
+            $id => new UrlParams((string) $id, UrlParamsSource::MEDIA, $path, $updatedAt),
+        ]);
+
+        $icon['url'] = $urls[$id] ?? null;
+
+        return $icon;
+    }
+
+    private function parseDate(mixed $value): ?\DateTimeInterface
+    {
+        if (!is_string($value) || $value === '') {
+            return null;
+        }
+
+        try {
+            return new \DateTimeImmutable($value);
+        } catch (\Exception) {
+            return null;
+        }
+    }
 
     private function getSelectionMode(CmsSlotEntity $slot): string
     {

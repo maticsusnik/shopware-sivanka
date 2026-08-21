@@ -2,352 +2,249 @@
 
 namespace OptiwebProductEnquiry\Controller;
 
-use Shopware\Core\Content\Mail\Service\MailService;
-use Shopware\Core\Content\Media\MediaService;
-use Shopware\Core\Framework\Context;
+use OptiwebProductEnquiry\Core\Content\ProductEnquiry\ProductEnquiryStatus;
+use Psr\Log\LoggerInterface;
+use Shopware\Core\Content\Product\ProductEntity;
+use Shopware\Core\Defaults;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\RangeFilter;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Sorting\FieldSorting;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
-use Shopware\Core\Framework\Event\EventData\MailRecipientStruct;
-use Shopware\Core\Framework\Validation\DataBag\DataBag;
+use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\Framework\Validation\DataBag\RequestDataBag;
-use Shopware\Core\Framework\Validation\Exception\ConstraintViolationException;
-use Shopware\Core\System\SystemConfig\SystemConfigService;
-use Shopware\Storefront\Controller\StorefrontController;
+use Shopware\Core\Content\Mail\Service\AbstractMailService;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
-use Shopware\Core\Defaults;
+use Shopware\Core\System\SystemConfig\SystemConfigService;
+use Shopware\Core\PlatformRequest;
+use Shopware\Storefront\Controller\StorefrontController;
+use Shopware\Storefront\Framework\Routing\StorefrontRouteScope;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Constraints\Email;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route(defaults: ['_routeScope' => ['storefront']])]
+#[Route(defaults: [PlatformRequest::ATTRIBUTE_ROUTE_SCOPE => [StorefrontRouteScope::ID]])]
 class ProductEnquiryController extends StorefrontController
 {
     public function __construct(
         private readonly SystemConfigService $systemConfigService,
-        private readonly MediaService $mediaService,
-        private readonly MailService $mailService,
+        private readonly AbstractMailService $mailService,
         private readonly EntityRepository $productRepository,
         private readonly EntityRepository $mailTemplateRepository,
         private readonly EntityRepository $mailTemplateTypeRepository,
-        private readonly EntityRepository $logEntryRepository,
+        private readonly EntityRepository $productEnquiryRepository,
         private readonly EntityRepository $cmsSlotRepository,
-        private readonly ValidatorInterface $validator
+        private readonly ValidatorInterface $validator,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
-    #[Route(path: '/form/product-enquiry', name: 'frontend.form.product-enquiry.send', methods: ['POST'], defaults: ['XmlHttpRequest' => true])]
+    #[Route(
+        path: '/form/product-enquiry',
+        name: 'frontend.form.product-enquiry.send',
+        defaults: ['XmlHttpRequest' => true],
+        options: ['seo' => false],
+        methods: ['POST']
+    )]
     public function sendProductEnquiry(RequestDataBag $data, SalesChannelContext $context): JsonResponse
     {
-        $response = [];
-        $data->set('subject', $this->trans('optiwebProductEnquiry.subject'));
-
-        // Validate required fields
-        $violations = new ConstraintViolationList();
-        $fieldErrors = [];
-        
-        $firstNameViolations = $this->validator->validate($data->get('firstName'), [
-            new NotBlank(['message' => $this->trans('error.VIOLATION::IS_BLANK_ERROR')])
-        ]);
-        $violations->addAll($firstNameViolations);
-        if ($firstNameViolations->count() > 0) {
-            $fieldErrors['firstName'] = $firstNameViolations->get(0)->getMessage();
-        }
-
-        $lastNameViolations = $this->validator->validate($data->get('lastName'), [
-            new NotBlank(['message' => $this->trans('error.VIOLATION::IS_BLANK_ERROR')])
-        ]);
-        $violations->addAll($lastNameViolations);
-        if ($lastNameViolations->count() > 0) {
-            $fieldErrors['lastName'] = $lastNameViolations->get(0)->getMessage();
-        }
-
-        $emailViolations = $this->validator->validate($data->get('email'), [
-            new NotBlank(['message' => $this->trans('error.VIOLATION::IS_BLANK_ERROR')]),
-            new Email(['message' => $this->trans('error.VIOLATION::INVALID_EMAIL_FORMAT_ERROR')])
-        ]);
-        $violations->addAll($emailViolations);
-        if ($emailViolations->count() > 0) {
-            // Get the first violation message for email field
-            $fieldErrors['email'] = $emailViolations->get(0)->getMessage();
-        }
-
-        $qtyValue = $data->get('productQty');
-        if (empty($qtyValue) || $qtyValue <= 0) {
-            $qtyViolations = $this->validator->validate($qtyValue, [
-                new NotBlank(['message' => $this->trans('error.VIOLATION::IS_BLANK_ERROR')])
-            ]);
-            $violations->addAll($qtyViolations);
-            if ($qtyViolations->count() > 0) {
-                $fieldErrors['productQty'] = $qtyViolations->get(0)->getMessage();
-            }
-        }
-
-        if ($violations->count() > 0) {
-            $violationMessages = [];
-            foreach ($violations as $violation) {
-                $violationMessages[] = $violation->getMessage();
-            }
-
-            $this->writeLogs('product_enquiry.validation_error', $violationMessages, $context->getContext(), 400);
-
-            return new JsonResponse([
-                [
-                    'type' => 'danger',
-                    'alert' => $this->trans('optiwebProductEnquiry.errors.checkErrors'),
-                    'fieldErrors' => $fieldErrors,
-                ]
-            ]);
-        }
-
-        // Set default values for optional fields
-        if (empty($data->get('phone'))) {
-            $data->set('phone', '');
-        }
-
-        if (empty($data->get('comment'))) {
-            $data->set('comment', '');
-        }
-
-        // Get product by product_id
-        if ($data->get('product_id')) {
-            $product = $this->getProductById($data->get('product_id'), $context->getContext());
-            
-            if ($product) {
-                $data->set('product', $product);
-            } else {
-                $this->writeLogs('product_enquiry.missing_product', $data->all(), $context->getContext());
-                
-                return new JsonResponse([
-                    [
-                        'type' => 'danger',
-                        'alert' => $this->trans('optiwebProductEnquiry.errors.productNotFound'),
-                    ]
-                ]);
-            }
-        } else {
-            $this->writeLogs('product_enquiry.missing_product_id', $data->all(), $context->getContext());
-
-            return new JsonResponse([
-                [
-                    'type' => 'danger',
-                    'alert' => $this->trans('optiwebProductEnquiry.errors.missingProductId'),
-                ]
-            ]);
-        }
-
-        try {
-            // Send mail to customer and add sales team to bcc
-            $messageCustomer = $this->sendMailToCustomer($data, $context);
-            $data->set('mailMessage', $messageCustomer);
-            $this->writeLogs('product_enquiry.mail_sent', $data->all(), $context->getContext(), 200);
-
-            $response[] = [
-                'type' => 'success',
-                'alert' => $messageCustomer,
-            ];
-
-        } catch (ConstraintViolationException $formViolations) {
-            $violations = [];
-            foreach ($formViolations->getViolations() as $violation) {
-                $violations[] = $violation->getMessage();
-            }
-
-            $this->writeLogs('product_enquiry.mail_send_error', $violations, $context->getContext(), 400);
-
-            $response[] = [
-                'type' => 'danger',
-                'alert' => $this->renderView('@Storefront/storefront/utilities/alert.html.twig', [
-                    'type' => 'danger',
-                    'list' => $violations,
-                ]),
-            ];
-        } catch (\Exception $e) {
-            $this->writeLogs('product_enquiry.unexpected_error', [
-                'error' => $e->getMessage(),
-                'data' => $data->all()
-            ], $context->getContext(), 500);
-
-            $response[] = [
-                'type' => 'danger',
-                'alert' => $this->trans('optiwebProductEnquiry.errors.unexpectedError'),
-            ];
-        }
-
-        return new JsonResponse($response);
-    }
-
-    private function getProductById(string $productId, Context $context): ?object
-    {
-        $criteria = new Criteria();
-        $criteria->addAssociation('cover');
-        $criteria->addAssociation('media');
-        $criteria->addAssociation('categories');
-        $criteria->addAssociation('manufacturer');
-        $criteria->addFilter(new EqualsFilter('product.id', $productId));
-
-        return $this->productRepository
-            ->search($criteria, $context)
-            ->getEntities()
-            ->first();
-    }
-
-    private function sendMailToCustomer(RequestDataBag $contactFormData, SalesChannelContext $context): string
-    {
-        $salesChannel = $context->getSalesChannel();
-        $salesChannelId = $context->getSalesChannel()->getId();
-
-        // Get mail template type by technical name - try config first, then look up by technical name
-        $mailTemplateTypeId = $this->systemConfigService->get('OptiwebProductEnquiry.config.mailTemplateType', $salesChannelId);
-        
-        if (empty($mailTemplateTypeId)) {
-            // If not configured, try to find by technical name
-            $criteria = new Criteria();
-            $criteria->addFilter(new EqualsFilter('technicalName', 'product_enquiry_form'));
-            $mailTemplateType = $this->mailTemplateTypeRepository->search($criteria, $context->getContext())->first();
-            
-            if ($mailTemplateType === null) {
-                $contactFormData->set('errorMessage', 'Missing mailTemplateType for product enquiry form.');
-                $this->writeLogs('product_enquiry.mail_send_customer_error', $contactFormData->all(), $context->getContext(), 300);
-
-                return $this->trans('optiwebProductEnquiry.errors.missingMailTemplate');
-            }
-            
-            $mailTemplateTypeId = $mailTemplateType->getId();
-        }
-
-        // Get mail template by type
-        $criteria = new Criteria();
-        $criteria->addFilter(new EqualsFilter('mailTemplateTypeId', $mailTemplateTypeId));
-        $criteria->addAssociation('media.media');
-        $criteria->setLimit(1);
-
-        $mailTemplate = $this->mailTemplateRepository->search($criteria, $context->getContext())->first();
-
-        if ($mailTemplate === null) {
-            $contactFormData->set('errorMessage', 'Missing mailTemplate for product enquiry form. Please create a mail template for type "product_enquiry_form".');
-            $this->writeLogs('product_enquiry.mail_send_customer_error', $contactFormData->all(), $context->getContext(), 300);
-
-            return $this->trans('optiwebProductEnquiry.errors.missingMailTemplate');
-        }
-
-        $receivers = [];
-        $message = '';
-        
-        if ($contactFormData->has('slotId')) {
-            $slotId = $contactFormData->get('slotId');
-
-            if ($slotId) {
-                $criteria = new Criteria([$slotId]);
-                $slot = $this->cmsSlotRepository
-                    ->search($criteria, $context->getContext())
-                    ->getEntities()
-                    ->first();
-
-                if ($slot) {
-                    $slotTranslated = $slot->get('translated');
-                    $receivers = $slotTranslated['config']['mailReceiver']['value'] ?? [];
-                    $message = $slotTranslated['config']['confirmationText']['value'] ?? '';
-                }
-            }
-        }
-
-        if (empty($message)) {
-            $message = $this->trans('optiwebProductEnquiry.success.message');
-        }
-        
-        if (empty($receivers)) {
-            $defaultEmail = $this->systemConfigService->get('core.basicInformation.email', $salesChannelId);
-            if ($defaultEmail) {
-                $receivers[] = $defaultEmail;
-            }
-        }
-        
-        // Ensure receivers array is valid
-        if (empty($receivers)) {
-            $contactFormData->set('errorMessage', 'No email recipients configured.');
-            $this->writeLogs('product_enquiry.mail_send_customer_error', $contactFormData->all(), $context->getContext(), 300);
-            return $this->trans('optiwebProductEnquiry.errors.missingMailTemplate');
-        }
-        
-        // Convert to associative array for MailRecipientStruct (key = value)
-        $receiversAssoc = [];
-        foreach ($receivers as $email) {
-            $receiversAssoc[$email] = $email;
-        }
-        $receivers = $receiversAssoc;
-
-        // Recipients
-        $recipients = new MailRecipientStruct($receivers);
-
-        $data = new DataBag();
-        $data->set('recipients', $recipients->getRecipients());
-        $data->set('senderName', $mailTemplate->getTranslation('senderName'));
-        $data->set('salesChannelId', $salesChannelId);
-        $data->set('templateId', $mailTemplate->getId());
-        $data->set('customFields', $mailTemplate->getCustomFields());
-        $data->set('contentHtml', $mailTemplate->getTranslation('contentHtml'));
-        $data->set('contentPlain', $mailTemplate->getTranslation('contentPlain'));
-        $data->set('subject', $mailTemplate->getTranslation('subject'));
-        $data->set('mediaIds', []);
-
-        $attachments = [];
-        if ($mailTemplate->getMedia() !== null) {
-            foreach ($mailTemplate->getMedia() as $mailTemplateMedia) {
-                if ($mailTemplateMedia->getMedia() === null) {
-                    continue;
-                }
-                if ($mailTemplateMedia->getLanguageId() !== null && $mailTemplateMedia->getLanguageId() !== $context->getContext()->getLanguageId()) {
-                    continue;
-                }
-
-                $attachments[] = $this->mediaService->getAttachment(
-                    $mailTemplateMedia->getMedia(),
-                    $context->getContext()
-                );
-            }
-        }
-        
-        if (!empty($attachments)) {
-            $data->set('binAttachments', $attachments);
-        }
-
-        $mailServiceData = [
-            'contactFormData' => $contactFormData->all(),
-            'product' => $contactFormData->get('product'),
-            'salesChannel' => $salesChannel,
-        ];
-
-        $this->mailService->send(
-            $data->all(),
-            $context->getContext(),
-            $mailServiceData
+        $constraints = new Assert\Collection(
+            fields: [
+                'firstName'  => [new Assert\NotBlank()],
+                'lastName'   => [new Assert\NotBlank()],
+                'email'      => [new Assert\NotBlank(), new Assert\Email()],
+                'productQty' => [new Assert\NotBlank(), new Assert\Positive()],
+            ],
+            allowExtraFields: true,
         );
 
-        return $message;
+        $violations = $this->validator->validate($data->all(), $constraints);
+
+        if (count($violations) > 0) {
+            $fieldErrors = [];
+            foreach ($violations as $violation) {
+                $field = trim((string) $violation->getPropertyPath(), '[]');
+                $fieldErrors[$field] = $violation->getMessage();
+            }
+
+            return new JsonResponse([
+                'type'        => 'danger',
+                'alerts'      => [['type' => 'danger', 'content' => $this->trans('optiwebProductEnquiry.errors.checkErrors')]],
+                'fieldErrors' => $fieldErrors,
+            ]);
+        }
+
+        $productId = $data->getString('product_id');
+        if (empty($productId)) {
+            return new JsonResponse([
+                'type'   => 'danger',
+                'alerts' => [['type' => 'danger', 'content' => $this->trans('optiwebProductEnquiry.errors.missingProductId')]],
+            ]);
+        }
+
+        $productCriteria = new Criteria([$productId]);
+        $productCriteria->addAssociations(['cover', 'cover.media', 'options', 'options.group']);
+
+        $product = $this->productRepository->search(
+            $productCriteria,
+            $context->getContext()
+        )->first();
+
+        if (!$product) {
+            return new JsonResponse([
+                'type'   => 'danger',
+                'alerts' => [['type' => 'danger', 'content' => $this->trans('optiwebProductEnquiry.errors.productNotFound')]],
+            ]);
+        }
+
+        // A double click or a re-fired submit would otherwise file the same enquiry twice.
+        if ($this->findRecentDuplicate($data, $productId, $context)) {
+            $this->logger->info('OptiwebProductEnquiry: swallowed a duplicate enquiry submission', [
+                'email'     => $data->getString('email'),
+                'productId' => $productId,
+            ]);
+
+            return new JsonResponse([
+                'type'   => 'success',
+                'alerts' => [['type' => 'success', 'content' => $this->resolveConfirmationText($data, $context)]],
+            ]);
+        }
+
+        $this->productEnquiryRepository->create([[
+            'id'             => Uuid::randomHex(),
+            'salesChannelId' => $context->getSalesChannelId(),
+            'firstName'      => $data->getString('firstName'),
+            'lastName'       => $data->getString('lastName'),
+            'email'          => $data->getString('email'),
+            'phone'          => $data->getString('phone') ?: null,
+            'productId'      => $productId,
+            'productName'    => $product->getTranslated()['name'] ?? '',
+            'productNumber'  => $product->getProductNumber(),
+            'productOption'  => $data->getString('product_option') ?: null,
+            'quantity'       => (int) $data->get('productQty', 1),
+            'message'        => $data->getString('comment') ?: null,
+            'status'         => ProductEnquiryStatus::New->value,
+        ]], $context->getContext());
+
+        try {
+            $this->sendAdminEmail($data, $product, $context);
+        } catch (\Throwable $e) {
+            // The enquiry itself is already stored, so a mail failure must not fail the request.
+            $this->logger->error('OptiwebProductEnquiry: notification mail failed', [
+                'exception' => $e,
+                'productId' => $productId,
+            ]);
+        }
+
+        return new JsonResponse([
+            'type'   => 'success',
+            'alerts' => [['type' => 'success', 'content' => $this->resolveConfirmationText($data, $context)]],
+        ]);
     }
 
-    private function writeLogs(string $message, array $logData, Context $context, int $level = 100): void
+    /**
+     * Returns true when an identical enquiry (same e-mail, product and quantity) was
+     * filed in the last minute, so accidental double submits do not create two rows.
+     */
+    private function findRecentDuplicate(RequestDataBag $data, string $productId, SalesChannelContext $context): bool
     {
-        $data = [
-            'source' => 'storefront',
-            'additionalData' => $logData
-        ];
+        try {
+            $criteria = new Criteria();
+            $criteria->addFilter(new EqualsFilter('email', $data->getString('email')));
+            $criteria->addFilter(new EqualsFilter('productId', $productId));
+            $criteria->addFilter(new EqualsFilter('quantity', (int) $data->get('productQty', 1)));
+            $criteria->addFilter(new RangeFilter('createdAt', [
+                RangeFilter::GTE => (new \DateTimeImmutable('-60 seconds'))->format(Defaults::STORAGE_DATE_TIME_FORMAT),
+            ]));
+            $criteria->addSorting(new FieldSorting('createdAt', FieldSorting::DESCENDING));
+            $criteria->setLimit(1);
 
-        $this->logEntryRepository->create(
+            return $this->productEnquiryRepository->search($criteria, $context->getContext())->getTotal() > 0;
+        } catch (\Throwable $e) {
+            // A failed check must never block a legitimate enquiry.
+            $this->logger->warning('OptiwebProductEnquiry: duplicate check failed', ['exception' => $e]);
+
+            return false;
+        }
+    }
+
+    private function resolveConfirmationText(RequestDataBag $data, SalesChannelContext $context): string
+    {
+        $confirmationText = $this->trans('optiwebProductEnquiry.success.message');
+
+        $slotId = $data->getString('slotId');
+        if ($slotId) {
+            $slot = $this->cmsSlotRepository->search(new Criteria([$slotId]), $context->getContext())->first();
+            if ($slot) {
+                $config = $slot->getTranslated()['config'] ?? [];
+                $text = $config['confirmationText']['value'] ?? '';
+                if (!empty($text)) {
+                    $confirmationText = $text;
+                }
+            }
+        }
+
+        return $confirmationText;
+    }
+
+    private function sendAdminEmail(RequestDataBag $data, ProductEntity $product, SalesChannelContext $context): void
+    {
+        $typeCriteria = new Criteria();
+        $typeCriteria->addFilter(new EqualsFilter('technicalName', 'product_enquiry_form'));
+        $typeCriteria->setLimit(1);
+
+        $type = $this->mailTemplateTypeRepository->search($typeCriteria, $context->getContext())->first();
+        if (!$type) {
+            $this->logger->warning('OptiwebProductEnquiry: mail template type "product_enquiry_form" is missing');
+
+            return;
+        }
+
+        $templateCriteria = new Criteria();
+        $templateCriteria->addFilter(new EqualsFilter('mailTemplateTypeId', $type->getId()));
+        $templateCriteria->setLimit(1);
+
+        $template = $this->mailTemplateRepository->search($templateCriteria, $context->getContext())->first();
+        if (!$template) {
+            $this->logger->warning('OptiwebProductEnquiry: no mail template for type "product_enquiry_form"');
+
+            return;
+        }
+
+        $adminEmail = $this->systemConfigService->getString(
+            'OptiwebProductEnquiry.config.adminEmail',
+            $context->getSalesChannelId()
+        );
+
+        if (empty($adminEmail)) {
+            $adminEmail = $this->systemConfigService->getString('core.basicInformation.email');
+        }
+
+        if (empty($adminEmail)) {
+            $this->logger->warning('OptiwebProductEnquiry: no recipient configured for enquiry notifications');
+
+            return;
+        }
+
+        $recipients = [$adminEmail => $adminEmail];
+
+        $this->mailService->send(
             [
-                [
-                    'message' => $message,
-                    'level' => $level,
-                    'channel' => 'product_enquiry',
-                    'context' => $data,
-                    'createdAt' => (new \DateTime())->format(Defaults::STORAGE_DATE_TIME_FORMAT),
-                ]
+                'recipients'     => $recipients,
+                'senderName'     => $template->getTranslated()['senderName'] ?? '{{ salesChannel.name }}',
+                'salesChannelId' => $context->getSalesChannelId(),
+                'templateId'     => $template->getId(),
+                'contentHtml'    => $template->getTranslated()['contentHtml'] ?? '',
+                'contentPlain'   => $template->getTranslated()['contentPlain'] ?? '',
+                'subject'        => $template->getTranslated()['subject'] ?? 'Product Enquiry',
             ],
-            $context
+            $context->getContext(),
+            [
+                'contactFormData' => $data->all(),
+                'product'         => $product,
+                'salesChannel'    => $context->getSalesChannel(),
+            ]
         );
     }
 }

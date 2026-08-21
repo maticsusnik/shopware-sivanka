@@ -1,23 +1,70 @@
+// ONE breadcrumb style for every page — no per-controller overrides. The handoff specs the
+// smaller, tighter treatment for the product page; applied here for every page so there is
+// still a single rule.
 .breadcrumb {
-    color: $ow-color-black;
+    color: $sivanka-text-soft;
+    font-family: $sivanka-sans;
+    font-size: 12.5px;
+    line-height: 18.75px;
+    align-items: center;
+    padding-block: 12px 24px;
+    margin: 0;
+    gap: 8px;
 
-    a {
-        @include fontSpecs(16, 24, 400, false, true);
-        color: inherit;
+    a,
+    .breadcrumb-link {
+        font-family: $sivanka-sans;
+        font-size: 12.5px;
+        font-weight: 400;
+        line-height: 18.75px;
+        color: $sivanka-text-soft;
         text-decoration: none;
 
         &:hover {
-            color: inherit;
-            text-decoration: underline;
+            color: $sivanka-primary;
+            text-decoration: none;
         }
 
         &.is-active {
-            color: $ow-color-grey-7;
-            font-weight: 400;
+            color: $sivanka-text;
+            font-weight: 600;
         }
     }
 
-    .icon {
+    // Every crumb wraps its label in .breadcrumb-title, so this span must NOT carry
+    // the current-crumb treatment — it has to inherit from its <a>, or all crumbs
+    // render dark + semibold and the active one is indistinguishable.
+    .breadcrumb-title {
+        font-size: inherit;
+        font-weight: inherit;
         color: inherit;
+    }
+
+    // Current crumb only
+    .breadcrumb-link.is-active .breadcrumb-title,
+    .breadcrumb-item:last-child .breadcrumb-title {
+        font-weight: 600;
+        color: $sivanka-text;
+    }
+
+    // Separators — thin "›" like the design (replaces the caret-right icon)
+    .icon {
+        color: $sivanka-text-soft;
+        opacity: 0.6;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: auto;
+
+        svg {
+            display: none;
+        }
+
+        &::before {
+            content: "\203A"; // ›
+            font-size: 16px;
+            line-height: 1;
+            color: $sivanka-text-soft;
+        }
     }
 }

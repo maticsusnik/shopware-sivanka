@@ -1,82 +1,52 @@
-{% sw_extends '@Storefront/storefront/component/product/quickview/minimal.html.twig' %}
-
 {% block component_product_quickview_minimal %}
-    {% if page.product %}
-        <input type="hidden" name="product_id" value="{{ page.product.id }}"/>
-        <input type="hidden" name="product_name" value="{{ page.product.translated.name }}"/>
-        <input type="hidden" name="product_number" value="{{ page.product.productNumber }}"/>
-        <input type="hidden" name="product_url" value="{{ seoUrl('frontend.detail.page', {'productId': page.product.id }) }}"/>
+    {% if product %}
+        <input type="hidden" name="product_id" value="{{ product.id }}"/>
+        <input type="hidden" name="product_name" value="{{ product.translated.name }}"/>
+        <input type="hidden" name="product_number" value="{{ product.productNumber }}"/>
+        <input type="hidden" name="product_url" value="{{ seoUrl('frontend.detail.page', { productId: product.id }) }}"/>
 
-        {% if page.product.options %}
-            {% set productOption = page.product.options|first %}
-            {% if(productOption) %}
+        {% if product.options %}
+            {% set productOption = product.options|first %}
+            {% if productOption %}
                 <input type="hidden" name="product_option" value="{{ productOption.translated.name }}"/>
             {% endif %}
         {% endif %}
-
-    {% endif %}
-
-    {% if(page.headline) %}
-        <div class="row">
-            <div class="col-12 quickview-minimal-product-headline">
-                <h3>{{ page.headline }}:</h3>
-            </div>
-        </div>
     {% endif %}
 
     <div class="row quickview-minimal-container">
         <div class="col-12 col-md-6 quickview-minimal-image-wrapper">
-            {% block component_product_quickview_minimal_img %}
-                <div class="quickview-minimal-image">
-                    {% if page.product.media  and page.product.cover.media %}
-                        {% sw_thumbnails 'minimal-image-thumbnails' with {
-                            media: page.product.cover.media,
-                            sizes: {
-                                'default': '300px'
-                            },
-                            attributes: {
-                                'class': 'img-fluid quickview-minimal-img',
-                                'alt': ( page.product.cover.translated.alt ?: ''),
-                                'title': (page.product.cover.translated.title ?: '')
-                            }
-                        } %}
-                    {% else %}
-                        {% sw_icon 'placeholder' style {
-                            'size': 'fluid'
-                        } %}
-                    {% endif %}
-                </div>
-            {% endblock %}
+            <div class="quickview-minimal-image" style="display:flex;align-items:center;justify-content:center;max-height:150px;overflow:hidden;">
+                {% if product and product.cover and product.cover.media %}
+                    {% sw_thumbnails 'minimal-image-thumbnails' with {
+                        media: product.cover.media,
+                        sizes: { 'default': '300px' },
+                        attributes: {
+                            class: 'img-fluid quickview-minimal-img',
+                            style: 'max-height:150px;width:auto;object-fit:contain;',
+                            alt: (product.cover.translated.alt ?: ''),
+                            title: (product.cover.translated.title ?: '')
+                        }
+                    } %}
+                {% else %}
+                    {% sw_icon 'placeholder' style { 'size': 'fluid' } %}
+                {% endif %}
+            </div>
         </div>
 
         <div class="col-12 col-md-6 quickview-minimal-product-wrapper">
-            {% block component_product_quickview_minimal_product %}
-                <div class="quickview-minimal-product">
-                    {% block component_product_quickview_minimal_product_name %}
-                        {% if page.product %}
-                            <h4 class="quickview-minimal-product-name">
-                                {{ page.product.translated.name }}
-                            </h4>
-                        {% else %}
-                            {{ parent() }}
-                        {% endif %}
-                    {% endblock %}
-
-                    {% block component_product_quickview_minimal_product_number %}
-                        {% if page.product and page.product.productNumber %}
-                            <div class="quickview-minimal-product-number">
-                                <span class="product-number-label">{{ 'detail.ordernumberLabel'|trans }}</span>
-                                <span class="product-number-value">{{ page.product.productNumber }}</span>
-                            </div>
-                        {% else %}
-                            {{ parent() }}
-                        {% endif %}
-                    {% endblock %}
-                </div>
-            {% endblock %}
+            <div class="quickview-minimal-product">
+                {% if product %}
+                    <h4 class="quickview-minimal-product-name">
+                        {{ product.translated.name }}
+                    </h4>
+                    {% if product.productNumber %}
+                        <div class="quickview-minimal-product-number">
+                            <span class="product-number-label">{{ 'detail.ordernumberLabel'|trans }}</span>
+                            <span class="product-number-value">{{ product.productNumber }}</span>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
         </div>
     </div>
-{% endblock %}
-
-{% block component_product_quickview_minimal_footer %}
 {% endblock %}

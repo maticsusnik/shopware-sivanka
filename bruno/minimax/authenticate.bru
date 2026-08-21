@@ -1,0 +1,23 @@
+meta {
+  name: authenticate
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{minimaxAuthUrl}}
+  body: formUrlEncoded
+  auth: none
+}
+
+body:form-urlencoded {
+  grant_type: password
+  client_id: {{MINIMAX_CLIENT_ID}}
+  client_secret: {{MINIMAX_CLIENT_SECRET}}
+  username: {{MINIMAX_USERNAME}}
+  password: {{MINIMAX_PASSWORD}}
+}
+
+vars:post-response {
+  access_token: res.body.access_token
+}

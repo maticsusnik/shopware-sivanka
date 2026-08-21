@@ -7,29 +7,25 @@
 {% endblock %}
 
 {% block layout_footer_copyright %}
-
-    <div class="container footer-copyright row justify-content-between">
-        <div class="footer-copyright-text col-auto px-0 px-xxl-3">
-            {{ 'footer.copyrightInfo'|trans|sw_sanitize }}
-        </div>
-
-        <div class="footer-copyright-links col-auto px-0 px-xxl-3">
-            <a href="{{ 'optiweb.privacyPolicyUrl'|trans }}"
-               title="{{ 'optiweb.privacyPolicyText'|trans|sw_sanitize }}"
-               class="footer-copyright-link">
-                {{ 'optiweb.privacyPolicyText'|trans|sw_sanitize }}
-            </a>
-        </div>
+<div class="container footer-copyright row justify-content-between">
+    <div class="footer-copyright-text col-auto px-0 px-xxl-3">
+        {{ 'footer.copyrightInfo'|trans|sw_sanitize }}
     </div>
-
+    <div class="footer-copyright-links col-auto px-0 px-xxl-3">
+        <a href="{{ 'optiweb.privacyPolicyUrl'|trans }}"
+           title="{{ 'optiweb.privacyPolicyText'|trans|sw_sanitize }}"
+           class="footer-copyright-link">
+            {{ 'optiweb.privacyPolicyText'|trans|sw_sanitize }}
+        </a>
+    </div>
+</div>
 {% endblock %}
 
 {% block layout_footer_payment_shipping_logos %}
 {% endblock %}
 
 {% block layout_footer_navigation %}
-    <div id="footerColumns" class="row footer-columns justify-content-between"
-    >
+    <div id="footerColumns" class="row footer-columns justify-content-between">
         {% set themeConfig = config('OptiwebTheme').config %}
 
         {% block layout_footer_navigation_col1 %}
@@ -37,7 +33,6 @@
                 <div class="footer-logo">
                     {% sw_include '@Storefront/storefront/layout/header/logo.html.twig' %}
                 </div>
-
                 <div class="footer-column-content-inner">
                     {{ themeConfig['addressInfo']|raw }}
                 </div>
@@ -56,89 +51,93 @@
         {% endblock %}
 
         {% block layout_footer_navigation_columns %}
-
-                {% block layout_footer_navigation_column %}
-                    <div class="col-lg-auto col-sm-6 col-12 footer-column col3">
-                        <h4 class="footer-column-content-title">
-                            {{ 'optiweb.categoriesTitle'|trans|sw_sanitize }}
-                        </h4>
-
-                        {% block layout_footer_navigation_information_content %}
-                            <div class="footer-column-content">
-                                <div class="footer-column-content-inner">
-                                    {% block layout_footer_navigation_information_links %}
-                                        <ul class="list-unstyled">
-                                            {% for treeItem in footer.navigation.tree %}
-                                                {% set category = treeItem.category %}
-                                                {% set name = category.translated.name %}
-
-                                                {% block layout_footer_navigation_information_link_item %}
-                                                    <li class="footer-link-item">
-                                                        {% block layout_footer_navigation_information_link %}
-                                                            {% if category.type == 'folder' %}
-                                                                <div>{{ name }}</div>
-                                                            {% else %}
-                                                                {% set linkUrl = category.seoUrl %}
-                                                                {% if category.type == 'link' %}
-                                                                    {% set checkUrl = category.seoUrl ?: (category.translated.externalLink ?: '') %}
-                                                                    {% if checkUrl and 'ms-link.com' in checkUrl and ('?l=' in checkUrl or '&l=' in checkUrl) %}
-                                                                        {% set urlParts = checkUrl|split('?l=') %}
-                                                                        {% if urlParts|length == 1 %}
-                                                                            {% set urlParts = checkUrl|split('&l=') %}
-                                                                        {% endif %}
-                                                                        {% if urlParts|length > 1 %}
-                                                                            {% set extractedLink = urlParts[1]|split('&')|first|split('#')|first %}
-                                                                            {% set linkUrl = extractedLink %}
-                                                                        {% endif %}
+            {% block layout_footer_navigation_column %}
+                <div class="col-lg-auto col-sm-6 col-12 footer-column col3">
+                    <h4 class="footer-column-content-title">
+                        {{ 'optiweb.categoriesTitle'|trans|sw_sanitize }}
+                    </h4>
+                    {% block layout_footer_navigation_information_content %}
+                        <div class="footer-column-content">
+                            <div class="footer-column-content-inner">
+                                {% block layout_footer_navigation_information_links %}
+                                    <ul class="list-unstyled">
+                                        {% for treeItem in footer.navigation.tree %}
+                                            {% set category = treeItem.category %}
+                                            {% set name = category.translated.name %}
+                                            {% block layout_footer_navigation_information_link_item %}
+                                                <li class="footer-link-item">
+                                                    {% block layout_footer_navigation_information_link %}
+                                                        {% if category.type == 'folder' %}
+                                                            <div>{{ name }}</div>
+                                                        {% else %}
+                                                            {% set linkUrl = category.seoUrl %}
+                                                            {% if category.type == 'link' %}
+                                                                {% set checkUrl = category.seoUrl ?: (category.translated.externalLink ?: '') %}
+                                                                {% if checkUrl and 'ms-link.com' in checkUrl and ('?l=' in checkUrl or '&l=' in checkUrl) %}
+                                                                    {% set urlParts = checkUrl|split('?l=') %}
+                                                                    {% if urlParts|length == 1 %}
+                                                                        {% set urlParts = checkUrl|split('&l=') %}
+                                                                    {% endif %}
+                                                                    {% if urlParts|length > 1 %}
+                                                                        {% set extractedLink = urlParts[1]|split('&')|first|split('#')|first %}
+                                                                        {% set linkUrl = extractedLink %}
                                                                     {% endif %}
                                                                 {% endif %}
-                                                                <a class="footer-link"
-                                                                   href="{{ linkUrl }}"
-                                                                   {% if category.shouldOpenInNewTab %}target="_blank"{% endif %}
-                                                                   title="{{ name }}">
-                                                                    {{ name }}
-                                                                </a>
                                                             {% endif %}
-                                                        {% endblock %}
-                                                    </li>
-                                                {% endblock %}
-
-                                            {% endfor %}
-                                        </ul>
-                                    {% endblock %}
-                                </div>
+                                                            <a class="footer-link"
+                                                               href="{{ linkUrl }}"
+                                                               {% if category.shouldOpenInNewTab %}target="_blank"{% endif %}
+                                                               title="{{ name }}">
+                                                                {{ name }}
+                                                            </a>
+                                                        {% endif %}
+                                                    {% endblock %}
+                                                </li>
+                                            {% endblock %}
+                                        {% endfor %}
+                                    </ul>
+                                {% endblock %}
                             </div>
-                        {% endblock %}
-                    </div>
-                {% endblock %}
+                        </div>
+                    {% endblock %}
+                </div>
+            {% endblock %}
         {% endblock %}
 
         {% block layout_footer_navigation_col4 %}
             <div class="col-lg-auto col-sm-6 col-12 footer-column col4">
-                    <div class="footer-column-content-inner">
-                        <div class="social-links row justify-content-lg-end">
-                            {% if themeConfig['instagramLink'] %}
-                            <a href="{{ themeConfig['instagramLink'] }}" target="_blank" title="Instagram" class="social-link-item col-auto px-2">
-                                {% sw_icon 'instagram' style { pack: 'ow'} %}
+                <div class="footer-column-content-inner">
+                    <div class="social-links">
+                        {% if themeConfig['instagramLink'] %}
+                            <a href="{{ themeConfig['instagramLink'] }}" target="_blank" title="Instagram" class="social-link-item" aria-label="Instagram">
+                                <svg class="social-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <rect x="4" y="4" width="16" height="16" rx="5"/><circle cx="12" cy="12" r="3.5"/><circle cx="17" cy="7" r="1" fill="currentColor" stroke="none"/>
+                                </svg>
                             </a>
-                            {% endif %}
-                            {% if themeConfig['twitterLink'] %}
-                            <a href="{{ themeConfig['twitterLink'] }}" target="_blank" title="X" class="social-link-item col-auto px-2">
-                                {% sw_icon 'twitter' style { pack: 'ow'} %}
+                        {% endif %}
+                        {% if themeConfig['twitterLink'] %}
+                            <a href="{{ themeConfig['twitterLink'] }}" target="_blank" title="X" class="social-link-item" aria-label="X">
+                                <svg class="social-svg" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">
+                                    <path d="M17.7 4h2.9l-6.3 7.2L21.8 20h-5.6l-4.4-5.7L6.8 20H3.9l6.7-7.7L3.4 4h5.7l4 5.3L17.7 4Zm-1 14.3h1.6L8.3 5.6H6.6l10.1 12.7Z"/>
+                                </svg>
                             </a>
-                            {% endif %}
-                            {% if themeConfig['facebookLink'] %}
-                            <a href="{{ themeConfig['facebookLink'] }}" target="_blank" title="Facebook" class="social-link-item col-auto px-2">
-                                {% sw_icon 'facebook' style { pack: 'ow'} %}
+                        {% endif %}
+                        {% if themeConfig['facebookLink'] %}
+                            <a href="{{ themeConfig['facebookLink'] }}" target="_blank" title="Facebook" class="social-link-item" aria-label="Facebook">
+                                <svg class="social-svg" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">
+                                    <path d="M14 9h3V6h-3c-1.7 0-3 1.3-3 3v2H8v3h3v7h3v-7h2.5l.5-3H14V9.5c0-.3.2-.5.5-.5Z"/>
+                                </svg>
                             </a>
-                            {% endif %}
-                            {% if themeConfig['linkedinLink'] %}
-                            <a href="{{ themeConfig['linkedinLink'] }}" target="_blank" title="LinkedIn" class="social-link-item col-auto px-2">
-                                {% sw_icon 'linkedin' style { pack: 'ow'} %}
+                        {% endif %}
+                        {% if themeConfig['linkedinLink'] %}
+                            <a href="{{ themeConfig['linkedinLink'] }}" target="_blank" title="LinkedIn" class="social-link-item" aria-label="LinkedIn">
+                                <svg class="social-svg" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">
+                                    <path d="M6.94 5.5a1.94 1.94 0 1 1-3.88 0 1.94 1.94 0 0 1 3.88 0ZM3.4 8.4h3.1V20H3.4V8.4Zm5.1 0h2.97v1.58h.04c.41-.78 1.42-1.6 2.93-1.6 3.13 0 3.71 2.06 3.71 4.74V20h-3.1v-5.26c0-1.25-.02-2.86-1.74-2.86-1.74 0-2.01 1.36-2.01 2.77V20H8.5V8.4Z"/>
+                                </svg>
                             </a>
-                            {% endif %}
-                        </div>
+                        {% endif %}
                     </div>
+                </div>
             </div>
         {% endblock %}
     </div>

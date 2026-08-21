@@ -15,6 +15,7 @@ import './module/sw-cms/blocks/sivanka/catalogs';
 import './module/sw-cms/blocks/sivanka/banners';
 import './module/sw-cms/blocks/sivanka/sivanka-product-slider';
 import './module/sw-cms/blocks/sivanka/sivanka-category-navigation';
+import './module/sw-cms/blocks/sivanka/sivanka-hero';
 
 /** elements **/
 import './module/sw-cms/elements/main-slider';
@@ -28,6 +29,7 @@ import './module/sw-cms/elements/catalogs';
 import './module/sw-cms/elements/banners';
 import './module/sw-cms/elements/sivanka-product-slider';
 import './module/sw-cms/elements/sivanka-sidebar-category-navigation';
+import './module/sw-cms/elements/sivanka-hero';
 
 /** components **/
 import "./module/sw-cms/component/sw-cms-block/sw-cms-block-layout-config/index";

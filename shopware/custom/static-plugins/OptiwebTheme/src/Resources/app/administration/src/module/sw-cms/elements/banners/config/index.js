@@ -27,8 +27,22 @@ Component.register('sw-cms-el-config-banners', {
         },
         addBanner() {
             const banners = this.element.config.banners.value || [];
-            if (banners.length >= 6) { return; }
-            banners.push({ id: Date.now(), media: null, text: '', link: '' });
+            if (banners.length >= 3) { return; }
+            banners.push({
+                id: Date.now(),
+                media: null,
+                style: 'plain',
+                title: '',
+                eyebrow: '',
+                text: '',
+                description: '',
+                btnLabel: '',
+                textPositionV: 'bottom',
+                textPositionH: 'left',
+                link: '',
+                bgColor: '#F7DCE7',
+                iconType: 'gift',
+            });
             this.element.config.banners.value = [...banners];
             this.onElementUpdate();
         },
@@ -41,17 +55,37 @@ Component.register('sw-cms-el-config-banners', {
         onBannerTextChange() {
             this.onElementUpdate();
         },
+        onBannerTextPositionChange() {
+            this.onElementUpdate();
+        },
         onBannerLinkChange() {
             this.onElementUpdate();
         },
         onBannerMediaChange(banner, mediaId) {
-            // store only mediaId for consistency with Shopware patterns
             banner.media = null;
             banner.mediaId = mediaId;
             this.onElementUpdate();
-        }
+        },
+        onStyleChange() {
+            this.onElementUpdate();
+        },
+        onTitleChange() {
+            this.onElementUpdate();
+        },
+        onEyebrowChange() {
+            this.onElementUpdate();
+        },
+        onDescriptionChange() {
+            this.onElementUpdate();
+        },
+        onBtnLabelChange() {
+            this.onElementUpdate();
+        },
+        onBgColorChange() {
+            this.onElementUpdate();
+        },
+        onIconTypeChange() {
+            this.onElementUpdate();
+        },
     }
 });
-
-
-

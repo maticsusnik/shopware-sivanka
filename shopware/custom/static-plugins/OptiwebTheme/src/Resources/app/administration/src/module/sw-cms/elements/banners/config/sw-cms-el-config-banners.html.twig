@@ -10,43 +10,122 @@
             :options="[
                 { value: 1, label: '1 per row' },
                 { value: 2, label: '2 per row' },
-                { value: 3, label: '3 per row' },
-                { value: 4, label: '4 per row' }
+                { value: 3, label: '3 per row' }
             ]"
             v-model:value="element.config.perRow.value"
             @update:value="onPerRowChange" />
 
         <div class="sw-cms-el-config-banners__header">
-            <h3>Banners</h3>
-            <sw-button @click="addBanner" :disabled="(element.config.banners.value || []).length >= 8">Add new banner</sw-button>
+            <h3>Banners (max 3)</h3>
+            <sw-button @click="addBanner" :disabled="(element.config.banners.value || []).length >= 3">Add banner</sw-button>
         </div>
 
         <div class="sw-cms-el-config-banners__items">
             <div class="sw-cms-el-config-banners__item" v-for="(banner, index) in element.config.banners.value" :key="banner.id || index">
-                <div class="sw-cms-el-config-banners__item-fields">
-                    <sw-media-field
-                        :label="'Image'"
-                        :allowEmpty="true"
-                        v-model:value="banner.mediaId"
-                        @update:value="() => onBannerMediaChange(banner, banner.mediaId)" />
 
+                <sw-single-select
+                    :label="'Banner style'"
+                    :options="[
+                        { value: 'plain',       label: 'Plain – image + text overlay' },
+                        { value: 'image-cta',   label: 'Image CTA – image bg + button' },
+                        { value: 'accent-icon', label: 'Accent + Icon – color bg + icon' },
+                        { value: 'image-card',  label: 'Image Card – image bg + floating card' }
+                    ]"
+                    v-model:value="banner.style"
+                    @update:value="onStyleChange" />
+
+                <!-- Image (for plain, image-cta, image-card styles) -->
+                <sw-media-field
+                    v-if="banner.style !== 'accent-icon'"
+                    :label="'Background image'"
+                    :allowEmpty="true"
+                    v-model:value="banner.mediaId"
+                    @update:value="() => onBannerMediaChange(banner, banner.mediaId)" />
+
+                <!-- Background color (for accent-icon) -->
+                <div v-if="banner.style === 'accent-icon'">
                     <sw-text-field
-                        :label="'Text'"
-                        v-model="banner.text"
-                        @change="onBannerTextChange" />
-
-                    <sw-url-field
-                        :label="'Link'"
-                        v-model="banner.link"
-                        @change="onBannerLinkChange" />
+                        :label="'Background color (CSS value, e.g. #F7DCE7)'"
+                        v-model="banner.bgColor"
+                        @change="onBgColorChange" />
+                    <sw-single-select
+                        :label="'Icon'"
+                        :options="[
+                            { value: 'gift',       label: 'Gift / Voucher' },
+                            { value: 'truck',      label: 'Delivery' },
+                            { value: 'shield',     label: 'Quality / Guarantee' },
+                            { value: 'star',       label: 'Star / Best' },
+                            { value: 'heart',      label: 'Heart / Wishlist' },
+                            { value: 'headphones', label: 'Support' },
+                            { value: 'return',     label: 'Returns' }
+                        ]"
+                        v-model:value="banner.iconType"
+                        @update:value="onIconTypeChange" />
                 </div>
+
+                <!-- Eyebrow text (for image-cta) -->
+                <sw-text-field
+                    v-if="banner.style === 'image-cta'"
+                    :label="'Eyebrow (small label above title)'"
+                    v-model="banner.eyebrow"
+                    @change="onEyebrowChange" />
+
+                <!-- Title -->
+                <sw-text-field
+                    :label="'Title'"
+                    v-model="banner.title"
+                    @change="onTitleChange" />
+
+                <!-- Description -->
+                <sw-textarea-field
+                    :label="'Description'"
+                    v-model="banner.description"
+                    @change="onDescriptionChange" />
+
+                <!-- Button label (for image-cta, image-card) -->
+                <sw-text-field
+                    v-if="banner.style === 'image-cta' || banner.style === 'image-card'"
+                    :label="'Button label'"
+                    v-model="banner.btnLabel"
+                    @change="onBtnLabelChange" />
+
+                <!-- Link for text-link (accent-icon) -->
+                <sw-text-field
+                    v-if="banner.style === 'accent-icon'"
+                    :label="'Link label'"
+                    v-model="banner.text"
+                    @change="onBannerTextChange" />
+
+                <!-- Link URL -->
+                <sw-url-field
+                    :label="'Link URL'"
+                    v-model="banner.link"
+                    @change="onBannerLinkChange" />
+
+                <!-- Legacy text for plain style -->
+                <sw-text-editor
+                    v-if="banner.style === 'plain'"
+                    :label="'Overlay text (HTML)'"
+                    :value="banner.text"
+                    @update:value="(val) => { banner.text = val; onBannerTextChange(); }" />
+
+                <div v-if="banner.style === 'plain'" class="sw-cms-el-config-banners__position-row">
+                    <sw-single-select
+                        :label="'Text vertical position'"
+                        :options="[{ value: 'top', label: 'Top' }, { value: 'middle', label: 'Middle' }, { value: 'bottom', label: 'Bottom' }]"
+                        v-model:value="banner.textPositionV"
+                        @update:value="onBannerTextPositionChange" />
+                    <sw-single-select
+                        :label="'Text horizontal position'"
+                        :options="[{ value: 'left', label: 'Left' }, { value: 'center', label: 'Center' }, { value: 'right', label: 'Right' }]"
+                        v-model:value="banner.textPositionH"
+                        @update:value="onBannerTextPositionChange" />
+                </div>
+
                 <div class="sw-cms-el-config-banners__item-footer">
                     <sw-button @click="removeBanner(index)">Remove</sw-button>
-                </div> 
+                </div>
             </div>
         </div>
     </div>
 {% endblock %}
-
-
-

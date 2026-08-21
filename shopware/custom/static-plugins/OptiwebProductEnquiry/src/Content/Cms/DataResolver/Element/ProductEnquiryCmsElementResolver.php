@@ -9,13 +9,14 @@ use Shopware\Core\Content\Cms\DataResolver\Element\ElementDataCollection;
 use Shopware\Core\Content\Cms\DataResolver\ResolverContext\ResolverContext;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
-use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Sorting\FieldSorting;
+use Shopware\Core\Framework\Struct\ArrayStruct;
 
 class ProductEnquiryCmsElementResolver extends AbstractCmsElementResolver
 {
     public function __construct(
         private readonly EntityRepository $salutationRepository,
-        private readonly EntityRepository $productRepository
+        private readonly EntityRepository $productRepository,
     ) {
     }
 
@@ -31,39 +32,30 @@ class ProductEnquiryCmsElementResolver extends AbstractCmsElementResolver
 
     public function enrich(CmsSlotEntity $slot, ResolverContext $resolverContext, ElementDataCollection $result): void
     {
-        $context = $resolverContext->getSalesChannelContext();
+        $criteria = new Criteria();
+        $criteria->addSorting(new FieldSorting('salutationKey', FieldSorting::ASCENDING));
 
-        // Get salutations
-        $salutations = $this->salutationRepository->search(new Criteria(), $context->getContext())->getEntities();
-        $slot->setData($salutations);
+        $salutations = $this->salutationRepository->search(
+            $criteria,
+            $resolverContext->getSalesChannelContext()->getContext()
+        )->getEntities();
 
-        // Add product if productId is provided
-        $productId = $resolverContext->getRequest()->get('productId');
-        
+        $slot->setData(new ArrayStruct(['salutations' => $salutations]));
+
+        $productId = $resolverContext->getRequest()->query->get('productId');
+
         if ($productId) {
-            $product = $this->getProductById($productId, $context->getContext());
-            
+            $productCriteria = new Criteria([$productId]);
+            $productCriteria->addAssociations(['media', 'cover', 'cover.media', 'options', 'options.group']);
+
+            $product = $this->productRepository->search(
+                $productCriteria,
+                $resolverContext->getSalesChannelContext()->getContext()
+            )->first();
+
             if ($product) {
                 $slot->addExtension('product', $product);
             }
         }
-    }
-
-    private function getProductById(string $productId, \Shopware\Core\Framework\Context $context): ?object
-    {
-        $criteria = new Criteria();
-        // $criteria->addAssociation('categories');
-        $criteria->addAssociation('media');
-        $criteria->addAssociation('cover');
-        $criteria->addAssociation('cover.media');
-        $criteria->addAssociation('options');
-        // $criteria->addAssociation('unit');
-        // $criteria->addAssociation('manufacturer');
-        $criteria->addFilter(new EqualsFilter('product.id', $productId));
-
-        return $this->productRepository
-            ->search($criteria, $context)
-            ->getEntities()
-            ->first();
     }
 }

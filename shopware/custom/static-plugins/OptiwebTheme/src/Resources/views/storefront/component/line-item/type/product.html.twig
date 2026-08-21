@@ -1,15 +1,143 @@
 {% sw_extends '@Storefront/storefront/component/line-item/type/product.html.twig' %}
 
+{#
+    Cart page: render the design's clean grid row.
+    Offcanvas / confirm / order keep the default structure (handled by the
+    inner-block overrides further down).
+#}
+{% block component_line_item_type_product %}
+    {% if controllerAction is same as('cartPage') and displayMode == 'default' %}
+        {% set productLink = seoUrl('frontend.detail.page', { productId: lineItem.referencedId }) %}
+        <li class="{{ lineItemClasses }} sv-cart-line">
+            <div class="sv-cart-product">
+                <a href="{{ productLink }}" class="sv-cart-thumb" title="{{ label }}" tabindex="-1">
+                    {% sw_include '@Storefront/storefront/component/line-item/element/image.html.twig' with {
+                        lineItemLink: false,
+                        fallbackIcon: 'placeholder'
+                    } %}
+                </a>
+                <div class="sv-cart-meta">
+                    <a href="{{ productLink }}" class="sv-cart-name">{{ label }}</a>
+
+                    {% if lineItem.payload.options is not empty %}
+                        {% sw_include '@Storefront/storefront/component/line-item/element/variant-characteristics.html.twig' %}
+                    {% endif %}
+
+                    {% if lineItem.payload.productNumber %}
+                        <div class="sv-cart-sku">
+                            {{ 'checkout.cartItemInfoId'|trans|sw_sanitize }} {{ lineItem.payload.productNumber }}
+                        </div>
+                    {% endif %}
+
+                    <div class="sv-cart-unit">
+                        {{ lineItem.price.unitPrice|currency }} / {{ 'checkout.lineItemUnitPriceDescriptor'|trans|sw_sanitize }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="sv-cart-qty">
+                {% sw_include '@Storefront/storefront/component/line-item/element/quantity.html.twig' %}
+            </div>
+
+            <div class="sv-cart-total">
+                {% sw_include '@Storefront/storefront/component/line-item/element/total-price.html.twig' with {
+                    currency: lineItem.order.currency.isoCode
+                } %}
+            </div>
+
+            <div class="sv-cart-remove">
+                {% if lineItem.removable and nestingLevel < 1 %}
+                    {% sw_include '@Storefront/storefront/component/line-item/element/remove.html.twig' %}
+                {% endif %}
+            </div>
+        </li>
+    {% elseif controllerAction is same as('confirmPage') and displayMode == 'default' %}
+        {% set productLink = seoUrl('frontend.detail.page', { productId: lineItem.referencedId }) %}
+        <li class="{{ lineItemClasses }} sv-confirm-line">
+            <div class="sv-confirm-thumb">
+                {% sw_include '@Storefront/storefront/component/line-item/element/image.html.twig' with {
+                    lineItemLink: false,
+                    fallbackIcon: 'placeholder'
+                } %}
+            </div>
+            <div class="sv-confirm-meta">
+                <a href="{{ productLink }}" class="sv-confirm-name">{{ label }}</a>
+                {% if lineItem.payload.options is not empty %}
+                    {% sw_include '@Storefront/storefront/component/line-item/element/variant-characteristics.html.twig' %}
+                {% endif %}
+                <div class="sv-confirm-unit">
+                    {{ lineItem.price.unitPrice|currency }} / {{ 'checkout.lineItemUnitPriceDescriptor'|trans|sw_sanitize }}
+                </div>
+            </div>
+            <div class="sv-confirm-qty">
+                {% sw_include '@Storefront/storefront/component/line-item/element/quantity.html.twig' %}
+            </div>
+            <div class="sv-confirm-total">
+                {% sw_include '@Storefront/storefront/component/line-item/element/total-price.html.twig' with {
+                    currency: lineItem.order.currency.isoCode
+                } %}
+            </div>
+        </li>
+    {% elseif displayMode == 'order' or controllerAction is same as('finishPage') %}
+        {#
+            Finish page + account order history. These used to fall through to parent(),
+            where the offcanvas-shaped inner blocks below squeezed the quantity and the
+            total in underneath the product name. Reuse the confirm row, which is the
+            same read-only product/qty/total shape.
+        #}
+        <li class="{{ lineItemClasses }} sv-confirm-line sv-order-line">
+            <div class="sv-confirm-thumb">
+                {% sw_include '@Storefront/storefront/component/line-item/element/image.html.twig' with {
+                    lineItemLink: false,
+                    fallbackIcon: 'placeholder'
+                } %}
+            </div>
+            <div class="sv-confirm-meta">
+                <span class="sv-confirm-name">{{ label }}</span>
+                {% if lineItem.payload.options is not empty %}
+                    {% sw_include '@Storefront/storefront/component/line-item/element/variant-characteristics.html.twig' %}
+                {% endif %}
+                {% if lineItem.payload.productNumber %}
+                    <div class="sv-cart-sku">
+                        {{ 'checkout.cartItemInfoId'|trans|sw_sanitize }} {{ lineItem.payload.productNumber }}
+                    </div>
+                {% endif %}
+                <div class="sv-confirm-unit">
+                    {{ lineItem.price.unitPrice|currency }} / {{ 'checkout.lineItemUnitPriceDescriptor'|trans|sw_sanitize }}
+                </div>
+            </div>
+            <div class="sv-confirm-qty">
+                {% sw_include '@Storefront/storefront/component/line-item/element/quantity.html.twig' %}
+            </div>
+            <div class="sv-confirm-total">
+                {% sw_include '@Storefront/storefront/component/line-item/element/total-price.html.twig' %}
+            </div>
+        </li>
+    {% else %}
+        {{ parent() }}
+    {% endif %}
+{% endblock %}
+
+{#
+    The blocks below reshape the row for the OFFCANVAS mini-cart only. Every other
+    context now has its own branch above, so they must not leak into those pages.
+#}
 {% block component_line_item_type_product_col_quantity %}
+    {% if displayMode != 'offcanvas' %}{{ parent() }}{% endif %}
 {% endblock %}
 
 {% block component_line_item_type_product_col_unit_price %}
+    {% if displayMode != 'offcanvas' %}{{ parent() }}{% endif %}
 {% endblock %}
 
 {% block component_line_item_type_product_col_remove %}
+    {% if displayMode != 'offcanvas' %}{{ parent() }}{% endif %}
 {% endblock %}
 
 {% block component_line_item_type_product_details_container %}
+    {% if displayMode != 'offcanvas' %}
+        {{ parent() }}
+    {% else %}
     <div class="line-item-details-container">
         {% block component_line_item_type_product_label %}
             {{ parent() }}
@@ -34,20 +162,21 @@
         {% endblock %}
 
         <div class="line-item-total-price line-item-price checkout-price">
-            {% sw_include '@Storefront/storefront/component/line-item/element/total-price.html.twig' with {
-                currency: lineItem.order.currency.isoCode
-            } %}
+            {% sw_include '@Storefront/storefront/component/line-item/element/total-price.html.twig' %}
         </div>
     </div>
+    {% endif %}
 {% endblock %}
 
 {% block component_line_item_type_product_col_total_price %}
+    {% if displayMode != 'offcanvas' %}
+        {{ parent() }}
+    {% else %}
     <div class="line-item-total-price line-item-price">
         {% if showRemoveButton and lineItem.removable and nestingLevel < 1 %}
             {% sw_include '@Storefront/storefront/component/line-item/element/remove.html.twig' %}
         {% endif %}
-        {% sw_include '@Storefront/storefront/component/line-item/element/total-price.html.twig' with {
-            currency: lineItem.order.currency.isoCode
-        } %}
+        {% sw_include '@Storefront/storefront/component/line-item/element/total-price.html.twig' %}
     </div>
+    {% endif %}
 {% endblock %}

@@ -8,6 +8,7 @@ use Shopware\Core\Content\Product\SalesChannel\SalesChannelProductEntity;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\System\SalesChannel\Entity\SalesChannelEntityLoadedEvent;
+use Shopware\Core\System\SalesChannel\SalesChannelContext;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class ProductAvailabilitySubscriber implements EventSubscriberInterface
@@ -89,6 +90,11 @@ class ProductAvailabilitySubscriber implements EventSubscriberInterface
                 $isNotSellable = true;
             }
 
+            // A product the ERP sync left without a price must never be buyable for 0,00 €
+            if (!$isNotSellable && $this->isFreeOfCharge($product, $event->getSalesChannelContext())) {
+                $isNotSellable = true;
+            }
+
             // Check if product belongs to a not-sellable category (using categoryTree)
             if (!$isNotSellable && !empty($notSellableCategoryIds)) {
                 $categoryTree = $product->getCategoryTree();
@@ -116,5 +122,24 @@ class ProductAvailabilitySubscriber implements EventSubscriberInterface
         }
     }
 
+    /**
+     * True when the product carries no usable price. The Minimax sync leaves `price`
+     * at 0 for items it could not price, and without this guard those products render
+     * a working "add to cart" button and can be ordered for free.
+     */
+    private function isFreeOfCharge(SalesChannelProductEntity $product, SalesChannelContext $context): bool
+    {
+        // `calculatedPrice` is a typed property that is only set once the price
+        // calculator has run, so it has to be probed rather than read directly.
+        if ($product->has('calculatedPrice')) {
+            $calculated = $product->getCalculatedPrice();
+
+            return $calculated->getTotalPrice() <= 0.0;
+        }
+
+        $price = $product->getPrice()?->getCurrencyPrice($context->getCurrencyId());
+
+        return $price !== null && $price->getGross() <= 0.0;
+    }
 }
 

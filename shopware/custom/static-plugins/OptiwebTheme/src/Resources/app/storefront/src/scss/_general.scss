@@ -1,5 +1,23 @@
+// $content-width is 1366px + $bs-gutter-x, so the container needs half a gutter of
+// padding per side to resolve to the 1366px inner column the design is built on.
+// Bootstrap's own --bs-gutter-x default (24px) would leave it at 1382px.
 .container, .cms-section .boxed {
     max-width: $content-width;
+    margin-inline: auto;
+    padding-inline: calc(#{$bs-gutter-x} / 2);
+}
+
+.btn .icon > svg {
+    top: 0;
+}
+
+.cms-section-default .boxed {
+    max-width: $header-width;
+    margin-inline: auto;
+}
+
+.cms-section {
+    overflow: visible;
 }
 
 .container-main {
@@ -85,6 +103,72 @@ header, footer, .nav-main {
         &:checked {
             background-color: $ow-color-black;
             border-color: $ow-color-black;
+        }
+    }
+}
+
+// ============================================================
+//  Cookie consent banner
+//  Core renders all three actions as identical .btn-primary. Give them a hierarchy:
+//  "accept all" is the filled primary, "deny" and "configure" are lighter and smaller.
+//  Both refusal paths stay full-height, full-contrast and side by side with accept, so
+//  declining is still a single, obvious tap — see the note in the handover.
+// ============================================================
+.cookie-permission-container {
+    .cookie-permission-actions {
+        gap: 8px;
+        align-items: center;
+    }
+
+    // Secondary — deny + configure
+    .js-cookie-permission-button .btn,
+    .js-cookie-configuration-button .btn {
+        min-height: 38px;
+        padding: 8px 14px;
+        font-size: 13px;
+        font-weight: 600;
+        border: 1px solid $sivanka-border;
+        border-radius: $sivanka-r8;
+        background: $sivanka-white;
+        color: $sivanka-text;
+
+        &:hover,
+        &:focus,
+        &:active {
+            background: $ow-color-grey;
+            border-color: $sivanka-primary;
+            color: $sivanka-primary;
+        }
+    }
+
+    // Primary — accept all
+    .js-cookie-accept-all-button .btn {
+        min-height: 44px;
+        padding: 11px 24px;
+        font-size: 15px;
+        font-weight: 600;
+        border: 1px solid $sivanka-primary;
+        border-radius: $sivanka-r8;
+        background: $sivanka-primary;
+        color: $sivanka-white;
+
+        &:hover,
+        &:focus,
+        &:active {
+            background: $sivanka-primary-hover;
+            border-color: $sivanka-primary-hover;
+            color: $sivanka-white;
+        }
+    }
+
+    .cookie-permission-content {
+        font-size: 13.5px;
+        line-height: 1.5;
+        color: $sivanka-text;
+
+        a {
+            color: $sivanka-primary;
+            font-weight: 600;
         }
     }
 }

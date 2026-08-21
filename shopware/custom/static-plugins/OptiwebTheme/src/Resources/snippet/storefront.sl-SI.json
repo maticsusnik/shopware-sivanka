@@ -1,4 +1,7 @@
 {
+    "checkout": {
+        "confirmTermsTextModal": "Prebral sem in sprejemam %tosModalTagOpen%splošne pogoje%tosModalTagClose% ter politiko odpovedi."
+    },
     "optiweb": {
         "toggleMenuText": "Izdelki",
         "privacyPolicyUrl": "/politika-zasebnosti",
@@ -12,7 +15,9 @@
                 "show": "Prikaži več",
                 "hide": "Skrij"
             },
-            "selectedFilters": "Izbrani filtri"
+            "selectedFilters": "Izbrani filtri",
+            "showingBefore": "Prikazanih",
+            "showingAfter": "izdelkov"
         },
         "search": {
             "headlineSuper": "Rezultati iskanja"
@@ -22,13 +27,51 @@
             "specificationTitle": "Specifikacije",
             "addAllProducts": "Dodaj vse v košarico",
             "logIn": "Prijavi se",
-            "logInTitle": "Nakup je omogočen samo prijavljenim strankam"
+            "logInTitle": "Nakup je omogočen samo prijavljenim strankam",
+            "priceOnRequest": "Cena na povpraševanje"
         },
         "checkout": {
             "logInAlert": "Če želite opraviti nakup, morate biti prijavljeni.",
             "freeShipping": "Brezplačno",
-            "title": "Oddaj naročilo"
+            "title": "Oddaj naročilo",
+            "stepCart": "Košarica",
+            "stepCheckout": "Blagajna",
+            "stepComplete": "Zaključek",
+            "confirmAddressHeader": "Podatki za dostavo",
+            "confirmPaymentShippingHeader": "Dostava in plačilo",
+            "confirmProductsHeader": "Pregled naročila",
+            "sslSecure": "Varno plačilo s SSL šifriranjem",
+            "colProduct": "Izdelek",
+            "colQuantity": "Količina",
+            "colSubtotal": "Vmesni seštevek",
+            "continueShopping": "Nadaljuj z nakupovanjem",
+            "promoPlaceholder": "Koda za popust",
+            "applyPromo": "Uveljavi",
+            "toCheckout": "Na blagajno",
+            "freeShippingNote": "<strong>Brezplačna dostava</strong> pri naročilu nad 60 €.",
+            "shippingInfoHeader": "Informacije o pošiljanju",
+            "backToShop": "Nazaj v trgovino",
+            "orderQuestions": "Vprašanja v zvezi z vašim naročilom?",
+            "supportPhone": "05 90 31 676",
+            "supportHours": "Pon–pet 8:00–14:00"
+        },
+        "navigation": {
+            "allCategories": "Vse kategorije",
+            "menuTitle": "Kategorije"
         }
+    },
+    "sivanka": {
+        "topbarDelivery": "Brezplačna dostava nad 60 €",
+        "topbarQuality": "Vrhunska kakovost za ustvarjalce",
+        "topbarSupport": "Z veseljem vam pomagamo",
+        "topbarHelp": "Pomoč & kontakt",
+        "nlSvc1Title": "Obiščite nas v Kranju",
+        "nlSvc1Text": "Cesta Staneta Žagarja 32",
+        "nlSvc2Title": "Prevzem v trgovini",
+        "nlSvc2Text": "Naročilo pripravimo isti dan",
+        "nlSvc3Title": "Šivanje in popravila",
+        "nlSvc3Text": "Storitve v naši delavnici",
+        "searchClear": "Počisti iskanje"
     },
     "prems-one-page-checkout": {
         "steps": {

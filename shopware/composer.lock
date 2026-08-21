@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "df5189f8e3113a6dabedb40636a425bc",
+    "content-hash": "977659307020e9890d43d8f6c6c05534",
     "packages": [
         {
             "name": "async-aws/core",
@@ -3923,11 +3923,11 @@
         },
         {
             "name": "optiweb/product-enquiry",
-            "version": "2.0.0",
+            "version": "3.0.0",
             "dist": {
                 "type": "path",
                 "url": "custom/static-plugins/OptiwebProductEnquiry",
-                "reference": "5eb20686847a66e53c834c16fe46ff0be51f1a99"
+                "reference": "b483e8df1050ec338b29de4ad1657c0d1ed193ce"
             },
             "require": {
                 "shopware/core": "~6.7.0"
@@ -3936,8 +3936,11 @@
             "extra": {
                 "shopware-plugin-class": "OptiwebProductEnquiry\\OptiwebProductEnquiry",
                 "label": {
-                    "de-DE": "Optiweb Product Enquiry",
+                    "de-DE": "Optiweb Produktanfrage",
                     "en-GB": "Optiweb Product Enquiry"
+                },
+                "description": {
+                    "en-GB": "Replaces Add to Cart with an enquiry form when products are out of stock or not sellable."
                 }
             },
             "autoload": {
@@ -3948,13 +3951,40 @@
             "license": [
                 "MIT"
             ],
-            "authors": [
-                {
-                    "name": "Optiweb",
-                    "homepage": "https://www.optiweb.com"
-                }
-            ],
             "description": "Optiweb Product Enquiry plugin for Shopware 6.7",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "optiweb/sync",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "custom/static-plugins/OptiwebSync",
+                "reference": "68d3ab29905da7d1282e1d659490d8826ee96287"
+            },
+            "require": {
+                "shopware/core": "~6.7.0"
+            },
+            "type": "shopware-platform-plugin",
+            "extra": {
+                "shopware-plugin-class": "OptiwebSync\\OptiwebSync",
+                "label": {
+                    "de-DE": "Optiweb Sync",
+                    "en-GB": "Optiweb Sync"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "OptiwebSync\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Optiweb Sync",
             "transport-options": {
                 "symlink": true,
                 "relative": true
@@ -11290,5 +11320,5 @@
         "composer-runtime-api": "^2.0"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }

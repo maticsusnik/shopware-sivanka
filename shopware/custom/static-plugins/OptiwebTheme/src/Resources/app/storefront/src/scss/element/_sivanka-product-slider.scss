@@ -18,16 +18,89 @@
     }
 
     .cms-element-title-paragraph {
-        margin-bottom: 2rem;
-        margin-top: 0.6rem;
+        font-family: $sivanka-serif;
+        font-size: 32px;
+        font-weight: 600;
+        line-height: 1.12;
+        color: $sivanka-text;
+        margin-bottom: 28px;
+        margin-top: 0;
+
+        @include media-breakpoint-down(md) {
+            font-size: 24px;
+        }
     }
     .sivanka-product-slider-wrapper {
+        position: relative;
+
         .row {
             align-items: stretch !important;
         }
-        
+
         .col-md-3 {
             display: flex;
+        }
+    }
+
+    // Circular arrow controls, top-right aligned with the title (design .arrows .arr)
+    .product-slider-controls-container {
+        position: absolute;
+        top: 2px;
+        right: calc(#{$bs-gutter-x} / 2); // respect the wrapper's horizontal padding
+        z-index: 3;
+    }
+
+    .product-slider-controls {
+        display: flex;
+        gap: 8px;
+        margin: 0;
+    }
+
+    .product-slider-controls-prev,
+    .product-slider-controls-next {
+        position: relative;
+        inset: auto;
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        border-radius: 50%;
+        border: 1.5px solid $sivanka-border;
+        background: $sivanka-white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: $sivanka-text;
+        cursor: pointer;
+        line-height: 0;
+        transition: border-color 0.18s, color 0.18s;
+
+        &:hover {
+            border-color: $sivanka-primary;
+            color: $sivanka-primary;
+        }
+
+        .icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            color: inherit;
+
+            svg {
+                top: 0;
+                width: 16px;
+                height: 16px;
+
+                path {
+                    fill: currentColor;
+                }
+            }
+        }
+
+        @include media-breakpoint-down(sm) {
+            width: 32px;
+            height: 32px;
         }
     }
     

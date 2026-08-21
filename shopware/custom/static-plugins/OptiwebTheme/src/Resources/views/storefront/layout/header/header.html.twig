@@ -1,26 +1,44 @@
 {% sw_extends '@Storefront/storefront/layout/header/header.html.twig' %}
 
+{# Topbar is rendered full-width from the outer layout/header.html.twig — suppress here to avoid duplication #}
+{% block layout_top_bar %}{% endblock %}
+
 {% block layout_header_navigation %}
-    <div class="row align-items-center justify-content-between pb-0 pt-3 pb-sm-3">
+    <div class="row align-items-center g-0">
         {% block layout_header_logo %}
             <div class="col-2 header-logo-col">
                 {% sw_include '@Storefront/storefront/layout/header/logo.html.twig' %}
             </div>
         {% endblock %}
 
+        {# Below sm the search bar is collapsed, so it needs a trigger. It lives in the
+           header rather than the bottom bar, which is deliberately kept to four icons. #}
+        {% block layout_header_search_toggle %}
+            <div class="col-auto order-1 d-sm-none header-search-toggle-col">
+                <button class="btn header-actions-btn header-search-toggle-btn collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#searchCollapse"
+                        aria-expanded="false"
+                        aria-controls="searchCollapse"
+                        aria-label="{{ 'header.searchButton'|trans|striptags }}">
+                    <svg class="header-search-toggle-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="7"></circle>
+                        <path d="m21 21-4.3-4.3"></path>
+                    </svg>
+                </button>
+            </div>
+        {% endblock %}
+
         {% block layout_header_search %}
-            <div class="col-12 order-2 col-sm order-sm-1 header-search-col pt-3 pt-sm-0">
-                <div class="row justify-content-end">
-                    <div class="col-lg-auto px-0 px-sm-3">
-                        {% sw_include '@Storefront/storefront/layout/header/search.html.twig' %}
-                    </div>
-                </div>
+            <div class="col-12 order-2 col-sm order-sm-1 header-search-col">
+                {% sw_include '@Storefront/storefront/layout/header/search.html.twig' %}
             </div>
         {% endblock %}
 
         {% block layout_header_actions %}
             <div class="col-auto order-1 col-sm-auto order-sm-2 header-actions-col">
-                <div class="row g-0">
+                <div class="row g-0 align-items-center">
 
                     {% block layout_header_actions_account %}
                         {{ parent() }}

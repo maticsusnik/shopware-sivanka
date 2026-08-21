@@ -1,11 +1,49 @@
 {% sw_extends "@Storefront/storefront/element/cms-element-image-gallery.html.twig" %}
 
+{% block element_image_gallery_inner %}
+
+    {# mouseDrag is deliberately NOT enabled here. tiny-slider does not suppress the
+       click that ends a mouse drag, and the whole gallery column is the zoom-modal
+       trigger (`[data-zoom-modal]`), so dragging the main image with a mouse both moved
+       the slide AND opened the zoom popup. Touch swipe works natively (touch:true is
+       tiny-slider's default) and the arrows cover pointer devices. Re-enabling mouseDrag
+       needs a JS guard that swallows the post-drag click. #}
+    {% set gallerySliderOptions = gallerySliderOptions|replace_recursive({
+        thumbnailSlider: {
+            items: 6,
+            slideBy: 5,
+            controls: true,
+            startIndex: startIndexThumbnails ? startIndexThumbnails : null,
+            ariaLive: false,
+            responsive: {
+                xs: {
+                    items: 4,
+                    slideBy: 3,
+                    enabled: true,
+                    controls: true
+                },
+                sm: {
+                    items: 4,
+                    slideBy: 3,
+                    enabled: true,
+                    controls: true
+                }
+            }
+        }
+    }) %}
+
+    {{ parent() }}
+
+{% endblock %}
+
+{% block element_image_gallery_slider_dots %}{% endblock %}
 
 {% block element_image_gallery_inner_wrapper %}
-{% set product = page.product %}
-    {% block element_image_gallery_badges %}
-        {% sw_include '@Storefront/storefront/component/product/card/badges.html.twig' %}
-    {% endblock %}
-
+    {% set product = page.product %}
+    <div class="product-badges-icons-wrapper">
+        {% block element_image_gallery_badges %}
+            {% sw_include '@Storefront/storefront/component/product/card/badges.html.twig' %}
+        {% endblock %}
+    </div>
     {{ parent() }}
 {% endblock %}

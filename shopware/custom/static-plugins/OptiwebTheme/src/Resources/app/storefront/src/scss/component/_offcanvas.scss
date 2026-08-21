@@ -68,3 +68,273 @@
         }
     }
 }
+// ============================================================
+//  Mobile navigation offcanvas — Sivanka styling
+// ============================================================
+@include media-breakpoint-down(lg) {
+    .navigation-offcanvas {
+        font-family: $sivanka-sans;
+    }
+
+    // ---- Sticky header row: back link + "all categories" + close ----
+    .offcanvas-back-link {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        row-gap: 8px;
+        gap: 10px;
+        position: sticky;
+        top: 0;
+        z-index: 3;
+        background: $sivanka-beige;
+        border-bottom: 1px solid $sivanka-border;
+        padding: 10px 12px;
+
+        .is-back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1 1 auto;
+            min-width: 0;
+            padding: 8px 10px !important;
+            border: 0 !important;
+            border-radius: $sivanka-r8;
+            font-family: $sivanka-serif;
+            font-size: 17px;
+            font-weight: 700;
+            line-height: 1.25;
+            color: $sivanka-heading-dark !important;
+            background: transparent;
+
+            > span[itemprop="name"] {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .icon {
+                color: $sivanka-primary;
+                flex-shrink: 0;
+
+                svg { top: 0; }
+                svg path { fill: currentColor; }
+            }
+
+            &:active {
+                background: rgba(160, 43, 107, 0.06);
+            }
+        }
+    }
+
+    .offcanvas-root-head {
+        justify-content: space-between;
+    }
+
+    .offcanvas-root-title {
+        flex: 1 1 auto;
+        min-width: 0;
+        padding: 8px 10px;
+        font-family: $sivanka-serif;
+        font-size: 17px;
+        font-weight: 700;
+        line-height: 1.25;
+        color: $sivanka-heading-dark;
+    }
+
+    // Jump straight back to the top level from any depth — own row, full width, so the
+    // category title above it is not squeezed down to a few characters.
+    .offcanvas-root-link {
+        flex: 1 1 100%;
+        justify-content: center;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+        padding: 7px 12px;
+        border: 1.5px solid $sivanka-primary;
+        border-radius: 999px;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: $sivanka-primary;
+        text-decoration: none;
+        background: $sivanka-white;
+
+        .icon {
+            width: 14px;
+            height: 14px;
+            color: $sivanka-primary;
+
+            svg { top: 0; width: 14px; height: 14px; }
+            svg path { fill: currentColor; }
+        }
+
+        &:active {
+            background: $sivanka-primary;
+            color: $sivanka-white;
+
+            .icon { color: $sivanka-white; }
+        }
+    }
+
+    .offcanvas-back-link .offcanvas-close {
+        flex: 0 0 auto;
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+        padding: 0;
+        border: 0;
+        border-radius: 50%;
+        background: $sivanka-white;
+        color: $sivanka-text;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        .icon {
+            width: 18px;
+            height: 18px;
+            color: $sivanka-text;
+
+            svg { top: 0; }
+        }
+    }
+
+    // ---- The list itself ----
+    .navigation-offcanvas-list {
+        margin: 0;
+        padding: 0;
+    }
+
+    .navigation-offcanvas-link {
+        display: flex !important;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        min-height: 54px;
+        padding: 14px 16px !important;
+        border: 0 !important;
+        border-bottom: 1px solid $sivanka-card-border !important;
+        font-size: 15px;
+        font-weight: 500;
+        line-height: 1.35;
+        color: $sivanka-text !important;
+        text-decoration: none;
+
+        // hairline that fills in magenta on the active row
+        box-shadow: inset 3px 0 0 transparent;
+        transition: background 0.14s, box-shadow 0.14s;
+
+        &:active {
+            background: $sivanka-side-hover;
+        }
+
+        &.active {
+            color: $sivanka-primary !important;
+            font-weight: 600;
+            background: $sivanka-side-hover;
+            box-shadow: inset 3px 0 0 $sivanka-primary;
+        }
+    }
+
+    .navigation-offcanvas-label {
+        min-width: 0;
+        flex: 1 1 auto;
+
+        > span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+
+    // Chevron on rows that drill down
+    .navigation-offcanvas-link-icon {
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 22px;
+        height: 22px;
+        color: $sivanka-primary;
+
+        .icon,
+        svg {
+            width: 16px;
+            height: 16px;
+            color: inherit;
+        }
+
+        svg {
+            top: 0;
+        }
+
+        svg path {
+            fill: currentColor;
+        }
+    }
+
+    // "Show all products in this category" row reads as the primary action
+    .navigation-offcanvas-list .is-current-category {
+        font-weight: 600;
+        color: $sivanka-primary !important;
+        background: $sivanka-white;
+    }
+}
+
+// ============================================================
+//  Shared offcanvas close button (cart, account menu, tabs, cookie panels)
+//  Not wrapped in a breakpoint: the cart panel is the only way out on desktop too.
+// ============================================================
+.offcanvas-header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 12px 16px 0;
+    border: 0;
+}
+
+// Two class names so this outranks the `.offcanvas .offcanvas-close` block above, which
+// paints the icon white for the dark category menu.
+.offcanvas-close.ow-offcanvas-close {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: $ow-color-grey;
+    color: $sivanka-text;
+
+    .icon {
+        width: 18px;
+        height: 18px;
+        color: $sivanka-text;
+
+        svg {
+            top: 0;
+            width: 18px;
+            height: 18px;
+        }
+
+        svg path {
+            fill: currentColor;
+        }
+    }
+
+    &:hover,
+    &:focus {
+        background: $ow-color-grey-4;
+        color: $sivanka-text;
+    }
+}
+
+// The account menu markup is shared between the offcanvas (< md) and the dropdown panel
+// (>= md). `js-offcanvas-close` is only wired up inside an offcanvas, so in the dropdown
+// the button would be dead — hide the header there.
+.account-menu-dropdown > .offcanvas-header,
+.dropdown-menu > .offcanvas-header {
+    display: none;
+}

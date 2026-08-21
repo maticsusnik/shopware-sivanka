@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/trunk/src/Core/System/SystemConfig/Schema/config.xsd">
+
+    <card>
+        <title>Order export</title>
+        <title lang="de-DE">Auftragsexport</title>
+
+        <input-field type="bool">
+            <name>enableOrderExport</name>
+            <label>Send orders to Minimax</label>
+            <label lang="de-DE">Aufträge an Minimax senden</label>
+            <helpText>Off by default. While off, the export still runs and logs the exact payload it would send, but nothing is created in Minimax.</helpText>
+            <defaultValue>false</defaultValue>
+        </input-field>
+
+        <component name="sw-entity-single-select">
+            <name>orderExportState</name>
+            <entity>state_machine_state</entity>
+            <label>Select default order state for export</label>
+        </component>
+
+        <component name="sw-entity-multi-id-select">
+            <name>allowedOrderPaymentStateToExport</name>
+            <entity>state_machine_state</entity>
+            <label>Select allowed order payment state to export</label>
+        </component>
+
+        <input-field type="text">
+            <name>shippingItemCode</name>
+            <label>Minimax item code for shipping costs</label>
+            <label lang="de-DE">Minimax-Artikelcode für Versandkosten</label>
+            <helpText>Code of an item in Minimax representing shipping (e.g. "POSTNINA"). A Minimax order row carries no VAT rate of its own — it inherits it from the referenced item — so without this the shipping row is exported as free text with no VAT rate. Leave empty to keep the free-text row.</helpText>
+        </input-field>
+    </card>
+
+    <card>
+        <title>Product import</title>
+        <title lang="de-DE">Produktimport</title>
+
+        <input-field type="bool">
+            <name>minimaxItemPriceIncludesVat</name>
+            <label>Minimax item prices already include VAT</label>
+            <label lang="de-DE">Minimax-Artikelpreise enthalten bereits MwSt.</label>
+            <helpText>Leave off when the item price in Minimax is net (the Minimax default: its documents distinguish Price from PriceWithVAT). Turn on only if this organisation maintains gross item prices — otherwise the imported catalogue is off by the VAT rate.</helpText>
+            <defaultValue>false</defaultValue>
+        </input-field>
+    </card>
+
+</config>

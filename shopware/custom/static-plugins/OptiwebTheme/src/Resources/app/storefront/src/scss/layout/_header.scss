@@ -1,80 +1,668 @@
+// ---- Sivanka Header ----
 
-.header-logo {
-    &-main-link {
-        text-align: left;
+.header-main {
+    background: $sivanka-white;
+    border-bottom: 1px solid $sivanka-border;
+
+    .container {
+        padding-block: 10px;
+
+        @include media-breakpoint-up(lg) {
+            padding-block: 14px;
+        }
     }
 
-    &-col {
-        min-width: 130px;
+    // Remove Bootstrap row's extra padding classes (pt-3 pb-sm-3)
+    .row {
+        align-items: center;
+        flex-wrap: nowrap;
+        gap: 0;
+        padding: 0 !important;
+        margin-bottom: 0 !important;
+
+        // The search column goes full-width from md down, so the row has to be
+        // allowed to wrap at the same breakpoint — otherwise it is laid out on the
+        // same line as the actions and overhangs the viewport.
+        @include media-breakpoint-down(md) {
+            flex-wrap: wrap;
+        }
     }
 }
 
-.header-actions {
+// Logo column — flex:1 1 0 so it takes equal share of remaining space,
+// centering the fixed-width search between logo and actions
+.header-logo {
     &-col {
-        padding-left: 0;
-        padding-right: 14px;
+        flex: 1 1 0 !important;
+        width: auto !important;
+        max-width: none !important;
+        min-width: 0;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    &-main-link {
+        display: inline-flex;
+        align-items: center;
+        text-align: left;
+        max-width: 100%;
+    }
+
+    &-picture {
+        display: block;
+        max-width: 100%;
+        max-height: 46px;
+        width: auto;
+    }
+
+    // Constrain the actual image so it never overflows the logo column
+    &-main-img {
+        display: block;
+        width: auto;
+        height: auto;
+        max-width: 100%;
+        max-height: 46px;
+        object-fit: contain;
+    }
+}
+
+// Search bar column
+.header-search {
+    &-col {
+        flex: 0 0 460px;
+        max-width: 460px;
+        padding-inline: 0;
+
+        @include media-breakpoint-up(xl) {
+            flex: 0 0 520px;
+            max-width: 520px;
+        }
+
+        @include media-breakpoint-down(lg) {
+            flex: 0 0 360px;
+            max-width: 360px;
+        }
 
         @include media-breakpoint-down(md) {
-            padding-right: 0;
+            order: 3;
+            flex: 0 0 100%;
+            max-width: 100%;
         }
 
-        .icon {
-            color: $ow-color-black;
+        .row {
+            display: block;
         }
     }
 
-    &-btn {
-        padding-inline: 6px;
-    }
-}
-
-.header-search {
     max-width: 100%;
 
-    @include media-breakpoint-up(lg) {
-        width: 400px;
-    }
-
-    &-col {
-        @include media-breakpoint-up(md) {
-            padding-inline: 31px 26px;
+    // Padding sits on the collapse, not the column, so a closed search adds no height
+    @include media-breakpoint-down(md) {
+        #searchCollapse {
+            padding-top: 10px;
         }
     }
 
     &-form {
+        position: relative;
+
         .header-search-input {
-            padding-left: 44px;
-            border: 0;
-            background: $ow-color-grey-border;
+            width: 100%;
+            height: 46px;
+            border: 1.5px solid $sivanka-border !important;
+            border-radius: $sivanka-r8 !important;
+            padding: 0 52px 0 18px !important;
+            font-family: $sivanka-sans;
+            font-size: 14.5px;
+            color: $sivanka-text;
+            background: $sivanka-white !important;
+            transition: border-color 0.18s;
 
             &::placeholder {
-                color: $ow-color-black;
+                color: $sivanka-text-soft !important;
+            }
+
+            &:hover:not(:focus) {
+                border-color: #D9D3CE !important;
+                cursor: text;
+            }
+
+            // Keep a subtle focus ring for a11y instead of the browser outline
+            &:focus {
+                outline: none;
+                border-color: $sivanka-primary !important;
+                box-shadow: 0 0 0 3px rgba(160, 43, 107, 0.15);
             }
         }
 
-        .btn {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 44px;
-            z-index: 6;
-            border: 0;
-            text-overflow: unset;
-
-            .icon {
-                width: 20px;
-                height: 20px;
-                color: $ow-color-black;
-            }
-        }
-
+        // Search submit button — pink, right side
         .header-search-btn {
-            background: $ow-color-grey-border;
+            position: absolute;
+            right: 5px !important;
+            top: 5px !important;
+            left: auto !important;
+            width: 36px;
+            height: 36px;
+            border-radius: $sivanka-r8 !important;
+            background: $sivanka-primary !important;
+            color: $sivanka-white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            padding: 0;
+            z-index: 6;
+            cursor: pointer;
+
+            &:hover {
+                background: $sivanka-primary-hover !important;
+            }
+
+            // Inline magnifier SVG — stroke-based, perfectly centered
+            .header-search-svg {
+                width: 18px;
+                height: 18px;
+                display: block;
+                color: $sivanka-white;
+                stroke: currentColor;
+                fill: none;
+            }
+
+            // Loading — the spinner takes the glyph's place, the field stays editable
+            &.is-loading-indicator-before {
+                background: $sivanka-primary !important;
+                opacity: 1;
+
+                .header-search-svg {
+                    display: none;
+                }
+
+                .loader {
+                    margin: 0;
+                    border-color: rgba(255, 255, 255, 0.4);
+                    border-top-color: $sivanka-white;
+                }
+            }
+        }
+
+        // Hovering anywhere over the field darkens the submit button, matching the
+        // magenta hover used across the theme.
+        &:hover .header-search-btn:not(:disabled) {
+            background: $sivanka-primary-hover !important;
+        }
+
+        // Close button — hidden by default, shown by JS when input has text
+        .header-close-btn {
+            position: absolute;
+            right: 5px !important;
+            top: 5px !important;
+            left: auto !important;
+            width: 36px;
+            height: 36px;
+            border-radius: $sivanka-r8 !important;
+            background: $sivanka-primary !important;
+            color: $sivanka-white;
+            display: none; // default hidden
+            align-items: center;
+            justify-content: center;
+            border: none;
+            padding: 0;
+            z-index: 7; // sit above the submit button
+            cursor: pointer;
+
+            &:not(.d-none) {
+                display: flex !important; // shown when JS removes d-none
+            }
+
+            &:hover {
+                background: $sivanka-primary-hover !important;
+            }
+
+            // Center the X glyph inside the button, sized to match the magnifier
+            .header-close-icon {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 18px;
+                height: 18px;
+                line-height: 0;
+                svg {
+                    top:0;
+                }
+            }
+
+            .icon, svg {
+                display: block;
+                width: 18px;
+                height: 18px;
+
+                path {
+                    stroke: $sivanka-white !important;
+                }
+            }
+        }
+
+        // Filled — the close button is active (input has text), so hide the magnifier
+        // submit button and never show two magenta boxes in the same slot.
+        &:has(.header-close-btn:not(.d-none)) .header-search-btn {
+            display: none !important;
+        }
+
+        // Loading wins over filled: the spinner needs the slot back.
+        &:has(.header-search-btn.is-loading-indicator-before) {
+            .header-search-btn {
+                display: flex !important;
+            }
+
+            .header-close-btn {
+                display: none !important;
+            }
         }
     }
 }
 
-.list-group-item {
-    background: none;
+// Search-suggest dropdown — keep each result on ONE line (product image /
+// name / price) and the "show all results" row (link + total count) inline.
+// The `.header-search-col .row { display:block }` rule above cascades into the
+// suggest markup (which uses Bootstrap `.row`) and would otherwise stack them.
+.header-search-col .search-suggest {
+    background: $sivanka-white;
+    border: 1px solid $sivanka-border;
+    border-radius: $sivanka-r8;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+
+    // "No results" — a single, non-clickable meta row
+    .search-suggest-no-result {
+        font-family: $sivanka-sans;
+        font-size: 14px;
+        color: $sivanka-text-soft;
+        pointer-events: none;
+    }
+
+    .row {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+    }
+
+    .search-suggest-product-name {
+        min-width: 0; // allow the name column to shrink/ellipsize instead of wrapping the price away
+
+        a,
+        .search-suggest-product-name-link {
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+
+    .search-suggest-product-price {
+        white-space: nowrap;
+        text-align: right;
+    }
+
+    .search-suggest-total .row {
+        justify-content: space-between;
+    }
+}
+
+// Actions column — flex:1 1 0 with right alignment mirrors the logo column,
+// keeping the search bar perfectly centered
+.header-actions {
+    &-col {
+        flex: 1 1 0 !important;
+        width: auto !important;
+        max-width: none !important;
+        display: flex !important;
+        justify-content: flex-end;
+        align-items: center;
+        padding: 0 !important;
+
+        .row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: nowrap;
+        }
+    }
+
+    &-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        width: 74px;
+        color: $sivanka-text;
+        font-size: 11.5px;
+        font-weight: 500;
+        font-family: $sivanka-sans;
+        position: relative;
+        padding: 4px 6px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        line-height: 1.2;
+        border-radius: $sivanka-r8;
+        transition: color 0.18s;
+
+        &:hover {
+            color: $sivanka-primary;
+            background: none;
+
+            .icon {
+                color: $sivanka-primary;
+            }
+        }
+
+        &:focus {
+            box-shadow: none;
+        }
+
+        .icon {
+            width: 26px;
+            height: 26px;
+            color: $sivanka-text;
+            transition: color 0.18s;
+        }
+    }
+}
+
+// Ensure all action column children (col-auto wrappers) are vertically centered.
+// Exclude d-lg-none elements — in this build Bootstrap display utilities have no !important,
+// so a higher-specificity selector would unhide the mobile hamburger on desktop.
+.header-actions-col > .row > .col-auto:not(.d-lg-none):not(.d-none),
+.header-actions-col > .row > [class*="col-"]:not(.d-lg-none):not(.d-none) {
+    display: flex;
+    align-items: center;
+}
+
+// Icon-only actions: even 12px gap between account / wishlist / cart
+.header-actions-col > .row {
+    align-items: center;
+    gap: 12px;
+}
+
+// Reinforce Bootstrap responsive visibility for d-lg-none inside actions col
+@include media-breakpoint-up(lg) {
+    .header-actions-col .d-lg-none {
+        display: none !important;
+    }
+}
+
+// Hide wishlist badge when empty (no items in wishlist yet)
+.header-wishlist-badge:empty {
+    display: none !important;
+}
+
+// Cart widget
+.header-cart {
+    position: relative;
+
+    &.header-actions-btn,
+    .header-cart-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: auto;
+        padding: 4px 6px;
+
+        &:hover {
+            color: $sivanka-primary;
+        }
+    }
+
+    &-icon {
+        .icon {
+            width: 26px;
+            height: 26px;
+        }
+    }
+
+    // Count badge. Written as a descendant selector (`.header-cart .header-cart-badge`)
+    // so it outranks Bootstrap's `.badge.bg-primary.rounded-pill` utilities, which
+    // are all `!important` at (0,1,0) and were fighting the pink counter styling.
+    .header-cart-badge {
+        position: absolute !important;
+        top: 6px !important;
+        right: -2px !important;
+        left: auto !important;
+        box-sizing: border-box !important;
+        min-width: 16px !important;
+        width: auto !important;
+        height: 16px !important;
+        padding: 0 4px !important;
+        background-color: $sivanka-primary !important;
+        color: $sivanka-white !important;
+        font-size: 10px !important;
+        font-weight: 700 !important;
+        line-height: 1 !important;
+        border-radius: 8px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+
+        &:empty {
+            display: none !important;
+        }
+    }
+
+    &-total {
+        display: none;
+    }
+}
+
+// Wishlist widget
+.header-wishlist {
+    position: relative;
+
+    &.header-actions-btn,
+    .header-wishlist-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: auto;
+        padding: 4px 6px;
+
+        &:hover {
+            color: $sivanka-primary;
+        }
+    }
+
+    &-icon {
+        .icon {
+            width: 26px;
+            height: 26px;
+        }
+    }
+
+    &-badge {
+        position: absolute !important;
+        top: -3px !important;
+        right: -3px !important;
+        background: $sivanka-primary !important;
+        color: $sivanka-white !important;
+        font-size: 10px !important;
+        font-weight: 700 !important;
+        min-width: 16px;
+        height: 16px;
+        border-radius: 8px !important;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        padding: 0 3px !important;
+        line-height: 1;
+    }
+}
+
+// Account menu button
+.account-menu {
+    &-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: $sivanka-text;
+        font-size: 11.5px;
+        font-weight: 500;
+        font-family: $sivanka-sans;
+        position: relative;
+        width: auto;
+        padding: 4px 6px;
+        background: none;
+        border: none;
+        line-height: 1.2;
+        border-radius: $sivanka-r8;
+        transition: color 0.18s;
+        cursor: pointer;
+
+        &:hover {
+            color: $sivanka-primary;
+            background: none;
+
+            .icon {
+                color: $sivanka-primary;
+            }
+        }
+
+        .icon {
+            width: 26px;
+            height: 26px;
+            color: $sivanka-text;
+            transition: color 0.18s;
+        }
+
+        &:focus, &:focus-visible {
+            box-shadow: none;
+            outline: none;
+        }
+    }
+
+    &-login {
+        border: 0;
+        padding-bottom: 0;
+    }
+
+    &-header {
+        border: none;
+    }
+
+    &-links {
+        // Bootstrap paints `.list-group-item` white, which showed as white rows on the
+        // beige dropdown panel. Let the panel's own background come through.
+        .list-group-item {
+            background: transparent;
+            border-color: transparent;
+        }
+
+        .list-group-item,
+        .btn-link {
+            @include fontSpecs(14, 20, 400);
+            color: $sivanka-text;
+            text-decoration: none;
+
+            &:hover {
+                color: $sivanka-primary;
+                background: none;
+
+                .icon {
+                    color: $sivanka-primary;
+                }
+            }
+        }
+
+        .icon {
+            width: 1rem;
+            height: 1rem;
+        }
+    }
+
+    &-offcanvas {
+        .offcanvas-footer {
+            display: none;
+        }
+    }
+
+    .dropdown-menu {
+        padding: 1rem 1.5rem;
+    }
+}
+
+// Unify the icon row across account / wishlist / cart so the labels below
+// all sit on the same baseline (account previously had no icon wrapper).
+.header-account-icon,
+.header-cart-icon,
+.header-wishlist-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 27px;
+    line-height: 0;
+
+    .icon {
+        width: 26px;
+        height: 26px;
+    }
+
+    svg {
+        display: block;
+    }
+}
+
+// Action labels removed — icons only across the header actions
+.header-action-label {
+    display: none;
+}
+
+.modal-open .header-search-form .btn {
+    z-index: 1;
+}
+
+@include media-breakpoint-up(sm) {
+    .header-cart-badge {
+        display: flex;
+    }
+}
+
+// ---- Mobile / tablet header: compact logo + icon-only actions so nothing overlaps ----
+@include media-breakpoint-down(lg) {
+    .header-logo-picture,
+    .header-logo-main-img {
+        max-height: 34px;
+    }
+
+    // Icon-only action buttons on small screens (labels would overflow next to a wide logo)
+    .header-action-label {
+        display: none;
+    }
+
+    .header-actions-btn,
+    .account-menu-btn,
+    .header-cart.header-actions-btn,
+    .header-cart .header-cart-btn,
+    .header-wishlist.header-actions-btn,
+    .header-wishlist .header-wishlist-btn {
+        width: auto;
+        min-width: 0;
+        padding: 4px 6px;
+    }
+
+    .header-actions-col > .row {
+        gap: 12px;
+    }
+
+    .header-account-icon,
+    .header-cart-icon,
+    .header-wishlist-icon {
+        height: auto;
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    .header-logo-picture,
+    .header-logo-main-img {
+        max-height: 30px;
+    }
 }

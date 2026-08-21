@@ -1,43 +1,40 @@
 
 .category-navigation {
-    padding: 0;
-    background: $ow-color-grey;
+    // White, rounded, bordered card holding the subcategory pills (design mock)
+    padding: 8px !important; // override the ul list reset that zeroes padding-left
+    background: $sivanka-white;
+    border: 1px solid $sivanka-card-border;
+    border-radius: $sivanka-r16;
 
     &-box {
         padding-inline: 0;
         width: 100%;
     }
 
-    &-link {
-        @include fontSpecs(16, 24, 400, false, true);
-        color: $ow-color-grey-9;
-        text-decoration: none;
-        padding-block: 0.75rem;
+    // "Izdelki" back-link that sits ABOVE the card (it is a sibling of the list)
+    &-title {
+        font-family: $sivanka-sans;
+        @include fontSpecs(15, 22, 600, false, false);
+        color: $sivanka-text;
         padding-inline: 0;
-        border-bottom: 1px solid $ow-color-grey-4;
+        padding-block: 0;
+        margin-bottom: 14px;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
 
         &:hover {
-            background: $ow-color-grey-4;
+            background: none;
+            color: $sivanka-primary;
         }
-
-        &.is-active {
-            color: $ow-color-black;
-            font-weight: 700;
-        }
-    }
-
-    &-title {
-        @include fontSpecs(20, 32, 700, false, true);
-        color: $ow-color-black;
-        padding-inline: 1rem;
-        border: none;
 
         &:before {
             content: "";
             display: inline-block;
             vertical-align: middle;
-            width: 1.5rem;
-            height: 1.5rem;
+            width: 1.15rem;
+            height: 1.15rem;
             background-image: url("#{$assets-path}/images/arrow-left.svg");
             background-position: 50%;
             background-repeat: no-repeat;
@@ -46,17 +43,37 @@
         }
     }
 
+    // Subcategory pills
     .category-navigation-entry {
         border-bottom: none !important;
-        padding-inline: 1rem;
-        margin-top: -1px;
+        padding-inline: 0;
+        margin-top: 0;
+        background: transparent;
 
         &:hover, &:focus {
-            background: $ow-color-grey-4;
+            background: transparent;
         }
 
-        &:last-child .category-navigation-link {
-            border-bottom: 0;
+        .category-navigation-link {
+            @include fontSpecs(14.5, 20, 500, false, false);
+            display: block;
+            color: #4a545b;
+            text-decoration: none;
+            padding: 11px 14px;
+            border: none;
+            border-radius: 10px;
+            transition: background 0.16s, color 0.16s;
+
+            &:hover {
+                background: $sivanka-side-hover;
+                color: $sivanka-primary;
+            }
+
+            &.is-active {
+                background: $sivanka-side-hover;
+                color: $sivanka-primary;
+                font-weight: 600;
+            }
         }
     }
 

@@ -39,22 +39,29 @@
             <div class="image-slider-container"
                  data-base-slider-container="true">
                 {% for slide in slides %}
-                    <div class="image-slider-item-container">
+                    {% set textColorToken = (slide.textColor|default('white')) in ['white', 'black'] ? slide.textColor|default('white') : 'white' %}
+                    <div class="image-slider-item-container color-{{ textColorToken }}">
                         <div class="image-slider-item {% if loop.first != true %} is-not-first{% endif %} is-cover "{% if sliderConfig.minHeight.value and sliderConfig.displayMode.value == "cover" %} style="min-height: {{ sliderConfig.minHeight.value|trim|replace({' ':''}) }}"{% endif %}>
-                            {% set attributes = {
-                                'class': 'img-fluid image-slider-image',
-                                'alt':slide.image.translated.alt ?: '',
-                                'title': slide.image.translated.title ?: '',
-                                'tabindex': (slide.image.url ? '-1' : '0'),
-                                'data-object-fit': imageDisplayMode
+                            {% set mainSliderImgAttributes = {
+                                class: 'img-fluid image-slider-image',
+                                alt: slide.image.translated.alt ?: '',
+                                title: slide.image.translated.title ?: '',
+                                tabindex: slide.image.url ? '-1' : '0',
+                                'data-object-fit': imageDisplayMode,
                             } %}
+                            {% if loop.first %}
+                                {% set mainSliderImgAttributes = mainSliderImgAttributes|merge({
+                                    loading: 'eager',
+                                    fetchpriority: 'high',
+                                }) %}
+                            {% endif %}
 
                             {% sw_thumbnails 'cms-image-slider-thumbnails' with {
-                                media: slide.image
+                                media: slide.image,
+                                attributes: mainSliderImgAttributes,
                             } %}
                         </div>
                         <div class="ow-main-slider__slide-content">
-                            <div class="ow-main-slider__slide-content-overlay"></div>
                             <div class="container">
                                 <div class="ow-main-slider__slide-content-text">
                                     <h1 class="ow-main-slider__slide-content-title">{{ slide.title }}</h1>
@@ -66,8 +73,10 @@
                             </div>
                         </div>
                         <div class="ow-main-slider__slide-description-wrapper">
-                            <div class="ow-main-slider__slide-description">
-                                <p class="ow-main-slider__slide-description-text">{{ slide.description }}</p>
+                            <div class="container">
+                                <div class="ow-main-slider__slide-description">
+                                    <p class="ow-main-slider__slide-description-text">{{ slide.description }}</p>
+                                </div>
                             </div>
                         </div>
                     </div>

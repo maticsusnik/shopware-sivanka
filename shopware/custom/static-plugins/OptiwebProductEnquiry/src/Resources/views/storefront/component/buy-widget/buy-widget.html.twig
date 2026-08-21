@@ -2,13 +2,13 @@
 
 {% block page_product_detail_enquiry_form_container %}
     {% set configEnquiryForm = config("OptiwebProductEnquiry.config.enquiryForm") %}
-    
+
     {# Check if product is marked as not sellable (set by ProductAvailabilitySubscriber) #}
     {% set isNotSellable = page.product.customFields._isNotSellable ?? false %}
-    
+
     {# Show enquiry button if product is not available OR marked as not sellable #}
     {% set showEnquiryButton = (not page.product.available) or isNotSellable %}
-    
+
     {% if configEnquiryForm and showEnquiryButton %}
         <div class="product-enquiry-form mt-negative {% if price.unitPrice > 0 %}price-with-no-stock{% endif %}">
             <a class="btn btn-light btn-block btn-send-enquiry"

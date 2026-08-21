@@ -4,7 +4,9 @@
 {% set searchWidgetOptions = { searchWidgetMinChars: shopware.minSearchLength } %}
 
 {% block layout_header_search %}
-    <div id="searchCollapse">
+    {# `collapse` drives the phone toggle; `d-sm-block` forces it permanently open from
+       sm up, so the desktop header is unaffected by the collapse state. #}
+    <div class="collapse d-sm-block" id="searchCollapse">
         <div class="header-search">
             {% block layout_header_search_form %}
                 {{ parent() }}
@@ -19,16 +21,18 @@
         <button type="submit"
                 class="btn header-search-btn"
                 aria-label="{{ 'header.searchButton'|trans|striptags }}">
-                <span class="header-search-icon">
-                    {% sw_icon 'search' style {pack: 'ow'} %}
-                </span>
+                <svg class="header-search-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="11" cy="11" r="7"></circle>
+                    <path d="m21 21-4.3-4.3"></path>
+                </svg>
         </button>
     {% endblock %}
 
+    {# Shown in place of the magnifier once the field holds text (SearchClear plugin) #}
     {% block layout_header_close_button %}
         <button class="btn header-close-btn js-search-close-btn d-none"
                 type="button"
-                aria-label="{{ 'header.searchCloseButton'|trans|striptags }}">
+                aria-label="{{ 'sivanka.searchClear'|trans|striptags|default('Počisti iskanje') }}">
                 <span class="header-close-icon">
                     {% sw_icon 'close' style {pack: 'ow'} %}
                 </span>

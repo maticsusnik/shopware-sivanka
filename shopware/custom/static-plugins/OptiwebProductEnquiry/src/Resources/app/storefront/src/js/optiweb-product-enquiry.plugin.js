@@ -1,253 +1,161 @@
-import FormCmsHandler from 'src/plugin/forms/form-cms-handler.plugin';
+import Plugin from 'src/plugin-system/plugin.class';
 
-export default class OptiwebProductEnquiryPlugin extends FormCmsHandler {
+export default class OptiwebProductEnquiryPlugin extends Plugin {
+
     init() {
-        // Find the form element within the wrapper div
-        const form = this.el.querySelector('form');
-        if (form) {
-            // Temporarily store the original el
-            this._originalEl = this.el;
-            // Set el to the form element for FormCmsHandler to work properly
-            this.el = form;
-        }
-        super.init();
-        
-        // Initialize field validation listeners
+        this._wrapper = this.el;
+        this._form = this.el.querySelector('form') ?? this.el.closest('form');
+        if (!this._form) return;
+
+        this._form.addEventListener('submit', (e) => this._onSubmit(e));
         this._initFieldValidation();
     }
-    
-    /**
-     * Initialize field validation listeners
-     * @private
-     */
+
     _initFieldValidation() {
-        const form = this.el;
-        if (!form) {
+        this._form.querySelectorAll('input, textarea, select').forEach((field) => {
+            field.addEventListener('input', () => this._validateField(field));
+            field.addEventListener('blur', () => this._validateField(field));
+        });
+    }
+
+    _validateField(field) {
+        field.setCustomValidity('');
+        if (field.dataset.serverError) {
+            delete field.dataset.serverError;
+        }
+
+        const feedback = field.parentElement?.querySelector('.invalid-feedback');
+
+        if (!field.value && field.type !== 'checkbox' && !field.required) {
+            field.classList.remove('is-valid', 'is-invalid');
             return;
         }
-        
-        // Listen to input events to validate fields in real-time
-        const fields = form.querySelectorAll('input, textarea, select');
-        fields.forEach((field) => {
-            // Validate on input (user typing)
-            field.addEventListener('input', () => {
-                this._validateField(field);
-            });
-            
-            // Validate on blur (field loses focus)
-            field.addEventListener('blur', () => {
-                this._validateField(field);
-            });
-        });
-    }
-    
-    /**
-     * Validate a single field
-     * @param {HTMLElement} field
-     * @private
-     */
-    _validateField(field) {
-        // Clear any custom validity that might block submission
-        field.setCustomValidity('');
-        
-        // Clear server error flag when user starts interacting with the field
-        if (field.hasAttribute('data-server-error')) {
-            field.removeAttribute('data-server-error');
-        }
-        
-        // Check if field is valid
-        if (field.checkValidity() && field.value && field.value.trim() !== '') {
-            // Field is valid
-            field.classList.remove('is-invalid');
+
+        if (field.checkValidity()) {
             field.classList.add('is-valid');
+            field.classList.remove('is-invalid');
             field.removeAttribute('aria-invalid');
-            
-            // Hide error message
-            const errorElement = field.parentElement.querySelector('.invalid-feedback');
-            if (errorElement) {
-                errorElement.style.display = 'none';
-            }
-        } else if (field.hasAttribute('required') && (!field.value || field.value.trim() === '')) {
-            // Required field is empty
-            field.classList.remove('is-valid');
-            field.classList.add('is-invalid');
-            field.setAttribute('aria-invalid', 'true');
-        } else if (!field.checkValidity()) {
-            // Field is invalid
-            field.classList.remove('is-valid');
-            field.classList.add('is-invalid');
-            field.setAttribute('aria-invalid', 'true');
+            if (feedback) feedback.style.display = 'none';
         } else {
-            // Field is optional and empty - neutral state
-            field.classList.remove('is-valid', 'is-invalid');
-            field.removeAttribute('aria-invalid');
+            field.classList.add('is-invalid');
+            field.classList.remove('is-valid');
+            field.setAttribute('aria-invalid', 'true');
         }
     }
 
-    _submitForm() {
-        const products = this._getProductEnquiryItems();
+    _onSubmit(e) {
+        e.preventDefault();
+        if (this._isSubmitting) {
+            return;
+        }
+        if (!this._form.checkValidity()) {
+            this._form.reportValidity();
+            return;
+        }
 
-        // Google Analytics / GTM tracking
         if (window.dataLayer) {
             window.dataLayer.push({
-                'event': 'productEnquiry',
-                'ecommerce': {
-                    'productEnquiry': {
-                        'products': products
-                    }
-                }
+                event: 'productEnquiry',
+                ecommerce: {
+                    items: [{
+                        id: this._getFieldValue('product_id'),
+                        name: this._getFieldValue('product_name'),
+                        product_number: this._getFieldValue('product_number'),
+                        variant: this._getFieldValue('product_option'),
+                    }],
+                },
             });
         }
 
-        super._submitForm();
+        this._submit();
+    }
+
+    _submit() {
+        const formData = new FormData(this._form);
+
+        this._setLoading(true);
+
+        fetch(this._form.action, {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        })
+            .then((res) => res.json())
+            .then((data) => this._handleResponse(data))
+            .catch(() => this._showAlert('danger', 'Prišlo je do nepričakovane napake. Prosimo, poskusite znova.'))
+            .finally(() => this._setLoading(false));
     }
 
     /**
-     * Get product enquiry items for tracking
-     * @returns {Array}
-     * @private
+     * Blocks the submit button while the request is in flight so an impatient second
+     * click cannot fire the enquiry twice.
      */
-    _getProductEnquiryItems() {
-        return [{
-            'id': this._getValueFromInput('product_id'),
-            'name': this._getValueFromInput('product_name'),
-            'product_number': this._getValueFromInput('product_number'),
-            'variant': this._getValueFromInput('product_option'),
-        }];
+    _setLoading(isLoading) {
+        const button = this._form.querySelector('button[type="submit"], input[type="submit"]');
+        if (!button) return;
+
+        this._isSubmitting = isLoading;
+        button.disabled = isLoading;
+        button.classList.toggle('is-loading', isLoading);
+        this._form.classList.toggle('is-submitting', isLoading);
     }
 
-    /**
-     * Get value from input field
-     * @param {string} name
-     * @returns {string}
-     * @private
-     */
-    _getValueFromInput(name) {
-        const input = this.el.querySelector(`input[name="${name}"]`);
-        return input ? input.value : '';
-    }
-
-    _handleResponse(res) {
-        const response = JSON.parse(res);
-        this.$emitter.publish('onFormResponse', res);
-
-        this.el.dispatchEvent(new CustomEvent('removeLoader'));
-
-        if (response.length > 0) {
-            let changeContent = true;
-            let content = '';
-            
-            for (let i = 0; i < response.length; i += 1) {
-                if (response[i].type === 'danger' || response[i].type === 'info') {
-                    changeContent = false;
-                    
-                    // Handle field-specific errors from server
-                    if (response[i].fieldErrors && typeof response[i].fieldErrors === 'object') {
-                        this._handleFieldErrors(response[i].fieldErrors);
-                    }
-                }
-                content += response[i].alert;
-            }
-
-            // Reset form after successful submission to clear form contents.
-            if (changeContent) {
-                this.el.reset();
-                this._clearAllFieldErrors();
-            }
-
-            this._createResponse(changeContent, content);
-        } else {
-            window.location.reload();
+    _handleResponse(response) {
+        if (response.fieldErrors) {
+            this._handleFieldErrors(response.fieldErrors);
         }
+
+        const alerts = response.alerts ?? [];
+
+        if (response.type === 'success') {
+            const message = alerts[0]?.content ?? '';
+            this._wrapper.innerHTML = `<div class="enquiry-success"><p>${message}</p></div>`;
+            return;
+        }
+
+        alerts.forEach((alert) => {
+            this._showAlert(alert.type, alert.content);
+        });
     }
-    
-    /**
-     * Handle field-specific errors from server response
-     * @param {Object} fieldErrors
-     * @private
-     */
+
+    _showAlert(type, message) {
+        const existing = this._wrapper.querySelector('.enquiry-inline-alert');
+        if (existing) existing.remove();
+        this._wrapper.insertAdjacentHTML('afterbegin', `<div class="alert alert-${type} enquiry-inline-alert">${message}</div>`);
+    }
+
     _handleFieldErrors(fieldErrors) {
-        // Mark each field with error from server
-        Object.keys(fieldErrors).forEach((fieldName) => {
-            const field = this.el.querySelector(`[name="${fieldName}"]`);
-            if (field) {
-                // Remove valid state
-                field.classList.remove('is-valid');
-                // Add invalid state
-                field.classList.add('is-invalid');
-                field.setAttribute('aria-invalid', 'true');
-                // Mark as server error - but allow re-validation when user types
-                field.setAttribute('data-server-error', 'true');
-                // Clear any custom validity to allow form submission after fixing
-                field.setCustomValidity('');
-                
-                // Find or create error message element
-                let errorElement = field.parentElement.querySelector('.invalid-feedback');
-                if (!errorElement) {
-                    errorElement = document.createElement('div');
-                    errorElement.className = 'invalid-feedback';
-                    field.parentElement.appendChild(errorElement);
-                }
-                errorElement.textContent = fieldErrors[fieldName];
-                errorElement.style.display = 'block';
-                
-                // Hide any valid feedback
-                const validFeedback = field.parentElement.querySelector('.valid-feedback');
-                if (validFeedback) {
-                    validFeedback.style.display = 'none';
-                }
-            }
-        });
-        
-        // Scroll to first error field
-        const firstErrorField = this.el.querySelector('.is-invalid');
-        if (firstErrorField) {
-            setTimeout(() => {
-                firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                firstErrorField.focus();
-            }, 100);
-        }
-    }
-    
-    /**
-     * Clear all field errors
-     * @private
-     */
-    _clearAllFieldErrors() {
-        const invalidFields = this.el.querySelectorAll('.is-invalid');
-        invalidFields.forEach((field) => {
-            field.classList.remove('is-invalid');
-            field.removeAttribute('aria-invalid');
-            field.removeAttribute('data-server-error');
-            // Clear any custom validity
-            field.setCustomValidity('');
-            
-            const errorElement = field.parentElement.querySelector('.invalid-feedback');
-            if (errorElement) {
-                errorElement.style.display = 'none';
-            }
-        });
-        
-        // Also clear all valid states
-        const validFields = this.el.querySelectorAll('.is-valid');
-        validFields.forEach((field) => {
+        let firstErrorField = null;
+
+        Object.entries(fieldErrors).forEach(([fieldName, errorMessage]) => {
+            const field = this._form.querySelector(`[name="${fieldName}"]`);
+            if (!field) return;
+
+            field.classList.add('is-invalid');
             field.classList.remove('is-valid');
+            field.setAttribute('aria-invalid', 'true');
+            field.dataset.serverError = 'true';
+            field.setCustomValidity(errorMessage);
+
+            let feedback = field.parentElement?.querySelector('.invalid-feedback');
+            if (!feedback) {
+                feedback = document.createElement('div');
+                feedback.className = 'invalid-feedback';
+                field.insertAdjacentElement('afterend', feedback);
+            }
+            feedback.textContent = errorMessage;
+            feedback.style.display = 'block';
+
+            if (!firstErrorField) firstErrorField = field;
         });
-        
-        // Clear custom validity from all fields to ensure form can be submitted
-        const allFields = this.el.querySelectorAll('input, textarea, select');
-        allFields.forEach((field) => {
-            field.setCustomValidity('');
-        });
+
+        if (firstErrorField) {
+            firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            firstErrorField.focus();
+        }
     }
 
-    _createResponse(changeContent, content) {
-        super._createResponse(changeContent, content);
-
-        // Show close button if available
-        const closeButton = document.querySelector('.enquiry-form-close');
-        if (closeButton) {
-            closeButton.classList.remove('d-none');
-        }
+    _getFieldValue(name) {
+        return this._form.querySelector(`input[name="${name}"]`)?.value ?? '';
     }
 }

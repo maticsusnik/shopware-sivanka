@@ -33,5 +33,22 @@
             }
         }
 
+        &.text-right-over-image {
+            .sw-cms-block-img-text__content {
+                background: #189EFF;
+                padding: 40px;
+
+                button {
+                    background: white;
+                    color: #189EFF;
+                }
+            }
+        }
+
+        &.text-left-next-to-image {
+            .sw-cms-block-img-text__image {
+                order: 2;
+            }
+        }
     }
 }

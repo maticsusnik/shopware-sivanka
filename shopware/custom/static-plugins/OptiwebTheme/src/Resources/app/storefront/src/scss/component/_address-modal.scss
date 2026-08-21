@@ -1,7 +1,31 @@
 .address-manager-modal {
-    .address-manager-select-address .dropdown,
-    .address-manager-modal-address-form,
+    // The tab strip stays hidden: the confirm page opens this modal already scoped to
+    // one address via its own "Spremeni naslov pošiljanja" / "…za obračunavanje" buttons,
+    // so the in-modal shipping/billing tabs would be a duplicate control.
+    //
+    // The per-address options dropdown and the add/edit form triggers used to be hidden
+    // here as well, which left customers unable to add a second address or edit an
+    // existing one during checkout. They are intentionally visible again.
     .address-manager-modal-tab-navigation-list {
-        display:none;
+        display: none;
+    }
+}
+
+// Core renders the modal's cancel action as `.btn-secondary`, which compiles to solid
+// black and reads as a second primary action next to the pink "Spremeni naslov".
+// Give it the neutral outline the rest of the design uses for cancel actions.
+.address-manager-modal,
+.address-editor-modal {
+    .modal-footer .btn-secondary {
+        background-color: transparent;
+        border-color: $sivanka-divider;
+        color: $sivanka-text;
+
+        &:hover,
+        &:focus {
+            background-color: $sivanka-side-hover;
+            border-color: $sivanka-primary;
+            color: $sivanka-primary;
+        }
     }
 }

@@ -1,0 +1,82 @@
+# config/services.yaml or src/Resources/config/services.yaml
+
+services:
+  # Auto-load your entire plugin/service folder
+  OptiwebSync\:
+    resource: '../../*'
+    exclude:
+      - '../../DependencyInjection/'
+      - '../../Entity/'
+      - '../../Migration/'
+      - '../../Migrations/'
+      - '../../Tests/'
+    autowire: true
+    autoconfigure: true
+
+  # Raw HTTP client (plain Symfony, no Shopware middleware)
+  http_client.raw:
+    class: Symfony\Contracts\HttpClient\HttpClientInterface
+    factory: ['Symfony\Component\HttpClient\HttpClient', 'create']
+
+  # Shopware admin API client — used for the few writes that go through the
+  # sync API (product upserts) rather than the DAL.
+  OptiwebSync\Client\ShopwareClient:
+    arguments:
+      $client: '@http_client.raw'
+    public: true
+
+  # Minimax API client
+  OptiwebSync\Client\MinimaxClient:
+    arguments:
+      $client: '@http_client.raw'
+    public: true
+
+  # Auto-tag all classes that implement the interface
+  _instanceof:
+    OptiwebSync\Service\SyncBase\SyncBaseInterface:
+      tags: ['optiweb.sync_base']
+
+  # SyncCommand with tagged iterator injected
+  OptiwebSync\Command\SyncCommand:
+    arguments:
+      $syncServices: !tagged_iterator 'optiweb.sync_base'
+    tags: ['console.command']
+
+  OptiwebSync\Command\ScheduledTaskUpdateStatusCommand:
+    tags: ['console.command']
+
+  OptiwebSync\Service\Product\ProductSync:
+    autowire: true
+    autoconfigure: true
+    arguments:
+      $minimaxClient: '@OptiwebSync\Client\MinimaxClient'
+      $shopwareClient: '@OptiwebSync\Client\ShopwareClient'
+
+  OptiwebSync\ScheduledTask\Product\ImportProductsTaskHandler:
+    arguments:
+      $scheduledTaskRepository: '@scheduled_task.repository'
+      $exceptionLogger: '@monolog.logger'
+      $productSync: '@OptiwebSync\Service\Product\ProductSync'
+    tags:
+      - { name: 'messenger.message_handler' }
+
+  OptiwebSync\Service\Order\OrderExportSync:
+    autowire: true
+    autoconfigure: true
+    arguments:
+      $minimaxClient: '@OptiwebSync\Client\MinimaxClient'
+      $orderRepository: '@order.repository'
+
+  OptiwebSync\ScheduledTask\Order\ExportOrdersTaskHandler:
+    arguments:
+      $scheduledTaskRepository: '@scheduled_task.repository'
+      $exceptionLogger: '@monolog.logger'
+      $exportOrdersSync: '@OptiwebSync\Service\Order\OrderExportSync'
+    tags:
+      - { name: 'messenger.message_handler' }
+
+  OptiwebSync\Storefront\Subscriber\OrderListener:
+    arguments:
+      $orderRepository: '@order.repository'
+    tags:
+      - { name: 'kernel.event_subscriber' }

@@ -14,7 +14,21 @@
 }
 
 .nav-main {
-    border-bottom: 1px solid $ow-color-grey;
+    border-bottom: 1px solid $sivanka-border;
+    background-color: $sivanka-white;
+
+    .navbar-nav {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: 50px;
+
+        li {
+            &:nth-child(2) {
+                margin-left: auto;
+            }
+        }
+    }
 }
 
 .main-menu {
@@ -36,20 +50,121 @@
     padding: 0;
 
     .nav-link {
-        @include fontSpecs(18, 24, 700, 0.27, true);
-        padding-block: 0.5rem 1.5rem;
+        font-family: $sivanka-sans;
+        font-size: 16px;
+        font-weight: 500;
+        padding-block: 0;
+        color: $sivanka-text;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        position: relative;
+        letter-spacing: normal;
+        line-height: 1;
+
+        // Keep any leading/trailing icon vertically centered with the label
+        .icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            svg {
+                top: -2px;
+            }
+        }
+
+        .main-navigation-link-text {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding-bottom:0;
+        }
+
+        &::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -3px;
+            height: 2.5px;
+            background: $sivanka-primary;
+            transform: scaleX(0);
+            transition: transform 0.2s;
+        }
 
         &:hover, &:focus, &:focus-visible {
-            color: $ow-color-base;
+            color: $sivanka-primary;
             box-shadow: none;
+
+            &::after {
+                transform: scaleX(1);
+            }
+        }
+
+        &.active {
+            color: $sivanka-text;
+        }
+
+        &.mega-menu-link {
+            cursor: pointer;
+            color: $sivanka-text !important;
+
+            &:hover, &:focus, &:focus-visible {
+                color: $sivanka-text !important;
+            }
+
+            &::after {
+                display: none;
+            }
         }
     }
 
     .nav-item {
+        display: flex;
+        align-items: center;
 
         &:not(:last-child) {
-            @include padding('right', 48, true);
+            @include padding('right', 32, true);
         }
+    }
+}
+
+// Override mega-menu flyout hover: bold text, no underline
+.ow-mega-menu,
+.navigation-offcanvas-desktop {
+    .navigation-flyout-categories {
+        .nav-item {
+            &:hover, &.is-active {
+                text-decoration: none !important;
+                font-weight: 700;
+            }
+        }
+    }
+
+    .navigation-flyout-link {
+        &:hover {
+            text-decoration: none !important;
+        }
+
+        &.is-active, &:hover {
+            font-weight: 700;
+        }
+    }
+}
+
+// Mobile/tablet nav toggle — no purple hover
+.nav-main-toggle-btn {
+    color: $sivanka-text;
+
+    &:hover {
+        color: $sivanka-text;
+        background: none;
+    }
+
+    .icon {
+        width: 22px;
+        height: 22px;
+        color: $sivanka-text;
     }
 }
 
@@ -110,7 +225,7 @@
             }
 
             &.is-active, &:hover {
-                text-decoration: underline;
+                text-decoration: none;
             }
 
             &:focus-visible {
@@ -179,7 +294,7 @@
             padding-inline: 1rem;
 
             &.is-active, &:hover {
-                text-decoration: underline;
+                text-decoration: none;
                 color: inherit;
                 font-weight: 700;
             }

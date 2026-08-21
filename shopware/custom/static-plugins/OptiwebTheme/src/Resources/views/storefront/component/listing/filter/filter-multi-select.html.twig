@@ -1,8 +1,14 @@
 {% sw_extends '@Storefront/storefront/component/listing/filter/filter-multi-select.html.twig' %}
 
 {% block component_filter_multi_select_toggle %}
-    <button class="filter-panel-item-toggle btn{% if sidebar %} btn-block{% endif %}"
-            aria-expanded="true"
+    {% set collapsed = "collapsed" %}
+    {% set expanded = "false" %}
+    {% if name == "manufacturer" %}
+        {% set collapsed = "" %}
+        {% set expanded = "true" %}
+    {% endif %}
+    <button class="filter-panel-item-toggle btn{% if sidebar %} btn-block{% endif %} {{ collapsed }}"
+            aria-expanded= {{ expanded }}
             {% if sidebar %}
         data-bs-toggle="collapse"
         data-bs-target="#{{ filterItemId }}"
@@ -26,7 +32,13 @@
 
 
 {% block component_filter_multi_select_dropdown %}
-    <div class="filter-multi-select-dropdown filter-panel-item-dropdown{% if sidebar %} collapse{% else %} dropdown-menu{% endif %} show"
+
+    {% set show = "" %}
+    {% if name == "manufacturer" %}
+        {% set show = "show" %}
+    {% endif %}
+
+    <div class="filter-multi-select-dropdown filter-panel-item-dropdown{% if sidebar %} collapse{% else %} dropdown-menu{% endif %} {{ show }}"
          id="{{ filterItemId }}">
         {% block component_filter_multi_select_list %}
             <ul class="filter-multi-select-list">
@@ -40,20 +52,6 @@
                     {% endblock %}
                 {% endfor %}
             </ul>
-            <div data-state="show" class="filter-show-all d-none">
-                <div class="show">
-                    {% sw_icon 'plus' style {
-                        'pack': 'ow', 'class': 'filter-show-all'
-                    } %}
-                    <span class="text">{{ 'optiweb.listing.filter.show'|trans }}</span>
-                </div>
-                <div class="hide">
-                    {% sw_icon 'close' style {
-                        'pack': 'ow', 'class': 'filter-show-all'
-                    } %}
-                    <span class="text">{{ 'optiweb.listing.filter.hide'|trans }}</span>
-                </div>
-            </div>
         {% endblock %}
     </div>
 {% endblock %}

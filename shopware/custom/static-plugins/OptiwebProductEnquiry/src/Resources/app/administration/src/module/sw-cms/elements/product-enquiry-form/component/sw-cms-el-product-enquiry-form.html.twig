@@ -1,12 +1,8 @@
 {% block sw_cms_el_product_enquiry_form %}
     <div class="sw-cms-el-product-enquiry-form">
         <div class="sw-cms-el-product-enquiry-form__content">
-                <div class="sw-cms-el-product-enquiry-form__title">
-                    Product Enquiry Form
-                </div>
-                <div class="sw-cms-el-product-enquiry-form__description">
-                    A form for customers to enquire about products
-                </div>
+            <p class="sw-cms-el-product-enquiry-form__title">{{ element.config.title.value || 'Product Enquiry Form' }}</p>
+            <p class="sw-cms-el-product-enquiry-form__description">{{ element.config.subtitle.value }}</p>
         </div>
     </div>
 {% endblock %}

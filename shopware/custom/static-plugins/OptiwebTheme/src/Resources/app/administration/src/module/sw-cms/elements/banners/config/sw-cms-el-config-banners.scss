@@ -3,6 +3,7 @@
   &__items { display: grid; gap: 12px; }
   &__item { border: 1px solid #d1d9e0; padding: 12px; border-radius: 4px; }
   &__item-fields { display: grid; gap: 8px; }
+  &__position-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   &__item-footer { display: flex; justify-content: flex-end; }
 }
 

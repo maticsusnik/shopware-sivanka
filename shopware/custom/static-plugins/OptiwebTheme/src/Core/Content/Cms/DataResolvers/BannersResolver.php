@@ -70,10 +70,19 @@ class BannersResolver extends AbstractCmsElementResolver
         foreach ($bannersConfig as $banner) {
             $mediaId = $banner['mediaId'] ?? null;
             $resolvedBanners[] = [
-                'mediaId' => $mediaId,
-                'media' => $mediaId && isset($mediaById[$mediaId]) ? $mediaById[$mediaId] : null,
-                'text' => $banner['text'] ?? '',
-                'link' => $banner['link'] ?? '',
+                'mediaId'       => $mediaId,
+                'media'         => $mediaId && isset($mediaById[$mediaId]) ? $mediaById[$mediaId] : null,
+                'text'          => $banner['text'] ?? '',
+                'link'          => $banner['link'] ?? '',
+                'textPositionV' => $banner['textPositionV'] ?? 'bottom',
+                'textPositionH' => $banner['textPositionH'] ?? 'left',
+                'style'         => $banner['style'] ?? 'plain',
+                'title'         => $banner['title'] ?? '',
+                'eyebrow'       => $banner['eyebrow'] ?? '',
+                'description'   => $banner['description'] ?? '',
+                'btnLabel'      => $banner['btnLabel'] ?? '',
+                'bgColor'       => $banner['bgColor'] ?? '#F7DCE7',
+                'iconType'      => $banner['iconType'] ?? 'gift',
             ];
         }
 

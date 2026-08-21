@@ -1,0 +1,257 @@
+// ---- Sivanka Hero Element ----
+.cms-block-sivanka-hero {
+    margin-bottom: 50px;
+}
+
+.sivanka-hero {
+    padding: 24px 0 4px;
+
+    // Match the width of the other home-page sections (category/product wrappers),
+    // which sit flush at $content-width with no extra Bootstrap gutter padding.
+    > .container {
+        max-width: $content-width;
+        margin-inline: auto;
+        padding-inline: 0;
+    }
+
+    &__box {
+        position: relative;
+        border-radius: $sivanka-r24;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        min-height: 520px;
+        background: $sivanka-beige;
+        box-shadow: 0 18px 50px -30px rgba(160, 43, 107, 0.35);
+
+        @include media-breakpoint-down(md) {
+            min-height: auto;
+            border-radius: $sivanka-r16;
+        }
+    }
+
+    &__media {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+
+        picture {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        img, &__photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+    }
+
+    &__scrim {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        background: linear-gradient(
+            95deg,
+            #FBE7EF 0%, #F7EDE8 33%,
+            rgba(247, 237, 232, 0.85) 47%,
+            rgba(247, 237, 232, 0.28) 61%,
+            transparent 76%
+        );
+
+        @include media-breakpoint-down(md) {
+            background: linear-gradient(180deg, rgba(248, 239, 234, 0.93) 55%, rgba(248, 239, 234, 0.78));
+        }
+    }
+
+    &__text {
+        position: relative;
+        z-index: 2;
+        max-width: 540px;
+        padding: 60px;
+
+        @include media-breakpoint-down(lg) {
+            padding: 48px 40px;
+        }
+
+        @include media-breakpoint-down(md) {
+            padding: 36px 28px;
+            max-width: 100%;
+        }
+
+        h1 {
+            font-family: $sivanka-serif;
+            font-size: 50px;
+            font-weight: 600;
+            line-height: 1.08;
+            letter-spacing: -0.01em;
+            margin-bottom: 22px;
+            color: $sivanka-text;
+
+            @include media-breakpoint-down(md) {
+                font-size: 36px;
+            }
+        }
+
+        p {
+            font-family: $sivanka-sans;
+            font-size: 17px;
+            line-height: 1.6;
+            color: $sivanka-muted;
+            margin-bottom: 34px;
+            max-width: 440px;
+
+            @include media-breakpoint-down(md) {
+                font-size: 15px;
+            }
+        }
+    }
+
+    &__em {
+        color: $sivanka-primary;
+        font-style: italic;
+    }
+
+    &__cta {
+        display: flex;
+        gap: 14px;
+        margin-bottom: 44px;
+        flex-wrap: wrap;
+
+        @include media-breakpoint-down(sm) {
+            flex-direction: column;
+            gap: 10px;
+        }
+    }
+
+    &__trust {
+        display: flex;
+        gap: 24px;
+        flex-wrap: wrap;
+
+        @include media-breakpoint-down(md) {
+            flex-direction: column;
+            gap: 14px;
+        }
+    }
+}
+
+// Trust item
+.sivanka-trust {
+    display: flex;
+    gap: 11px;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+
+    @include media-breakpoint-down(md) {
+        flex: none;
+        width: 100%;
+    }
+
+    &__ic {
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+        border-radius: 50%;
+        background: $sivanka-white;
+        border: 1px solid $sivanka-border;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: $sivanka-primary;
+        line-height: 0;
+        flex: none;
+
+        // The inline svg itself carries the .icon class — just size it and let the
+        // flex parent center it (no display:flex on the svg, which breaks centering).
+        .icon,
+        svg {
+            display: block;
+            width: 19px;
+            height: 19px;
+            color: $sivanka-primary;
+        }
+    }
+
+    // Scope the text styles to the copy wrapper so the rule does NOT also match
+    // the icon span (.sivanka-trust__ic), which must stay display:flex to center its svg.
+    > div {
+        min-width: 0;
+
+        b {
+            display: block;
+            font-family: $sivanka-sans;
+            font-size: 14px;
+            font-weight: 600;
+            color: $sivanka-text;
+            white-space: nowrap;
+        }
+
+        span {
+            font-family: $sivanka-sans;
+            font-size: 12px;
+            color: $sivanka-muted;
+            display: block;
+        }
+    }
+}
+
+// Hero CTA Buttons
+.sivanka-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    font-family: $sivanka-sans;
+    font-weight: 600;
+    font-size: 14.5px;
+    padding: 14px 26px;
+    border-radius: $sivanka-r8;
+    background: $sivanka-primary;
+    color: $sivanka-white;
+    border: none;
+    text-decoration: none;
+    transition: background 0.18s, transform 0.1s;
+    cursor: pointer;
+
+    &:hover {
+        background: $sivanka-primary-hover;
+        color: $sivanka-white;
+        text-decoration: none;
+    }
+
+    &:active {
+        transform: translateY(1px);
+    }
+}
+
+.sivanka-btn-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    font-family: $sivanka-sans;
+    font-weight: 600;
+    font-size: 14.5px;
+    padding: 13px 25px; // 1px less to account for border
+    border-radius: $sivanka-r8;
+    background: $sivanka-white;
+    color: $sivanka-primary;
+    border: 1.5px solid $sivanka-primary;
+    text-decoration: none;
+    transition: background 0.18s, transform 0.1s;
+    cursor: pointer;
+
+    &:hover {
+        background: $sivanka-accent;
+        color: $sivanka-primary;
+        text-decoration: none;
+    }
+
+    &:active {
+        transform: translateY(1px);
+    }
+}

@@ -61,7 +61,7 @@
     &.active {
         color: $ow-color-black;
         background: transparent;
-        border-bottom: 3px solid $ow-color-base;
+        border-bottom: 3px solid $sivanka-primary;
     }
 }
 
@@ -102,7 +102,7 @@
 .login-header {
     @include fontSpecs(26, 31.2, 700, false, true);
     @include margin('bottom', 32, true);
-    color: $ow-color-black;
+    color: $sivanka-heading-dark;
     text-align: left;
 }
 
@@ -118,27 +118,30 @@
     text-align: left;
 }
 
+// This form predates the Sivanka design system: it used square corners and the old
+// grey border, so the login tab looked nothing like the register tab beside it.
+// Matched to the shared input treatment (8px radius, $sivanka-input-border, pink focus).
 .login-input {
     width: 100%;
-    @include padding('top', 12, false);
-    @include padding('bottom', 12, false);
-    @include padding('left', 16, false);
-    @include padding('right', 16, false);
+    @include padding('top', 7, false);
+    @include padding('bottom', 7, false);
+    @include padding('left', 12, false);
+    @include padding('right', 12, false);
     @include fontSpecs(16, 24, 400, false, false);
-    border: 1px solid $ow-color-grey-border;
-    border-radius: 0;
+    border: 1px solid $sivanka-input-border;
+    border-radius: $sivanka-r8;
     background: $ow-color-white;
-    color: $ow-color-black;
-    transition: border-color 0.3s ease;
+    color: $sivanka-text;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
 
     &:focus {
         outline: none;
-        border-color: $ow-color-base;
-        box-shadow: 0 0 0 3px rgba(180, 54, 124, 0.1);
+        border-color: $sivanka-primary;
+        box-shadow: 0 0 0 3px rgba($sivanka-primary, 0.12);
     }
 
     &::placeholder {
-        color: $ow-color-grey-7;
+        color: $sivanka-text-soft;
     }
 }
 
@@ -149,12 +152,12 @@
 }
 
 .login-password-recover-link {
-    color: $ow-color-base;
+    color: $sivanka-primary;
     text-decoration: underline;
     @include fontSpecs(14, 20, 400, false, false);
 
     &:hover {
-        color: $ow-color-black;
+        color: $sivanka-primary-hover;
         text-decoration: underline;
     }
 }
@@ -163,6 +166,8 @@
     @include margin('top', 32, true);
 }
 
+// Same shape as every other primary action (register's "Nadaljuj", checkout, cart):
+// 12px radius, sentence case — it used to be a square, UPPERCASE outlier.
 .login-submit-button {
     width: 100%;
     @include fontSpecs(20, 32, 700, false, true);
@@ -170,17 +175,22 @@
     @include padding('top', 12, true);
     @include padding('left', 24, true);
     @include padding('right', 24, true);
-    background: $ow-color-base;
-    border: none;
-    border-radius: 0;
+    background: $sivanka-primary;
+    border: 1px solid $sivanka-primary;
+    border-radius: $sivanka-r12;
     color: $ow-color-white;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    text-transform: uppercase;
+    transition: background-color 0.18s ease, border-color 0.18s ease;
+    text-transform: none;
+
+    &:hover {
+        background: $sivanka-primary-hover;
+        border-color: $sivanka-primary-hover;
+    }
 
     &:focus {
         outline: none;
-        box-shadow: 0 0 0 3px rgba(180, 54, 124, 0.3);
+        box-shadow: 0 0 0 3px rgba($sivanka-primary, 0.3);
     }
 
     span {

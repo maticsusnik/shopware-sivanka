@@ -1,25 +1,25 @@
 services:
-    OptiwebProductEnquiry\Content\Cms\DataResolver\Element\ProductEnquiryCmsElementResolver:
-        tags:
-            - { name: shopware.cms.data_resolver }
-        arguments:
-            $salutationRepository: '@salutation.repository'
-            $productRepository: '@product.repository'
+  OptiwebProductEnquiry\Core\Content\ProductEnquiry\ProductEnquiryDefinition:
+    tags:
+      - { name: shopware.entity.definition }
 
-    OptiwebProductEnquiry\Controller\ProductEnquiryController:
-        public: true
-        arguments:
-            $systemConfigService: '@Shopware\Core\System\SystemConfig\SystemConfigService'
-            $mediaService: '@Shopware\Core\Content\Media\MediaService'
-            $mailService: '@Shopware\Core\Content\Mail\Service\MailService'
-            $productRepository: '@product.repository'
-            $mailTemplateRepository: '@mail_template.repository'
-            $mailTemplateTypeRepository: '@mail_template_type.repository'
-            $logEntryRepository: '@log_entry.repository'
-            $cmsSlotRepository: '@cms_slot.repository'
-            $validator: '@validator'
-        calls:
-            - method: setContainer
-              arguments: ['@service_container']
-        tags:
-            - { name: controller.service_arguments }
+  OptiwebProductEnquiry\Content\Cms\DataResolver\Element\ProductEnquiryCmsElementResolver:
+    arguments:
+      $salutationRepository: '@salutation.repository'
+      $productRepository: '@product.repository'
+    tags:
+      - { name: shopware.cms.data_resolver }
+
+  OptiwebProductEnquiry\Controller\ProductEnquiryController:
+    public: true
+    autoconfigure: true
+    autowire: true
+    arguments:
+      $mailService: '@Shopware\Core\Content\Mail\Service\MailService'
+      $productRepository: '@product.repository'
+      $mailTemplateRepository: '@mail_template.repository'
+      $mailTemplateTypeRepository: '@mail_template_type.repository'
+      $productEnquiryRepository: '@product_enquiry.repository'
+      $cmsSlotRepository: '@cms_slot.repository'
+    tags:
+      - { name: controller.service_arguments }

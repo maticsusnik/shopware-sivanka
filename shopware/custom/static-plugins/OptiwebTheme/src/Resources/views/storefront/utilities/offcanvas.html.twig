@@ -9,5 +9,13 @@
     </div>
 {% endblock %}
 
- {% block utilities_offcanvas_close %}
- {% endblock %}
+{# Core's close button is a full-width labelled btn-secondary, which does not belong in
+   this design. It is replaced with the round icon button used everywhere else in the
+   theme rather than dropped — the cart and account panels have no other way to close. #}
+{% block utilities_offcanvas_close %}
+    <button class="btn offcanvas-close ow-offcanvas-close js-offcanvas-close"
+            type="button"
+            aria-label="{{ 'general.offcanvasCloseMenu'|trans|striptags }}">
+        {% sw_icon 'x' style { size: 'sm' } %}
+    </button>
+{% endblock %}

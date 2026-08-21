@@ -1,30 +1,252 @@
+// ---- Sivanka Banners Element ----
+
+.cms-block-banners {
+    margin-bottom: 50px;
+}
+
 .cms-element-banners {
-    margin-bottom: 24px;
     &__title {
-        @include margin('bottom', 32, false);
-    }
-    &__grid { display: grid; gap: 16px; align-items: stretch; }
-    &__grid.per-row-1 { grid-template-columns: repeat(1, 1fr); }
-    &__grid.per-row-2 { grid-template-columns: repeat(2, 1fr); }
-    &__grid.per-row-3 { grid-template-columns: repeat(3, 1fr); }
-    &__grid.per-row-4 { grid-template-columns: repeat(4, 1fr); }
-    &__item { border: 0; border-radius: 0; overflow: hidden; background: transparent; }
-    &__image { position: relative; display: block; width: 100%; aspect-ratio: 16 / 9; overflow: hidden;  }
-    &__image img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
-    &__badge {
-        position: absolute;
-        left: 16px;
-        right: 16px;
-        bottom: 12px;
-        color: #fff;
-        padding: 0;
-        border-radius: 0;
-        background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.45) 100%);
-        -webkit-background-clip: text;
-        background-clip: text;
-        text-shadow: 0 2px 6px rgba(0,0,0,0.55);
+        font-family: $sivanka-serif;
+        font-size: 32px;
         font-weight: 600;
-        line-height: 1.2;
-        display: inline-block;
+        margin-bottom: 32px;
+        color: $sivanka-text;
     }
+
+    &__grid {
+        display: grid;
+        gap: 22px;
+
+        &.per-row-1 { grid-template-columns: 1fr; }
+        &.per-row-2 { grid-template-columns: 1fr 1fr; }
+        &.per-row-3 { grid-template-columns: 1.35fr 1fr 1.35fr; }
+
+        @include media-breakpoint-down(lg) {
+            &.per-row-3 { grid-template-columns: 1fr 1fr; }
+        }
+
+        @include media-breakpoint-down(md) {
+            &.per-row-2,
+            &.per-row-3 { grid-template-columns: 1fr; }
+        }
+    }
+
+    // Legacy plain banner item
+    &__item {
+        border-radius: $sivanka-r16;
+        overflow: hidden;
+    }
+
+    &__image {
+        position: relative;
+        display: block;
+        aspect-ratio: 16 / 9;
+        overflow: hidden;
+        border-radius: $sivanka-r16;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+
+    // Legacy text overlay
+    &__text {
+        position: absolute;
+        padding: 24px;
+        max-width: 60%;
+        color: $sivanka-white;
+
+        &.pos-v-top    { top: 0; }
+        &.pos-v-middle { top: 50%; transform: translateY(-50%); }
+        &.pos-v-bottom { bottom: 0; }
+        &.pos-h-left   { left: 0; text-align: left; }
+        &.pos-h-center { left: 50%; transform: translateX(-50%); text-align: center; }
+        &.pos-h-right  { right: 0; text-align: right; }
+        &.pos-v-middle.pos-h-center { transform: translate(-50%, -50%); }
+    }
+}
+
+// ---- Shared Sivanka Banner Base ----
+.sivanka-banner {
+    border-radius: $sivanka-r16;
+    overflow: hidden;
+    position: relative;
+    min-height: 268px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 34px;
+    text-decoration: none;
+    color: $sivanka-text;
+
+    h3 {
+        font-family: $sivanka-serif;
+        font-size: 25px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        line-height: 1.15;
+    }
+
+    p {
+        font-family: $sivanka-sans;
+        font-size: 13.5px;
+        color: $sivanka-muted;
+        margin-bottom: 18px;
+        max-width: 30ch;
+    }
+
+    // Image background fills behind content
+    &__art {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        overflow: hidden;
+
+        picture { display: block; width: 100%; height: 100%; }
+        img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    }
+
+    &__inner,
+    &__card {
+        position: relative;
+        z-index: 1;
+    }
+
+    // ---- image-cta (b1) ----
+    &--image-cta {
+        color: $sivanka-text;
+
+        &:hover {
+            text-decoration: none;
+        }
+
+        &::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            background: linear-gradient(90deg, rgba(255, 241, 247, 0.96) 0%, rgba(255, 241, 247, 0.7) 42%, rgba(255, 241, 247, 0) 78%);
+        }
+
+        .sivanka-banner__inner { z-index: 1; max-width: 66%; }
+
+        // Text sits left, so the artwork is anchored right (the handoff's `xMaxYMid slice`)
+        // and the motif survives the crop instead of being centred under the copy.
+        .sivanka-banner__art img { object-position: right center; }
+
+        h3 { font-size: 26px; color: $sivanka-heading-dark; }
+        p  { color: $sivanka-text-muted; }
+    }
+
+    // ---- accent-icon (b2) ----
+    &--accent-icon {
+        align-items: flex-start;
+        text-align: left;
+        padding: 34px;
+        // design gradient (beats the inline bgColor fallback)
+        background: linear-gradient(160deg, #FBE0EE, #F6CFE1) !important;
+
+        h3 { font-family: $sivanka-serif; font-size: 23px; color: $sivanka-heading-dark; }
+        p  { color: #6B4A5A; }
+    }
+
+    &__icon-box {
+        width: 46px;
+        height: 46px;
+        border-radius: $sivanka-r12;
+        background: $sivanka-white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: $sivanka-primary;
+        margin-bottom: 16px;
+        flex-shrink: 0;
+        line-height: 0;
+
+        .icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            color: $sivanka-primary;
+            line-height: 0;
+        }
+
+        svg {
+            display: block;
+            width: 22px;
+            height: 22px;
+        }
+    }
+
+    &__text-link {
+        font-family: $sivanka-sans;
+        font-size: 13.5px;
+        font-weight: 600;
+        color: $sivanka-primary;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        margin-top: 14px;
+
+        &:hover {
+            gap: 11px;
+            color: $sivanka-primary;
+        }
+    }
+
+    // ---- image-card (b3) ----
+    &--image-card {
+        padding: 0;
+
+        // The caption card floats top-right, so the artwork is anchored left
+        // (the handoff's `xMinYMid slice`).
+        .sivanka-banner__art img { object-position: left center; }
+
+        &::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            background: repeating-linear-gradient(115deg, rgba(255,255,255,.12) 0 2px, transparent 2px 15px);
+        }
+    }
+
+    &__card {
+        position: absolute;
+        right: 24px;
+        top: 24px;
+        background: $sivanka-white;
+        border-radius: 14px;
+        padding: 20px 22px;
+        max-width: 210px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        z-index: 1;
+
+        h3 { font-family: $sivanka-serif; font-size: 19px; margin-bottom: 8px; color: $sivanka-heading-dark; }
+        p  { font-size: 13px; line-height: 1.5; color: $sivanka-text-muted; margin-bottom: 14px; max-width: none; }
+    }
+
+    // Banner CTA buttons are pills in the design
+    .sivanka-btn-primary {
+        border-radius: 999px;
+        padding: 11px 24px;
+        font-size: 14px;
+    }
+}
+
+// Eyebrow label (small uppercase Space Mono, above the title)
+.sivanka-eyebrow {
+    font-family: $sivanka-mono;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: $sivanka-primary;
+    display: block;
+    margin-bottom: 10px;
 }

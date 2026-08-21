@@ -1,0 +1,15 @@
+meta {
+  name: get products
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{minimaxApiUrl}}api/orgs/239849/items
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}

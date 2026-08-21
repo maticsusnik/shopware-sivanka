@@ -1,9 +1,64 @@
 .cms-element-product-listing-actions {
+    margin-bottom: 22px;
+
     .col-md-auto {
         display: flex;
         align-items: center;
         gap: 8px;
     }
+
+    // Stacked (< md) the count is ordered below the sort button, and a flex row gives it
+    // no separation from the button above it.
+    @include media-breakpoint-down(md) {
+        .listing-result-count {
+            margin-top: 10px;
+        }
+    }
+}
+
+// "Prikazanih X izdelkov" result count on the left of the sort bar
+.listing-result-count-text {
+    font-family: $sivanka-sans;
+    font-size: 14px;
+    line-height: 21px;
+    color: $sivanka-text;
+
+    strong {
+        color: $sivanka-text;
+        font-weight: 700;
+    }
+}
+
+// Sort <select> — rounded pill matching the design mock (keeps Bootstrap caret)
+select.sorting.form-select {
+    appearance: none;
+    height: 42px;
+    border: 1px solid $sivanka-input-border;
+    border-radius: 10px;
+    padding: 0 40px 0 16px;
+    background-color: $sivanka-white;
+    font-family: $sivanka-sans;
+    font-size: 14px;
+    color: $sivanka-text;
+    cursor: pointer;
+    width: auto;
+    min-width: 170px;
+
+    &:focus {
+        border-color: $sivanka-primary-light;
+        box-shadow: none;
+    }
+
+    @include media-breakpoint-down(lg) {
+        width: 100%;
+    }
+}
+
+// Ten pagination controls do not fit a 320px screen in one line
+.cms-element-product-listing .pagination {
+    flex-wrap: wrap;
+    justify-content: center;
+    row-gap: 8px;
 }
 
 .cms-element-product-listing .cms-listing-row {

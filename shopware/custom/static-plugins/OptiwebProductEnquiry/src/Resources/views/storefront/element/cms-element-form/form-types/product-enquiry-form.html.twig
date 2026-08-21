@@ -1,172 +1,156 @@
-<form action="{{ path(action) }}"
-      method="post"
-      data-form-csrf-handler="true"
-      data-form-validation="true"
-      data-optiweb-product-enquiry>
+{% set product = element.extensions.product %}
 
-    <div class="form-content">
-        {# Product Information Section - 50/50 layout #}
-        <div class="row form-row product-row">
-            <div class="col-12">
-                {% if element.extensions.product %}
-                    {% sw_include '@Storefront/storefront/component/product/quickview/minimal.html.twig'
-                    with {
-                        page: {
-                            product: element.extensions.product,
-                            headline: "optiwebProductEnquiry.headline"|trans
-                        }
-                    } only
-                    %}
-                {% endif %}
+<style>
+.enquiry-checkbox-wrap .form-check-input[type="checkbox"] {
+    width: 1.25em;
+    height: 1.25em;
+    border: 2px solid #adb5bd;
+    border-radius: 4px;
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: #fff;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background-color .15s, border-color .15s;
+    box-shadow: none !important;
+    outline: none !important;
+}
+.enquiry-checkbox-wrap .form-check-input[type="checkbox"]:checked {
+    background-color: #B4367C;
+    border-color: #B4367C;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 80%;
+}
+.enquiry-checkbox-wrap .form-check-input[type="checkbox"]:focus,
+.enquiry-checkbox-wrap .form-check-input[type="checkbox"]:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+}
+.enquiry-checkbox-wrap .form-check-input.is-invalid {
+    border-color: #dc3545;
+    background-image: none;
+}
+.enquiry-checkbox-wrap .form-check-input.is-invalid:checked {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 80%;
+}
+.enquiry-success {
+    text-align: center;
+    padding: 2rem 1rem;
+}
+.enquiry-success p {
+    margin: 0;
+    font-size: 1.1rem;
+}
+</style>
+
+<div class="form-content">
+    <form action="{{ path('frontend.form.product-enquiry.send') }}"
+          method="POST"
+          data-form-csrf-handler="true"
+          data-form-validation="true">
+
+        <input type="hidden" name="slotId" value="{{ element.id }}">
+
+        {% if product %}
+            <div class="row product-row mb-4">
+                <div class="col-12">
+                    {% include '@OptiwebProductEnquiry/storefront/component/product/quickview/minimal.html.twig' with { product: product } %}
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="row">
+            <div class="col-12 col-md-6 mb-3">
+                <label for="firstName" class="form-label">{{ 'account.personalFirstName'|trans }}*</label>
+                <input type="text"
+                       id="firstName"
+                       name="firstName"
+                       class="form-control"
+                       required
+                       autocomplete="given-name">
+                <div class="invalid-feedback"></div>
+            </div>
+            <div class="col-12 col-md-6 mb-3">
+                <label for="lastName" class="form-label">{{ 'account.personalLastName'|trans }}*</label>
+                <input type="text"
+                       id="lastName"
+                       name="lastName"
+                       class="form-control"
+                       required
+                       autocomplete="family-name">
+                <div class="invalid-feedback"></div>
             </div>
         </div>
 
-        {# First Name and Last Name - 50/50 on desktop #}
-        <div class="row form-row">
-            <div class="col-12 col-md-6">
-                {% block cms_form_product_enquiry_input_first_name %}
-                    {% sw_include '@Storefront/storefront/element/cms-element-form/form-components/cms-element-form-input.html.twig'
-                        with {
-                        fieldName: 'firstName',
-                        required: true,
-                        additionalClass: '',
-                        label: 'account.personalFirstNameLabel',
-                        placeholder: 'account.personalFirstNamePlaceholder'
-                    }
-                    %}
-                {% endblock %}
+        <div class="row">
+            <div class="col-12 col-md-6 mb-3">
+                <label for="email" class="form-label">{{ 'account.personalMailLabel'|trans }}*</label>
+                <input type="email"
+                       id="email"
+                       name="email"
+                       class="form-control"
+                       required
+                       autocomplete="email">
+                <div class="invalid-feedback"></div>
             </div>
-            <div class="col-12 col-md-6">
-                {% block cms_form_product_enquiry_input_last_name %}
-                    {% sw_include '@Storefront/storefront/element/cms-element-form/form-components/cms-element-form-input.html.twig'
-                        with {
-                        fieldName: 'lastName',
-                        required: true,
-                        additionalClass: '',
-                        label: 'account.personalLastNameLabel',
-                        placeholder: 'account.personalLastNamePlaceholder'
-                    }
-                    %}
-                {% endblock %}
+            <div class="col-12 col-md-6 mb-3">
+                <label for="phone" class="form-label">{{ 'account.profilePhoneNumber'|trans }}</label>
+                <input type="tel"
+                       id="phone"
+                       name="phone"
+                       class="form-control"
+                       autocomplete="tel">
+                <div class="invalid-feedback"></div>
             </div>
         </div>
 
-        {# Email and Phone - 50/50 on desktop #}
-        <div class="row form-row">
-            <div class="col-12 col-md-6">
-                {% block cms_form_product_enquiry_input_email %}
-                    {% sw_include '@Storefront/storefront/element/cms-element-form/form-components/cms-element-form-input.html.twig'
-                        with {
-                        fieldName: 'email',
-                        type: 'email',
-                        required: true,
-                        additionalClass: '',
-                        label: 'account.loginMailLabel',
-                        placeholder: 'account.loginMailPlaceholder'
-                    }
-                    %}
-                {% endblock %}
+        <div class="mb-3">
+            <label for="productQty" class="form-label">{{ 'optiwebProductEnquiry.form.qtyLabel'|trans }}*</label>
+            <div class="qtyField">
+                <input type="number"
+                       id="productQty"
+                       name="productQty"
+                       class="form-control"
+                       value="1"
+                       min="1"
+                       step="1"
+                       required
+                       style="max-width: 120px;">
             </div>
-            <div class="col-12 col-md-6">
-                {% block cms_form_product_enquiry_input_phone %}
-                    {% sw_include '@Storefront/storefront/element/cms-element-form/form-components/cms-element-form-input.html.twig'
-                        with {
-                        fieldName: 'phone',
-                        required: false,
-                        additionalClass: '',
-                        label: 'account.personalPhoneLabel',
-                        placeholder: 'account.personalPhonePlaceholder'
-                    }
-                    %}
-                {% endblock %}
-            </div>
+            <div class="invalid-feedback"></div>
         </div>
 
-        {# Quantity - 100% width #}
-        <div class="row form-row">
-            <div class="col-12">
-                    {% block cms_form_product_enquiry_input_qty %}
-                        {% sw_include '@Storefront/storefront/element/cms-element-form/form-components/cms-element-form-input.html.twig'
-                            with {
-                            fieldName: 'productQty',
-                            type: 'number',
-                            required: true,
-                            additionalClass: '',
-                            label: 'detail.dataColumnQuantity',
-                            value: 1,
-                            min: 1,
-                            step: 1
-                        }
-                        %}
-                    {% endblock %}
-{#                    {% if element.extensions.product and element.extensions.product.unit %}#}
-{#                        <div class="qty">{{ element.extensions.product.unit.translated.shortCode }}</div>#}
-{#                    {% endif %}#}
-            </div>
+        <div class="mb-3">
+            <label for="comment" class="form-label">{{ 'optiwebProductEnquiry.form.commentLabel'|trans }}</label>
+            <textarea id="comment"
+                      name="comment"
+                      class="form-control"
+                      rows="5"
+                      placeholder="{{ 'optiwebProductEnquiry.form.commentPlaceholder'|trans }}"></textarea>
+            <div class="invalid-feedback"></div>
         </div>
 
-        {# Comment - 100% width #}
-        <div class="row form-row">
-            <div class="col-12">
-                {% block cms_form_product_enquiry_comment_textarea %}
-                    {% sw_include '@Storefront/storefront/element/cms-element-form/form-components/cms-element-form-textarea.html.twig'
-                        with {
-                        rows: 5,
-                        required: false,
-                        fieldName: 'comment',
-                        additionalClass: '',
-                        label: 'optiwebProductEnquiry.form.commentLabel',
-                        placeholder: 'optiwebProductEnquiry.form.commentPlaceholder'
-                    }
-                    %}
-                {% endblock %}
-            </div>
+        <div class="mb-3 form-check enquiry-checkbox-wrap">
+            <input type="checkbox" id="privacyPolicy" name="privacyPolicy" class="form-check-input" required>
+            <label class="form-check-label" for="privacyPolicy">
+                {{ 'general.privacyPolicyCheckboxLabel'|trans|sw_sanitize }}
+            </label>
+            <div class="invalid-feedback"></div>
         </div>
 
-        {# Privacy, Captcha, Required Info, Submit - 100% width each #}
-        <div class="row form-row">
-            <div class="col-12">
-                {% block cms_form_product_enquiry_privacy %}
-                    {% sw_include '@Storefront/storefront/element/cms-element-form/form-components/cms-element-form-privacy.html.twig' %}
-                {% endblock %}
-            </div>
-        </div>
+        <p class="required-fields-info">
+            <small>* {{ 'general.requiredFields'|trans }}</small>
+        </p>
 
-        <div class="row form-row">
-            <div class="col-12">
-                {% block cms_form_product_enquiry_captcha %}
-                    {% sw_include '@Storefront/storefront/component/captcha/base.html.twig' with { 'captchas': config('core.basicInformation.activeCaptchas') } %}
-                {% endblock %}
-            </div>
-        </div>
-
-        <div class="row form-row">
-            <div class="col-12">
-                {% block cms_form_product_enquiry_required_fields_info %}
-                    {% sw_include '@Storefront/storefront/element/cms-element-form/form-components/cms-element-form-info-required.html.twig' %}
-                {% endblock %}
-            </div>
-        </div>
-
-        <div class="row form-row">
-            <div class="col-12">
-                {% block cms_form_product_enquiry_submit %}
-                    {% sw_include '@Storefront/storefront/element/cms-element-form/form-components/cms-element-form-submit.html.twig' %}
-                {% endblock %}
-            </div>
-        </div>
-    </div>
-
-    {% block cms_form_product_enquiry_hidden_fields %}
-        <div class="form-hidden-fields">
-            <input type="hidden" name="slotId" value="{{ element.id }}"/>
-            {% if element.extensions.product %}
-                <input type="hidden" name="product_id" value="{{ element.extensions.product.id }}"/>
-                <input type="hidden" name="product_name" value="{{ element.extensions.product.translated.name }}"/>
-                <input type="hidden" name="product_number" value="{{ element.extensions.product.productNumber }}"/>
-            {% endif %}
-
-            <input type="submit" class="submit--hidden d-none" />
-        </div>
-    {% endblock %}
-</form>
+        <button type="submit" class="btn btn-primary w-100 mt-3">
+            {{ 'optiwebProductEnquiry.form.submit'|trans }}
+        </button>
+    </form>
+</div>

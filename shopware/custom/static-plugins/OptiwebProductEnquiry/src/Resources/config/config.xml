@@ -1,31 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/platform/master/src/Core/System/SystemConfig/Schema/config.xsd">
-
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/platform/trunk/src/Core/System/SystemConfig/Schema/config.xsd">
     <card>
-        <title>Product enquiry form</title>
+        <title>Optiweb Product Enquiry</title>
 
-        <component name="sw-entity-single-select">
+        <input-field type="text">
             <name>enquiryForm</name>
-            <entity>cms_page</entity>
-            <pageType>page</pageType>
-            <label>Choose a page with product enquiry form.</label>
-            <label lang="de-DE">Choose a page with product enquiry form.</label>
-            <placeholder>Assign layout...</placeholder>
-            <placeholder lang="de-DE">Layout zuweisen ...</placeholder>
-        </component>
+            <label>CMS Page ID (Enquiry Form)</label>
+            <helpText>Paste the ID of the CMS page that contains the product enquiry form element. Find it in Shopping Experiences → URL of the page.</helpText>
+        </input-field>
 
+        <input-field type="text">
+            <name>adminEmail</name>
+            <label>Admin Notification Email</label>
+            <helpText>Email address for admin notifications. Overrides the store default. Leave blank to use the store default email.</helpText>
+        </input-field>
     </card>
-
-    <card>
-        <title>Product enquiry mail template</title>
-
-        <component name="sw-entity-single-select">
-            <name>mailTemplateType</name>
-            <entity>mail_template_type</entity>
-            <label>Choose a mail template type for customer e-mail.</label>
-        </component>
-
-    </card>
-
 </config>

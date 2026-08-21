@@ -1,0 +1,60 @@
+{% block optiweb_product_enquiry_list %}
+<sw-page class="optiweb-product-enquiry-list">
+    {% block optiweb_product_enquiry_list_header %}
+    <template #smart-bar-header>
+        <h2>
+            {{ $tc('optiwebProductEnquiry.admin.list.title') }}
+            <sw-label v-if="unreadCount > 0" variant="warning" appearance="pill" class="ml-2">
+                {{ unreadCount }}
+            </sw-label>
+        </h2>
+    </template>
+    {% endblock %}
+
+    {% block optiweb_product_enquiry_list_search %}
+    <template #smart-bar-actions>
+        <sw-simple-search-field
+            v-model="searchTerm"
+            @search-term-change="onSearch"
+        />
+    </template>
+    {% endblock %}
+
+    {% block optiweb_product_enquiry_list_content %}
+    <template #content>
+        <sw-data-grid
+            :data-source="enquiries"
+            :columns="[
+                { property: 'createdAt', label: $tc('optiwebProductEnquiry.admin.list.columns.date'), sortable: true },
+                { property: 'firstName', label: $tc('optiwebProductEnquiry.admin.list.columns.customer'), sortable: true },
+                { property: 'email', label: $tc('optiwebProductEnquiry.admin.list.columns.email'), sortable: true },
+                { property: 'productName', label: $tc('optiwebProductEnquiry.admin.list.columns.product') },
+                { property: 'quantity', label: $tc('optiwebProductEnquiry.admin.list.columns.quantity') },
+                { property: 'status', label: $tc('optiwebProductEnquiry.admin.list.columns.status') },
+            ]"
+            :is-loading="isLoading"
+            :show-actions="true"
+            identifier="optiweb-product-enquiry-list"
+            @row-click="onRowClick"
+        >
+            <template #column-createdAt="{ item }">
+                {{ formatDate(item.createdAt) }}
+            </template>
+            <template #column-firstName="{ item }">
+                {{ item.firstName }} {{ item.lastName }}
+            </template>
+            <template #column-status="{ item }">
+                <sw-label :variant="item.status === 'new' ? 'warning' : 'success'" appearance="pill">
+                    {{ $tc('optiwebProductEnquiry.admin.detail.status.' + item.status) }}
+                </sw-label>
+            </template>
+            <template #actions="{ item }">
+                <sw-context-menu-item @click="onRowClick(item)">
+                    {{ $tc('global.default.view') }}
+                </sw-context-menu-item>
+            </template>
+        </sw-data-grid>
+    </template>
+    {% endblock %}
+</sw-page>
+{% endblock %}
