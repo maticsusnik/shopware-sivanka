@@ -17,7 +17,7 @@ env:
   IMAGE: ghcr.io/${{ github.repository }}   # e.g. ghcr.io/owner/repo
   TAG: ${{ github.sha }}
   ANSIBLE_DIR: ansible
-  COLLECTION_REF: "2.1.51"                  # <-- change to your tag/branch if needed
+  COLLECTION_REF: "2.1.52"                  # tag in maticsusnik/ansible-collections; must be >= 2.1.52 (adds shopware_frankenphp)
 
 jobs:
   build:
@@ -140,7 +140,15 @@ jobs:
           ansible-galaxy collection list -p ./collections || true
 
           echo "=== Sanity check for role path ==="
-          find ./collections -type d -path "*/ansible_collections/maticsusnik/common/roles/shopware" -print
+          # Check the role the playbook actually uses, and fail here rather than
+          # letting ansible-playbook report a confusing "role was not found".
+          ROLE_DIR="$(find ./collections -type d -path "*/ansible_collections/maticsusnik/common/roles/shopware_frankenphp" -print -quit)"
+          if [ -z "$ROLE_DIR" ]; then
+            echo "::error::Role 'shopware_frankenphp' is missing from maticsusnik.common at ref '${REF}'. It was added in 2.1.52 - bump COLLECTION_REF."
+            find ./collections -type d -path "*/maticsusnik/common/roles/*" -maxdepth 6 -print
+            exit 1
+          fi
+          echo "Found role at ${ROLE_DIR}"
 
       - name: Deploy via Ansible (use deploy user + key)
         working-directory: ${{ env.ANSIBLE_DIR }}
