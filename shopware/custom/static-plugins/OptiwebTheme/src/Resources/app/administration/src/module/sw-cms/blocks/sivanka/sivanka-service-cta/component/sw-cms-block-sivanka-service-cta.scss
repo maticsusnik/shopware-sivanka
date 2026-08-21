@@ -1,0 +1,6 @@
+@import "../../../../sivanka-service-shared";
+
+.sw-cms-block-sivanka-service-cta {
+    @include sivanka-service-block-grid(1fr auto);
+    align-items: center;
+}

@@ -1,6 +1,7 @@
 {% block cms_block_img_text %}
     {% set image = block.slots.getSlot('image') %}
-    {% set layout = block.customFields.layout %}
+    {# `customFields` is null on blocks created before the layout option existed. #}
+    {% set layout = (block.customFields ? block.customFields.layout : null)|default('text-right-over-image') %}
 
     {% if layout is empty %}
         {% set layout = 'text-right-over-image' %}

@@ -1,0 +1,46 @@
+{% block sw_cms_el_config_sivanka_service_intro %}
+<div class="sw-cms-el-config-sivanka-service-intro">
+    {% block sw_cms_el_config_sivanka_service_intro_eyebrow %}
+    <mt-text-field
+        v-model="element.config.eyebrow.value"
+        :label="$tc('sw-cms.elements.sivankaServiceIntro.config.label.eyebrow')"
+        @update:model-value="onChange"
+    />
+    {% endblock %}
+
+    {% block sw_cms_el_config_sivanka_service_intro_headline %}
+    <mt-text-field
+        v-model="element.config.headline.value"
+        :label="$tc('sw-cms.elements.sivankaServiceIntro.config.label.headline')"
+        @update:model-value="onChange"
+    />
+    {% endblock %}
+
+    {% block sw_cms_el_config_sivanka_service_intro_lead %}
+    <mt-textarea
+        v-model="element.config.lead.value"
+        :label="$tc('sw-cms.elements.sivankaServiceIntro.config.label.lead')"
+        @update:model-value="onChange"
+    />
+    {% endblock %}
+
+    {% block sw_cms_el_config_sivanka_service_intro_headline_level %}
+    <mt-select
+        v-model="element.config.headlineLevel.value"
+        :label="$tc('sw-cms.elements.sivankaServiceIntro.config.label.headlineLevel')"
+        :help-text="$tc('sw-cms.elements.sivankaServiceIntro.config.helpText.headlineLevel')"
+        :options="headlineLevelOptions"
+        @update:model-value="onChange"
+    />
+    {% endblock %}
+
+    {% block sw_cms_el_config_sivanka_service_intro_variant %}
+    <mt-select
+        v-model="element.config.variant.value"
+        :label="$tc('sw-cms.elements.sivankaServiceIntro.config.label.variant')"
+        :options="variantOptions"
+        @update:model-value="onChange"
+    />
+    {% endblock %}
+</div>
+{% endblock %}

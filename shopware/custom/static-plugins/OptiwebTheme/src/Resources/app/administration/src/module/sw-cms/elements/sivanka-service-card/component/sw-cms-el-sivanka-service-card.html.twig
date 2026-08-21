@@ -1,0 +1,28 @@
+{% block sw_cms_el_sivanka_service_card %}
+<div class="sw-cms-el-sivanka-service-card" :class="'is--' + element.config.variant.value">
+    <div class="sw-cms-el-sivanka-service-card__media">
+        <img
+            v-if="mediaUrl"
+            class="sw-cms-el-sivanka-service-card__image"
+            :src="mediaUrl"
+            alt=""
+        >
+        <mt-icon
+            v-else
+            name="regular-image"
+            size="20px"
+        />
+    </div>
+
+    <div class="sw-cms-el-sivanka-service-card__body">
+        <p class="sw-cms-el-sivanka-service-card__title">{{ element.config.title.value }}</p>
+        <p
+            v-if="element.config.text.value && element.config.variant.value === 'wide'"
+            class="sw-cms-el-sivanka-service-card__text"
+        >
+            {{ element.config.text.value }}
+        </p>
+        <span class="sw-cms-el-sivanka-service-card__link">{{ element.config.linkLabel.value }}</span>
+    </div>
+</div>
+{% endblock %}

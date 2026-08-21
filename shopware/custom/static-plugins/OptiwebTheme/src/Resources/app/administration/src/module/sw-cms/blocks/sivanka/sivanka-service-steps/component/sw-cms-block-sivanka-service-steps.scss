@@ -1,0 +1,9 @@
+@import "../../../../sivanka-service-shared";
+
+.sw-cms-block-sivanka-service-steps {
+    @include sivanka-service-block-grid(repeat(3, minmax(0, 1fr)));
+
+    &__slot--heading {
+        @include sivanka-service-block-full-row;
+    }
+}

@@ -6,46 +6,32 @@
         <h2 class="cms-element-title-paragraph cms-element-banners__title">{{ data.sectionTitle }}</h2>
     {% endif %}
 
-    {% set allBanners = data.banners %}
+    {% set banners = data.banners %}
+    {% set perRow = data.perRow|default(3) %}
 
-    {# Auto "design mode": when nothing has an explicit style yet, render the design trio
-       (image-cta / accent-icon / image-card) in the 3-column layout, using fallback copy.
-       As soon as a banner gets a real style in the admin, that style is respected verbatim. #}
-    {% set hasExplicitStyle = false %}
-    {% for b in allBanners %}
-        {% if b.style is defined and b.style not in ['', 'plain'] %}{% set hasExplicitStyle = true %}{% endif %}
-    {% endfor %}
-    {% set autoMode = not hasExplicitStyle %}
-
-    {% set perRow = autoMode ? 3 : data.perRow|default(3) %}
-    {% set banners = autoMode ? allBanners|slice(0, 3) : allBanners %}
-
+    {# Every value rendered below comes from the block configuration — there is no
+       hardcoded fallback copy. The only default is the *layout* of a banner that has
+       never had a style picked (legacy content): it falls back to the design order
+       image-cta / accent-icon / image-card by position, so old banners keep their look
+       while the text stays whatever the administration holds. #}
     {% set defaultStyles = ['image-cta', 'accent-icon', 'image-card'] %}
-    {% set defaults = {
-        0: { eyebrow: 'Naše storitve', title: 'Popravila in krajšanje', description: 'Krajšamo hlače in krila, popravljamo šive in obnovimo priljubljene kose.', btnLabel: 'Več o storitvah' },
-        1: { title: 'Brezplačna dostava nad 60 €', description: 'Hitra in zanesljiva dostava po vsej Sloveniji.', text: 'Več o dostavi', iconType: 'gift' },
-        2: { title: 'Menjava zadrg', description: 'Zamenjamo zadrge na jaknah, hlačah in torbah. Prinesite kos v trgovino.', btnLabel: 'Poglej več' }
-    } %}
 
     <div class="cms-element-banners__grid per-row-{{ perRow }}">
         {% for banner in banners %}
         {% set idx = loop.index0 %}
-        {% set def = autoMode and defaults[idx] is defined ? defaults[idx] : {} %}
+        {# No style picked yet: a banner that already carries overlay text was authored
+           as the legacy "plain" banner, so keep it plain and do not drop its text.
+           An empty one takes the design layout for its position. #}
+        {% set style = banner.style ?: (banner.text ? 'plain' : (defaultStyles[idx]|default('image-cta'))) %}
 
-        {% set style = banner.style|default('plain') %}
-        {% if autoMode or style in ['', 'plain'] %}
-            {% set style = defaultStyles[idx]|default('image-cta') %}
-        {% endif %}
-
-        {# Resolved display fields (banner config wins, design defaults fill the gaps) #}
-        {% set bEyebrow = banner.eyebrow ?: (def.eyebrow ?? '') %}
-        {% set bTitle   = banner.title ?: (def.title ?? '') %}
-        {% set bDesc    = banner.description ?: (def.description ?? '') %}
-        {% set bBtn     = banner.btnLabel ?: (def.btnLabel ?? '') %}
-        {% set bText    = banner.text ?: (def.text ?? '') %}
-        {% set bIcon    = banner.iconType ?: (def.iconType ?? 'gift') %}
+        {% set bEyebrow = banner.eyebrow|default('') %}
+        {% set bTitle   = banner.title|default('') %}
+        {% set bDesc    = banner.description|default('') %}
+        {% set bBtn     = banner.btnLabel|default('') %}
+        {% set bText    = banner.text|default('') %}
+        {% set bIcon    = banner.iconType ?: 'gift' %}
         {% set bLink    = banner.link ?: '#' %}
-        {% set bBg      = banner.bgColor|default('#F7DCE7') %}
+        {% set bBg      = banner.bgColor ?: '#F7DCE7' %}
 
         {% if style == 'image-cta' %}
             {# ---- b1: Image background + gradient + eyebrow + title + desc + button ---- #}
@@ -59,12 +45,16 @@
                     } %}
                 </div>
                 {% endif %}
+                {# Skip the copy panel entirely while nothing is filled in, so the banner
+                   reads as a clean image tile instead of an empty overlay. #}
+                {% if bEyebrow or bTitle or bDesc or bBtn %}
                 <div class="sivanka-banner__inner">
                     {% if bEyebrow %}<span class="sivanka-eyebrow">{{ bEyebrow }}</span>{% endif %}
                     {% if bTitle %}<h3>{{ bTitle }}</h3>{% endif %}
                     {% if bDesc %}<p>{{ bDesc }}</p>{% endif %}
                     {% if bBtn %}<span class="sivanka-btn-primary">{{ bBtn }}</span>{% endif %}
                 </div>
+                {% endif %}
             </a>
 
         {% elseif style == 'accent-icon' %}
@@ -107,11 +97,13 @@
                     } %}
                 </div>
                 {% endif %}
+                {% if bTitle or bDesc or bBtn %}
                 <div class="sivanka-banner__card">
                     {% if bTitle %}<h3>{{ bTitle }}</h3>{% endif %}
                     {% if bDesc %}<p>{{ bDesc }}</p>{% endif %}
                     {% if bBtn %}<span class="sivanka-btn-primary" style="padding: 10px 18px; font-size: 13px;">{{ bBtn }}</span>{% endif %}
                 </div>
+                {% endif %}
             </a>
 
         {% else %}

@@ -1,0 +1,13 @@
+{% block sw_cms_el_sivanka_service_actions %}
+<div class="sw-cms-el-sivanka-service-actions">
+    <span v-if="element.config.primaryLabel.value" class="sw-cms-el-sivanka-service-actions__btn">
+        {{ element.config.primaryLabel.value }}
+    </span>
+    <span
+        v-if="element.config.secondaryLabel.value"
+        class="sw-cms-el-sivanka-service-actions__btn sw-cms-el-sivanka-service-actions__btn--ghost"
+    >
+        {{ element.config.secondaryLabel.value }}
+    </span>
+</div>
+{% endblock %}

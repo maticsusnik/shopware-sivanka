@@ -1,0 +1,12 @@
+{% block block_sivanka_service_grid %}
+    <div class="col-12 cms-block-sivanka-service-grid">
+        <div class="sivanka-service-grid">
+            {% for slotName in ['cardOne', 'cardTwo', 'cardThree', 'cardFour'] %}
+                {% sw_include '@Storefront/storefront/block/sivanka-service/slot.html.twig' with {
+                    slotName: slotName,
+                    slotClass: 'sivanka-service-grid__item'
+                } %}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

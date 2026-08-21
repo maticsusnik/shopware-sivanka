@@ -1,3 +1,5 @@
+{# `loop: true` makes the slider wrap around at both ends instead of stopping on the
+   last card; tiny-slider implements it by cloning the edge slides. #}
 {% block block_category_slider %}
     {% set title = block.slots.getSlot("category").config.title.value.text %}
     {% set categories = block.slots.getSlot("category").data.get("childCategories") %}
@@ -5,7 +7,8 @@
     {% set categorySliderOptions = {
         slider: {
             controls: true,
-            loop: false,
+            loop: true,
+            rewind: false,
             nav: false,
             mouseDrag: true,
             autoplay: false,

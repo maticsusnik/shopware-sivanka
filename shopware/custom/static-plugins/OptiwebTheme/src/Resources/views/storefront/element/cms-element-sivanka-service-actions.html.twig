@@ -1,0 +1,28 @@
+{% block element_sivanka_service_actions %}
+    {% set config = element.fieldConfig.elements %}
+    {% set newTab = config.newTab.value %}
+
+    {% if config.primaryLabel.value or config.secondaryLabel.value %}
+        <div class="cms-element-{{ element.type }} sivanka-actions">
+            {% block element_sivanka_service_actions_primary %}
+                {% if config.primaryLabel.value %}
+                    <a class="sivanka-btn-primary sivanka-actions__btn"
+                       href="{{ config.primaryUrl.value ?: '#' }}"
+                       {% if newTab %}target="_blank" rel="noopener"{% endif %}>
+                        {{ config.primaryLabel.value }}
+                    </a>
+                {% endif %}
+            {% endblock %}
+
+            {% block element_sivanka_service_actions_secondary %}
+                {% if config.secondaryLabel.value %}
+                    <a class="sivanka-btn-outline sivanka-actions__btn"
+                       href="{{ config.secondaryUrl.value ?: '#' }}"
+                       {% if newTab %}target="_blank" rel="noopener"{% endif %}>
+                        {{ config.secondaryLabel.value }}
+                    </a>
+                {% endif %}
+            {% endblock %}
+        </div>
+    {% endif %}
+{% endblock %}

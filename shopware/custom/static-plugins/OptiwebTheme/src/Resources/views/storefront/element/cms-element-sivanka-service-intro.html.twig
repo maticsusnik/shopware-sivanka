@@ -1,0 +1,25 @@
+{% block element_sivanka_service_intro %}
+    {% set config = element.fieldConfig.elements %}
+    {% set variant = config.variant.value in ['hero', 'cta', 'plain'] ? config.variant.value : 'hero' %}
+    {% set level = config.headlineLevel.value in ['h1', 'h2', 'h3'] ? config.headlineLevel.value : 'h2' %}
+
+    <div class="cms-element-{{ element.type }} sivanka-intro sivanka-intro--{{ variant }}">
+        {% block element_sivanka_service_intro_eyebrow %}
+            {% if config.eyebrow.value %}
+                <span class="sivanka-intro__eyebrow">{{ config.eyebrow.value }}</span>
+            {% endif %}
+        {% endblock %}
+
+        {% block element_sivanka_service_intro_headline %}
+            {% if config.headline.value %}
+                <{{ level }} class="sivanka-intro__headline">{{ config.headline.value }}</{{ level }}>
+            {% endif %}
+        {% endblock %}
+
+        {% block element_sivanka_service_intro_lead %}
+            {% if config.lead.value %}
+                <p class="sivanka-intro__lead">{{ config.lead.value|nl2br }}</p>
+            {% endif %}
+        {% endblock %}
+    </div>
+{% endblock %}

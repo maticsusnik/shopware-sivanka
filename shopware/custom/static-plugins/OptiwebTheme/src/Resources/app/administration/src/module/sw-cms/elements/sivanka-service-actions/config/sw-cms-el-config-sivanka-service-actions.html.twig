@@ -1,0 +1,48 @@
+{% block sw_cms_el_config_sivanka_service_actions %}
+<div class="sw-cms-el-config-sivanka-service-actions">
+    {% block sw_cms_el_config_sivanka_service_actions_primary %}
+    <mt-text-field
+        v-model="element.config.primaryLabel.value"
+        :label="$tc('sw-cms.elements.sivankaServiceActions.config.label.primaryLabel')"
+        @update:model-value="onChange"
+    />
+
+    <div class="sw-cms-el-config-sivanka-service-actions__url">
+        <div class="sw-field__label">
+            {{ $tc('sw-cms.elements.sivankaServiceActions.config.label.primaryUrl') }}
+        </div>
+        <sw-dynamic-url-field
+            v-model:value="element.config.primaryUrl.value"
+            @update:value="onChange"
+        />
+    </div>
+    {% endblock %}
+
+    {% block sw_cms_el_config_sivanka_service_actions_secondary %}
+    <mt-text-field
+        v-model="element.config.secondaryLabel.value"
+        :label="$tc('sw-cms.elements.sivankaServiceActions.config.label.secondaryLabel')"
+        :help-text="$tc('sw-cms.elements.sivankaServiceActions.config.helpText.secondaryLabel')"
+        @update:model-value="onChange"
+    />
+
+    <div class="sw-cms-el-config-sivanka-service-actions__url">
+        <div class="sw-field__label">
+            {{ $tc('sw-cms.elements.sivankaServiceActions.config.label.secondaryUrl') }}
+        </div>
+        <sw-dynamic-url-field
+            v-model:value="element.config.secondaryUrl.value"
+            @update:value="onChange"
+        />
+    </div>
+    {% endblock %}
+
+    {% block sw_cms_el_config_sivanka_service_actions_new_tab %}
+    <mt-switch
+        v-model="element.config.newTab.value"
+        :label="$tc('sw-cms.elements.sivankaServiceActions.config.label.newTab')"
+        @update:model-value="onChange"
+    />
+    {% endblock %}
+</div>
+{% endblock %}

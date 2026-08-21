@@ -3,22 +3,63 @@
     {% parent() %}
 
     <sw-card class="sw-product-detail-base__labelling-card" title="Custom settings">
+        {# Slider/grid tile image. This is the category's own media (`category.mediaId`) —
+           the same field as "Media" in the "Menu" card, surfaced here because the tile
+           image and the badge icon are edited together. #}
         <sw-container>
             <sw-upload-listener
-                    :key="category.id + 'categoryIcon' + 'uploadListener'"
-                    :upload-tag="category.id + 'categoryIcon'"
+                    :key="tileUploadTag + 'uploadListener'"
+                    :upload-tag="tileUploadTag"
+                    auto-upload
+                    @media-upload-finish="onSetTileMediaItem"/>
+            <sw-media-upload-v2
+                    :key="tileUploadTag + 'upload'"
+                    :label="'Category tile image'"
+                    :help-text="'Square image shown in the category slider and category grid. Leave empty to fall back to the soft gradient tile.'"
+                    variant="regular"
+                    :disabled="!acl.can('category.editor')"
+                    :source="categoryTileMedia"
+                    :upload-tag="tileUploadTag"
+                    :allow-multi-select="false"
+                    :default-folder="category.getEntityName()"
+                    @media-upload-sidebar-open="tileModalIsOpen = true"
+                    @media-upload-remove-image="onRemoveTileMediaItem"/>
+            <sw-media-modal-v2
+                    v-if="tileModalIsOpen"
+                    variant="full"
+                    :allow-multi-select="false"
+                    :entity-context="category.getEntityName()"
+                    @media-modal-selection-change="onTileSelectionChange"
+                    @media-upload-remove-image="onRemoveTileMediaItem"
+                    @modal-close="tileModalIsOpen = false"/>
+        </sw-container>
+
+        <sw-container>
+            <sw-upload-listener
+                    :key="iconUploadTag + 'uploadListener'"
+                    :upload-tag="iconUploadTag"
                     auto-upload
                     @media-upload-finish="onSetMediaItem"/>
             <sw-media-upload-v2
-                    :key="category.id + 'categoryIcon' + 'upload'"
+                    :key="iconUploadTag + 'upload'"
                     :label="'Category icon'"
+                    :help-text="'Small line icon (SVG, 24×24) shown in the white badge on the tile.'"
                     variant="regular"
                     :disabled="!acl.can('category.editor')"
                     :source="categoryIcon"
-                    :upload-tag="category.id + 'categoryIcon'"
+                    :upload-tag="iconUploadTag"
                     :allow-multi-select="false"
                     :default-folder="category.getEntityName()"
+                    @media-upload-sidebar-open="iconModalIsOpen = true"
                     @media-upload-remove-image="onRemoveMediaItem"/>
+            <sw-media-modal-v2
+                    v-if="iconModalIsOpen"
+                    variant="full"
+                    :allow-multi-select="false"
+                    :entity-context="category.getEntityName()"
+                    @media-modal-selection-change="onIconSelectionChange"
+                    @media-upload-remove-image="onRemoveMediaItem"
+                    @modal-close="iconModalIsOpen = false"/>
         </sw-container>
 
         <sw-container>
@@ -31,5 +72,3 @@
     </sw-card>
 
 {% endblock %}
-
-

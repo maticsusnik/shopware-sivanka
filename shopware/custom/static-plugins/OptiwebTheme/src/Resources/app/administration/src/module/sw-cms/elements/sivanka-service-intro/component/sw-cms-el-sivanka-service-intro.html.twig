@@ -1,0 +1,13 @@
+{% block sw_cms_el_sivanka_service_intro %}
+<div class="sw-cms-el-sivanka-service-intro" :class="'is--' + element.config.variant.value">
+    <span v-if="element.config.eyebrow.value" class="sw-cms-el-sivanka-service-intro__eyebrow">
+        {{ element.config.eyebrow.value }}
+    </span>
+    <component :is="headlineTag" class="sw-cms-el-sivanka-service-intro__headline">
+        {{ element.config.headline.value }}
+    </component>
+    <p v-if="element.config.lead.value" class="sw-cms-el-sivanka-service-intro__lead">
+        {{ element.config.lead.value }}
+    </p>
+</div>
+{% endblock %}

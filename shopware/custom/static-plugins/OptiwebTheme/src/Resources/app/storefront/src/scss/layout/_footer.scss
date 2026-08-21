@@ -315,9 +315,12 @@
         line-height: 1.6;
     }
 
-    // All links in footer columns
-    .footer-column-content-inner a,
-    .footer-link {
+    // All links in footer columns.
+    // Social icon links carry their own colours (white glyph on the magenta hover
+    // circle), so they must stay out of this rule — its `!important` would otherwise
+    // repaint the glyph magenta on magenta and make it disappear.
+    .footer-column-content-inner a:not(.social-link-item),
+    .footer-link:not(.social-link-item) {
         font-family: $sivanka-sans;
         font-size: 15px;
         color: $sivanka-muted !important;

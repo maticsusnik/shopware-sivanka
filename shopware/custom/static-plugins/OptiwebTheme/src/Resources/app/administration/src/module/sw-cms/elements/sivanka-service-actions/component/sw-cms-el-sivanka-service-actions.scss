@@ -1,0 +1,23 @@
+@import "../../../sivanka-service-shared";
+
+.sw-cms-el-sivanka-service-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    &__btn {
+        display: inline-block;
+        padding: 5px 14px;
+        font-size: 12px;
+        font-weight: 600;
+        border: 1px solid $sivanka-cms-primary;
+        border-radius: 8px;
+        background: $sivanka-cms-primary;
+        color: #fff;
+
+        &--ghost {
+            background: #fff;
+            color: $sivanka-cms-primary;
+        }
+    }
+}
