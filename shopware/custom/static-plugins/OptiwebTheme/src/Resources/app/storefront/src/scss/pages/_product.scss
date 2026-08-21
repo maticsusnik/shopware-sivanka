@@ -1,5 +1,13 @@
 .product-detail-tabs-content {
     display: block !important;
+
+    // Core's product description template extends the shared offcanvas utility, so it
+    // always emits an `.offcanvas-header` with a close button. The description renders
+    // inline in the detail tabs (never in a real offcanvas), which left a stray ✕
+    // floating above the description at every breakpoint.
+    .offcanvas-header {
+        display: none;
+    }
 }
 
 .cms-element-buy-box {
@@ -303,6 +311,18 @@
             overflow: hidden;
         }
 
+        // ...but that overflow:hidden clips at the frame's PADDING box, so with several
+        // images the neighbouring slide showed through the 24px inner gutter — a strip
+        // of the next/previous photo beside the active one. tiny-slider's own
+        // `.tns-ovh { overflow: hidden }` is not part of the compiled storefront CSS
+        // here, so the track was never clipped at the frame's inner edge. Clip it on the
+        // wrappers tiny-slider injects around the track (main slider only — the
+        // thumbnails live in their own column, the zoom modal outside this col).
+        .gallery-slider .tns-outer,
+        .gallery-slider .tns-ovh {
+            overflow: hidden;
+        }
+
         // Slides carry no chrome of their own — they just centre their image inside the
         // frame. The square aspect-ratio stays here so the slides still drive its height.
         .gallery-slider-single-image,
@@ -319,15 +339,21 @@
             justify-content: center;
         }
 
-        // Image contained within the square frame
+        // Image contained within the square frame. The <img> box deliberately FILLS the
+        // square instead of shrinking to the picture's own ratio: `object-fit: contain`
+        // letterboxes it so it looks identical, but the element then covers the whole
+        // frame. Shopware's ZoomModalPlugin binds its click to `img` (triggerSelector),
+        // so an auto-sized box left a dead band — up to 163px on a landscape photo —
+        // where clicking the "big image" did nothing.
         .gallery-slider-single-image img,
         .gallery-slider-item img,
         .gallery-slider-image {
+            width: 100%;
+            height: 100%;
             max-width: 100%;
             max-height: 100%;
-            width: auto;
-            height: auto;
             object-fit: contain;
+            cursor: zoom-in;
         }
 
         // Arrows over the main image, on top of the frame. tiny-slider already ships
@@ -566,6 +592,66 @@
                 width: 22px;
                 height: 22px;
                 top: 0;
+            }
+        }
+    }
+
+    // Enquiry button — replaces add-to-cart on unpriced / unavailable products.
+    // Core ships it as `.btn-light` (pale grey) with an inline-block layout, so the
+    // baseline-aligned envelope sat ~5px above the label and the button did not match
+    // the pink ghost/outline used for the same action in the listing cards.
+    .product-enquiry-form .btn-send-enquiry,
+    .product-enquiry-form .btn.btn-send-enquiry {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        background: transparent;
+        color: $sivanka-primary;
+        border: 1.5px solid $sivanka-primary;
+        border-radius: 12px;
+        padding: 16px 20px;
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 1.25;
+        text-align: center;
+        transition: background 0.18s, color 0.18s, border-color 0.18s;
+
+        .icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px !important;
+            height: 22px !important;
+            margin: 0;
+        }
+
+        .icon svg,
+        svg {
+            width: 22px;
+            height: 22px;
+            top: 0;
+            display: block;
+        }
+
+        // the Shopware envelope hardcodes fill="#758CA3" on its <use> element,
+        // so the colour has to be forced there rather than on the <svg>
+        .icon svg use,
+        svg use {
+            fill: $sivanka-primary !important;
+        }
+
+        &:hover,
+        &:focus,
+        &:active {
+            background: $sivanka-primary;
+            border-color: $sivanka-primary;
+            color: $ow-color-white;
+
+            .icon svg use,
+            svg use {
+                fill: $ow-color-white !important;
             }
         }
     }

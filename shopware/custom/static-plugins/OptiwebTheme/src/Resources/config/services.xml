@@ -28,8 +28,7 @@
 
         <service id="OptiwebTheme\Core\Content\Cms\DataResolvers\CategorySliderResolver">
             <tag name="shopware.cms.data_resolver"/>
-            <argument type="service" id="category.repository"/>
-            <argument type="service" id="media.repository"/>
+            <argument type="service" id="Shopware\Core\Content\Media\Core\Application\AbstractMediaUrlGenerator"/>
         </service>
 
         <service id="OptiwebTheme\Core\Content\Cms\DataResolvers\CategoryReadMoreResolver">

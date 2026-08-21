@@ -550,6 +550,13 @@
     }
 
     &-links {
+        // Bootstrap paints `.list-group-item` white, which showed as white rows on the
+        // beige dropdown panel. Let the panel's own background come through.
+        .list-group-item {
+            background: transparent;
+            border-color: transparent;
+        }
+
         .list-group-item,
         .btn-link {
             @include fontSpecs(14, 20, 400);

@@ -27,7 +27,8 @@
             "specificationTitle": "Specifikacije",
             "addAllProducts": "Dodaj vse v košarico",
             "logIn": "Prijavi se",
-            "logInTitle": "Nakup je omogočen samo prijavljenim strankam"
+            "logInTitle": "Nakup je omogočen samo prijavljenim strankam",
+            "priceOnRequest": "Cena na povpraševanje"
         },
         "checkout": {
             "logInAlert": "Če želite opraviti nakup, morate biti prijavljeni.",

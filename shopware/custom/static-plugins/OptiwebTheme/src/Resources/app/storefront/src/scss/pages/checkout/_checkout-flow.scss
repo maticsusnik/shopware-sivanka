@@ -149,9 +149,11 @@
 
 // ------------------------------------------------------------
 // Two-column flow layout — steps + H1 span full width above
+// Shared by register, confirm and the finish (thank-you) page.
 // ------------------------------------------------------------
 .is-act-checkoutregisterpage,
-.is-act-confirmpage {
+.is-act-confirmpage,
+.is-act-finishpage {
     .checkout { padding: 0; }
 
     .checkout-container {
@@ -168,12 +170,20 @@
             display: block !important;
             padding-inline: 24px;
         }
+
+        // On phones the page `.container` already supplies the gutter. Keeping this
+        // one plus core's `.checkout-main` padding stacked three gutters per side and
+        // squeezed the order rows to ~260px of a 390px screen.
+        @include media-breakpoint-down(md) {
+            padding-inline: 0;
+        }
     }
 
     .checkout-main {
         display: contents;
 
         @include media-breakpoint-down(lg) { display: block; }
+        @include media-breakpoint-down(md) { padding-inline: 0; }
     }
 
     .flashbags { grid-column: 1 / -1; }
@@ -228,10 +238,11 @@
 }
 
 // ------------------------------------------------------------
-// Shared pink summary card (register + confirm)
+// Shared pink summary card (register + confirm + finish)
 // ------------------------------------------------------------
 .is-act-checkoutregisterpage,
-.is-act-confirmpage {
+.is-act-confirmpage,
+.is-act-finishpage {
     .checkout-aside-container {
         background: $sivanka-info-bg !important;
         border: 1px solid $sivanka-info-border;
@@ -684,138 +695,6 @@
         .sv-cart-header { display: none; }
     }
 
-    .sv-confirm-line {
-        display: grid;
-        grid-template-columns: 64px 1fr 132px 100px;
-        gap: 16px;
-        align-items: center;
-        padding: 18px 22px;
-        border-bottom: 1px solid $sivanka-card-border;
-        list-style: none;
-
-        &:last-child { border-bottom: 0; }
-
-        @include media-breakpoint-down(sm) {
-            grid-template-columns: 56px 1fr auto;
-            grid-template-areas: "thumb meta total" "thumb qty qty";
-            row-gap: 10px;
-        }
-    }
-
-    .sv-confirm-thumb {
-        width: 64px;
-        height: 64px;
-        border-radius: 10px;
-        overflow: hidden;
-        background: #f7f4f1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        @include media-breakpoint-down(sm) { grid-area: thumb; }
-
-        img,
-        .line-item-img { width: 100%; height: 100%; object-fit: contain; }
-        .line-item-icon { width: 34px; height: 34px; color: $sivanka-text-soft; }
-    }
-
-    .sv-confirm-meta {
-        min-width: 0;
-
-        @include media-breakpoint-down(sm) { grid-area: meta; }
-
-        .sv-confirm-name {
-            display: block;
-            font-weight: 600;
-            font-size: 14.5px;
-            color: $sivanka-text;
-            text-decoration: none;
-
-            &:hover { color: $sivanka-primary; }
-        }
-        .sv-confirm-unit {
-            font-size: 12.5px;
-            color: $sivanka-text-soft;
-            margin-top: 3px;
-        }
-        .line-item-details-characteristics {
-            font-size: 12.5px;
-            color: $sivanka-text-soft;
-            margin-top: 2px;
-        }
-    }
-
-    .sv-confirm-qty {
-        display: flex;
-        justify-content: center;
-
-        @include media-breakpoint-down(sm) { grid-area: qty; justify-content: flex-start; }
-
-        .line-item-quantity-row { margin: 0; }
-        .line-item-quantity-label { display: none; }
-        .line-item-quantity-select-wrapper { width: auto; padding: 0; }
-        .line-item-quantity-container { margin: 0; }
-        fieldset { margin: 0; padding: 0; border: 0; }
-
-        .line-item-quantity-group {
-            display: inline-flex;
-            align-items: center;
-            width: auto;
-            border: 1px solid $sivanka-qty-border;
-            border-radius: 9px;
-            background: $ow-color-white;
-            overflow: hidden;
-            flex-wrap: nowrap;
-        }
-        .btn-minus,
-        .btn-plus {
-            width: 32px;
-            height: 36px;
-            padding: 0;
-            border: 0;
-            background: transparent;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 0;
-
-            &:hover { background: $sivanka-side-hover; box-shadow: none; }
-            .icon { color: $sivanka-primary; }
-            .icon > svg { width: 12px; height: 12px; }
-            .icon svg use, .icon svg path { fill: $sivanka-primary !important; stroke: $sivanka-primary; }
-        }
-        .quantity-selector-group-input {
-            width: 34px;
-            max-width: 34px;
-            min-width: 34px;
-            height: 36px;
-            padding: 0;
-            text-align: center;
-            border: 0;
-            background: transparent;
-            font-weight: 600;
-            font-size: 14px;
-            color: $sivanka-text;
-            -moz-appearance: textfield;
-
-            &:focus { box-shadow: none; outline: none; }
-            &::-webkit-outer-spin-button,
-            &::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        }
-    }
-
-    .sv-confirm-total {
-        text-align: right;
-
-        @include media-breakpoint-down(sm) { grid-area: total; }
-
-        .line-item-total-price-label { display: none; }
-        .line-item-total-price-value {
-            font-weight: 700;
-            font-size: 15px;
-            color: $sivanka-heading-dark;
-        }
-    }
 
     // TOS in aside
     .sv-confirm-tos {
@@ -921,5 +800,403 @@
         border-top: 0;
         border-radius: 0 0 18px 18px;
         padding-top: 20px;
+    }
+}
+
+
+// ============================================================
+// FINISH (thank-you) PAGE
+// Reuses the register / confirm shell above: 1160px grid, pink summary aside.
+// Own pieces: the success hero across the top, the order-detail cards and the
+// read-only item list.
+// ============================================================
+.is-act-finishpage {
+    // The shared shell leaves the top gap to the page H1; here the hero card is
+    // the first thing on the page, so it brings its own.
+    .checkout-container { padding-top: 36px; }
+
+    // ---- success hero, full width above both columns ----
+    .finish-success-card {
+        grid-column: 1 / -1;
+        text-align: center;
+        background: $sivanka-info-bg;
+        border: 1px solid $sivanka-info-border;
+        border-radius: 20px;
+        box-shadow: none;
+        padding: 40px 32px;
+        margin: 0 0 28px;
+
+        @include media-breakpoint-down(md) {
+            padding: 30px 20px;
+            border-radius: 16px;
+        }
+    }
+
+    .finish-success-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 58px;
+        height: 58px;
+        border-radius: 50%;
+        background: $sivanka-primary;
+        margin: 0 auto 18px;
+
+        .icon {
+            width: 26px;
+            height: 26px;
+            color: $ow-color-white;
+        }
+        .icon svg use,
+        .icon svg path { fill: $ow-color-white; }
+    }
+
+    .finish-header {
+        font-family: $sivanka-serif;
+        font-weight: 700;
+        font-size: 30px;
+        line-height: 1.2;
+        color: $sivanka-heading-dark;
+        margin: 0 0 16px;
+
+        @include media-breakpoint-down(md) { font-size: 24px; }
+    }
+
+    // Order number as a pill so it reads as the one thing worth noting down —
+    // label on top, the number on its own line underneath.
+    .finish-ordernumber {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        margin: 0;
+        padding: 10px 22px;
+        background: $ow-color-white;
+        border: 1px solid $sivanka-info-border;
+        border-radius: 18px;
+        color: $sivanka-text-muted;
+
+        &-label {
+            font-size: 13px;
+            line-height: 1.3;
+        }
+
+        &-value {
+            font-family: $sivanka-mono;
+            font-weight: 700;
+            font-size: 19px;
+            line-height: 1.25;
+            letter-spacing: 0.02em;
+            color: $sivanka-heading-dark;
+        }
+    }
+
+    // Core ships `.finish-content { margin: 0 auto 6rem }`, which left ~96px of dead
+    // space between the last line of the hero and its bottom edge.
+    .finish-content { margin: 0; }
+
+    .finish-teaser,
+    .finish-order-subtitle {
+        margin: 14px 0 0;
+        font-size: 13.5px;
+        line-height: 1.5;
+        color: $sivanka-text-soft;
+    }
+
+    // ---- order details ----
+    // Core nests the three cards in bootstrap columns (col-md-8 > row > col-sm-6 ×2,
+    // plus col-md-4). `display: contents` flattens those wrappers away so all three
+    // cards land in one even grid, the same treatment the confirm page gets.
+    .finish-info {
+        grid-column: 1;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        margin: 0 0 30px;
+
+        @include media-breakpoint-down(md) { grid-template-columns: 1fr; }
+    }
+
+    .finish-address,
+    .finish-address > .row,
+    .finish-address > .row > [class^='col'],
+    .finish-order-details {
+        display: contents;
+    }
+
+    .finish-info .checkout-card {
+        border: 1px solid $sivanka-card-border !important;
+        border-radius: 16px;
+        background: $ow-color-white;
+        box-shadow: none;
+        height: 100%;
+        margin: 0;
+
+        .card-body { padding: 20px; }
+
+        // "Naslov za obračunavanje" needs two lines in a third-of-column card while
+        // the other two titles need one, so reserve two lines everywhere and the
+        // address blocks start on the same baseline across all three cards.
+        .card-title {
+            font-family: $sivanka-mono;
+            font-size: 12px;
+            line-height: 1.4;
+            min-height: 2.8em;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #9a8b83;
+            font-weight: 400;
+            margin: 0 0 12px;
+            padding: 0;
+            border: 0;
+
+            @include media-breakpoint-down(md) { min-height: 0; }
+        }
+
+        p,
+        address {
+            font-size: 14px;
+            line-height: 1.7;
+            font-style: normal;
+            color: #3c3138;
+            margin: 0;
+        }
+
+        p + p { margin-top: 10px; }
+
+        strong {
+            display: block;
+            font-weight: 600;
+            color: $sivanka-text;
+        }
+    }
+
+    // ---- item list ----
+    .finish-products {
+        grid-column: 1;
+        margin: 0;
+    }
+
+    .finish-section-title {
+        font-family: $sivanka-serif;
+        font-weight: 700;
+        font-size: 21px;
+        color: $sivanka-heading-dark;
+        margin: 0 0 14px;
+    }
+
+    .checkout-product-table {
+        border: 1px solid $sivanka-card-border !important;
+        border-radius: 16px;
+        background: $ow-color-white;
+        box-shadow: none;
+        overflow: hidden;
+        margin: 0;
+
+        > .card-body {
+            padding: 0;
+            margin: 0;
+        }
+
+        .cart-table-header,
+        .sv-cart-header { display: none; }
+    }
+
+    // Quantity is read-only here — no stepper, just the number
+    .sv-order-line .sv-confirm-qty {
+        font-weight: 600;
+        font-size: 14.5px;
+        color: $sivanka-text;
+    }
+
+    // Customer comment (only rendered when the order carries one)
+    .checkout-additional {
+        grid-column: 1;
+        margin-top: 22px;
+
+        .checkout-card {
+            border: 1px solid $sivanka-card-border !important;
+            border-radius: 16px;
+            background: $ow-color-white;
+            box-shadow: none;
+        }
+
+        .card-title {
+            font-family: $sivanka-mono;
+            font-size: 12px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #9a8b83;
+            font-weight: 400;
+            margin: 0 0 10px;
+            padding: 0;
+            border: 0;
+        }
+    }
+
+    // ---- aside ----
+    .checkout-aside.checkout-aside-no-offset { margin: 0 !important; }
+
+    // ---- phones: one gutter, same as the CMS pages ----
+    // Core's `.checkout-container` @extends Bootstrap's `.row`, so every direct child
+    // (main + aside) gets half a gutter of padding — 20px on top of the 20px the page
+    // `.container` already supplies. Cards sat 40px from the screen edge while the home
+    // and category pages use 20px. Zero the inner one; the selector needs three classes
+    // to outrank core's `.is-act-finishpage .checkout .checkout-container > *`.
+    @include media-breakpoint-down(md) {
+        .checkout .checkout-container > * { padding-inline: 0; }
+
+        .checkout-container { padding-bottom: 32px; }
+
+        .finish-info { gap: 12px; margin-bottom: 22px; }
+
+        .finish-info .checkout-card .card-body { padding: 16px 18px; }
+
+        .checkout-aside-container { padding: 20px; }
+
+        .sv-confirm-line { padding: 14px 16px; }
+    }
+}
+
+// ============================================================
+// ORDER LINE ROW (shared component)
+// Used by the confirm page, the finish page and the account order
+// history. It lived inside `.is-act-confirmpage` and therefore never
+// reached the finish / order pages, which fell back to an unstyled
+// stack. `.sv-confirm-line` is a bespoke class, so it needs no page scope.
+// ============================================================
+.sv-confirm-line {
+    display: grid;
+    grid-template-columns: 64px 1fr 132px 100px;
+    gap: 16px;
+    align-items: center;
+    padding: 18px 22px;
+    border-bottom: 1px solid $sivanka-card-border;
+    list-style: none;
+
+    &:last-child { border-bottom: 0; }
+
+    @include media-breakpoint-down(sm) {
+        grid-template-columns: 56px 1fr auto;
+        grid-template-areas: "thumb meta total" "thumb qty qty";
+        row-gap: 10px;
+    }
+}
+
+.sv-confirm-thumb {
+    width: 64px;
+    height: 64px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #f7f4f1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+
+    // the small-screen grid narrows this track to 56px — match it, or the
+    // thumbnail spills into the product name column
+    @include media-breakpoint-down(sm) { grid-area: thumb; width: 56px; height: 56px; }
+
+    img,
+    .line-item-img { width: 100%; height: 100%; object-fit: contain; }
+    .line-item-icon { width: 34px; height: 34px; color: $sivanka-text-soft; }
+}
+
+.sv-confirm-meta {
+    min-width: 0;
+
+    @include media-breakpoint-down(sm) { grid-area: meta; }
+
+    .sv-confirm-name {
+        display: block;
+        font-weight: 600;
+        font-size: 14.5px;
+        color: $sivanka-text;
+        text-decoration: none;
+
+        &:hover { color: $sivanka-primary; }
+    }
+    .sv-confirm-unit {
+        font-size: 12.5px;
+        color: $sivanka-text-soft;
+        margin-top: 3px;
+    }
+    .line-item-details-characteristics {
+        font-size: 12.5px;
+        color: $sivanka-text-soft;
+        margin-top: 2px;
+    }
+}
+
+.sv-confirm-qty {
+    display: flex;
+    justify-content: center;
+
+    @include media-breakpoint-down(sm) { grid-area: qty; justify-content: flex-start; }
+
+    .line-item-quantity-row { margin: 0; }
+    .line-item-quantity-label { display: none; }
+    .line-item-quantity-select-wrapper { width: auto; padding: 0; }
+    .line-item-quantity-container { margin: 0; }
+    fieldset { margin: 0; padding: 0; border: 0; }
+
+    .line-item-quantity-group {
+        display: inline-flex;
+        align-items: center;
+        width: auto;
+        border: 1px solid $sivanka-qty-border;
+        border-radius: 9px;
+        background: $ow-color-white;
+        overflow: hidden;
+        flex-wrap: nowrap;
+    }
+    .btn-minus,
+    .btn-plus {
+        width: 32px;
+        height: 36px;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0;
+
+        &:hover { background: $sivanka-side-hover; box-shadow: none; }
+        .icon { color: $sivanka-primary; }
+        .icon > svg { width: 12px; height: 12px; }
+        .icon svg use, .icon svg path { fill: $sivanka-primary !important; stroke: $sivanka-primary; }
+    }
+    .quantity-selector-group-input {
+        width: 34px;
+        max-width: 34px;
+        min-width: 34px;
+        height: 36px;
+        padding: 0;
+        text-align: center;
+        border: 0;
+        background: transparent;
+        font-weight: 600;
+        font-size: 14px;
+        color: $sivanka-text;
+        -moz-appearance: textfield;
+
+        &:focus { box-shadow: none; outline: none; }
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    }
+}
+
+.sv-confirm-total {
+    text-align: right;
+
+    @include media-breakpoint-down(sm) { grid-area: total; }
+
+    .line-item-total-price-label { display: none; }
+    .line-item-total-price-value {
+        font-weight: 700;
+        font-size: 15px;
+        color: $sivanka-heading-dark;
     }
 }

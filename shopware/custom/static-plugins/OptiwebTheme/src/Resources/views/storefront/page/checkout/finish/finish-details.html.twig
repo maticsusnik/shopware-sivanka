@@ -34,8 +34,12 @@
         {% endblock %}
 
         {% block page_checkout_finish_ordernumber %}
+            {# The snippet ends in a dangling "#" ("Vaša številka naročila: #") which reads
+               wrong once the number moves to its own line, so strip it off the label. #}
             <p class="finish-ordernumber" data-order-number="{{ page.order.orderNumber }}">
-                {{ 'checkout.finishInfoOrdernumber'|trans|sw_sanitize }}
+                <span class="finish-ordernumber-label">
+                    {{ 'checkout.finishInfoOrdernumber'|trans|trim|trim('#')|trim|sw_sanitize }}
+                </span>
                 <strong class="finish-ordernumber-value">{{ page.order.orderNumber }}</strong>
             </p>
         {% endblock %}

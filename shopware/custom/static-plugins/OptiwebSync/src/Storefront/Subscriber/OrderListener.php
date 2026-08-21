@@ -10,7 +10,6 @@ use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityWriteResult;
 use Shopware\Core\Framework\DataAbstractionLayer\Event\EntityWrittenEvent;
-use Shopware\Core\Framework\DataAbstractionLayer\Pricing\CashRoundingConfig;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class OrderListener implements EventSubscriberInterface
@@ -52,12 +51,11 @@ class OrderListener implements EventSubscriberInterface
 
             $this->setCustomField($context, $payload["id"], [GlobalVariables::CUSTOM_FIELD_OPTIWEB_STATUS => $status]);
 
-            $itemRounding = $payload["itemRounding"] ?? null;
-            if($itemRounding){
-                $itemRounding->setDecimals(4);
-                /** OptiwebPricing plugin sets rounding to 8 decimals at a certain point. This call restores the rounding to 4 deci */
-                $this->setItemRounding($writeResult->getPayload()["id"], $itemRounding, $context);
-            }
+            // NOTE: this listener used to force the order's itemRounding to 4 decimals to undo the
+            // 8-decimal rounding of the OptiwebPricing plugin. That plugin is not part of this
+            // project, so the override only made every order render prices as "4,1000 €" on the
+            // finish page, in the account order history and in order mails. The order now keeps the
+            // rounding of its currency (2 decimals).
         }
     }
 
@@ -72,20 +70,6 @@ class OrderListener implements EventSubscriberInterface
         }
 
         $this->orderRepository->update([$customFieldSetData], $context);
-    }
-
-    public function setItemRounding(string $orderId, CashRoundingConfig $itemRounding, $context): void
-    {
-        try {
-            $this->orderRepository->update([
-                [
-                    "id" => $orderId,
-                    "itemRounding" => $itemRounding->jsonSerialize(),
-                ],
-            ], $context);
-        } catch (\Exception $error) {
-            return;
-        }
     }
 
 }

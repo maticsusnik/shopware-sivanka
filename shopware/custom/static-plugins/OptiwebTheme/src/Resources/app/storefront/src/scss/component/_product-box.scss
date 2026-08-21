@@ -42,13 +42,17 @@
             height: 100%;
         }
 
+        // `cover` cropped every non-square photo — the wide yarn shots (280x174) lost
+        // their outer balls and looked off-centre. `contain` shows the whole picture,
+        // centred on the beige panel, the same way the detail gallery frames it.
         img,
         .product-image {
             width: 100%;
             height: 100%;
             max-height: none !important; // kill the base 200px cap that squashed the square
-            object-fit: cover !important;
-            object-position: center;
+            object-fit: contain !important;
+            object-position: center center;
+            padding: 12px;
             display: block;
         }
     }

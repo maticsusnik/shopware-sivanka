@@ -45,6 +45,9 @@ export default class OptiwebProductEnquiryPlugin extends Plugin {
 
     _onSubmit(e) {
         e.preventDefault();
+        if (this._isSubmitting) {
+            return;
+        }
         if (!this._form.checkValidity()) {
             this._form.reportValidity();
             return;
@@ -70,6 +73,8 @@ export default class OptiwebProductEnquiryPlugin extends Plugin {
     _submit() {
         const formData = new FormData(this._form);
 
+        this._setLoading(true);
+
         fetch(this._form.action, {
             method: 'POST',
             body: formData,
@@ -77,7 +82,22 @@ export default class OptiwebProductEnquiryPlugin extends Plugin {
         })
             .then((res) => res.json())
             .then((data) => this._handleResponse(data))
-            .catch(() => this._showAlert('danger', 'Prišlo je do nepričakovane napake. Prosimo, poskusite znova.'));
+            .catch(() => this._showAlert('danger', 'Prišlo je do nepričakovane napake. Prosimo, poskusite znova.'))
+            .finally(() => this._setLoading(false));
+    }
+
+    /**
+     * Blocks the submit button while the request is in flight so an impatient second
+     * click cannot fire the enquiry twice.
+     */
+    _setLoading(isLoading) {
+        const button = this._form.querySelector('button[type="submit"], input[type="submit"]');
+        if (!button) return;
+
+        this._isSubmitting = isLoading;
+        button.disabled = isLoading;
+        button.classList.toggle('is-loading', isLoading);
+        this._form.classList.toggle('is-submitting', isLoading);
     }
 
     _handleResponse(response) {

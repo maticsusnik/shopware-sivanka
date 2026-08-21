@@ -1,4 +1,18 @@
 {% sw_extends '@Storefront/storefront/component/product/card/price-unit.html.twig' %}
 
+{% block component_product_box_price %}
+    {# Products the ERP sync left unpriced would otherwise advertise "0,00 €".
+       They are enquiry-only (see ProductAvailabilitySubscriber), so label them as such. #}
+    {% if product.calculatedPrice.unitPrice <= 0 %}
+        <div class="product-price-wrapper">
+            <span class="product-price product-price-on-request">
+                {{ 'optiweb.product.priceOnRequest'|trans|sw_sanitize }}
+            </span>
+        </div>
+    {% else %}
+        {{ parent() }}
+    {% endif %}
+{% endblock %}
+
 {% block component_product_box_price_tax_info %}
 {% endblock %}

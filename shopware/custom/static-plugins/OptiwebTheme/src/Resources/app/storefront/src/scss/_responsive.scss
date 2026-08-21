@@ -185,9 +185,14 @@ $bottom-bar-height: 58px;
             top: 0;
         }
 
-        // Badges hug the glyph rather than the full-width button
+        // The buttons above are `width: 100%`, which resolves against their wrapper —
+        // so every wrapper has to span its column too, or the button collapses to the
+        // glyph width and leaves a ~26px tap target (account + menu toggle did).
         .header-cart,
-        .header-wishlist {
+        .header-wishlist,
+        .account-menu,
+        .dropdown,
+        .menu-button {
             width: 100%;
             display: flex;
             justify-content: center;
@@ -361,10 +366,35 @@ $bottom-bar-height: 58px;
         }
     }
 
-    // Back-to-top has to clear the bar AND the floating Filter pill stacked above it.
-    // Bar 58 + 12 gap + pill 42 = 112, so this leaves ~40px of air above the pill.
+    // Back-to-top only has to clear the bottom bar. It used to be lifted a further 6rem
+    // to stay above the floating Filter pill, which left it hovering mid-screen — but the
+    // pill is centred and this is pinned to the right edge, so they never overlap. Same
+    // line as the pill now.
     .scroll-up-button {
-        bottom: calc(#{$bottom-bar-height} + env(safe-area-inset-bottom, 0px) + 6rem) !important;
+        bottom: calc(#{$bottom-bar-height} + env(safe-area-inset-bottom, 0px) + 0.75rem) !important;
+    }
+}
+
+// ============================================================
+//  Back-to-top button: square tap target, centred glyph
+//  Core renders it as a default inline-block .btn, so the arrow sat on the text
+//  baseline — off-centre in both directions inside the pink box.
+// ============================================================
+.scroll-up-button .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+
+    .icon {
+        width: 18px;
+        height: 18px;
+    }
+
+    .icon > svg {
+        top: 0;
     }
 }
 
