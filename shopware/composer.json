@@ -70,6 +70,9 @@
                 "https://raw.githubusercontent.com/shopware/recipes/flex/main/index.json",
                 "flex://defaults"
             ]
+        },
+        "runtime": {
+            "dotenv_overload": true
         }
     }
 }
