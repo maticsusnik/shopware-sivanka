@@ -215,7 +215,7 @@ class MinimaxClient implements ClientInterface
         }
 
         try {
-            $record = $this->get($resourceUrl);
+            $record = $this->get($this->absoluteUrl($resourceUrl));
 
             foreach (self::VAT_PERCENT_KEYS as $key) {
                 if (isset($record[$key]) && is_numeric($record[$key])) {
@@ -823,6 +823,24 @@ class MinimaxClient implements ClientInterface
     private function codeUrl(string $orgId, string $resource, string $code): string
     {
         return $this->url($orgId, $resource) . '/code(' . rawurlencode($code) . ')';
+    }
+
+    /**
+     * Resolve a URL Minimax handed back to us into an absolute one.
+     *
+     * Record links such as a VatRate's `ResourceUrl` arrive relative to the API
+     * root ("/api/orgs/239849/vatrates/36"). HttpClient rejects those outright
+     * ("scheme is missing"), so they must be joined onto baseUrl() — which
+     * already carries the locale path prefix (/si/API/) that a root-relative
+     * resolve against the host would drop.
+     */
+    private function absoluteUrl(string $url): string
+    {
+        if (preg_match('#^https?://#i', $url) === 1) {
+            return $url;
+        }
+
+        return $this->baseUrl() . ltrim($url, '/');
     }
 
     /**
