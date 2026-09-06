@@ -3,8 +3,10 @@ import template from './sw-cms-el-config-read-more-text.html.twig';
 Shopware.Component.register('sw-cms-el-config-read-more-text', {
     template,
 
+    emits: ['element-update'],
+
     mixins: [
-        'cms-element'
+        Shopware.Mixin.getByName('cms-element')
     ],
 
     created() {

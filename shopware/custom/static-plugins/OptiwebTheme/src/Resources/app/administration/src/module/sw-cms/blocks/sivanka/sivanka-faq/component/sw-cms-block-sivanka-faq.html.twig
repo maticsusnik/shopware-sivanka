@@ -1,0 +1,16 @@
+{% block sw_cms_block_sivanka_faq %}
+<div class="sw-cms-block-sivanka-faq">
+    <div class="sw-cms-block-sivanka-faq__heading">
+        <slot name="heading">{% block sw_cms_block_sivanka_faq_slot_heading %}{% endblock %}</slot>
+    </div>
+    <div class="sw-cms-block-sivanka-faq__grid">
+        <div class="sw-cms-block-sivanka-faq__aside">
+            <slot name="image">{% block sw_cms_block_sivanka_faq_slot_image %}{% endblock %}</slot>
+            <slot name="text">{% block sw_cms_block_sivanka_faq_slot_text %}{% endblock %}</slot>
+        </div>
+        <div class="sw-cms-block-sivanka-faq__list">
+            <slot name="faq">{% block sw_cms_block_sivanka_faq_slot_faq %}{% endblock %}</slot>
+        </div>
+    </div>
+</div>
+{% endblock %}

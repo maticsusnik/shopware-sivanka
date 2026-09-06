@@ -6,6 +6,8 @@ const { Criteria } = Shopware.Data;
 Component.register('sw-cms-el-config-sivanka-category-navigation', {
     template,
 
+    emits: ['element-update'],
+
     inject: ['repositoryFactory'],
 
     mixins: [
@@ -48,15 +50,21 @@ Component.register('sw-cms-el-config-sivanka-category-navigation', {
             this.parentCategoryIdLocal = cfg.parentCategory?.value || '';
             this.showParentCategoryLocal = cfg.showParentCategory?.value || 'no';
         },
+
+        onElementUpdate() {
+            this.$emit('element-update', this.element);
+        },
     },
 
     watch: {
         parentCategoryIdLocal(val) {
             this.element.config.parentCategory.value = val || '';
+            this.onElementUpdate();
         },
 
         showParentCategoryLocal(val) {
             this.element.config.showParentCategory.value = val || 'no';
+            this.onElementUpdate();
         },
     }
 });

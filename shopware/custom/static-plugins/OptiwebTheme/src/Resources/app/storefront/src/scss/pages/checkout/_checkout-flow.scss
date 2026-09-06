@@ -7,7 +7,7 @@
 // Minimal checkout header
 // ------------------------------------------------------------
 .sv-co-header {
-    border-bottom: 1px solid $sivanka-card-border;
+    border-bottom: 1px solid $sv-border;
 
     .container { max-width: 1160px; }
 
@@ -42,13 +42,13 @@
         text-align: right;
         font-size: 13px;
         line-height: 1.45;
-        color: $sivanka-text-muted;
+        color: $sv-ink-muted;
 
-        &-title { font-weight: 700; color: $sivanka-text; }
+        &-title { font-weight: 700; color: $sv-ink; }
 
         &-line {
-            a { font-weight: 700; color: $sivanka-primary; }
-            span { color: $sivanka-text-soft; margin-left: 6px; }
+            a { font-weight: 700; color: $sv-bordo; }
+            span { color: $sv-ink-muted; margin-left: 6px; }
         }
 
         @include media-breakpoint-down(md) { display: none; }
@@ -61,14 +61,14 @@
         flex-shrink: 0;
         font-weight: 600;
         font-size: 14px;
-        color: $sivanka-primary;
-        border: 1.5px solid $sivanka-primary;
-        border-radius: 999px;
+        color: $sv-bordo;
+        border: 1px solid $sv-bordo;
+        border-radius: $sv-r-btn;
         padding: 10px 20px;
         text-decoration: none;
         transition: all 0.16s;
 
-        &:hover { background: $sivanka-primary; color: $ow-color-white; }
+        &:hover { background: $sv-bordo; color: $sv-white; }
     }
 }
 
@@ -104,21 +104,21 @@
     &-number {
         width: 34px;
         height: 34px;
-        border-radius: 50%;
+        border-radius: $sv-r-round;
         display: flex;
         align-items: center;
         justify-content: center;
         font-weight: 700;
         font-size: 15px;
         flex-shrink: 0;
-        background: #f2eae0;
-        color: #9a8b83;
+        background: $sv-cream;
+        color: $sv-ink-muted;
     }
 
     &-label {
         font-size: 15px;
         font-weight: 600;
-        color: #9a8b83;
+        color: $sv-ink-muted;
         white-space: nowrap;
     }
 
@@ -127,18 +127,18 @@
         height: 2px;
         min-width: 30px;
         margin: 0 16px;
-        background: #eadfe6;
+        background: $sv-border;
     }
 
     .is-done {
-        .checkout-steps-number { background: #e6f4ee; color: #2fa36b; }
-        .checkout-steps-label { color: $sivanka-text; }
-        .checkout-steps-connector { background: $sivanka-primary; }
+        .checkout-steps-number { background: $sv-state-surface; color: $sv-success; }
+        .checkout-steps-label { color: $sv-ink; }
+        .checkout-steps-connector { background: $sv-bordo; }
     }
 
     .is-active {
-        .checkout-steps-number { background: $sivanka-primary; color: $ow-color-white; }
-        .checkout-steps-label { color: $sivanka-primary; font-weight: 700; }
+        .checkout-steps-number { background: $sv-bordo; color: $sv-white; }
+        .checkout-steps-label { color: $sv-bordo; font-weight: 700; }
     }
 
     @include media-breakpoint-down(sm) {
@@ -194,11 +194,11 @@
         grid-column: 1 / -1;
         grid-row: 2;
         display: block;
-        font-family: $sivanka-serif;
-        font-weight: 700;
+        font-family: $sv-serif;
+        font-weight: 600;
         font-size: 34px;
         line-height: 1.15;
-        color: $sivanka-heading-dark;
+        color: $sv-bordo-head;
         margin: 36px 0 28px;
 
         @include media-breakpoint-down(md) { font-size: 27px; }
@@ -244,9 +244,9 @@
 .is-act-confirmpage,
 .is-act-finishpage {
     .checkout-aside-container {
-        background: $sivanka-info-bg !important;
-        border: 1px solid $sivanka-info-border;
-        border-radius: 18px;
+        background: $sv-cream !important;
+        border: 1px solid $sv-border;
+        border-radius: $sv-r-panel;
         padding: 28px;
     }
 
@@ -256,10 +256,10 @@
     }
 
     .checkout-aside-summary-header {
-        font-family: $sivanka-serif;
-        font-weight: 700;
+        font-family: $sv-serif;
+        font-weight: 600;
         font-size: 22px;
-        color: $sivanka-heading-dark;
+        color: $sv-bordo-head;
         margin: 0 0 18px;
         padding: 0;
         border: 0;
@@ -280,21 +280,21 @@
             font-size: 14.5px;
         }
 
-        dt { text-align: left; color: $sivanka-text-muted; font-weight: 400; }
-        dd { text-align: right; color: $sivanka-text; font-weight: 600; }
+        dt { text-align: left; color: $sv-ink-muted; font-weight: 400; }
+        dd { text-align: right; color: $sv-ink; font-weight: 600; }
 
         dt.checkout-aside-summary-total,
         dd.checkout-aside-summary-total {
-            border-top: 1px solid $sivanka-divider;
+            border-top: 1px solid $sv-border;
             margin-top: 10px;
             padding-top: 14px;
             padding-bottom: 2px;
-            color: $sivanka-heading-dark;
+            color: $sv-bordo-head;
         }
         dt.checkout-aside-summary-total { font-weight: 700; font-size: 16px; }
         dd.checkout-aside-summary-total {
-            font-family: $sivanka-serif;
-            font-weight: 700;
+            font-family: $sv-serif;
+            font-weight: 600;
             font-size: 23px;
             line-height: 1;
         }
@@ -302,7 +302,7 @@
         dt.summary-net, dd.summary-net,
         dt.summary-tax, dd.summary-tax {
             font-size: 12.5px;
-            color: $sivanka-text-soft;
+            color: $sv-ink-muted;
             font-weight: 400;
             padding: 3px 0;
         }
@@ -310,7 +310,7 @@
     }
 
     // Shipping cost shown free = green
-    dd.checkout-aside-summary-value.summary-shipping { color: #2fa36b; }
+    dd.checkout-aside-summary-value.summary-shipping { color: $sv-success; }
 }
 
 // ------------------------------------------------------------
@@ -320,15 +320,16 @@
     .checkout-aside-products {
         padding: 0;
         margin-top: 18px;
-        border-top: 1px solid $sivanka-divider;
+        border-top: 1px solid $sv-border;
         padding-top: 14px;
 
         .checkout-aside-product-header {
-            font-family: $sivanka-mono;
+            font-family: $sv-sans;
+            font-weight: 700;
             font-size: 11px;
-            letter-spacing: 0.1em;
+            letter-spacing: .96px;
             text-transform: uppercase;
-            color: #9a8b83;
+            color: $sv-ink-muted;
             border: 0;
             margin: 0 0 8px;
             padding: 0;
@@ -342,11 +343,11 @@
 
             .line-item-img-container { width: 48px; }
             .line-item-img {
-                border-radius: 9px;
-                background: $ow-color-white;
+                border-radius: $sv-r-field;
+                background: $sv-white;
             }
-            .line-item-label { font-size: 13.5px; font-weight: 600; color: $sivanka-text; }
-            .line-item-total-price-value { font-weight: 700; font-size: 14px; color: $sivanka-heading-dark; }
+            .line-item-label { font-size: 13.5px; font-weight: 600; color: $sv-ink; }
+            .line-item-total-price-value { font-weight: 700; font-size: 14px; color: $sv-bordo-head; }
             .line-item-remove-button { display: none; }
         }
     }
@@ -361,22 +362,22 @@
         display: flex;
         align-items: center;
         gap: 12px;
-        background: $sivanka-info-bg;
-        border: 1px solid $sivanka-info-border;
-        border-radius: 14px;
+        background: $sv-cream;
+        border: 1px solid $sv-border;
+        border-radius: $sv-r-panel;
         padding: 16px 20px;
         margin-bottom: 24px;
 
         .icon {
             width: 22px;
             height: 22px;
-            color: $sivanka-primary;
+            color: $sv-bordo;
             flex-shrink: 0;
         }
-        .icon svg use, .icon svg path { fill: $sivanka-primary; }
+        .icon svg use, .icon svg path { fill: $sv-bordo; }
 
-        a { font-weight: 600; color: $sivanka-primary; text-decoration: none; }
-        a:hover { color: $sivanka-primary-hover; }
+        a { font-weight: 600; color: $sv-bordo; text-decoration: none; }
+        a:hover { color: $sv-bordo-hover; }
     }
 
     // Section cards
@@ -385,11 +386,11 @@
     fieldset.register-shipping,
     .login-card,
     #loginCollapse .card {
-        border: 1px solid $sivanka-card-border;
-        border-radius: 18px;
+        border: 1px solid $sv-border;
+        border-radius: $sv-r-panel;
         padding: 28px;
         margin-bottom: 22px;
-        background: $ow-color-white;
+        background: $sv-white;
     }
     #loginCollapse .card { box-shadow: none; }
 
@@ -398,10 +399,10 @@
     .register-billing .card-title,
     .register-shipping .card-title,
     #loginCollapse .card-title {
-        font-family: $sivanka-serif;
-        font-weight: 700;
+        font-family: $sv-serif;
+        font-weight: 600;
         font-size: 20px;
-        color: $sivanka-heading-dark;
+        color: $sv-bordo-head;
         margin: 0 0 20px;
         padding: 0;
         border: 0;
@@ -425,22 +426,22 @@
         .form-label {
             font-size: 13px;
             font-weight: 600;
-            color: #4a545b;
+            color: $sv-ink-muted;
             margin-bottom: 7px;
         }
 
         .form-control,
         .form-select {
             height: 46px;
-            border: 1px solid $sivanka-input-border;
-            border-radius: 10px;
+            border: 1px solid $sv-border;
+            border-radius: $sv-r-field;
             padding: 0 14px;
             font-size: 14.5px;
             box-shadow: none;
 
             &:focus {
-                border-color: $sivanka-primary;
-                box-shadow: 0 0 0 3px rgba($sivanka-primary, 0.12);
+                border-color: $sv-bordo;
+                box-shadow: $sv-focus-ring;
             }
         }
 
@@ -449,15 +450,15 @@
     }
 
     // Checkboxes
-    .form-check-input { accent-color: $sivanka-primary; }
+    .form-check-input { accent-color: $sv-bordo; }
     .form-check-input:checked {
-        background-color: $sivanka-primary;
-        border-color: $sivanka-primary;
+        background-color: $sv-bordo;
+        border-color: $sv-bordo;
     }
     .register-guest-control,
     .register-different-shipping {
         margin-top: 4px;
-        .form-check-label { font-size: 13.5px; color: #4a545b; }
+        .form-check-label { font-size: 13.5px; color: $sv-ink-muted; }
     }
 
     // Privacy note
@@ -467,18 +468,18 @@
         padding: 0;
         margin-top: 18px;
         font-size: 13px;
-        color: $sivanka-text-soft;
+        color: $sv-ink-muted;
 
         .privacy-notice-title {
             font-size: 13px;
-            color: $sivanka-text-soft;
+            color: $sv-ink-muted;
             font-weight: 400;
             padding: 0;
             border: 0;
             float: none;
             width: auto;
         }
-        a { color: $sivanka-primary; }
+        a { color: $sv-bordo; }
     }
 
     // Submit → pink full-width button
@@ -491,18 +492,18 @@
 
         .btn {
             width: 100%;
-            background: $sivanka-primary;
-            border-color: $sivanka-primary;
-            color: $ow-color-white;
-            border-radius: 12px;
+            background: $sv-bordo;
+            border-color: $sv-bordo;
+            color: $sv-white;
+            border-radius: $sv-r-card;
             padding: 15px;
             font-weight: 600;
             font-size: 16px;
             line-height: 1.2;
 
             &:hover {
-                background: $sivanka-primary-hover;
-                border-color: $sivanka-primary-hover;
+                background: $sv-bordo-hover;
+                border-color: $sv-bordo-hover;
             }
         }
     }
@@ -532,10 +533,10 @@
     .confirm-section-number {
         width: 28px;
         height: 28px;
-        border-radius: 50%;
-        background: $sivanka-primary;
-        color: $ow-color-white;
-        font-family: $sivanka-mono;
+        border-radius: $sv-r-round;
+        background: $sv-bordo;
+        color: $sv-white;
+        font-family: $sv-sans;
         font-weight: 700;
         font-size: 14px;
         display: flex;
@@ -545,10 +546,10 @@
     }
 
     .confirm-section-title {
-        font-family: $sivanka-serif;
-        font-weight: 700;
+        font-family: $sv-serif;
+        font-weight: 600;
         font-size: 21px;
-        color: $sivanka-heading-dark;
+        color: $sv-bordo-head;
         margin: 0;
     }
 
@@ -586,9 +587,9 @@
     // The bordered card inside each column
     .confirm-address .checkout-card,
     .confirm-payment-shipping .checkout-card {
-        border: 1px solid $sivanka-card-border !important;
-        border-radius: 16px;
-        background: $ow-color-white;
+        border: 1px solid $sv-border !important;
+        border-radius: $sv-r-panel;
+        background: $sv-white;
         box-shadow: none;
         height: 100%;
 
@@ -599,14 +600,14 @@
     .confirm-payment-shipping .confirm-payment { order: 1; }
     .confirm-payment-shipping .confirm-shipping { order: 2; }
 
-    // Space Mono uppercase labels
+    // Uppercase Inter labels — the eyebrow treatment
     .confirm-address .card-title,
     .confirm-payment-shipping .card-title {
-        font-family: $sivanka-mono;
+        font-family: $sv-sans;
         font-size: 12px;
-        letter-spacing: 0.1em;
+        letter-spacing: .96px;
         text-transform: uppercase;
-        color: #9a8b83;
+        color: $sv-ink-muted;
         font-weight: 400;
         margin: 0 0 12px;
         padding: 0;
@@ -620,7 +621,7 @@
         p {
             font-size: 14.5px;
             line-height: 1.7;
-            color: #3c3138;
+            color: $sv-ink;
             font-style: normal;
             margin: 0;
         }
@@ -634,14 +635,14 @@
         margin-top: 16px;
         font-size: 13.5px;
         font-weight: 600;
-        color: $sivanka-primary;
+        color: $sv-bordo;
         background: transparent;
-        border: 1px solid $sivanka-divider;
-        border-radius: 999px;
+        border: 1px solid $sv-border;
+        border-radius: $sv-r-btn-sm;
         padding: 7px 16px;
         text-decoration: none;
 
-        &:hover { background: $sivanka-side-hover; color: $sivanka-primary; border-color: $sivanka-divider; }
+        &:hover { background: $sv-bordo-tint; color: $sv-bordo; border-color: $sv-border; }
     }
 
     // Payment / shipping radios
@@ -659,7 +660,7 @@
     }
     .payment-method-input,
     .shipping-method-input {
-        accent-color: $sivanka-primary;
+        accent-color: $sv-bordo;
         width: 18px;
         height: 18px;
         margin-top: 2px;
@@ -669,26 +670,26 @@
     .shipping-method-label {
         font-weight: 600;
         font-size: 14.5px;
-        color: $sivanka-text;
+        color: $sv-ink;
     }
     .payment-method-description,
     .shipping-method-description {
         font-size: 13px;
-        color: $sivanka-text-soft;
+        color: $sv-ink-muted;
 
-        p { font-size: 13px; color: $sivanka-text-soft; margin: 2px 0 0; }
+        p { font-size: 13px; color: $sv-ink-muted; margin: 2px 0 0; }
     }
-    .shipping-method .shipping-price { color: #2fa36b; font-weight: 600; font-size: 13px; }
+    .shipping-method .shipping-price { color: $sv-success; font-weight: 600; font-size: 13px; }
 
     // Order review list
     .confirm-product {
         .card,
         .checkout-product-table {
-            border: 1px solid $sivanka-card-border !important;
-            border-radius: 16px;
+            border: 1px solid $sv-border !important;
+            border-radius: $sv-r-panel;
             overflow: hidden;
             box-shadow: none;
-            background: $ow-color-white;
+            background: $sv-white;
         }
         .card-body { padding: 0; margin: 0; }
         .cart-table-header,
@@ -703,9 +704,9 @@
         gap: 10px;
         margin-top: 20px;
         padding: 14px;
-        background: $ow-color-white;
-        border: 1px solid $sivanka-divider;
-        border-radius: 12px;
+        background: $sv-white;
+        border: 1px solid $sv-border;
+        border-radius: $sv-r-card;
         cursor: pointer;
 
         .form-check-input {
@@ -713,16 +714,16 @@
             height: 18px;
             margin: 1px 0 0;
             flex-shrink: 0;
-            accent-color: $sivanka-primary;
+            accent-color: $sv-bordo;
         }
         .checkout-confirm-tos-label,
         .checkout-confirm-revocation-label {
             font-size: 12.5px;
             line-height: 1.5;
-            color: #5b4650;
+            color: $sv-ink-muted;
         }
         .btn-link-inline {
-            color: $sivanka-primary;
+            color: $sv-bordo;
             padding: 0;
             border: 0;
             background: none;
@@ -741,18 +742,18 @@
         .btn,
         .btn-primary {
             width: 100%;
-            background: $sivanka-primary;
-            border-color: $sivanka-primary;
-            color: $ow-color-white;
-            border-radius: 12px;
+            background: $sv-bordo;
+            border-color: $sv-bordo;
+            color: $sv-white;
+            border-radius: $sv-r-card;
             padding: 16px;
             font-weight: 600;
             font-size: 16px;
             line-height: 1.2;
 
             &:hover {
-                background: $sivanka-primary-hover;
-                border-color: $sivanka-primary-hover;
+                background: $sv-bordo-hover;
+                border-color: $sv-bordo-hover;
             }
         }
     }
@@ -766,7 +767,7 @@
         gap: 8px;
         margin-top: 16px;
         font-size: 12.5px;
-        color: $sivanka-text-soft;
+        color: $sv-ink-muted;
 
         svg { flex-shrink: 0; }
     }
@@ -782,23 +783,31 @@
 //  card's top, the fieldset its body.
 // ============================================================
 .is-act-checkoutregisterpage {
+    // The h2 and the fieldset are siblings that read as one card. The radius
+    // therefore lives on the shared wrapper with `overflow: hidden`, so neither
+    // child needs an asymmetric shorthand — the system has none.
+    .register-card > .card-body {
+        border-radius: $sv-r-panel;
+        overflow: hidden;
+    }
+
     .register-card > .card-body > h2.card-title {
         margin: 0;
         padding: 28px 28px 0;
-        border: 1px solid $sivanka-card-border;
+        border: 1px solid $sv-border;
         border-bottom: 0;
-        border-radius: 18px 18px 0 0;
-        background: $ow-color-white;
-        font-family: $sivanka-serif;
+        border-radius: 0;
+        background: $sv-white;
+        font-family: $sv-serif;
         font-size: 20px;
-        font-weight: 700;
-        color: $sivanka-heading-dark;
+        font-weight: 600;
+        color: $sv-bordo-head;
     }
 
     fieldset.register-personal {
         margin-top: 0;
         border-top: 0;
-        border-radius: 0 0 18px 18px;
+        border-radius: 0;
         padding-top: 20px;
     }
 }
@@ -819,16 +828,16 @@
     .finish-success-card {
         grid-column: 1 / -1;
         text-align: center;
-        background: $sivanka-info-bg;
-        border: 1px solid $sivanka-info-border;
-        border-radius: 20px;
+        background: $sv-cream;
+        border: 1px solid $sv-border;
+        border-radius: $sv-r-panel;
         box-shadow: none;
         padding: 40px 32px;
         margin: 0 0 28px;
 
         @include media-breakpoint-down(md) {
             padding: 30px 20px;
-            border-radius: 16px;
+            border-radius: $sv-r-panel;
         }
     }
 
@@ -838,25 +847,25 @@
         justify-content: center;
         width: 58px;
         height: 58px;
-        border-radius: 50%;
-        background: $sivanka-primary;
+        border-radius: $sv-r-round;
+        background: $sv-bordo;
         margin: 0 auto 18px;
 
         .icon {
             width: 26px;
             height: 26px;
-            color: $ow-color-white;
+            color: $sv-white;
         }
         .icon svg use,
-        .icon svg path { fill: $ow-color-white; }
+        .icon svg path { fill: $sv-white; }
     }
 
     .finish-header {
-        font-family: $sivanka-serif;
-        font-weight: 700;
+        font-family: $sv-serif;
+        font-weight: 600;
         font-size: 30px;
         line-height: 1.2;
-        color: $sivanka-heading-dark;
+        color: $sv-bordo-head;
         margin: 0 0 16px;
 
         @include media-breakpoint-down(md) { font-size: 24px; }
@@ -871,10 +880,10 @@
         gap: 2px;
         margin: 0;
         padding: 10px 22px;
-        background: $ow-color-white;
-        border: 1px solid $sivanka-info-border;
-        border-radius: 18px;
-        color: $sivanka-text-muted;
+        background: $sv-white;
+        border: 1px solid $sv-border;
+        border-radius: $sv-r-panel;
+        color: $sv-ink-muted;
 
         &-label {
             font-size: 13px;
@@ -882,12 +891,12 @@
         }
 
         &-value {
-            font-family: $sivanka-mono;
+            font-family: $sv-sans;
             font-weight: 700;
             font-size: 19px;
             line-height: 1.25;
-            letter-spacing: 0.02em;
-            color: $sivanka-heading-dark;
+            letter-spacing: .96px;
+            color: $sv-bordo-head;
         }
     }
 
@@ -900,7 +909,7 @@
         margin: 14px 0 0;
         font-size: 13.5px;
         line-height: 1.5;
-        color: $sivanka-text-soft;
+        color: $sv-ink-muted;
     }
 
     // ---- order details ----
@@ -925,9 +934,9 @@
     }
 
     .finish-info .checkout-card {
-        border: 1px solid $sivanka-card-border !important;
-        border-radius: 16px;
-        background: $ow-color-white;
+        border: 1px solid $sv-border !important;
+        border-radius: $sv-r-panel;
+        background: $sv-white;
         box-shadow: none;
         height: 100%;
         margin: 0;
@@ -938,13 +947,13 @@
         // the other two titles need one, so reserve two lines everywhere and the
         // address blocks start on the same baseline across all three cards.
         .card-title {
-            font-family: $sivanka-mono;
+            font-family: $sv-sans;
             font-size: 12px;
             line-height: 1.4;
             min-height: 2.8em;
-            letter-spacing: 0.1em;
+            letter-spacing: .96px;
             text-transform: uppercase;
-            color: #9a8b83;
+            color: $sv-ink-muted;
             font-weight: 400;
             margin: 0 0 12px;
             padding: 0;
@@ -958,7 +967,7 @@
             font-size: 14px;
             line-height: 1.7;
             font-style: normal;
-            color: #3c3138;
+            color: $sv-ink;
             margin: 0;
         }
 
@@ -967,7 +976,7 @@
         strong {
             display: block;
             font-weight: 600;
-            color: $sivanka-text;
+            color: $sv-ink;
         }
     }
 
@@ -978,17 +987,17 @@
     }
 
     .finish-section-title {
-        font-family: $sivanka-serif;
-        font-weight: 700;
+        font-family: $sv-serif;
+        font-weight: 600;
         font-size: 21px;
-        color: $sivanka-heading-dark;
+        color: $sv-bordo-head;
         margin: 0 0 14px;
     }
 
     .checkout-product-table {
-        border: 1px solid $sivanka-card-border !important;
-        border-radius: 16px;
-        background: $ow-color-white;
+        border: 1px solid $sv-border !important;
+        border-radius: $sv-r-panel;
+        background: $sv-white;
         box-shadow: none;
         overflow: hidden;
         margin: 0;
@@ -1006,7 +1015,7 @@
     .sv-order-line .sv-confirm-qty {
         font-weight: 600;
         font-size: 14.5px;
-        color: $sivanka-text;
+        color: $sv-ink;
     }
 
     // Customer comment (only rendered when the order carries one)
@@ -1015,18 +1024,18 @@
         margin-top: 22px;
 
         .checkout-card {
-            border: 1px solid $sivanka-card-border !important;
-            border-radius: 16px;
-            background: $ow-color-white;
+            border: 1px solid $sv-border !important;
+            border-radius: $sv-r-panel;
+            background: $sv-white;
             box-shadow: none;
         }
 
         .card-title {
-            font-family: $sivanka-mono;
+            font-family: $sv-sans;
             font-size: 12px;
-            letter-spacing: 0.1em;
+            letter-spacing: .96px;
             text-transform: uppercase;
-            color: #9a8b83;
+            color: $sv-ink-muted;
             font-weight: 400;
             margin: 0 0 10px;
             padding: 0;
@@ -1071,7 +1080,7 @@
     gap: 16px;
     align-items: center;
     padding: 18px 22px;
-    border-bottom: 1px solid $sivanka-card-border;
+    border-bottom: 1px solid $sv-border;
     list-style: none;
 
     &:last-child { border-bottom: 0; }
@@ -1086,9 +1095,9 @@
 .sv-confirm-thumb {
     width: 64px;
     height: 64px;
-    border-radius: 10px;
+    border-radius: $sv-r-field;
     overflow: hidden;
-    background: #f7f4f1;
+    background: $sv-cream;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1100,7 +1109,7 @@
 
     img,
     .line-item-img { width: 100%; height: 100%; object-fit: contain; }
-    .line-item-icon { width: 34px; height: 34px; color: $sivanka-text-soft; }
+    .line-item-icon { width: 34px; height: 34px; color: $sv-ink-muted; }
 }
 
 .sv-confirm-meta {
@@ -1112,19 +1121,19 @@
         display: block;
         font-weight: 600;
         font-size: 14.5px;
-        color: $sivanka-text;
+        color: $sv-ink;
         text-decoration: none;
 
-        &:hover { color: $sivanka-primary; }
+        &:hover { color: $sv-bordo; }
     }
     .sv-confirm-unit {
         font-size: 12.5px;
-        color: $sivanka-text-soft;
+        color: $sv-ink-muted;
         margin-top: 3px;
     }
     .line-item-details-characteristics {
         font-size: 12.5px;
-        color: $sivanka-text-soft;
+        color: $sv-ink-muted;
         margin-top: 2px;
     }
 }
@@ -1145,9 +1154,9 @@
         display: inline-flex;
         align-items: center;
         width: auto;
-        border: 1px solid $sivanka-qty-border;
-        border-radius: 9px;
-        background: $ow-color-white;
+        border: 1px solid $sv-border;
+        border-radius: $sv-r-field;
+        background: $sv-white;
         overflow: hidden;
         flex-wrap: nowrap;
     }
@@ -1163,10 +1172,10 @@
         justify-content: center;
         border-radius: 0;
 
-        &:hover { background: $sivanka-side-hover; box-shadow: none; }
-        .icon { color: $sivanka-primary; }
+        &:hover { background: $sv-bordo-tint; box-shadow: none; }
+        .icon { color: $sv-bordo; }
         .icon > svg { width: 12px; height: 12px; }
-        .icon svg use, .icon svg path { fill: $sivanka-primary !important; stroke: $sivanka-primary; }
+        .icon svg use, .icon svg path { fill: $sv-bordo !important; stroke: $sv-bordo; }
     }
     .quantity-selector-group-input {
         width: 34px;
@@ -1179,7 +1188,7 @@
         background: transparent;
         font-weight: 600;
         font-size: 14px;
-        color: $sivanka-text;
+        color: $sv-ink;
         -moz-appearance: textfield;
 
         &:focus { box-shadow: none; outline: none; }
@@ -1197,6 +1206,6 @@
     .line-item-total-price-value {
         font-weight: 700;
         font-size: 15px;
-        color: $sivanka-heading-dark;
+        color: $sv-bordo-head;
     }
 }

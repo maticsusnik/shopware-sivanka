@@ -1,7 +1,24 @@
 {% block sw_cms_preview_sivanka_hero %}
 <div class="sw-cms-preview-sivanka-hero">
     <div class="sw-cms-preview-sivanka-hero__inner">
-        <span>Hero</span>
+        <img class="sw-cms-preview-sivanka-hero__bg is--left"
+             :src="assetFilter('/administration/administration/static/img/cms/preview_mountain_large.jpg')"
+             alt="">
+        <img class="sw-cms-preview-sivanka-hero__bg is--right"
+             :src="assetFilter('/administration/administration/static/img/cms/preview_glasses_large.jpg')"
+             alt="">
+        <div class="sw-cms-preview-sivanka-hero__scrim"></div>
+        <div class="sw-cms-preview-sivanka-hero__text">
+            <span class="sw-cms-preview-sivanka-hero__headline">Vse za ustvarjanje,</span>
+            <span class="sw-cms-preview-sivanka-hero__headline">izdelavo in popravila.</span>
+            <div class="sw-cms-preview-sivanka-hero__cta">
+                <span class="sw-cms-preview-sivanka-hero__btn"></span>
+                <span class="sw-cms-preview-sivanka-hero__btn sw-cms-preview-sivanka-hero__btn--outline"></span>
+            </div>
+        </div>
+        <div class="sw-cms-preview-sivanka-hero__trust">
+            <span></span><span></span><span></span><span></span>
+        </div>
     </div>
 </div>
 {% endblock %}

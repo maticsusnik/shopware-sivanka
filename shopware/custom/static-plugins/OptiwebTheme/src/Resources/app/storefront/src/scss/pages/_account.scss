@@ -11,15 +11,15 @@
     .account-content-main h1,
     .card-title,
     h1, h2 {
-        color: $sivanka-heading-dark;
+        color: $sv-bordo-head;
     }
 
     // --- Sidebar navigation ---
     .account-aside {
         .card,
         .account-menu-inner {
-            border: 1px solid $sivanka-card-border;
-            border-radius: 16px;
+            border: 1px solid $sv-border;
+            border-radius: $sv-r-panel;
             box-shadow: none;
             overflow: hidden;
         }
@@ -27,11 +27,11 @@
         // Every item below ships with `padding: 8px 0`, so the labels sat hard against
         // the card border with no gutter at all.
         .account-aside-header {
-            background: $sivanka-info-bg;
-            border-bottom: 1px solid $sivanka-card-border;
-            font-family: $sivanka-serif;
-            font-weight: 700;
-            color: $sivanka-heading-dark;
+            background: $sv-cream;
+            border-bottom: 1px solid $sv-border;
+            font-family: $sv-serif;
+            font-weight: 600;
+            color: $sv-bordo-head;
             padding: 14px 18px;
             margin-bottom: 0;
         }
@@ -43,28 +43,28 @@
         .account-aside-item {
             border: 0;
             font-weight: 500;
-            color: $sivanka-text;
+            color: $sv-ink;
             padding: 10px 18px;
             background: transparent;
 
-            &:hover { background: $sivanka-side-hover; color: $sivanka-primary; }
+            &:hover { background: $sv-bordo-tint; color: $sv-bordo; }
 
             &.is-active {
                 background: transparent;
-                color: $sivanka-primary;
+                color: $sv-bordo;
                 font-weight: 700;
-                box-shadow: inset 3px 0 0 $sivanka-primary;
+                box-shadow: inset 3px 0 0 $sv-bordo;
             }
         }
 
         .account-aside-footer {
             padding: 12px 18px;
             background: transparent;
-            border-top: 1px solid $sivanka-card-border;
+            border-top: 1px solid $sv-border;
         }
 
         .account-aside-btn {
-            color: $sivanka-primary;
+            color: $sv-bordo;
             font-weight: 600;
             padding: 0;
         }
@@ -77,8 +77,8 @@
     // other), which is what read as "weird borders" on the overview.
     .card,
     .address-card {
-        border: 1px solid $sivanka-card-border;
-        border-radius: 16px;
+        border: 1px solid $sv-border;
+        border-radius: $sv-r-panel;
         box-shadow: none;
     }
 
@@ -98,37 +98,37 @@
     }
 
     .card .card-title {
-        font-family: $sivanka-serif;
-        font-weight: 700;
+        font-family: $sv-serif;
+        font-weight: 600;
         margin-bottom: 12px;
     }
 
     // --- Buttons: brand pink everywhere in the account area ---
     .btn-primary {
-        background-color: $sivanka-primary;
-        border-color: $sivanka-primary;
-        color: $ow-color-white;
+        background-color: $sv-bordo;
+        border-color: $sv-bordo;
+        color: $sv-white;
 
         &:hover,
         &:focus,
         &:active,
         &.active {
-            background-color: $sivanka-primary-hover;
-            border-color: $sivanka-primary-hover;
-            color: $ow-color-white;
+            background-color: $sv-bordo-hover;
+            border-color: $sv-bordo-hover;
+            color: $sv-white;
         }
     }
 
     .btn-outline-primary {
-        color: $sivanka-primary;
-        border-color: $sivanka-primary;
+        color: $sv-bordo;
+        border-color: $sv-bordo;
 
         &:hover,
         &:focus,
         &:active {
-            background-color: $sivanka-primary;
-            border-color: $sivanka-primary;
-            color: $ow-color-white;
+            background-color: $sv-bordo;
+            border-color: $sv-bordo;
+            color: $sv-white;
         }
     }
 
@@ -136,59 +136,59 @@
     .btn-outline-primary,
     .btn-secondary,
     .btn-outline-secondary {
-        border-radius: 10px;
+        border-radius: $sv-r-field;
         font-weight: 600;
     }
 
-    .btn-link { color: $sivanka-primary; }
+    .btn-link { color: $sv-bordo; }
 
     // Primary save actions that ship as .btn-light in core (profile forms)
     .profile-form-submit,
     .account-profile-form button[type="submit"],
     .address-form-submit {
-        background-color: $sivanka-primary;
-        border-color: $sivanka-primary;
-        color: $ow-color-white;
-        border-radius: 10px;
+        background-color: $sv-bordo;
+        border-color: $sv-bordo;
+        color: $sv-white;
+        border-radius: $sv-r-field;
         font-weight: 600;
 
         &:hover,
         &:focus,
         &:active {
-            background-color: $sivanka-primary-hover;
-            border-color: $sivanka-primary-hover;
-            color: $ow-color-white;
+            background-color: $sv-bordo-hover;
+            border-color: $sv-bordo-hover;
+            color: $sv-white;
         }
     }
 
     // --- Form fields ---
     .form-control,
     .form-select {
-        border: 1px solid $sivanka-input-border;
-        border-radius: 10px;
+        border: 1px solid $sv-border;
+        border-radius: $sv-r-field;
         box-shadow: none;
 
         &:focus {
-            border-color: $sivanka-primary;
-            box-shadow: 0 0 0 3px rgba($sivanka-primary, 0.12);
+            border-color: $sv-bordo;
+            box-shadow: $sv-focus-ring;
         }
     }
 
     label,
-    .form-label { color: #4a545b; font-weight: 600; }
+    .form-label { color: $sv-ink-muted; font-weight: 600; }
 
     .form-check-input {
-        accent-color: $sivanka-primary;
+        accent-color: $sv-bordo;
 
         &:checked {
-            background-color: $sivanka-primary;
-            border-color: $sivanka-primary;
+            background-color: $sv-bordo;
+            border-color: $sv-bordo;
         }
     }
 
     // Links
-    a { color: $sivanka-primary; }
-    a.account-aside-item { color: $sivanka-text; }
+    a { color: $sv-bordo; }
+    a.account-aside-item { color: $sv-ink; }
 
     // Address list card action row spacing
     .address-action,
@@ -198,15 +198,15 @@
 
     // "Default address" badge → brand pink (Bootstrap renders it blue via .text-bg-info)
     .address-item-default-badge {
-        background-color: $sivanka-primary !important;
-        color: $ow-color-white !important;
+        background-color: $sv-bordo !important;
+        color: $sv-white !important;
     }
 }
 
 // The default-address badge also appears in the address-manager markup site-wide
 .address-item-default-badge {
-    background-color: $sivanka-primary !important;
-    color: $ow-color-white !important;
+    background-color: $sv-bordo !important;
+    color: $sv-white !important;
 }
 
 // Address manager modal (add / edit address) — same field + button styling
@@ -214,21 +214,21 @@
 .address-editor-modal {
     .form-control,
     .form-select {
-        border: 1px solid $sivanka-input-border;
-        border-radius: 10px;
+        border: 1px solid $sv-border;
+        border-radius: $sv-r-field;
 
         &:focus {
-            border-color: $sivanka-primary;
-            box-shadow: 0 0 0 3px rgba($sivanka-primary, 0.12);
+            border-color: $sv-bordo;
+            box-shadow: $sv-focus-ring;
         }
     }
 
     .btn-primary {
-        background-color: $sivanka-primary;
-        border-color: $sivanka-primary;
-        color: $ow-color-white;
-        border-radius: 10px;
+        background-color: $sv-bordo;
+        border-color: $sv-bordo;
+        color: $sv-white;
+        border-radius: $sv-r-field;
 
-        &:hover { background-color: $sivanka-primary-hover; border-color: $sivanka-primary-hover; }
+        &:hover { background-color: $sv-bordo-hover; border-color: $sv-bordo-hover; }
     }
 }

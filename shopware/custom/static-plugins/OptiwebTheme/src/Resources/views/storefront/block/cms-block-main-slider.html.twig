@@ -41,7 +41,7 @@
                 {% for slide in slides %}
                     {% set textColorToken = (slide.textColor|default('white')) in ['white', 'black'] ? slide.textColor|default('white') : 'white' %}
                     <div class="image-slider-item-container color-{{ textColorToken }}">
-                        <div class="image-slider-item {% if loop.first != true %} is-not-first{% endif %} is-cover "{% if sliderConfig.minHeight.value and sliderConfig.displayMode.value == "cover" %} style="min-height: {{ sliderConfig.minHeight.value|trim|replace({' ':''}) }}"{% endif %}>
+                        <div class="image-slider-item{% if loop.first != true %} is-not-first{% endif %} is-cover">
                             {% set mainSliderImgAttributes = {
                                 class: 'img-fluid image-slider-image',
                                 alt: slide.image.translated.alt ?: '',

@@ -2,9 +2,15 @@
     {% set contentElement = element.slots.getSlot('tabs') %}
     {% set tabs = contentElement.data.get("tabs") %}
 
+    {# Titles saved before the config used a plain string are still `{ text: '...' }`. #}
+    {% set tabsTitle = contentElement.config.title.value %}
+    {% if tabsTitle is iterable %}
+        {% set tabsTitle = tabsTitle.text|default('') %}
+    {% endif %}
+
     <div class="col-12 cms-element-image-tabs__inner" data-cms-element-id="{{ element.id }}">
         {% block cms_element_image_tabs_inner %}
-            <h4 class="title has-line"><span>{{ contentElement.config.title.value }}</span></h4>
+            {% if tabsTitle %}<h4 class="title has-line"><span>{{ tabsTitle }}</span></h4>{% endif %}
             <div class="row align-items-center image-tab-items justify-content-center justify-content-md-between flex-md-nowrap px-3">
             {% for tab in tabs %}
                 {% if tab.image.id %}

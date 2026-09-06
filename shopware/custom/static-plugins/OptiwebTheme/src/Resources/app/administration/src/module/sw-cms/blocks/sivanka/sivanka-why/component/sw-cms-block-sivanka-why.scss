@@ -1,0 +1,17 @@
+@import "../../../../sivanka-service-shared";
+
+.sw-cms-block-sivanka-why {
+    padding: 20px;
+    background: $sivanka-cms-surface;
+    border: 1px solid $sivanka-cms-border;
+    border-radius: 14px;
+
+    &__heading {
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    &__grid {
+        @include sivanka-service-block-grid(repeat(4, minmax(0, 1fr)));
+    }
+}

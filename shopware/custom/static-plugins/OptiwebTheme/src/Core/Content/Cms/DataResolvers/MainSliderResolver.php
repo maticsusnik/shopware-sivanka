@@ -46,21 +46,21 @@ class MainSliderResolver extends AbstractCmsElementResolver
         $images = $result->get("media");
         $slides = $this->getSlides($slot);
 
-        if(!$images) return;
-
-        $assocImages = $images->reduce(function ($assocMedia, $image) {
-            $assocMedia[$image->getId()] = $image;
-            return $assocMedia;
-        }, []);
-
-
-        foreach ($slides as $index => $slide) {
-            if (!isset($slide["image"]["value"])) continue;
-            if (!isset($assocImages[$slide["image"]["value"]])) continue;
-            $slides[$index]["image"] = $assocImages[$slide["image"]["value"]];
-
+        $assocImages = [];
+        if ($images) {
+            $assocImages = $images->reduce(function ($assocMedia, $image) {
+                $assocMedia[$image->getId()] = $image;
+                return $assocMedia;
+            }, []);
         }
 
+        foreach ($slides as $index => $slide) {
+            $mediaId = $slide["image"]["value"] ?? null;
+            $slides[$index]["image"] = $mediaId !== null ? ($assocImages[$mediaId] ?? null) : null;
+        }
+
+        // Set the data even when no slide has an image yet — otherwise a slider whose
+        // slides only carry text would render as an empty slider.
         $slot->setData(new ArrayStruct(["slides" => $slides]));
     }
 

@@ -1,7 +1,12 @@
 {% block sw_cms_preview_sivanka_product_slider %}
-    <div class="sw-cms-preview-sivanka-product-slider">Sivanka product slider</div>
+<div class="sw-cms-preview-sivanka-product-slider">
+    <div class="sw-cms-preview-sivanka-product-slider__title">Products</div>
+    <div class="sw-cms-preview-sivanka-product-slider__track">
+        <div class="sw-cms-preview-sivanka-product-slider__card" v-for="n in 4" :key="n">
+            <img :src="assetFilter('/administration/administration/static/img/cms/preview_mountain_small.jpg')" alt="">
+            <span class="sw-cms-preview-sivanka-product-slider__name"></span>
+            <span class="sw-cms-preview-sivanka-product-slider__price"></span>
+        </div>
+    </div>
+</div>
 {% endblock %}
-
-
-
-

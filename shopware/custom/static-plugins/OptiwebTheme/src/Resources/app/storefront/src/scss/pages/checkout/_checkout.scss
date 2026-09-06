@@ -27,13 +27,13 @@
         align-items: center;
         gap: 10px;
         text-decoration: none;
-        color: $ow-color-grey-7;
+        color: $sv-ink-muted;
         pointer-events: none;
         @include fontSpecs(14, 20, 400, false, false);
 
         &[href] {
             pointer-events: auto;
-            &:hover { color: $ow-color-black; }
+            &:hover { color: $sv-ink; }
         }
     }
 
@@ -43,9 +43,9 @@
         justify-content: center;
         width: 28px;
         height: 28px;
-        border-radius: 50%;
-        background: $ow-color-grey-4;
-        color: $ow-color-white;
+        border-radius: $sv-r-round;
+        background: $sv-border;
+        color: $sv-white;
         @include fontSpecs(13, 20, 700, false, false);
         flex-shrink: 0;
         transition: background 0.2s;
@@ -60,33 +60,33 @@
     &-connector {
         flex: 1;
         height: 1px;
-        background: $ow-color-grey-4;
+        background: $sv-border;
         margin-inline: 8px;
         transition: background 0.2s;
     }
 
     .is-active {
         .checkout-steps-number {
-            background: $ow-color-base;
+            background: $sv-bordo;
         }
 
         .checkout-steps-link {
-            color: $ow-color-black;
+            color: $sv-ink;
             font-weight: 700;
         }
     }
 
     .is-done:not(.is-active) {
         .checkout-steps-number {
-            background: $ow-color-black;
+            background: $sv-ink;
         }
 
         .checkout-steps-link[href] {
-            color: $ow-color-black;
+            color: $sv-ink;
         }
 
         .checkout-steps-connector {
-            background: $ow-color-black;
+            background: $sv-ink;
         }
     }
 }
@@ -95,7 +95,7 @@
 // MINIMAL HEADER
 // ============================================================
 .header-minimal-row {
-    border-bottom: 1px solid $ow-color-grey-1;
+    border-bottom: 1px solid $sv-cream;
     align-items: center;
     min-height: 64px;
 
@@ -104,7 +104,7 @@
         align-items: center;
         justify-content: center;
         @include fontSpecs(14, 20, 400, false, false);
-        color: $ow-color-grey-7;
+        color: $sv-ink-muted;
 
         p { margin: 0; }
     }
@@ -160,7 +160,7 @@
         align-items: center;
         gap: 12px;
         @include margin('bottom', 16, false);
-        border-bottom: 1px solid $ow-color-grey-4;
+        border-bottom: 1px solid $sv-border;
         @include padding('bottom', 12, false);
     }
 
@@ -170,9 +170,9 @@
         justify-content: center;
         width: 32px;
         height: 32px;
-        border-radius: 50%;
-        background: $ow-color-black;
-        color: $ow-color-white;
+        border-radius: $sv-r-round;
+        background: $sv-ink;
+        color: $sv-white;
         @include fontSpecs(16, 24, 700, false, false);
         flex-shrink: 0;
     }
@@ -218,7 +218,7 @@
     .shipping-method-description,
     .payment-method-description {
         p {
-            color: $ow-color-grey-7;
+            color: $sv-ink-muted;
             @include fontSpecs(14, 20, 400, false, false);
         }
     }
@@ -248,7 +248,7 @@
         border: 0;
 
         &:hover, &:focus, &:active {
-            background: $ow-color-white;
+            background: $sv-white;
         }
     }
 }
@@ -267,8 +267,8 @@
 
 .checkout-aside-container {
     padding: 0;
-    background: $ow-color-grey-1;
-    border-radius: 4px;
+    background: $sv-cream;
+    border-radius: $sv-r-btn-sm;
 }
 
 // Products list in aside (checkout address/register page)
@@ -278,14 +278,14 @@
 
     .checkout-aside-product-header {
         @include fontSpecs(16, 24, 700, false, false);
-        border-top: 1px solid $ow-color-grey-4;
+        border-top: 1px solid $sv-border;
         @include padding('top', 16, false);
     }
 
     .checkout-aside-product-list {
         .line-item {
             padding-block: 0.75rem;
-            border-bottom: 1px solid $ow-color-grey-4;
+            border-bottom: 1px solid $sv-border;
 
             &:last-child { border-bottom: none; }
 
@@ -328,7 +328,7 @@
             .line-item-cart-quantity {
                 margin-top: 2px;
                 @include fontSpecs(13, 18, 400, false, false);
-                color: $ow-color-grey-7;
+                color: $sv-ink-muted;
 
                 .line-item-quantity-row { margin: 0; }
                 .line-item-quantity-label { display: none; }
@@ -378,7 +378,7 @@
     &-header {
         @include fontSpecs(18, 24, 700, false, false);
         @include margin('bottom', 16, false);
-        border-bottom: 1px solid $ow-color-grey-4;
+        border-bottom: 1px solid $sv-border;
         @include padding('bottom', 12, false);
     }
 
@@ -408,7 +408,7 @@
 // Visual separator: applied directly to the first total dt/dd pair
 dt.checkout-aside-summary-total,
 dd.checkout-aside-summary-total {
-    border-top: 2px solid $ow-color-black;
+    border-top: 2px solid $sv-ink;
     padding-top: 12px;
     margin-top: 8px;
     @include fontSpecs(17, 24, 700, false, false);
@@ -424,12 +424,12 @@ dd.checkout-aside-summary-total {
     @include padding('left', 20, false);
     @include padding('right', 20, false);
     @include fontSpecs(13, 18, 400, false, false);
-    color: $ow-color-grey-7;
+    color: $sv-ink-muted;
 
     .icon {
         width: 14px;
         height: 14px;
-        color: $ow-color-base;
+        color: $sv-bordo;
         flex-shrink: 0;
     }
 }
@@ -446,13 +446,13 @@ dd.checkout-aside-summary-total {
     }
 
     .btn-primary {
-        background: $ow-color-base;
-        border-color: $ow-color-base;
+        background: $sv-bordo;
+        border-color: $sv-bordo;
         width: 100%;
 
         &:hover {
-            background: darken(#B4367C, 8%);
-            border-color: darken(#B4367C, 8%);
+            background: $sv-bordo-hover;
+            border-color: $sv-bordo-hover;
         }
     }
 }
@@ -506,7 +506,7 @@ dd.checkout-aside-summary-total {
         }
 
         &:last-child {
-            border-bottom: 1px solid $ow-color-grey-4;
+            border-bottom: 1px solid $sv-border;
         }
     }
 }
@@ -520,8 +520,8 @@ dd.checkout-aside-summary-total {
     }
 
     .text-bg-info {
-        background-color: $ow-color-base;
-        color: $ow-color-black;
+        background-color: $sv-bordo;
+        color: $sv-ink;
     }
 
     .address-manager-modal-tab-navigation-list,

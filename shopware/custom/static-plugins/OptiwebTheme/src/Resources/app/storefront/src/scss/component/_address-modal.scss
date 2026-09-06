@@ -18,14 +18,14 @@
 .address-editor-modal {
     .modal-footer .btn-secondary {
         background-color: transparent;
-        border-color: $sivanka-divider;
-        color: $sivanka-text;
+        border-color: $sv-border;
+        color: $sv-ink;
 
         &:hover,
         &:focus {
-            background-color: $sivanka-side-hover;
-            border-color: $sivanka-primary;
-            color: $sivanka-primary;
+            background-color: $sv-bordo-tint;
+            border-color: $sv-bordo;
+            color: $sv-bordo;
         }
     }
 }

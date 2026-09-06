@@ -3,24 +3,13 @@
 {% block layout_header_top_bar %}
 <div class="sivanka-topbar">
     <div class="container">
-        <div class="tb-marquee">
-            <div class="tb-marquee-track">
-                <div class="tb-marquee-group">
-                    {% sw_include '@Storefront/storefront/layout/header/top-bar-items.html.twig' %}
-                </div>
-                {# Duplicate purely for the seamless mobile loop — hidden from AT and
-                   from the desktop layout. #}
-                <div class="tb-marquee-group tb-marquee-clone" aria-hidden="true">
-                    {% sw_include '@Storefront/storefront/layout/header/top-bar-items.html.twig' %}
-                </div>
-            </div>
-        </div>
+        {% sw_include '@Storefront/storefront/layout/header/top-bar-items.html.twig' %}
 
-        <a class="tb-item tb-right" href="{{ path('frontend.home.page') }}">
+        <a class="tb-item tb-help" href="{{ path('frontend.home.page') }}">
             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 0 1 4 1.8c0 1.7-2.5 2-2.5 3.2M12 17.5h.01"/>
+                <path d="M6 3h4l2 5-2.5 1.5a12 12 0 0 0 5 5L16 12l5 2v4a2 2 0 0 1-2.2 2A17 17 0 0 1 4 5.2 2 2 0 0 1 6 3z"/>
             </svg>
-            {{ 'sivanka.topbarHelp'|trans|default('Pomoč &amp; kontakt') }}
+            {{ 'sivanka.topbarHelp'|trans }}
         </a>
     </div>
 </div>

@@ -2,6 +2,7 @@
 @import "mixin";
 
 @import "typography";
+@import "reset";
 @import "layout";
 @import "general";
 @import "header";
@@ -9,8 +10,11 @@
 /*
  * Components
  * ---------------------------- */
+@import 'component/buttons';
 @import 'component/product-box';
 @import 'component/product-slider';
+@import 'component/slider-controls';
+@import 'component/rail';
 @import 'component/single-product';
 @import 'component/category-navigation';
 @import 'component/offcanvas';
@@ -20,6 +24,10 @@
 @import 'component/product-price';
 @import 'component/address-modal';
 @import 'component/modal';
+@import 'component/product-enquiry';
+@import 'component/bootstrap-shape';
+@import 'component/authored-content';
+@import 'component/alert';
 
 /*
  * Blocks
@@ -31,6 +39,7 @@
 @import 'block/category-description-and-faq';
 @import "block/catalogs";
 @import 'block/sivanka-service';
+@import 'block/sivanka-home';
 
 
 /*

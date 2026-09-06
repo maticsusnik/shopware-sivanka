@@ -46,28 +46,29 @@ class ImageTabsResolver extends AbstractCmsElementResolver
         $images = $result->get("media");
         $tabs = $this->getTabs($slot);
 
-        if(!$images) return;
-
-        $assocImages = $images->reduce(function ($assocMedia, $image) {
-            $assocMedia[$image->getId()] = $image;
-            return $assocMedia;
-        }, []);
-
         usort($tabs, function ($a, $b) {
             $orderA = $a['order'] ?? 0;
             $orderB = $b['order'] ?? 0;
             return $orderB <=> $orderA;
         });
 
-
-
-        foreach ($tabs as $index => $tab) {
-            if (!isset($tab["image"]["value"])) continue;
-            if (!isset($assocImages[$tab["image"]["value"]])) continue;
-            $tabs[$index]["image"] = $assocImages[$tab["image"]["value"]];
+        $assocImages = [];
+        if ($images) {
+            $assocImages = $images->reduce(function ($assocMedia, $image) {
+                $assocMedia[$image->getId()] = $image;
+                return $assocMedia;
+            }, []);
         }
 
+        // Always replace the raw config array with the media entity or null: the template
+        // reads `tab.image.id`, which on the unresolved config array is meaningless.
+        foreach ($tabs as $index => $tab) {
+            $mediaId = $tab["image"]["value"] ?? null;
+            $tabs[$index]["image"] = $mediaId !== null ? ($assocImages[$mediaId] ?? null) : null;
+        }
 
+        // Set the data even when no tab has an image, otherwise the slot keeps a null
+        // `data` and the block renders nothing at all.
         $slot->setData(new ArrayStruct(["tabs" => $tabs]));
     }
 

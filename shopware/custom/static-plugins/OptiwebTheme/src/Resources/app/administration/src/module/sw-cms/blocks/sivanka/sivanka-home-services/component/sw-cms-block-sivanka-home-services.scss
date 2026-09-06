@@ -1,0 +1,18 @@
+@import "../../../../sivanka-service-shared";
+
+.sw-cms-block-sivanka-home-services {
+    &__heading {
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    &__grid {
+        @include sivanka-service-block-grid(repeat(4, minmax(0, 1fr)));
+    }
+
+    &__actions {
+        display: flex;
+        justify-content: center;
+        margin-top: 16px;
+    }
+}

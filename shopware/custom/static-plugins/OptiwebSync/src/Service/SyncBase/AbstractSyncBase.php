@@ -16,6 +16,7 @@ abstract class AbstractSyncBase implements SyncBaseInterface
     protected bool $ignoreHash = false;
     protected bool $ignoreMedia = false;
     protected bool $dryRun = false;
+    protected bool $testMode = false;
     protected ?string $setId = null;
     private ?string $lockFile = null;
     private $lockHandle = null;
@@ -39,6 +40,7 @@ abstract class AbstractSyncBase implements SyncBaseInterface
         $this->ignoreHash  = (bool) ($options['ignoreHash'] ?? false);
         $this->ignoreMedia = (bool) ($options['ignoreMedia'] ?? false);
         $this->dryRun      = (bool) ($options['dryRun'] ?? false);
+        $this->testMode    = (bool) ($options['test'] ?? false);
         $this->setId       = !empty($options['setId']) ? (string) $options['setId'] : null;
 
         $lockTtl      = $this->getLockTtl();
@@ -62,7 +64,7 @@ abstract class AbstractSyncBase implements SyncBaseInterface
             try {
                 $this->initialize();
             } catch (Throwable $e) {
-                OwLogger::error($this->logger, $this->getName() . ' initialization failed', ['error' => $e->getMessage()]);
+                OwLogger::exception($this->logger, $this->getName() . ' initialization failed', $e);
                 error_log('[OptiwebSync] ' . $this->getName() . ' initialization failed: ' . $e->getMessage());
 
                 throw $e;
@@ -70,7 +72,7 @@ abstract class AbstractSyncBase implements SyncBaseInterface
 
             OwLogger::addVisibleLog($this->logger, $this->getName() . ' sync START.' . ($this->dryRun ? ' (DRY RUN)' : ''));
 
-            $pageSize    = !empty($options['test']) ? 10 : GlobalVariables::BATCH_SIZE;
+            $pageSize    = $this->testMode ? 10 : GlobalVariables::BATCH_SIZE;
             $loopThrough = $this->loopThrough();
             $syncType    = $this->getSyncType();
 
@@ -133,7 +135,16 @@ abstract class AbstractSyncBase implements SyncBaseInterface
             } catch (Throwable $error) {
                 // Includes the fetch itself: a single failed page must not abort
                 // the whole run, but we also must not loop on it forever.
-                OwLogger::error($this->logger, $this->getName() . " sync error on page $page", ['error' => $error->getMessage()]);
+                OwLogger::exception($this->logger, $this->getName() . " sync error on page $page", $error);
+
+                return;
+            }
+
+            // --test means "show me a sample", so it stops after one page.
+            // Without this it merely made the pages smaller and still walked the
+            // entire source — slower than a normal run, not faster.
+            if ($this->testMode) {
+                OwLogger::addVisibleLog($this->logger, $this->getName() . ': TEST MODE — stopping after the first page.');
 
                 return;
             }
@@ -154,7 +165,7 @@ abstract class AbstractSyncBase implements SyncBaseInterface
             $countInserted = $this->export($data, $loopData);
             OwLogger::addVisibleLog($this->logger, "$countInserted synced.");
         } catch (Throwable $error) {
-            OwLogger::error($this->logger, $this->getName() . ' export error', ['error' => $error->getMessage()]);
+            OwLogger::exception($this->logger, $this->getName() . ' export error', $error);
         }
     }
 

@@ -34,12 +34,14 @@
             </sw-card>
 
             <sw-card :title="$tc('optiwebProductEnquiry.admin.detail.productSection')">
-                <sw-container columns="1fr 1fr" gap="16px">
-                    <sw-text-field :value="enquiry.productName" label="Product" disabled />
-                    <sw-text-field :value="enquiry.productNumber" label="Product Number" disabled />
-                    <sw-text-field :value="enquiry.productOption || '—'" label="Variant" disabled />
-                    <sw-text-field :value="String(enquiry.quantity)" label="Quantity" disabled />
-                </sw-container>
+                <sw-data-grid
+                    :dataSource="productLines"
+                    :columns="productColumns"
+                    :showSelection="false"
+                    :showActions="false"
+                    :compactMode="true"
+                    plainAppearance
+                />
             </sw-card>
 
             <sw-card v-if="enquiry.message" :title="$tc('optiwebProductEnquiry.admin.detail.messageSection')">

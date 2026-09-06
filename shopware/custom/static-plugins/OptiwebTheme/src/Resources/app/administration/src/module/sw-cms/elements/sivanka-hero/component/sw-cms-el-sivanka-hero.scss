@@ -1,17 +1,137 @@
+// Layout-canvas preview of the home hero. Mirrors the storefront shape at a
+// smaller scale: two photographs pinned to the edges, cream wash, centred copy,
+// and the trust strip below.
 .sw-cms-el-sivanka-hero {
     &__box {
-        min-height: 120px;
-        background: #F7F3F0;
-        border-radius: 12px;
-        padding: 24px;
+        position: relative;
+        min-height: 180px;
+        background: #F6EDE2;
+        overflow: hidden;
         display: flex;
         align-items: center;
+        justify-content: center;
+        padding: 24px 20px;
     }
+
+    &__photo {
+        position: absolute;
+        top: 0;
+        width: 42%;
+        height: 100%;
+        object-fit: cover;
+
+        &.is--left  { left: 0; }
+        &.is--right { right: 0; }
+    }
+
+    &__scrim {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            90deg,
+            rgba(250, 242, 236, .55) 0%,
+            rgba(250, 242, 236, .93) 26%,
+            rgba(250, 242, 236, .95) 50%,
+            rgba(250, 242, 236, .93) 74%,
+            rgba(250, 242, 236, .55) 100%
+        );
+    }
+
     &__text {
-        h2 { font-size: 20px; font-weight: 600; margin-bottom: 8px; em { color: #A02B6B; } }
-        p { font-size: 13px; color: #6B6B6B; margin-bottom: 12px; }
+        position: relative;
+        text-align: center;
+        max-width: 460px;
+
+        h2 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 22px;
+            font-weight: 600;
+            line-height: 1.14;
+            color: #5C1229;
+            margin-bottom: 8px;
+        }
+
+        p {
+            font-size: 12px;
+            line-height: 18px;
+            color: #6B5A55;
+            margin-bottom: 12px;
+        }
     }
-    &__btns { display: flex; gap: 8px; }
-    &__btn-primary { background: #A02B6B; color: #fff; padding: 6px 14px; border-radius: 6px; font-size: 12px; }
-    &__btn-outline { background: #fff; color: #A02B6B; border: 1.5px solid #A02B6B; padding: 6px 14px; border-radius: 6px; font-size: 12px; }
+
+    &__line {
+        display: block;
+    }
+
+    &__btns {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+    }
+
+    &__btn {
+        padding: 6px 16px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        border: 1px solid #8E2247;
+
+        &.is--primary {
+            background: #8E2247;
+            color: #fff;
+        }
+
+        &.is--ghost {
+            background: #fff;
+            color: #8E2247;
+        }
+    }
+
+    &__trust {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        margin: -24px 20px 0;
+        background: #fff;
+        border: 1px solid #EADFD1;
+        border-radius: 10px;
+    }
+
+    &__trust-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 14px;
+        border-left: 1px solid #EADFD1;
+
+        &:first-child {
+            border-left: 0;
+        }
+    }
+
+    &__trust-dot {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: #F7E9EE;
+        flex: 0 0 auto;
+    }
+
+    &__trust-copy {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.25;
+        min-width: 0;
+
+        b {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 12px;
+            color: #5C1229;
+        }
+
+        span {
+            font-size: 11px;
+            color: #6B5A55;
+        }
+    }
 }

@@ -5,7 +5,7 @@
     @include padding('bottom', 40, true);
     @include padding('left', 20, false);
     @include padding('right', 20, false);
-    background: $ow-color-white;
+    background: $sv-white;
 }
 
 .card-tabs-registration {
@@ -45,7 +45,7 @@
     @include padding('left', 20, false);
     @include padding('right', 20, false);
     text-decoration: none;
-    color: $ow-color-black;
+    color: $sv-ink;
     background: transparent;
     border: none;
     border-bottom: 3px solid transparent;
@@ -53,32 +53,32 @@
     position: relative;
 
     &:hover {
-        color: $ow-color-black;
+        color: $sv-ink;
         background: transparent;
         border-bottom-color: transparent;
     }
 
     &.active {
-        color: $ow-color-black;
+        color: $sv-ink;
         background: transparent;
-        border-bottom: 3px solid $sivanka-primary;
+        border-bottom: 3px solid $sv-bordo;
     }
 }
 
 .tabs-title {
     @include fontSpecs(24, 28.8, 700, false, true);
     @include margin('bottom', 8, false);
-    color: $ow-color-black;
+    color: $sv-ink;
     text-transform: uppercase;
 }
 
 .tabs-legend {
     @include fontSpecs(14, 20, 400, false, false);
-    color: $ow-color-grey-7;
+    color: $sv-ink-muted;
 }
 
 .register-login-tabs-content {
-    background: $ow-color-white;
+    background: $sv-white;
     //@include padding('top', 40, true);
     //@include padding('bottom', 40, true);
     //@include padding('left', 40, true);
@@ -102,7 +102,7 @@
 .login-header {
     @include fontSpecs(26, 31.2, 700, false, true);
     @include margin('bottom', 32, true);
-    color: $sivanka-heading-dark;
+    color: $sv-bordo-head;
     text-align: left;
 }
 
@@ -114,13 +114,13 @@
     display: block;
     @include fontSpecs(14, 20, 400, false, false);
     @include margin('bottom', 8, false);
-    color: $ow-color-black;
+    color: $sv-ink;
     text-align: left;
 }
 
 // This form predates the Sivanka design system: it used square corners and the old
 // grey border, so the login tab looked nothing like the register tab beside it.
-// Matched to the shared input treatment (8px radius, $sivanka-input-border, pink focus).
+// Matched to the shared input treatment (8px radius, $sv-border, pink focus).
 .login-input {
     width: 100%;
     @include padding('top', 7, false);
@@ -128,20 +128,20 @@
     @include padding('left', 12, false);
     @include padding('right', 12, false);
     @include fontSpecs(16, 24, 400, false, false);
-    border: 1px solid $sivanka-input-border;
-    border-radius: $sivanka-r8;
-    background: $ow-color-white;
-    color: $sivanka-text;
+    border: 1px solid $sv-border;
+    border-radius: $sv-r-chrome;
+    background: $sv-white;
+    color: $sv-ink;
     transition: border-color 0.18s ease, box-shadow 0.18s ease;
 
     &:focus {
         outline: none;
-        border-color: $sivanka-primary;
-        box-shadow: 0 0 0 3px rgba($sivanka-primary, 0.12);
+        border-color: $sv-bordo;
+        box-shadow: $sv-focus-ring;
     }
 
     &::placeholder {
-        color: $sivanka-text-soft;
+        color: $sv-ink-muted;
     }
 }
 
@@ -152,12 +152,12 @@
 }
 
 .login-password-recover-link {
-    color: $sivanka-primary;
+    color: $sv-bordo;
     text-decoration: underline;
     @include fontSpecs(14, 20, 400, false, false);
 
     &:hover {
-        color: $sivanka-primary-hover;
+        color: $sv-bordo-hover;
         text-decoration: underline;
     }
 }
@@ -175,26 +175,26 @@
     @include padding('top', 12, true);
     @include padding('left', 24, true);
     @include padding('right', 24, true);
-    background: $sivanka-primary;
-    border: 1px solid $sivanka-primary;
-    border-radius: $sivanka-r12;
-    color: $ow-color-white;
+    background: $sv-bordo;
+    border: 1px solid $sv-bordo;
+    border-radius: $sv-r-card;
+    color: $sv-white;
     cursor: pointer;
     transition: background-color 0.18s ease, border-color 0.18s ease;
     text-transform: none;
 
     &:hover {
-        background: $sivanka-primary-hover;
-        border-color: $sivanka-primary-hover;
+        background: $sv-bordo-hover;
+        border-color: $sv-bordo-hover;
     }
 
     &:focus {
         outline: none;
-        box-shadow: 0 0 0 3px rgba($sivanka-primary, 0.3);
+        box-shadow: $sv-focus-ring;
     }
 
     span {
-        color: $ow-color-white;
+        color: $sv-white;
     }
 }
 

@@ -1,0 +1,18 @@
+{# The prev/next pair for a home rail: centred 26px below the track, prev ghost,
+   next bordo-filled. Include it inside a `.sv-rail`, after the track. #}
+{% block utilities_sivanka_rail_controls %}
+    <div class="sv-rail__controls">
+        <button type="button" class="sv-rail__arr sv-rail__prev" aria-label="{{ railPrevLabel|default('general.previous'|trans|striptags) }}">
+            {% sw_include '@Storefront/storefront/utilities/sivanka-icon.html.twig' with {
+                sivankaIcon: 'arrow-left',
+                sivankaIconSize: 18
+            } only %}
+        </button>
+        <button type="button" class="sv-rail__arr sv-rail__next" aria-label="{{ railNextLabel|default('general.next'|trans|striptags) }}">
+            {% sw_include '@Storefront/storefront/utilities/sivanka-icon.html.twig' with {
+                sivankaIcon: 'arrow',
+                sivankaIconSize: 18
+            } only %}
+        </button>
+    </div>
+{% endblock %}

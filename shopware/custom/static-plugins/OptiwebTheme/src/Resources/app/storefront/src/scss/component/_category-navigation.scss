@@ -2,9 +2,9 @@
 .category-navigation {
     // White, rounded, bordered card holding the subcategory pills (design mock)
     padding: 8px !important; // override the ul list reset that zeroes padding-left
-    background: $sivanka-white;
-    border: 1px solid $sivanka-card-border;
-    border-radius: $sivanka-r16;
+    background: $sv-white;
+    border: 1px solid $sv-border;
+    border-radius: $sv-r-panel;
 
     &-box {
         padding-inline: 0;
@@ -13,9 +13,9 @@
 
     // "Izdelki" back-link that sits ABOVE the card (it is a sibling of the list)
     &-title {
-        font-family: $sivanka-sans;
+        font-family: $sv-sans;
         @include fontSpecs(15, 22, 600, false, false);
-        color: $sivanka-text;
+        color: $sv-ink;
         padding-inline: 0;
         padding-block: 0;
         margin-bottom: 14px;
@@ -26,7 +26,7 @@
 
         &:hover {
             background: none;
-            color: $sivanka-primary;
+            color: $sv-bordo;
         }
 
         &:before {
@@ -57,21 +57,21 @@
         .category-navigation-link {
             @include fontSpecs(14.5, 20, 500, false, false);
             display: block;
-            color: #4a545b;
+            color: $sv-ink-muted;
             text-decoration: none;
             padding: 11px 14px;
             border: none;
-            border-radius: 10px;
+            border-radius: $sv-r-field;
             transition: background 0.16s, color 0.16s;
 
             &:hover {
-                background: $sivanka-side-hover;
-                color: $sivanka-primary;
+                background: $sv-bordo-tint;
+                color: $sv-bordo;
             }
 
             &.is-active {
-                background: $sivanka-side-hover;
-                color: $sivanka-primary;
+                background: $sv-bordo-tint;
+                color: $sv-bordo;
                 font-weight: 600;
             }
         }
@@ -88,12 +88,12 @@
         }
 
         .category-navigation-entry {
-            background: $ow-color-base;
+            background: $sv-bordo;
             min-height: 150px;
             padding: 0;
 
             &:hover {
-                background: $ow-color-grey-9;
+                background: $sv-ink;
 
                 a {
                     background: none;

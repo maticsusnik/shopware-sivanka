@@ -1,0 +1,142 @@
+// =============================================================================
+//  Slider controls — the shared prev/next pair
+//  -----------------------------------------------------------------------
+//  Extracted from the master page, where every rail (categories, "Pravkar prišlo",
+//  "Najbolj priljubljeno") uses the same pair:
+//    container  flex, centred, gap 12px, margin-top 26px — BELOW the rail
+//    prev       42x42, white, 1px #EADFD1, 50%, bordo glyph
+//    next       42x42, bordo fill, 1px bordo, 50%, white glyph
+//    glyph      18x18, stroke 1.8
+//  The asymmetry is deliberate: "next" is the emphasised direction.
+//  Below 1280 both grow to the 46px touch floor.
+// =============================================================================
+
+@mixin sv-slider-controls-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 26px;
+}
+
+@mixin sv-slider-arrow {
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    border-radius: $sv-r-round;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+    cursor: pointer;
+    transition: background-color .18s, border-color .18s, color .18s;
+
+    // Ghost by default — the "previous" direction.
+    background: $sv-white;
+    border: 1px solid $sv-border;
+    color: $sv-bordo;
+
+    &:hover {
+        border-color: $sv-bordo;
+        color: $sv-bordo-hover;
+    }
+
+    &[disabled],
+    &:disabled {
+        opacity: .4;
+        cursor: default;
+    }
+
+    .icon,
+    svg {
+        width: 18px;
+        height: 18px;
+        color: inherit;
+    }
+
+    .icon svg {
+        stroke-width: 1.8;
+    }
+
+    @media (max-width: $sv-bp-touch) {
+        width: $sv-touch;
+        height: $sv-touch;
+        min-width: $sv-touch;
+        min-height: $sv-touch;
+    }
+}
+
+@mixin sv-slider-arrow-next {
+    background: $sv-bordo;
+    border-color: $sv-bordo;
+    color: $sv-white;
+
+    &:hover {
+        background: $sv-bordo-hover;
+        border-color: $sv-bordo-hover;
+        color: $sv-white;
+    }
+}
+
+.sivanka-slider-controls,
+.product-slider-controls,
+.cms-element-product-slider .base-slider-controls {
+    @include sv-slider-controls-container;
+}
+
+.sivanka-slider-arr,
+.product-slider-controls-prev,
+.product-slider-controls-next,
+.base-slider-controls-prev,
+.base-slider-controls-next {
+    @include sv-slider-arrow;
+}
+
+.sivanka-slider-next,
+.product-slider-controls-next,
+.base-slider-controls-next {
+    @include sv-slider-arrow-next;
+}
+
+
+// =============================================================================
+//  Section signature — rule · heart · rule
+//  -----------------------------------------------------------------------
+//  Home-page section headings are centred with this flourish underneath: two
+//  34x1px bordo rules at 45% opacity flanking a 15px bordo heart outline, 10px
+//  apart, 12px under the heading. Subpage headings are left-aligned WITHOUT it —
+//  they sit in the flow of content rather than announcing a band.
+// =============================================================================
+@mixin sv-flourish {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 12px;
+    color: $sv-bordo;
+
+    &::before,
+    &::after {
+        content: "";
+        width: 34px;
+        height: 1px;
+        background: currentColor;
+        opacity: .45;
+    }
+
+    svg,
+    .icon {
+        width: 15px;
+        height: 15px;
+        color: inherit;
+    }
+}
+
+.sv-flourish {
+    @include sv-flourish;
+}
+
+// A centred section heading and its flourish.
+@mixin sv-section-heading-centred {
+    text-align: center;
+}

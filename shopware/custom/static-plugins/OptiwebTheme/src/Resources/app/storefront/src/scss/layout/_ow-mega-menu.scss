@@ -7,7 +7,7 @@
     @media (min-width: 992px) {
         position: static;
         > a.nav-link.active {
-            color:$ow-color-black !important;
+            color:$sv-ink !important;
             .main-navigation-link-text {
                 border:none !important;
             }
@@ -47,7 +47,7 @@
 
                     .nav-item {
                         @include fontSpecs(14, 20, 400);
-                        color: $ow-color-black;
+                        color: $sv-ink;
                         padding-block: 0.5rem;
                         padding-inline: 1rem;
                         margin: 0;
@@ -95,7 +95,7 @@
                 overflow: visible;
                 display: none;
                 left:100%;
-                border-left: 1px solid #EBEBEB;
+                border-left: 1px solid $sv-border;
                 &.is-visible {
                     display: block;
                 }
@@ -110,7 +110,7 @@
 
             .link-icon {
                 margin-left: auto;
-                color: $ow-color-grey-7;
+                color: $sv-ink-muted;
             }
 
             &.is-active {
@@ -118,7 +118,7 @@
 
                 .link-icon,
                 .icon {
-                    color: $ow-color-black;
+                    color: $sv-ink;
                 }
             }
         }
@@ -149,16 +149,27 @@
             padding-block: 1rem;
         }
 
-        // (2) Bridge the dead band. The flyout is a descendant of both the <li> and the
-        //     navbar, so extending its hit area upward keeps the pointer "inside" the
-        //     navbar for the whole trip from trigger to menu.
-        .dropdown-menu.show::before {
-            content: "";
-            position: absolute;
-            left: 0;
-            right: 0;
-            top: -22px;
-            height: 22px;
+        // (2) The flyout now sits flush against the bar's bottom border
+        //     (see `.dropdown-menu[data-bs-popper]` in _main-navigation.scss), so there
+        //     is no dead band left to bridge. An invisible overlay above the flyout
+        //     would sit on top of the nav bar and swallow clicks on the other links.
+
+        // (3) The link is 18px tall in a 50px bar, so a pointer moving downward can
+        //     leave it before core's 125ms open debounce fires. Extend the hit area
+        //     over the full bar without changing the layout. `::after` is Bootstrap's
+        //     dropdown caret, so this has to be `::before`.
+        > .mega-menu-link,
+        > .nav-link.mega-menu-link {
+            position: relative;
+
+            &::before {
+                content: "";
+                position: absolute;
+                left: 0;
+                right: 0;
+                top: -16px;
+                bottom: -17px;
+            }
         }
     }
 }

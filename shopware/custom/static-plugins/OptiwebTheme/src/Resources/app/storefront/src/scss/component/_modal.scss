@@ -1,13 +1,6 @@
 .js-pseudo-modal {
-    .modal:has(.product-enquiry-form-block) {
-        .only-close {
-            padding:16px 16px 0;
-        }
-        .modal-body {
-            padding-top: 0;
-        }
-
-    }
+    // The enquiry modal's own header/body spacing now lives in
+    // `component/_product-enquiry.scss`, which owns that dialog end to end.
     .cms-block-product-enquiry-form + .close-enquiry-form {
         display: none !important;
     }

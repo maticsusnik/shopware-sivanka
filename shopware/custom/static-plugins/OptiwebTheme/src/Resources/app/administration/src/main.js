@@ -17,6 +17,12 @@ import './module/sw-cms/blocks/sivanka/sivanka-product-slider';
 import './module/sw-cms/blocks/sivanka/sivanka-category-navigation';
 import './module/sw-cms/blocks/sivanka/sivanka-hero';
 
+/** Blocks — domača stran (home v2) **/
+import './module/sw-cms/blocks/sivanka/sivanka-promo';
+import './module/sw-cms/blocks/sivanka/sivanka-home-services';
+import './module/sw-cms/blocks/sivanka/sivanka-why';
+import './module/sw-cms/blocks/sivanka/sivanka-faq';
+
 /** Blocks — storitve (service pages) **/
 import './module/sw-cms/blocks/sivanka/sivanka-service-hero';
 import './module/sw-cms/blocks/sivanka/sivanka-service-features';
@@ -39,6 +45,7 @@ import './module/sw-cms/elements/banners';
 import './module/sw-cms/elements/sivanka-product-slider';
 import './module/sw-cms/elements/sivanka-sidebar-category-navigation';
 import './module/sw-cms/elements/sivanka-hero';
+import './module/sw-cms/elements/sivanka-promo-card';
 
 /** elements — storitve (service pages) **/
 import './module/sw-cms/elements/sivanka-service-intro';

@@ -23,6 +23,7 @@ Component.register('sw-cms-el-config-sivanka-service-intro', {
                 { value: 'hero', label: this.$tc('sw-cms.elements.sivankaServiceIntro.config.label.variantHero') },
                 { value: 'cta', label: this.$tc('sw-cms.elements.sivankaServiceIntro.config.label.variantCta') },
                 { value: 'plain', label: this.$tc('sw-cms.elements.sivankaServiceIntro.config.label.variantPlain') },
+                { value: 'home', label: this.$tc('sw-cms.elements.sivankaServiceIntro.config.label.variantHome') },
             ];
         },
     },

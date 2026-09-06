@@ -15,14 +15,13 @@
 
     <div class="row quickview-minimal-container">
         <div class="col-12 col-md-6 quickview-minimal-image-wrapper">
-            <div class="quickview-minimal-image" style="display:flex;align-items:center;justify-content:center;max-height:150px;overflow:hidden;">
+            <div class="quickview-minimal-image">
                 {% if product and product.cover and product.cover.media %}
                     {% sw_thumbnails 'minimal-image-thumbnails' with {
                         media: product.cover.media,
                         sizes: { 'default': '300px' },
                         attributes: {
                             class: 'img-fluid quickview-minimal-img',
-                            style: 'max-height:150px;width:auto;object-fit:contain;',
                             alt: (product.cover.translated.alt ?: ''),
                             title: (product.cover.translated.title ?: '')
                         }

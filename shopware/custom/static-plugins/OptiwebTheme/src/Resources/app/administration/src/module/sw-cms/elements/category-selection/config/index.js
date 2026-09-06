@@ -1,12 +1,15 @@
 import template from './sw-cms-el-config-category-selection.html.twig';
 
+const { Component, Mixin } = Shopware;
 const { Criteria } = Shopware.Data;
 
-Shopware.Component.register('sw-cms-el-config-category-selection', {
+Component.register('sw-cms-el-config-category-selection', {
     template,
 
+    emits: ['element-update'],
+
     inject: ['repositoryFactory'],
-    mixins: ['cms-element'],
+    mixins: [Mixin.getByName('cms-element')],
 
     data() {
         return {
@@ -35,6 +38,10 @@ Shopware.Component.register('sw-cms-el-config-category-selection', {
     },
 
     created() {
+        // Merges the element's defaultConfig into `element.config`, so slots saved before a
+        // field existed still have it. Without this the watchers below write to `undefined`.
+        this.initElementConfig('category-selection');
+
         const cfg = this.element?.config || {};
         const mode = cfg.selectionMode?.value;
         this.selectionModeLocal = (mode === 'multiple' || mode === 'single') ? mode : 'single';
@@ -51,18 +58,29 @@ Shopware.Component.register('sw-cms-el-config-category-selection', {
             // remove these two lines if you want to keep both values when toggling
             if (val === 'single') this.categoryIdsLocal = [];
             if (val === 'multiple') this.parentCategoryIdLocal = '';
+
+            this.onElementUpdate();
         },
 
         parentCategoryIdLocal(val) {
             this.element.config.parentCategoryId.value = val || '';
+            this.onElementUpdate();
         },
 
         categoryIdsLocal(val) {
             this.element.config.categories.value = Array.isArray(val) ? val : [];
+            this.onElementUpdate();
         },
 
         imageIdLocal(val) {
             this.element.config.image.value = val || null;
+            this.onElementUpdate();
+        },
+    },
+
+    methods: {
+        onElementUpdate() {
+            this.$emit('element-update', this.element);
         },
     },
 });

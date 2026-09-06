@@ -1,9 +1,15 @@
 // ---- Product Box (matches .prod design) ----
 
-.product-box {
-    border: 1px solid $sivanka-card-border;
-    border-radius: $sivanka-r16;
-    background: $sivanka-white;
+// Reference product card: 330px, white, 1px border, 12px radius, 16px of inner
+// padding, and an 8px-radius cream image frame inside it.
+// The markup is `<div class="card product-box">`, and component/_bootstrap-shape
+// gives every `.card` the 14px panel radius — a card is 12px, a panel is 14px, so
+// the two-class selector settles it independently of import order.
+.product-box,
+.product-box.card {
+    border: 1px solid $sv-border;
+    border-radius: $sv-r-card;
+    background: $sv-white;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -11,7 +17,7 @@
     height: 100%;
 
     &:hover {
-        box-shadow: 0 10px 28px rgba(0, 38, 53, 0.10);
+        box-shadow: $sv-shadow-soft;
         transform: translateY(-3px);
     }
 
@@ -30,10 +36,10 @@
         width: 100%;
         flex: 0 0 auto; // never let the flex column shrink the square
         height: auto;
-        background: $sivanka-beige;
+        background: $sv-cream;
         display: block;
         overflow: hidden;
-        border-radius: $sivanka-r12;
+        border-radius: $sv-r-chrome;
         margin-bottom: 14px;
 
         .product-image-link {
@@ -42,37 +48,45 @@
             height: 100%;
         }
 
-        // `cover` cropped every non-square photo — the wide yarn shots (280x174) lost
-        // their outer balls and looked off-centre. `contain` shows the whole picture,
-        // centred on the beige panel, the same way the detail gallery frames it.
+        // The reference fills the frame edge to edge. `contain` + 12px of padding left
+        // the photo's own white ground floating inside the cream frame, which read as a
+        // second box. `cover` crops a non-square shot — revert this pair of lines if
+        // that matters more than matching the mock.
         img,
         .product-image {
             width: 100%;
             height: 100%;
             max-height: none !important; // kill the base 200px cap that squashed the square
-            object-fit: contain !important;
+            object-fit: cover !important;
             object-position: center center;
-            padding: 12px;
+            padding: 0;
             display: block;
         }
     }
 
     // Body area
+    // No flex gap: the reference spaces this column with explicit margins —
+    // 10px under the name, 14px under the price — and a gap would add to both.
     .product-info {
         padding: 0;
         display: flex;
         flex-direction: column;
-        gap: 6px;
+        gap: 0;
         flex: 1;
     }
 
     // Product name
     .product-name {
-        font-family: $sivanka-sans;
+        font-family: $sv-sans;
         font-size: 14.5px;
         font-weight: 600;
-        color: $sivanka-text;
+        color: $sv-ink;
         line-height: 1.4;
+        // Core pins this at `height: 2.75rem`, reserving two lines whether or not
+        // the name needs them — 24px the reference does not draw. The clamp stays,
+        // so a long name still stops at two lines; the buttons stay aligned because
+        // `.product-action` pushes itself to the bottom of the card.
+        height: auto;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
@@ -80,14 +94,15 @@
         text-decoration: none;
 
         &:hover {
-            color: $sivanka-primary;
+            color: $sv-bordo;
             text-decoration: none;
         }
     }
 
     // Price info — keep only the main price (hide unit / "from" cheapest, like the design)
+    // Reference: 14px between the price and the add-to-cart button.
     .product-price-info {
-        margin: 0;
+        margin: 0 0 14px;
     }
 
     .product-price-unit,
@@ -97,63 +112,74 @@
 
     .product-price-wrapper,
     .product-price {
-        font-family: $sivanka-sans;
+        font-family: $sv-sans;
         font-size: 16px;
         font-weight: 700;
-        color: $sivanka-heading-dark;
+        line-height: 20px;
+        color: $sv-bordo-head;
         margin: 0;
 
         .product-price-regular {
             font-size: 12.5px;
             font-weight: 400;
-            color: $sivanka-muted;
+            color: $sv-ink;
         }
 
         del, .list-price {
             font-size: 13px;
-            color: $sivanka-muted;
+            color: $sv-ink;
             font-weight: 400;
         }
     }
 
     // Add to cart button — full-width pink (real markup is .btn-buy inside .product-action)
+    // No extra padding above the CTA: the reference's 14px sits on the price's
+    // margin-bottom alone, and a 2px top pad made the card 2px taller than the mock.
     .product-action {
         margin-top: auto;
-        padding-top: 2px;
+        padding-top: 0;
 
         .d-grid {
             width: 100%;
         }
     }
 
+    // Reference: "Dodaj v košarico" on a product CARD is the small GHOST button —
+    // white fill, 1px bordo, 4px radius, 13.5/600/19. The filled primary is
+    // reserved for the product-detail CTA (and that one is 12px, not 4px).
+    // Both variants carry the 1px border: a borderless fill measures 2px shorter
+    // than the ghost beside it and the pair misaligns in a centred row.
     .btn-buy,
     .btn.btn-primary {
         width: 100%;
-        background: $sivanka-primary;
-        color: $sivanka-white;
-        font-family: $sivanka-sans;
-        font-size: 14px;
+        background: $sv-white;
+        color: $sv-bordo;
+        font-family: $sv-sans;
+        font-size: 13.5px;
         font-weight: 600;
-        line-height: 1.35;
+        line-height: 19px;
         padding: 11px 14px;
-        border-radius: $sivanka-r12 - 2px; // 10px like the design
-        border: none;
-        transition: background 0.18s;
+        border-radius: $sv-r-btn-sm;
+        border: 1px solid $sv-bordo;
+        transition: color 0.18s, border-color 0.18s;
         text-align: center;
 
         &:hover,
         &:focus {
-            background: $sivanka-primary-hover;
-            color: $sivanka-white;
+            background: $sv-white;
+            border-color: $sv-bordo-hover;
+            color: $sv-bordo-hover;
         }
     }
 
     // "Pošlji povpraševanje" enquiry button — pink ghost / outline in the design
     .product-enquiry-form-listing {
         margin-top: auto;
-        padding-top: 2px;
+        padding-top: 0;
     }
 
+    // The enquiry button stands in for "Dodaj v košarico" on an unbuyable product,
+    // so it carries the same metrics — otherwise the two cards differ by 2px.
     .btn-send-enquiry,
     .btn.btn-send-enquiry {
         display: flex;
@@ -161,15 +187,16 @@
         justify-content: center;
         gap: 8px;
         width: 100%;
-        background: transparent;
-        color: $sivanka-primary;
-        font-family: $sivanka-sans;
-        font-size: 14px;
+        background: $sv-white;
+        color: $sv-bordo;
+        font-family: $sv-sans;
+        font-size: 13.5px;
         font-weight: 600;
-        line-height: 1.35;
-        padding: 10px 14px;
-        border-radius: $sivanka-r12 - 2px; // 10px
-        border: 1.5px solid $sivanka-primary;
+        line-height: 19px;
+        padding: 11px 14px;
+        // Matches the add-to-cart ghost it sits in place of.
+        border-radius: $sv-r-btn-sm;
+        border: 1px solid $sv-bordo;
         transition: background 0.18s, color 0.18s;
         text-align: center;
 
@@ -193,78 +220,69 @@
 
         .icon svg use,
         svg use {
-            fill: $sivanka-primary !important;
+            fill: $sv-bordo !important;
         }
 
         &:hover,
         &:focus {
-            background: $sivanka-primary;
-            color: $sivanka-white;
+            background: $sv-bordo;
+            color: $sv-white;
 
             .icon svg use,
             svg use {
-                fill: $sivanka-white !important;
+                fill: $sv-white !important;
             }
         }
     }
 
-    // Product badge tags (TOP, NEW, SALE)
+    // Badge chip — reference: one chip at the top-left of the image frame,
+    // Inter 10.5/700 with .9px tracking, uppercase, white on bordo, 3px radius,
+    // 10px inset. Core emits `.badge badge-*` inside `.product-badges`.
     .product-badges {
         position: absolute;
-        top: 9px;
-        left: 9px;
+        top: 10px;
+        left: 10px;
         z-index: 2;
         display: flex;
         flex-direction: column;
+        align-items: flex-start;
         gap: 4px;
     }
 
-    .product-badge {
-        font-family: $sivanka-sans;
+    .product-badges .badge,
+    .product-badge,
+    .product-discount-badge {
+        // Core sets `.product-badges .badge { height: 2rem; line-height: 2rem }` and the
+        // skin makes it `content-box`, which rendered a 40px block instead of a 23px chip.
+        height: auto;
+        line-height: 1.4;
+        box-sizing: border-box;
+        font-family: $sv-sans;
         font-size: 10.5px;
         font-weight: 700;
-        letter-spacing: 0.04em;
-        padding: 4px 9px;
-        border-radius: $sivanka-r4;
+        line-height: 1.4;
+        letter-spacing: .9px;
         text-transform: uppercase;
-
-        &.badge-topseller {
-            background: $sivanka-primary;
-            color: $sivanka-white;
-        }
-
-        &.badge-new {
-            background: $sivanka-accent;
-            color: $sivanka-primary;
-        }
-
-        &:not(.badge-topseller):not(.badge-new) {
-            background: $sivanka-white;
-            color: $sivanka-primary;
-            border: 1px solid $sivanka-primary;
-        }
+        padding: 4px 9px;
+        border-radius: $sv-r-badge;
+        background: $sv-bordo;
+        color: $sv-white;
     }
 
-    // Discount badge
+    // The discount chip is positioned by the core markup, not by .product-badges.
     .product-discount-badge {
         position: absolute;
-        top: 9px;
-        left: 9px;
-        background: $sivanka-primary;
-        color: $sivanka-white;
-        font-family: $sivanka-sans;
-        font-size: 10.5px;
-        font-weight: 700;
-        padding: 4px 9px;
-        border-radius: $sivanka-r4;
+        top: 10px;
+        left: 10px;
         z-index: 2;
     }
 
-    // Wishlist heart — white circle, top-right of the image (real markup)
+    // Wishlist heart — white circle, top-right of the image (real markup).
+    // Reference inset is 8px, and the glyph is bordo, not ink.
     .product-wishlist {
         position: absolute;
-        top: 9px;
-        right: 9px;
+        top: 8px;
+        right: 8px;
         z-index: 3;
     }
 
@@ -276,21 +294,21 @@
         height: 32px;
         min-width: 32px;
         padding: 0;
-        border-radius: 50%;
-        background: $sivanka-white;
+        border-radius: $sv-r-round;
+        background: $sv-white;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: $sivanka-text;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        color: $sv-bordo;
+        box-shadow: $sv-shadow-soft;
         transition: color 0.18s;
         border: none;
         cursor: pointer;
         line-height: 0;
 
         &:hover {
-            color: $sivanka-primary;
-            background: $sivanka-white;
+            color: $sv-bordo;
+            background: $sv-white;
         }
 
         // Don't force display here — that would override the added/not-added toggle

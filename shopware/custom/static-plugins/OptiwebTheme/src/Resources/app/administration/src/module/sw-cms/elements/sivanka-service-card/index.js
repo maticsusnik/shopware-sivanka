@@ -19,6 +19,7 @@ Shopware.Service('cmsService').registerCmsElement({
         icon: { source: 'static', value: 'needle' },
         title: { source: 'static', value: 'Ime storitve' },
         text: { source: 'static', value: 'Kratek opis storitve.' },
+        meta: { source: 'static', value: '' },
         url: { source: 'static', value: '' },
         linkLabel: { source: 'static', value: 'Več' },
         variant: { source: 'static', value: 'wide' },

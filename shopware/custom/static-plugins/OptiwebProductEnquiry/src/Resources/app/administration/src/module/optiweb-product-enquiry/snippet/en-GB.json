@@ -16,7 +16,8 @@
                     "product": "Product",
                     "quantity": "Qty",
                     "status": "Status"
-                }
+                },
+                "moreProducts": "{count} more product | {count} more products"
             },
             "detail": {
                 "title": "Enquiry Detail",
@@ -27,7 +28,11 @@
                 "status": {
                     "new": "New",
                     "read": "Read"
-                }
+                },
+                "columnProduct": "Product",
+                "columnNumber": "Product number",
+                "columnVariant": "Variant",
+                "columnQuantity": "Quantity"
             }
         }
     },

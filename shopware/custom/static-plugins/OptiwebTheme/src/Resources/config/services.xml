@@ -6,6 +6,10 @@
 
     <services>
 
+        <service id="OptiwebTheme\Core\Content\Cms\CmsLink">
+            <argument type="service" id="Shopware\Core\Content\Seo\SeoUrlPlaceholderHandlerInterface"/>
+        </service>
+
         <service id="OptiwebTheme\Core\Content\Cms\DataResolvers\MainSliderResolver">
             <tag name="shopware.cms.data_resolver"/>
         </service>
@@ -48,9 +52,14 @@
 
         <service id="OptiwebTheme\Core\Content\Cms\DataResolvers\SivankaHeroResolver">
             <tag name="shopware.cms.data_resolver"/>
+            <argument type="service" id="OptiwebTheme\Core\Content\Cms\CmsLink"/>
         </service>
 
         <service id="OptiwebTheme\Core\Content\Cms\DataResolvers\SivankaServiceCardResolver">
+            <tag name="shopware.cms.data_resolver"/>
+        </service>
+
+        <service id="OptiwebTheme\Core\Content\Cms\DataResolvers\SivankaPromoCardResolver">
             <tag name="shopware.cms.data_resolver"/>
         </service>
 
@@ -73,6 +82,13 @@
             <argument type="service" id="request_stack"/>
             <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
             <tag name="twig.extension"/>
+        </service>
+
+        <service id="OptiwebTheme\Core\Content\Product\SalesChannel\CrossSelling\FallbackCrossSellingRoute"
+                 decorates="Shopware\Core\Content\Product\SalesChannel\CrossSelling\ProductCrossSellingRoute">
+            <argument type="service" id="OptiwebTheme\Core\Content\Product\SalesChannel\CrossSelling\FallbackCrossSellingRoute.inner"/>
+            <argument type="service" id="sales_channel.product.repository"/>
+            <argument>Sorodni izdelki</argument>
         </service>
 
         <service id="OptiwebTheme\Services\ShippingMethodRouteDecorator" decorates="Shopware\Core\Checkout\Shipping\SalesChannel\ShippingMethodRoute">

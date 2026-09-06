@@ -1,0 +1,14 @@
+.sw-cms-block-sivanka-promo {
+    display: grid;
+    grid-template-columns: 1fr 1.24fr 1fr;
+    gap: 20px;
+    align-items: stretch;
+
+    &__slot {
+        display: flex;
+
+        > * {
+            width: 100%;
+        }
+    }
+}

@@ -48,7 +48,7 @@
             "promoPlaceholder": "Koda za popust",
             "applyPromo": "Uveljavi",
             "toCheckout": "Na blagajno",
-            "freeShippingNote": "<strong>Brezplačna dostava</strong> pri naročilu nad 60 €.",
+            "freeShippingNote": "<strong>Brezplačna dostava</strong> pri naročilu nad %amount%.",
             "shippingInfoHeader": "Informacije o pošiljanju",
             "backToShop": "Nazaj v trgovino",
             "orderQuestions": "Vprašanja v zvezi z vašim naročilom?",
@@ -61,7 +61,7 @@
         }
     },
     "sivanka": {
-        "topbarDelivery": "Brezplačna dostava nad 60 €",
+        "topbarDelivery": "Brezplačna dostava nad %amount%",
         "topbarQuality": "Vrhunska kakovost za ustvarjalce",
         "topbarSupport": "Z veseljem vam pomagamo",
         "topbarHelp": "Pomoč & kontakt",

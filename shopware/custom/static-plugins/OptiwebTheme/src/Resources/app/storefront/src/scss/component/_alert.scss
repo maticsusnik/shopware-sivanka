@@ -1,0 +1,106 @@
+// =============================================================================
+//  Alerts and flash messages
+//  -----------------------------------------------------------------------
+//  Not drawn anywhere in the 8 reference pages, and today the storefront shows
+//  Bootstrap's stock blue info box (the empty cart, "no products found", every
+//  flash bag). Derived from the nearest designed thing — the cream info panel in
+//  the topbar and the buy box: cream surface, 1px border, 8px radius, ink text.
+//
+//  State is carried by the border colour AND an icon AND the bold lead word, so
+//  it never rests on hue alone. That also keeps every alert inside the palette:
+//  Shopware's own skin computes `saturate(tint-color($value, 90%), 40%)`, which
+//  mints a new colour per state (e.g. #F6EFE8 for info).
+// =============================================================================
+
+.alert {
+    --bs-alert-bg: #{$sv-cream};
+    --bs-alert-color: #{$sv-ink};
+    --bs-alert-border-color: #{$sv-border};
+    --bs-alert-link-color: #{$sv-bordo};
+
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 18px;
+    border: 1px solid $sv-border;
+    border-radius: $sv-r-chrome;
+    background: $sv-cream;
+    color: $sv-ink;
+    font-size: 14.5px;
+    line-height: 22px;
+
+    .alert-content-container,
+    .alert-content {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .icon {
+        flex: 0 0 auto;
+        margin-top: 2px;
+        color: $sv-ink-muted;
+
+        // Shopware's sw_icon SVGs hardcode fill on the inner <use>; CSS `fill` on
+        // the <svg> never reaches it.
+        svg use {
+            fill: currentColor !important;
+        }
+    }
+
+    a {
+        color: $sv-bordo;
+        font-weight: 600;
+        text-decoration: underline;
+
+        &:hover { color: $sv-bordo-hover; }
+    }
+
+    .alert-heading,
+    strong,
+    b {
+        color: $sv-ink;
+        font-weight: 600;
+    }
+
+    .close,
+    .btn-close {
+        flex: 0 0 auto;
+        color: $sv-ink-muted;
+    }
+}
+
+.alert-success {
+    --bs-alert-border-color: #{$sv-success};
+    border-color: $sv-success;
+
+    .icon,
+    .alert-heading { color: $sv-success; }
+}
+
+.alert-danger,
+.alert-warning {
+    --bs-alert-border-color: #{$sv-error};
+    border-color: $sv-error;
+
+    .icon,
+    .alert-heading { color: $sv-error; }
+}
+
+.alert-info,
+.alert-secondary,
+.alert-light,
+.alert-primary {
+    --bs-alert-border-color: #{$sv-border};
+    border-color: $sv-border;
+
+    .icon { color: $sv-ink-muted; }
+}
+
+// Flash bags stack with the page rhythm rather than Bootstrap's 1rem
+.flashbags {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .alert { margin-bottom: 0; }
+}

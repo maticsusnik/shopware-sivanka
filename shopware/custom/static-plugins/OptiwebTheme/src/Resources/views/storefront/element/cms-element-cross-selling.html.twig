@@ -1,71 +1,43 @@
 {% sw_extends '@Storefront/storefront/element/cms-element-cross-selling.html.twig' %}
 
+{# "Sorodni izdelki" — reference/Sivanka Product.dc.html.
+
+   The reference draws a plain 4-up grid under a left-aligned section heading, not a
+   slider: on a product page the row is short enough to show whole, and a rail there
+   competes with the gallery for the same gesture.
+
+   The products come from the product's own cross-selling when an editor has set one
+   up in the administration; otherwise Core\Content\Product\SalesChannel\CrossSelling\
+   FallbackCrossSellingRoute supplies four from the same category. #}
 {% block cms_element_cross_selling_tabs_inner %}
-    {% if not sliderConfig %}
-        {% set sliderConfig = element.fieldConfig.elements %}
-    {% endif %}
+    {% set groups = element.data.crossSellings.elements is defined
+        ? element.data.crossSellings.elements|filter(item => item.total > 0 and item.crossSelling.active == true)
+        : [] %}
 
-    {% if element.data.crossSellings.elements is defined and element.data.crossSellings.elements|filter(item => item.total > 0)|length > 0 %}
-        <div class="product-detail-cross-selling">
-            {% block cms_element_cross_selling_tabs_content %}
-                <div class="product-detail-cross-selling-content">
-                    {% block cms_element_cross_selling_tabs_content_container %}
-                        {% for item in element.data.crossSellings.elements|filter(item => item.total > 0 and item.crossSelling.active == true) %}
-                            {% set crossSelling = item.crossSelling %}
-                            {% set products = item.products %}
-                            {% set id = crossSelling.id %}
-                            {% set position = crossSelling.position %}
-                            {# First cross sell slider is always UPSELL, others are regular cross sell#}
-                            {% set upsellSlider = position === 1 %}
+    {% if groups|length %}
+        <div class="product-detail-cross-selling sivanka-related">
+            {% for item in groups %}
+                {% set crossSelling = item.crossSelling %}
 
-                            <div class="cross-selling-slider {% if upsellSlider %} up-selling {% else %} cross-selling {% endif %}"
-                                 id="cross-selling-slider-{{ id }}"
-                                 aria-labelledby="cross-selling-slider-{{ id }}">
-                                {% set config = {
-                                    addToCartButtons: upsellSlider,
-                                    title: {
-                                        value: crossSelling.name ?: crossSelling.translated.name
-                                    },
-                                    border: {
-                                        value: false
-                                    },
-                                    rotate: {
-                                        value: false
-                                    },
-                                    products: {
-                                        value: products
-                                    },
-                                    boxLayout: {
-                                        value: sliderConfig.boxLayout.value
-                                    },
-                                    elMinWidth: {
-                                        value: sliderConfig.elMinWidth.value
-                                    },
-                                    navigation: {
-                                        value: true
-                                    },
-                                    navigationArrows: {
-                                        value: 'inside'
-                                    },
-                                    displayMode: {
-                                        value: sliderConfig.displayMode.value
-                                    },
-                                    verticalAlign: {
-                                        value: 'flex-start'
-                                    },
-                                    speed: {
-                                        value: 300
-                                    }
+                <section class="sivanka-related__group">
+                    {% if crossSelling.translated.name ?: crossSelling.name %}
+                        <h2 class="sivanka-related__title">
+                            {{ crossSelling.translated.name ?: crossSelling.name }}
+                        </h2>
+                    {% endif %}
+
+                    <div class="sivanka-related__grid">
+                        {% for product in item.products %}
+                            <div class="sivanka-related__cell">
+                                {% sw_include '@Storefront/storefront/component/product/card/box.html.twig' with {
+                                    'layout': 'standard',
+                                    'displayMode': 'cover',
                                 } %}
-
-                                {% block cms_element_cross_selling_tabs_content_container_slider %}
-                                    {{ parent() }}
-                                {% endblock %}
                             </div>
                         {% endfor %}
-                    {% endblock %}
-                </div>
-            {% endblock %}
+                    </div>
+                </section>
+            {% endfor %}
         </div>
     {% endif %}
 {% endblock %}

@@ -1,13 +1,30 @@
 {% block sw_cms_el_sivanka_hero %}
 <div class="sw-cms-el-sivanka-hero">
     <div class="sw-cms-el-sivanka-hero__box">
+        <img v-if="mediaLeft" class="sw-cms-el-sivanka-hero__photo is--left" :src="mediaLeft.url" alt="">
+        <img v-if="mediaRight" class="sw-cms-el-sivanka-hero__photo is--right" :src="mediaRight.url" alt="">
+        <div class="sw-cms-el-sivanka-hero__scrim"></div>
+
         <div class="sw-cms-el-sivanka-hero__text">
-            <h2>{{ element.config.headline.value }} <em>{{ element.config.headlineEmphasis.value }}</em></h2>
+            <h2>
+                <span v-for="(line, index) in headlineLines" :key="index" class="sw-cms-el-sivanka-hero__line">{{ line }}</span>
+            </h2>
             <p v-if="element.config.subheadline.value">{{ element.config.subheadline.value }}</p>
+
             <div class="sw-cms-el-sivanka-hero__btns">
-                <span class="sw-cms-el-sivanka-hero__btn-primary" v-if="element.config.primaryBtnLabel.value">{{ element.config.primaryBtnLabel.value }}</span>
-                <span class="sw-cms-el-sivanka-hero__btn-outline" v-if="element.config.secondaryBtnLabel.value">{{ element.config.secondaryBtnLabel.value }}</span>
+                <span v-if="element.config.primaryBtnLabel.value" class="sw-cms-el-sivanka-hero__btn is--primary">{{ element.config.primaryBtnLabel.value }}</span>
+                <span v-if="element.config.secondaryBtnLabel.value" class="sw-cms-el-sivanka-hero__btn is--ghost">{{ element.config.secondaryBtnLabel.value }}</span>
             </div>
+        </div>
+    </div>
+
+    <div v-if="trustItems.length" class="sw-cms-el-sivanka-hero__trust">
+        <div v-for="(item, index) in trustItems" :key="index" class="sw-cms-el-sivanka-hero__trust-item">
+            <span class="sw-cms-el-sivanka-hero__trust-dot"></span>
+            <span class="sw-cms-el-sivanka-hero__trust-copy">
+                <b>{{ item.title }}</b>
+                <span v-if="item.sub">{{ item.sub }}</span>
+            </span>
         </div>
     </div>
 </div>

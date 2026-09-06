@@ -44,6 +44,7 @@ Component.register('sw-cms-el-config-sivanka-service-card', {
             return [
                 { value: 'wide', label: this.$tc('sw-cms.elements.sivankaServiceCard.config.label.variantWide') },
                 { value: 'compact', label: this.$tc('sw-cms.elements.sivankaServiceCard.config.label.variantCompact') },
+                { value: 'tile', label: this.$tc('sw-cms.elements.sivankaServiceCard.config.label.variantTile') },
             ];
         },
     },

@@ -54,7 +54,6 @@ class ProductEnquiryController extends StorefrontController
                 'firstName'  => [new Assert\NotBlank()],
                 'lastName'   => [new Assert\NotBlank()],
                 'email'      => [new Assert\NotBlank(), new Assert\Email()],
-                'productQty' => [new Assert\NotBlank(), new Assert\Positive()],
             ],
             allowExtraFields: true,
         );
@@ -75,23 +74,56 @@ class ProductEnquiryController extends StorefrontController
             ]);
         }
 
-        $productId = $data->getString('product_id');
-        if (empty($productId)) {
+        $requested = $this->readRequestedProducts($data);
+
+        if ($requested === []) {
             return new JsonResponse([
                 'type'   => 'danger',
                 'alerts' => [['type' => 'danger', 'content' => $this->trans('optiwebProductEnquiry.errors.missingProductId')]],
             ]);
         }
 
-        $productCriteria = new Criteria([$productId]);
+        $productCriteria = new Criteria(array_keys($requested));
         $productCriteria->addAssociations(['cover', 'cover.media', 'options', 'options.group']);
 
-        $product = $this->productRepository->search(
-            $productCriteria,
-            $context->getContext()
-        )->first();
+        $products = $this->productRepository->search($productCriteria, $context->getContext())->getEntities();
 
-        if (!$product) {
+        if ($products->count() === 0) {
+            return new JsonResponse([
+                'type'   => 'danger',
+                'alerts' => [['type' => 'danger', 'content' => $this->trans('optiwebProductEnquiry.errors.productNotFound')]],
+            ]);
+        }
+
+        // Build the lines in the order they were submitted, skipping ids that no
+        // longer resolve — a stale wishlist entry must not sink the whole enquiry.
+        $lines    = [];
+        $entities = [];
+        $position = 0;
+
+        foreach ($requested as $productId => $line) {
+            $product = $products->get($productId);
+            if ($product === null) {
+                $this->logger->info('OptiwebProductEnquiry: dropped an unknown product from an enquiry', [
+                    'productId' => $productId,
+                ]);
+
+                continue;
+            }
+
+            $entities[] = $product;
+            $lines[]    = [
+                'id'            => Uuid::randomHex(),
+                'productId'     => $productId,
+                'productName'   => $product->getTranslated()['name'] ?? '',
+                'productNumber' => $product->getProductNumber(),
+                'productOption' => $line['option'] ?: null,
+                'quantity'      => $line['quantity'],
+                'position'      => $position++,
+            ];
+        }
+
+        if ($lines === []) {
             return new JsonResponse([
                 'type'   => 'danger',
                 'alerts' => [['type' => 'danger', 'content' => $this->trans('optiwebProductEnquiry.errors.productNotFound')]],
@@ -99,10 +131,10 @@ class ProductEnquiryController extends StorefrontController
         }
 
         // A double click or a re-fired submit would otherwise file the same enquiry twice.
-        if ($this->findRecentDuplicate($data, $productId, $context)) {
+        if ($this->findRecentDuplicate($data, $lines, $context)) {
             $this->logger->info('OptiwebProductEnquiry: swallowed a duplicate enquiry submission', [
-                'email'     => $data->getString('email'),
-                'productId' => $productId,
+                'email'    => $data->getString('email'),
+                'products' => array_column($lines, 'productNumber'),
             ]);
 
             return new JsonResponse([
@@ -111,6 +143,8 @@ class ProductEnquiryController extends StorefrontController
             ]);
         }
 
+        $first = $lines[0];
+
         $this->productEnquiryRepository->create([[
             'id'             => Uuid::randomHex(),
             'salesChannelId' => $context->getSalesChannelId(),
@@ -118,22 +152,26 @@ class ProductEnquiryController extends StorefrontController
             'lastName'       => $data->getString('lastName'),
             'email'          => $data->getString('email'),
             'phone'          => $data->getString('phone') ?: null,
-            'productId'      => $productId,
-            'productName'    => $product->getTranslated()['name'] ?? '',
-            'productNumber'  => $product->getProductNumber(),
-            'productOption'  => $data->getString('product_option') ?: null,
-            'quantity'       => (int) $data->get('productQty', 1),
+            // Mirrored from the first line: the admin list and older reports read
+            // these columns and predate multi-product enquiries.
+            'productId'      => $first['productId'],
+            'productName'    => $first['productName'],
+            'productNumber'  => $first['productNumber'],
+            'productOption'  => $first['productOption'],
+            'quantity'       => $first['quantity'],
+            'productCount'   => count($lines),
             'message'        => $data->getString('comment') ?: null,
             'status'         => ProductEnquiryStatus::New->value,
+            'lines'          => $lines,
         ]], $context->getContext());
 
         try {
-            $this->sendAdminEmail($data, $product, $context);
+            $this->sendAdminEmail($data, $entities, $lines, $context);
         } catch (\Throwable $e) {
             // The enquiry itself is already stored, so a mail failure must not fail the request.
             $this->logger->error('OptiwebProductEnquiry: notification mail failed', [
                 'exception' => $e,
-                'productId' => $productId,
+                'products'  => array_column($lines, 'productNumber'),
             ]);
         }
 
@@ -144,29 +182,128 @@ class ProductEnquiryController extends StorefrontController
     }
 
     /**
-     * Returns true when an identical enquiry (same e-mail, product and quantity) was
-     * filed in the last minute, so accidental double submits do not create two rows.
+     * Read the requested products, from either shape the form can submit.
+     *
+     * Single product (product detail modal):
+     *   product_id=<id>, productQty=<n>, product_option=<text>
+     * Several products (wishlist modal):
+     *   products[<id>][qty]=<n>, products[<id>][option]=<text>
+     *
+     * Keyed by product id, so the same product listed twice collapses into one
+     * line instead of producing two rows for the same thing.
+     *
+     * @return array<string, array{quantity: int, option: string}>
      */
-    private function findRecentDuplicate(RequestDataBag $data, string $productId, SalesChannelContext $context): bool
+    private function readRequestedProducts(RequestDataBag $data): array
+    {
+        $requested = [];
+
+        $products = $data->get('products');
+        if ($products instanceof RequestDataBag) {
+            $products = $products->all();
+        }
+
+        if (is_array($products)) {
+            foreach ($products as $productId => $line) {
+                if (!is_string($productId) || !Uuid::isValid($productId)) {
+                    continue;
+                }
+
+                $line = is_array($line) ? $line : [];
+
+                $requested[$productId] = [
+                    'quantity' => $this->normaliseQuantity($line['qty'] ?? 1),
+                    'option'   => trim((string) ($line['option'] ?? '')),
+                ];
+            }
+        }
+
+        if ($requested !== []) {
+            return $requested;
+        }
+
+        $productId = $data->getString('product_id');
+        if ($productId === '' || !Uuid::isValid($productId)) {
+            return [];
+        }
+
+        return [$productId => [
+            'quantity' => $this->normaliseQuantity($data->get('productQty', 1)),
+            'option'   => trim($data->getString('product_option')),
+        ]];
+    }
+
+    /** Clamped so a hand-edited form cannot store a zero, negative or absurd quantity. */
+    private function normaliseQuantity(mixed $value): int
+    {
+        $quantity = (int) $value;
+
+        return max(1, min($quantity, 9999));
+    }
+
+    /**
+     * Returns true when the same person filed the same basket of products in the
+     * last minute, so accidental double submits do not create two enquiries.
+     *
+     * Matching is done on the whole product set, not just the first line: two
+     * wishlist enquiries a minute apart are only a duplicate if they cover
+     * exactly the same products at the same quantities.
+     *
+     * @param list<array{productId: string, quantity: int}> $lines
+     */
+    private function findRecentDuplicate(RequestDataBag $data, array $lines, SalesChannelContext $context): bool
     {
         try {
             $criteria = new Criteria();
+            $criteria->addAssociation('lines');
             $criteria->addFilter(new EqualsFilter('email', $data->getString('email')));
-            $criteria->addFilter(new EqualsFilter('productId', $productId));
-            $criteria->addFilter(new EqualsFilter('quantity', (int) $data->get('productQty', 1)));
+            $criteria->addFilter(new EqualsFilter('productCount', count($lines)));
             $criteria->addFilter(new RangeFilter('createdAt', [
                 RangeFilter::GTE => (new \DateTimeImmutable('-60 seconds'))->format(Defaults::STORAGE_DATE_TIME_FORMAT),
             ]));
             $criteria->addSorting(new FieldSorting('createdAt', FieldSorting::DESCENDING));
-            $criteria->setLimit(1);
+            $criteria->setLimit(5);
 
-            return $this->productEnquiryRepository->search($criteria, $context->getContext())->getTotal() > 0;
+            $fingerprint = $this->fingerprint($lines);
+
+            foreach ($this->productEnquiryRepository->search($criteria, $context->getContext())->getEntities() as $enquiry) {
+                $existing = [];
+                foreach ($enquiry->getLines() ?? [] as $line) {
+                    $existing[] = [
+                        'productId' => $line->getProductId() ?? '',
+                        'quantity'  => $line->getQuantity(),
+                    ];
+                }
+
+                if ($this->fingerprint($existing) === $fingerprint) {
+                    return true;
+                }
+            }
+
+            return false;
         } catch (\Throwable $e) {
             // A failed check must never block a legitimate enquiry.
             $this->logger->warning('OptiwebProductEnquiry: duplicate check failed', ['exception' => $e]);
 
             return false;
         }
+    }
+
+    /**
+     * Order-independent signature of a product set.
+     *
+     * @param list<array{productId: string, quantity: int}> $lines
+     */
+    private function fingerprint(array $lines): string
+    {
+        $parts = array_map(
+            static fn (array $line): string => $line['productId'] . ':' . $line['quantity'],
+            $lines,
+        );
+
+        sort($parts);
+
+        return implode('|', $parts);
     }
 
     private function resolveConfirmationText(RequestDataBag $data, SalesChannelContext $context): string
@@ -188,7 +325,11 @@ class ProductEnquiryController extends StorefrontController
         return $confirmationText;
     }
 
-    private function sendAdminEmail(RequestDataBag $data, ProductEntity $product, SalesChannelContext $context): void
+    /**
+     * @param list<ProductEntity>                                                                           $products
+     * @param list<array{productName: string, productNumber: string, productOption: ?string, quantity: int}> $lines
+     */
+    private function sendAdminEmail(RequestDataBag $data, array $products, array $lines, SalesChannelContext $context): void
     {
         $typeCriteria = new Criteria();
         $typeCriteria->addFilter(new EqualsFilter('technicalName', 'product_enquiry_form'));
@@ -242,7 +383,11 @@ class ProductEnquiryController extends StorefrontController
             $context->getContext(),
             [
                 'contactFormData' => $data->all(),
-                'product'         => $product,
+                // `product` stays for templates written before multi-product
+                // enquiries existed; `enquiryLines` is the full set.
+                'product'         => $products[0] ?? null,
+                'products'        => $products,
+                'enquiryLines'    => $lines,
                 'salesChannel'    => $context->getSalesChannel(),
             ]
         );

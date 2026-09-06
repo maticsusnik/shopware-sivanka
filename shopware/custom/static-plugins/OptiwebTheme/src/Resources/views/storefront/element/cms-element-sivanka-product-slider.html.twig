@@ -1,78 +1,36 @@
-{% set products = element.data.products.elements  %}
-
-{% set productSliderOptions = {
-    slider: {
-        controls: true,
-        loop: true,
-        Rewind: false,
-        nav: false,
-        mouseDrag: true,
-        autoplay: false,
-        speed: 500,
-        ariaLive: false,
-        autoHeight: false,
-        gutter: 16,
-        items: 2,
-        responsive: {
-            xs: {
-                items: 2
-            },
-            sm: {
-                items: 2
-            },
-            md: {
-                items: 3
-            },
-            lg: {
-                items: 4
-            },
-            xl: {
-                items: 4
-            },
-            xxl: {
-                items: 4
-            }
-        }
-    }
-} %}
-
+{# Product rail — reference/Sivanka Home v2 redesign.dc.html, "Pravkar prišlo" and
+   "Najbolj priljubljeno". Native horizontal scroller with a fixed 330px card
+   (250 / 224 / 208 as the page narrows). #}
 {% block producty_slider %}
-    <div
-            class="product-slider d-block "
-            data-base-slider="true"
-            data-base-slider-options='{{ productSliderOptions|json_encode }}'
-            role="region"
-            aria-label="PRoduct slider"
-            tabindex="0">
+    {% set products = element.data.products.elements %}
+
+    {# The reference stamps one badge across a whole rail — "Novo" on "Pravkar prišlo",
+       "Priljubljeno" on "Najbolj priljubljeno". It is a property of the rail, not of
+       the product, so it is configured on the element. #}
+    {% set sliderBadge = element.fieldConfig.elements.badge.value|default('') %}
+
+    <div class="sv-rail sv-rail--products"
+         data-sv-rail="true"
+         role="region"
+         aria-label="{{ element.fieldConfig.elements.title.value.text|default('')|striptags }}">
 
         {% sw_include '@Storefront/storefront/component/skip-target.html.twig' with {
             targetId: block.id,
             snippet: 'component.cms.imageGallery.skipImageGallery',
         } %}
 
-        {% block element_image_slider_controls %}
-            <div class="product-slider-controls-container">
-                <div class="product-slider-controls" data-base-slider-controls="true">
-                    <button class="product-slider-controls-prev image-slider-controls-prev" aria-label="{{ 'general.previous'|trans|striptags }}">
-                        {% sw_icon 'arrow-left' style { pack: 'ow'} %}
-                    </button>
-                    <button class="product-slider-controls-next image-slider-controls-next" aria-label="{{ 'general.next'|trans|striptags }}">
-                        {% sw_icon 'arrow-right' style { pack: 'ow'} %}
-                    </button>
-                </div>
-            </div>
-        {% endblock %}
-
-        <div class="product-slider-container" data-base-slider-container="true">
+        <div class="sv-rail__track" tabindex="0">
             {% for product in products %}
-                <div class="product-slider-item">
+                <div class="sv-rail__item">
                     {% sw_include '@Storefront/storefront/component/product/card/box.html.twig' with {
                         'layout': 'standard',
                         'displayMode': 'cover',
+                        'sliderBadge': sliderBadge,
                     } %}
                 </div>
             {% endfor %}
         </div>
+
+        {% sw_include '@Storefront/storefront/utilities/sivanka-rail-controls.html.twig' %}
     </div>
 {% endblock %}
-

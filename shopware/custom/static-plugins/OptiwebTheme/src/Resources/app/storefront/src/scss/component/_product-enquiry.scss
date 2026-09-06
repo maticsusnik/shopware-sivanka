@@ -1,0 +1,699 @@
+/*
+ * Product enquiry modal — Sivanka styling
+ * ==================================================
+ * The OptiwebProductEnquiry plugin ships the structure and a neutral baseline so
+ * it renders sanely in any theme; the brand look lives here, where the Sivanka
+ * tokens are in scope.
+ *
+ * Scoped to `.product-enquiry-form-block` so it cannot leak into the other
+ * pseudo-modals (address, quickview) that share the same shell.
+ */
+
+$enquiry-field-height: 48px;
+
+.modal:has(.product-enquiry-form-block) {
+
+    .modal-dialog {
+        max-width: 720px;
+    }
+
+    .modal-content {
+        border: 0;
+        border-radius: $sv-r-panel;
+        box-shadow: $sv-shadow-deep;
+        overflow: hidden;
+    }
+
+    // The header carries no title for this modal — it exists only to hold the
+    // close button, so it collapses to a floating control over the body.
+    .modal-header.only-close {
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 3;
+        padding: 16px;
+        border: 0;
+        background: none;
+    }
+
+    .btn-close {
+        width: 36px;
+        height: 36px;
+        margin: 0;
+        padding: 0;
+        border-radius: $sv-r-round;
+        background-color: rgba(255, 255, 255, 0.9);
+        // Bootstrap's default glyph is a black X sized to fill the button, which
+        // reads as a heavy dark square against the tinted summary. Redrawn in
+        // the brand plum at a size that leaves the circle visible around it.
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23A02B6B' stroke-linecap='round' stroke-width='2' d='M3 3l10 10M13 3L3 13'/%3E%3C/svg%3E");
+        background-size: 14px;
+        background-position: center;
+        background-repeat: no-repeat;
+        box-shadow: $sv-shadow-soft;
+        opacity: 1;
+        transition: background-color 0.18s ease, transform 0.18s ease;
+
+        &:hover {
+            background-color: $sv-bordo-tint;
+            transform: rotate(90deg);
+        }
+
+        &:focus-visible {
+            outline: 2px solid $sv-bordo;
+            outline-offset: 2px;
+            box-shadow: none;
+        }
+    }
+
+    .modal-body {
+        padding: 0;
+    }
+}
+
+.cms-element-product-enquiry-form {
+
+    .form-content {
+        padding: 0;
+    }
+
+    /* Product summary
+     * ---------------------------- */
+    .product-row {
+        margin: 0;
+        padding: 24px 24px 16px;
+        background: linear-gradient(180deg, $sv-cream 0%, rgba(250, 241, 245, 0) 100%);
+        border-bottom: 1px solid $sv-border;
+    }
+
+    .quickview-minimal-container {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        gap: 16px;
+        margin: 0;
+    }
+
+    // Bootstrap's col-6 split gave the placeholder half the modal; the summary
+    // reads better as a compact chip with the copy carrying the width.
+    .quickview-minimal-image-wrapper {
+        flex: 0 0 auto;
+        width: 92px;
+        max-width: 92px;
+        padding: 0;
+    }
+
+    .quickview-minimal-image {
+        width: 92px;
+        height: 92px;
+        max-height: none;
+        padding: 8px;
+        border: 1px solid $sv-border;
+        border-radius: $sv-r-card;
+        background-color: $sv-white;
+
+        img,
+        svg {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+        }
+    }
+
+    .quickview-minimal-product-wrapper {
+        flex: 1 1 auto;
+        width: auto;
+        max-width: none;
+        min-width: 0;
+        padding: 0;
+    }
+
+    .quickview-minimal-product-name {
+        margin-bottom: 6px;
+        font-family: $sv-serif;
+        font-size: 1.25rem;
+        font-weight: 600;
+        line-height: 1.25;
+        color: $sv-bordo-head;
+    }
+
+    .quickview-minimal-product-number {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        margin: 0;
+        padding: 3px 10px;
+        border-radius: $sv-r-badge;
+        background-color: $sv-white;
+        border: 1px solid $sv-border;
+        font-size: 0.75rem;
+        color: $sv-ink-muted;
+
+        .product-number-value {
+            font-family: $sv-sans;
+            font-weight: 700;
+            color: $sv-ink;
+        }
+    }
+
+    /* Form
+     * ---------------------------- */
+    form {
+        padding: 24px;
+    }
+
+    .form-label {
+        margin-bottom: 6px;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+        color: $sv-ink;
+    }
+
+    .form-control {
+        min-height: $enquiry-field-height;
+        padding: 12px 14px;
+        border: 1.5px solid $sv-border;
+        border-radius: $sv-r-card;
+        background-color: $sv-white;
+        color: $sv-ink;
+        transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+
+        &::placeholder {
+            color: $sv-ink-muted;
+        }
+
+        &:hover:not(:focus) {
+            border-color: darken($sv-border, 8%);
+        }
+
+        &:focus {
+            border-color: $sv-bordo;
+            background-color: $sv-white;
+            box-shadow: $sv-focus-ring;
+        }
+    }
+
+    textarea.form-control {
+        min-height: 132px;
+        resize: vertical;
+        line-height: 1.55;
+    }
+
+    .qtyField {
+        width: auto;
+
+        .form-control {
+            width: 120px;
+            max-width: 120px;
+            font-variant-numeric: tabular-nums;
+        }
+    }
+
+    // Bootstrap hides .invalid-feedback until a sibling is .is-invalid, but the
+    // plugin's JS also sets display inline — keep both paths looking the same.
+    .invalid-feedback {
+        margin-top: 6px;
+        font-size: 0.8125rem;
+        color: $sv-error;
+    }
+
+    .form-control.is-invalid {
+        border-color: $sv-error;
+        background-image: none;
+
+        &:focus {
+            box-shadow: $sv-focus-ring;
+        }
+    }
+
+    // A valid field should read as "fine", not as a second alert state.
+    .form-control.is-valid {
+        border-color: $sv-border;
+        background-image: none;
+
+        &:focus {
+            border-color: $sv-bordo;
+            box-shadow: $sv-focus-ring;
+        }
+    }
+
+    /* Consent checkbox
+     * ---------------------------- */
+    .enquiry-checkbox-wrap {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 24px;
+        padding: 14px 16px;
+        border: 1px solid $sv-border;
+        border-radius: $sv-r-card;
+        background-color: $sv-cream;
+
+        .form-check-input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin: 1px 0 0;
+            border: 2px solid darken($sv-border, 14%);
+            border-radius: $sv-r-btn;
+            background-color: $sv-white;
+            transition: background-color 0.15s ease, border-color 0.15s ease;
+
+            &:checked {
+                background-color: $sv-bordo;
+                border-color: $sv-bordo;
+            }
+
+            &:focus-visible {
+                outline: 2px solid $sv-bordo;
+                outline-offset: 2px;
+            }
+        }
+
+        .form-check-label {
+            flex: 1 1 0;
+            min-width: 0;
+            margin: 0;
+            font-size: 0.875rem;
+            line-height: 1.45;
+            color: $sv-ink;
+
+            a {
+                color: $sv-bordo;
+                text-underline-offset: 2px;
+
+                &:hover {
+                    color: $sv-bordo-hover;
+                }
+            }
+        }
+
+        .invalid-feedback {
+            flex: 1 0 100%;
+        }
+    }
+
+    .required-fields-info {
+        margin: 14px 0 0;
+        font-size: 0.75rem;
+        color: $sv-ink-muted;
+
+        small {
+            font-size: inherit;
+        }
+    }
+
+    /* Submit
+     * ---------------------------- */
+    .btn-primary[type="submit"] {
+        position: relative;
+        width: 100%;
+        min-height: 54px;
+        margin-top: 16px;
+        border: 0;
+        border-radius: $sv-r-card;
+        background-color: $sv-bordo;
+        font-size: 1rem;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+        transition: background-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+
+        &:hover:not(:disabled) {
+            background-color: $sv-bordo-hover;
+            transform: translateY(-1px);
+            box-shadow: $sv-shadow-deep;
+        }
+
+        &:active:not(:disabled) {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $sv-bordo;
+            outline-offset: 3px;
+            box-shadow: none;
+        }
+
+        &:disabled {
+            opacity: 1;
+            background-color: $sv-bordo;
+        }
+    }
+
+    // The plugin's JS already toggles .is-loading while the request is in
+    // flight; without a style for it the disabled button gave no feedback.
+    .btn-primary.is-loading {
+        color: transparent;
+        pointer-events: none;
+
+        &::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-top-color: $sv-white;
+            border-radius: $sv-r-round;
+            animation: spinner 0.7s linear infinite;
+        }
+    }
+
+    /* Result states
+     * ---------------------------- */
+    .enquiry-success {
+        padding: 48px 24px;
+        text-align: center;
+
+        &::before {
+            content: '';
+            display: block;
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 16px;
+            border-radius: $sv-r-round;
+            background-color: $sv-bordo-tint;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%23A02B6B' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='m5 12.5 4.5 4.5L19 7.5'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 26px;
+        }
+
+        p {
+            margin: 0;
+            font-size: 1.0625rem;
+            line-height: 1.5;
+            color: $sv-ink;
+        }
+    }
+
+    .enquiry-inline-alert {
+        margin: 24px 24px 0;
+        border: 0;
+        border-radius: $sv-r-card;
+        font-size: 0.9375rem;
+    }
+}
+
+/* Narrow screens
+ * ---------------------------- */
+@include media-breakpoint-down(md) {
+    .modal:has(.product-enquiry-form-block) .modal-content {
+        border-radius: $sv-r-panel;
+    }
+
+    .cms-element-product-enquiry-form {
+        .product-row,
+        form {
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+
+        .product-row {
+            padding-top: 28px;
+        }
+
+        // Only the name needs to clear the floating close button; padding the
+        // whole row would also squeeze the product-number pill onto two lines.
+        .quickview-minimal-product-name {
+            padding-right: 44px;
+        }
+
+        .quickview-minimal-product-number {
+            white-space: nowrap;
+        }
+
+        .quickview-minimal-image-wrapper,
+        .quickview-minimal-image {
+            width: 72px;
+            max-width: 72px;
+        }
+
+        .quickview-minimal-image {
+            height: 72px;
+        }
+
+        .quickview-minimal-product-name {
+            font-size: 1.0625rem;
+        }
+    }
+}
+
+/* Multi-product list inside the modal (wishlist enquiry)
+ * ---------------------------- */
+.cms-element-product-enquiry-form {
+
+    .product-row-multi {
+        margin: 0;
+        padding: 24px 24px 16px;
+        background: linear-gradient(180deg, $sv-cream 0%, rgba(250, 241, 245, 0) 100%);
+        border-bottom: 1px solid $sv-border;
+    }
+
+    .enquiry-lines-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        color: $sv-ink-muted;
+    }
+
+    .enquiry-lines-count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 22px;
+        height: 22px;
+        padding: 0 7px;
+        border-radius: $sv-r-round;
+        background-color: $sv-bordo;
+        color: $sv-white;
+        font-size: 0.75rem;
+    }
+
+    // Capped so a 40-item wishlist scrolls inside the modal instead of pushing
+    // the submit button off the bottom of the dialog.
+    .enquiry-lines {
+        max-height: 320px;
+        overflow-y: auto;
+        padding-right: 4px;
+    }
+
+    .enquiry-line {
+        gap: 12px;
+        padding: 10px;
+        margin-bottom: 8px;
+        border: 1px solid $sv-border;
+        border-radius: $sv-r-card;
+        background-color: $sv-white;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    .enquiry-line-image {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        width: 56px;
+        height: 56px;
+        padding: 5px;
+        border: 1px solid $sv-border;
+        border-radius: $sv-r-chrome;
+        background-color: $sv-white;
+
+        img,
+        svg {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+        }
+    }
+
+    .enquiry-line-name {
+        font-weight: 600;
+        font-size: 0.9375rem;
+        line-height: 1.3;
+        color: $sv-bordo-head;
+    }
+
+    .enquiry-line-number {
+        margin-top: 3px;
+        font-size: 0.75rem;
+        color: $sv-ink-muted;
+
+        .product-number-value {
+            font-family: $sv-sans;
+            font-weight: 700;
+            color: $sv-ink;
+        }
+    }
+
+    .enquiry-line-qty {
+        flex: 0 0 auto;
+
+        .form-label {
+            margin-bottom: 3px;
+            font-size: 0.6875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            color: $sv-ink-muted;
+        }
+
+        .form-control {
+            width: 88px;
+            min-height: 40px;
+            padding: 8px 10px;
+            font-variant-numeric: tabular-nums;
+        }
+    }
+}
+
+/* Wishlist page — selection checkbox and the bulk enquiry bar
+ * ---------------------------- */
+.wishlist-enquiry-select {
+    padding: 8px 12px;
+    border: 1px solid $sv-border;
+    border-radius: $sv-r-chrome;
+    background-color: $sv-cream;
+
+    .form-check-input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        border: 2px solid darken($sv-border, 14%);
+        border-radius: $sv-r-btn-sm;
+        background-color: $sv-white;
+        cursor: pointer;
+
+        &:checked {
+            background-color: $sv-bordo;
+            border-color: $sv-bordo;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $sv-bordo;
+            outline-offset: 2px;
+            box-shadow: none;
+        }
+    }
+
+    .form-check-label {
+        color: $sv-ink;
+    }
+}
+
+.wishlist-enquiry-bar {
+    padding: 16px 24px;
+    border: 1px solid $sv-border;
+    border-radius: $sv-r-panel;
+    background: linear-gradient(135deg, $sv-cream 0%, $sv-white 100%);
+
+    .wishlist-enquiry-bar-title {
+        display: block;
+        font-family: $sv-serif;
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: $sv-bordo-head;
+    }
+
+    .wishlist-enquiry-bar-subtitle {
+        display: block;
+        margin-top: 2px;
+        font-size: 0.875rem;
+        color: $sv-ink-muted;
+
+        &.has-error {
+            color: $sv-error;
+        }
+    }
+
+    .btn-link {
+        padding: 0 12px;
+        color: $sv-ink-muted;
+        font-size: 0.875rem;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+
+        &:hover {
+            color: $sv-bordo;
+        }
+    }
+
+    .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 48px;
+        padding: 0 24px;
+        border: 0;
+        border-radius: $sv-r-card;
+        background-color: $sv-bordo;
+        font-weight: 600;
+        transition: background-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+
+        &:hover:not(:disabled) {
+            background-color: $sv-bordo-hover;
+            transform: translateY(-1px);
+            box-shadow: $sv-shadow-deep;
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            background-color: $sv-bordo;
+        }
+
+        svg use {
+            fill: $sv-white !important;
+        }
+    }
+}
+
+@include media-breakpoint-down(md) {
+    .wishlist-enquiry-bar {
+        padding: 16px;
+
+        .wishlist-enquiry-bar-inner {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .wishlist-enquiry-bar-actions {
+            justify-content: space-between;
+        }
+
+        .btn-primary {
+            flex: 1 1 auto;
+            justify-content: center;
+        }
+    }
+
+    .cms-element-product-enquiry-form {
+        .product-row-multi {
+            padding-left: 16px;
+            padding-right: 16px;
+            padding-top: 28px;
+        }
+
+        .enquiry-line {
+            flex-wrap: wrap;
+        }
+
+        .enquiry-line-qty .form-control {
+            width: 76px;
+        }
+    }
+}

@@ -10,6 +10,14 @@
             <helpText>Paste the ID of the CMS page that contains the product enquiry form element. Find it in Shopping Experiences → URL of the page.</helpText>
         </input-field>
 
+        <input-field type="bool">
+            <name>wishlistEnquiry</name>
+            <label>Enable bulk enquiry from the wishlist</label>
+            <label lang="de-DE">Sammelanfrage vom Merkzettel aktivieren</label>
+            <helpText>Adds a selection checkbox to every wishlist card and a "send enquiry" bar above the wishlist, so one enquiry can cover several products. Requires the CMS Page ID above.</helpText>
+            <defaultValue>true</defaultValue>
+        </input-field>
+
         <input-field type="text">
             <name>adminEmail</name>
             <label>Admin Notification Email</label>

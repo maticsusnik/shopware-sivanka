@@ -4,7 +4,7 @@
 
     .ow-read-more-toggle {
         position: relative;
-        color: $ow-color-black;
+        color: $sv-ink;
         text-align: center;
         margin: 20px 0 0;
         cursor: pointer;
@@ -41,7 +41,7 @@
             text-decoration: underline;
             padding-left: 0.5rem;
             padding-bottom: 1rem;
-            background: $ow-color-white;
+            background: $sv-white;
 
             &:before {
                 position: absolute;
@@ -60,10 +60,10 @@
             }
 
             &:hover {
-                color: $ow-color-base;
+                color: $sv-bordo;
 
                 &:before {
-                    color: $ow-color-black;
+                    color: $sv-ink;
                 }
             }
         }
@@ -84,7 +84,7 @@
 }
 
 .cms-element-read-more-text {
-    border-bottom: 1px solid $ow-color-grey-4;
+    border-bottom: 1px solid $sv-border;
     padding-bottom: 1rem;
     margin-bottom: 1.25rem;
 

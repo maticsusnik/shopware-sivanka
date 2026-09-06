@@ -5,6 +5,9 @@
 }
 
 // ---- Shared section header (title left, arrows right) ----
+// Section heading. The reference draws two variants and only two:
+//   home     — centred, with the rule-heart-rule flourish underneath
+//   subpage  — left-aligned in the content column, no flourish
 .sivanka-sec-head {
     display: flex;
     align-items: flex-end;
@@ -12,18 +15,18 @@
     gap: 20px;
     margin-bottom: 28px;
 
+    &--centred {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0;
+        text-align: center;
+    }
+
     h2,
     .cms-element-title-paragraph {
         margin: 0;
-        font-family: $sivanka-serif;
-        font-size: 32px;
-        font-weight: 600;
-        line-height: 1.12;
-        color: $sivanka-text;
-
-        @include media-breakpoint-down(md) {
-            font-size: 24px;
-        }
+        @include sv-h2;
     }
 }
 
@@ -52,49 +55,19 @@
 }
 
 // Round arrow controls (design .arr)
+// Reference: the prev/next pair sits centred BELOW the rail, 26px under it — not
+// pinned to the top-right of the section.
 .sivanka-slider-controls-container {
-    position: absolute;
-    top: 0;
-    right: calc(#{$bs-gutter-x} / 2); // respect the wrapper's horizontal padding
+    position: static;
     z-index: 2;
 }
 
-.sivanka-slider-controls {
-    display: flex;
-    gap: 8px;
-}
-
+// Size, shape and the prev/next colour split live in component/_slider-controls.scss.
 .sivanka-slider-arr {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    border: 1.5px solid $sivanka-border;
-    background: $sivanka-white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: $sivanka-text;
-    padding: 0;
-    cursor: pointer;
-    line-height: 0;
-    transition: border-color 0.18s, color 0.18s;
-
-    &:hover {
-        border-color: $sivanka-primary;
-        color: $sivanka-primary;
-    }
-
-    &[disabled] {
-        opacity: 0.4;
-        cursor: default;
-    }
-
     .icon {
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 16px;
-        height: 16px;
         color: inherit;
 
         svg {
@@ -114,47 +87,18 @@
     }
 }
 
-// Category grid — scrollable horizontal on mobile, grid on desktop
+// Category tile — the visual only. Layout (fixed width, gap, scrolling) belongs to
+// the rail: component/_rail.scss. The old grid/flex-scroller rules that used to live
+// here still matched `.category-grid__item` and shrank the tile to 50% of the rail
+// on phones.
 .category-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 18px;
-
-    @include media-breakpoint-down(xl) {
-        grid-template-columns: repeat(4, 1fr);
-    }
-
-    @include media-breakpoint-down(lg) {
-        grid-template-columns: repeat(3, 1fr);
-    }
-
-    @include media-breakpoint-down(md) {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    @include media-breakpoint-down(sm) {
-        display: flex;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        scrollbar-width: none;
-        padding-bottom: 4px;
-        gap: 14px;
-
-        &::-webkit-scrollbar { display: none; }
-    }
-
     &__item {
         display: block;
         text-decoration: none;
-        color: $sivanka-text;
-
-        @include media-breakpoint-down(sm) {
-            flex: 0 0 calc((100% - 14px) / 2);
-            scroll-snap-align: start;
-        }
+        color: $sv-ink;
 
         &:hover .category-grid__img {
-            box-shadow: 0 14px 30px -16px rgba(160, 43, 107, 0.45);
+            box-shadow: $sv-shadow-deep;
 
             img {
                 transform: scale(1.04);
@@ -162,18 +106,18 @@
         }
 
         &:hover .category-grid__name {
-            color: $sivanka-primary;
+            color: $sv-bordo;
         }
     }
 
-    // Image container — square
+    // Image container — square. Reference: cream fill, 1px border, 8px radius.
     &__img {
         position: relative;
-        border-radius: $sivanka-r12;
+        border-radius: $sv-r-chrome;
         overflow: hidden;
         aspect-ratio: 1 / 1;
-        border: 1px solid $sivanka-border;
-        background: $sivanka-beige;
+        border: 1px solid $sv-border;
+        background: $sv-cream;
         transition: box-shadow 0.25s;
 
         img {
@@ -191,18 +135,16 @@
         }
 
         // Gradient overlay for readability (only when a photo is present)
+        // The reference puts no scrim over a category photo — the tile title sits
+        // below the image, not on it, so there is nothing to keep legible.
         &:not(.category-grid__img--placeholder)::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(180deg, rgba(160, 43, 107, 0.05), rgba(60, 10, 38, 0.24));
-            pointer-events: none;
+            content: none;
         }
     }
 
     // No photo available → soft gradient tile; badge stays in the bottom-left corner (per design)
     &__img--placeholder {
-        background: linear-gradient(160deg, $sivanka-accent 0%, $sivanka-beige 100%);
+        background: linear-gradient(160deg, $sv-bordo-tint 0%, $sv-cream 100%);
     }
 
     // Icon badge bottom-left of image
@@ -212,19 +154,19 @@
         bottom: 10px;
         width: 38px;
         height: 38px;
-        border-radius: $sivanka-r8;
-        background: $sivanka-white;
+        border-radius: $sv-r-chrome;
+        background: $sv-white;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: $sivanka-primary;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        color: $sv-bordo;
+        box-shadow: $sv-shadow-soft;
         z-index: 1;
 
         .icon, svg {
             width: 20px;
             height: 20px;
-            color: $sivanka-primary;
+            color: $sv-bordo;
         }
 
         img {
@@ -235,22 +177,30 @@
         }
     }
 
-    // Category name
+    // Category name. Reference: Playfair 18/24/600 in the heading bordo, 14px below
+    // the tile and nothing under it.
     &__name {
-        font-family: $sivanka-serif;
-        font-size: 17px;
+        font-family: $sv-serif;
+        font-size: 18px;
         font-weight: 600;
-        color: $sivanka-text;
-        margin: 14px 0 4px;
-        line-height: 1.3;
+        line-height: 24px;
+        color: $sv-bordo-head;
+        margin: 14px 0 0;
         transition: color 0.18s;
+
+        // Below 720 the reference pads the label so the tile clears the 44px
+        // touch floor without the tile itself growing.
+        @media (max-width: $sv-bp-phone) {
+            display: block;
+            padding-block: 4px;
+        }
     }
 
     // Category description
     &__desc {
-        font-family: $sivanka-sans;
+        font-family: $sv-sans;
         font-size: 12.5px;
-        color: $sivanka-muted;
+        color: $sv-ink;
         line-height: 1.4;
         display: -webkit-box;
         -webkit-line-clamp: 2;
@@ -270,27 +220,27 @@
         align-items: center;
         gap: 14px;
         padding: 12px;
-        border: 1px solid $sivanka-border;
-        border-radius: $sivanka-r8;
+        border: 1px solid $sv-border;
+        border-radius: $sv-r-chrome;
         text-decoration: none;
-        color: $sivanka-text;
+        color: $sv-ink;
         transition: border-color 0.18s;
 
         &:hover {
-            border-color: $sivanka-primary;
-            color: $sivanka-primary;
+            border-color: $sv-bordo;
+            color: $sv-bordo;
         }
     }
 
     &__icon {
         width: 40px;
         height: 40px;
-        border-radius: $sivanka-r8;
-        background: $sivanka-accent;
+        border-radius: $sv-r-chrome;
+        background: $sv-bordo-tint;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: $sivanka-primary;
+        color: $sv-bordo;
         flex-shrink: 0;
 
         img { width: 24px; height: 24px; object-fit: contain; }
@@ -298,14 +248,14 @@
     }
 
     &__name {
-        font-family: $sivanka-sans;
+        font-family: $sv-sans;
         font-size: 14px;
         font-weight: 600;
         flex: 1;
     }
 
     &__arrow {
-        color: $sivanka-muted;
+        color: $sv-ink;
         .icon { width: 18px; height: 18px; }
     }
 }

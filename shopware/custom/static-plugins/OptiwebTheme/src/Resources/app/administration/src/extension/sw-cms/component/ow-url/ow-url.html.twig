@@ -1,3 +1,4 @@
+{% block ow_url %}
 <div class="sw-field sw-block-field sw-field--textarea sw-field--default">
     <div v-if="label" class="sw-field__label">
         {{ label }}
@@ -7,20 +8,29 @@
             <div class="ow-layout__two">
                 <mt-select label="Link type" v-model="linkType" :options="linkSelector"/>
             </div>
-            <div class="ow-layout__four" v-if="linkType == LINK_TYPE_EXTERNAL">
+            <div class="ow-layout__four" v-if="linkType === LINK_TYPE_EXTERNAL">
                 <mt-text-field label="Button URL" v-model="linkExternal"></mt-text-field>
             </div>
         </div>
-        <div v-if="linkType == LINK_TYPE_INTERNAL" class="sw-block-field__block-multifield">
-            <mt-select label="Select link type" v-model="linkInternal.entity" @change="selectLinkTypeEvent"
-                       :options="internalLinkSelector"/>
-            <div v-if="linkInternal.entity == ENTITY_TYPE_CATEGORY">
-                <sw-entity-single-select entity="category" v-model:value="linkInternal.value" label="Select Category"/>
-            </div>
-            <div v-if="linkInternal.entity == ENTITY_TYPE_PRODUCT">
-                <sw-entity-single-select entity="product" v-model:value="linkInternal.value" label="Select Product"/>
-            </div>
+        <div v-if="linkType === LINK_TYPE_INTERNAL" class="sw-block-field__block-multifield">
+            <mt-select label="Select link type"
+                       :model-value="linkInternal.entity"
+                       :options="internalLinkSelector"
+                       @update:model-value="selectLinkTypeEvent"/>
+
+            <sw-entity-single-select v-if="linkInternal.entity === ENTITY_TYPE_CATEGORY"
+                                     entity="category"
+                                     label="Select Category"
+                                     show-clearable-button
+                                     v-model:value="linkInternal.value"/>
+
+            <sw-entity-single-select v-if="linkInternal.entity === ENTITY_TYPE_PRODUCT"
+                                     entity="product"
+                                     label="Select Product"
+                                     show-clearable-button
+                                     v-model:value="linkInternal.value"/>
         </div>
-        <mt-text-field label="Button text" v-model="text"></mt-text-field>
+        <mt-text-field v-if="!hideText" label="Button text" v-model="text"></mt-text-field>
     </div>
 </div>
+{% endblock %}

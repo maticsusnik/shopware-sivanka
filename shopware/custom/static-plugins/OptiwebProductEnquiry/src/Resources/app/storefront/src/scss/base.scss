@@ -74,6 +74,66 @@
         padding: 1rem 0;
     }
 
+    /*
+     * Consent checkbox baseline.
+     *
+     * Lived in an inline <style> block in the form template until it was moved
+     * here; a fragment loaded into a modal re-injects that block on every open.
+     * The Sivanka look is layered on top of this in OptiwebTheme.
+     */
+    .enquiry-checkbox-wrap {
+        .form-check-input[type="checkbox"] {
+            width: 1.25em;
+            height: 1.25em;
+            border: 2px solid #adb5bd;
+            border-radius: 4px;
+            appearance: none;
+            -webkit-appearance: none;
+            background-color: #fff;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: background-color 0.15s, border-color 0.15s;
+            box-shadow: none;
+
+            &:checked {
+                background-color: #b4367c;
+                border-color: #b4367c;
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3E%3C/svg%3E");
+                background-repeat: no-repeat;
+                background-position: center;
+                background-size: 80%;
+            }
+
+            &:focus {
+                box-shadow: none;
+            }
+        }
+
+        .form-check-input.is-invalid {
+            border-color: #dc3545;
+            background-image: none;
+
+            &:checked {
+                background-color: #dc3545;
+                border-color: #dc3545;
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3E%3C/svg%3E");
+                background-repeat: no-repeat;
+                background-position: center;
+                background-size: 80%;
+            }
+        }
+    }
+
+    .enquiry-success {
+        text-align: center;
+        padding: 2rem 1rem;
+
+        p {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+    }
+
     .product-row {
         margin-bottom: 1.5rem;
         padding-bottom: 1rem;
@@ -120,5 +180,72 @@
     .btn-primary[type="submit"] {
         width: 100%;
         margin-top: 1rem;
+    }
+}
+
+/*
+ * Bulk wishlist enquiry — neutral baseline.
+ * The Sivanka look is layered on top of this in OptiwebTheme.
+ * ---------------------------- */
+.wishlist-enquiry-bar {
+    margin-bottom: 1.5rem;
+
+    // Hidden until the wishlist has actually rendered a card. The guest list
+    // arrives over AJAX, so at first paint there is nothing to enquire about.
+    &.is-empty {
+        display: none;
+    }
+
+    .wishlist-enquiry-bar-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .wishlist-enquiry-bar-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .js-wishlist-enquiry-summary.has-error {
+        color: #dc3545;
+    }
+}
+
+.wishlist-enquiry-select {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+
+    .form-check-input {
+        margin: 0;
+        flex-shrink: 0;
+    }
+
+    .form-check-label {
+        margin: 0;
+        font-size: 0.875rem;
+        cursor: pointer;
+    }
+}
+
+.enquiry-lines {
+    .enquiry-line {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .enquiry-line-info {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .enquiry-line-qty .form-control {
+        width: 88px;
     }
 }

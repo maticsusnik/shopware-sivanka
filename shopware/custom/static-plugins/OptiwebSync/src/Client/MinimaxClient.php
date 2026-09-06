@@ -28,6 +28,12 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  *   2. Document rows carry prices WITHOUT VAT. IssuedInvoiceRow distinguishes
  *      `Price` from `PriceWithVAT`; OrderRow has only `Price`, and no VatRate at
  *      all — VAT is derived from the referenced Item. So OrderRow.Price is net.
+ *   3. An *item's* `Price`, unlike a document row's, is net or gross depending on
+ *      the organisation's "Vnos cen v šifrantu Artikli" VAT-period setting —
+ *      GET items/settings answers D (incl. VAT) or N (excl.). Org 239849 is on
+ *      D, so Item.Price is GROSS there. Rather than derive from a setting that
+ *      can change under us, prices are read from GET items/pricelists, which
+ *      states PriceWithoutVAT and PriceWithVAT explicitly for every item.
  */
 class MinimaxClient implements ClientInterface
 {
@@ -36,6 +42,9 @@ class MinimaxClient implements ClientInterface
 
     /** Candidate keys for the percent value inside a VatRate record. */
     private const VAT_PERCENT_KEYS = ['Percent', 'Percentage', 'Rate', 'VatRatePercent', 'Value'];
+
+    /** Minimax VatRate.Code for the standard rate — 22% in SI. */
+    private const VAT_CODE_STANDARD = 'S';
 
     private string $accessToken = '';
     private int    $tokenExpiry = 0;
@@ -48,6 +57,11 @@ class MinimaxClient implements ClientInterface
     private array $stockMap        = [];  // SKU → float quantity
     private bool  $stockMapLoaded  = false;
     private array $vatPercentCache = [];  // VatRate ID → float|null percent
+    private array $priceMap        = [];  // SKU → array{net: float, gross: float}
+    private bool  $priceMapLoaded  = false;
+    private ?bool $pricesIncludeVat = null;
+    private bool  $vatRatesLoaded  = false;
+    private ?float $standardVatPercent = null;
 
     /** @var list<string> Non-fatal problems worth surfacing to the sync log. */
     private array $warnings = [];
@@ -71,7 +85,7 @@ class MinimaxClient implements ClientInterface
      * counting returned rows: rows without a usable SKU are filtered out here,
      * so a row count can never be a reliable "is there another page" signal.
      *
-     * @return array{rows: array<int, array{id: int, sku: string, name: string, price: float, vat: float|null, stock: float}>, totalRows: int, page: int, pageSize: int, hasMore: bool}
+     * @return array{rows: array<int, array{id: int, sku: string, name: string, net: float|null, gross: float|null, price: float, vat: float|null, stock: float}>, totalRows: int, page: int, pageSize: int, hasMore: bool}
      */
     public function getProductsPage(int $page, int $pageSize): array
     {
@@ -102,16 +116,7 @@ class MinimaxClient implements ClientInterface
                 $this->itemCache[$sku] = $id;
             }
 
-            $products[] = [
-                'id'    => $id,
-                'sku'   => $sku,
-                'name'  => trim((string) ($item['Title'] ?? '')),
-                'price' => (float) ($item['Price'] ?? 0.0),
-                // null (not 0.0) means "unknown" — the caller must NOT treat an
-                // unresolved VAT rate as a 0% rate.
-                'vat'   => $this->resolveVatPercent($item['VatRate'] ?? null),
-                'stock' => (float) ($stockMap[$sku] ?? 0),
-            ];
+            $products[] = $this->buildProductRow($item, $sku, $id, $orgId, $stockMap);
         }
 
         return [
@@ -123,6 +128,145 @@ class MinimaxClient implements ClientInterface
                 ? $page * $pageSize < $totalRows
                 : count($rows) >= $pageSize,
         ];
+    }
+
+    /**
+     * Fetch a single item by SKU, shaped exactly like a getProductsPage() row.
+     *
+     * Backs `optiweb:sync product --setId=<SKU>`. Stock and prices still come
+     * from the shared maps, so one product costs the same two list calls as a
+     * full run — but only that product is written.
+     *
+     * @return array<int, array{id: int, sku: string, name: string, net: float|null, gross: float|null, price: float, vat: float|null, stock: float}>
+     */
+    public function getProductBySku(string $sku): array
+    {
+        $sku = trim($sku);
+        if ($sku === '') {
+            return [];
+        }
+
+        $this->ensureAuthenticated();
+        $orgId = $this->getOrganizationId();
+
+        $item = $this->fetchItemByCode($sku, $orgId);
+        if ($item === null) {
+            $this->warn(sprintf('SKU "%s" not found in Minimax.', $sku));
+
+            return [];
+        }
+
+        // The code() route answers a full Item (Name), the SearchString
+        // fallback an ItemSearch (Title) — accept either.
+        $item['Title'] ??= $item['Name'] ?? '';
+        $code = trim((string) ($item['Code'] ?? $sku));
+
+        return [$this->buildProductRow($item, $code, (int) ($item['ItemId'] ?? 0), $orgId, $this->getStockMap($orgId))];
+    }
+
+    /**
+     * Shape one Minimax item into the row the product import consumes.
+     *
+     * @param array<string, mixed> $item
+     * @param array<string, float> $stockMap
+     *
+     * @return array{id: int, sku: string, name: string, net: float|null, gross: float|null, price: float, vat: float|null, stock: float}
+     */
+    private function buildProductRow(array $item, string $sku, int $id, string $orgId, array $stockMap): array
+    {
+        if ($id > 0) {
+            $this->itemCache[$sku] = $id;
+        }
+
+        $priced = $this->getPriceMap($orgId)[$sku] ?? null;
+
+        return [
+            'id'    => $id,
+            'sku'   => $sku,
+            'name'  => trim((string) ($item['Title'] ?? '')),
+            // Authoritative pair from items/pricelists. null means the item has
+            // no pricelist row and the caller must derive from `price`.
+            'net'   => $priced['net'] ?? null,
+            'gross' => $priced['gross'] ?? null,
+            // Raw Item.Price — net or gross per the organisation's VAT-period
+            // setting, so only usable together with pricesIncludeVat().
+            'price' => (float) ($item['Price'] ?? 0.0),
+            // null (not 0.0) means "unknown" — the caller must NOT treat an
+            // unresolved VAT rate as a 0% rate.
+            'vat'   => $this->resolveVatPercent($item['VatRate'] ?? null),
+            'stock' => (float) ($stockMap[$sku] ?? 0),
+        ];
+    }
+
+    /**
+     * Selling prices for the whole catalogue, keyed by item code.
+     *
+     * GET api/orgs/{orgId}/items/pricelists — returns ListResult<ItemPriceListItem>
+     * with PriceWithoutVAT and PriceWithVAT stated separately, so neither the VAT
+     * rate nor the organisation's price-entry setting has to be applied by us.
+     *
+     * Unlike the other list endpoints this one is NOT paged (ListResult carries
+     * no TotalRows) — one unfiltered call returns the entire catalogue.
+     *
+     * @return array<string, array{net: float, gross: float}>
+     */
+    private function getPriceMap(string $orgId): array
+    {
+        if ($this->priceMapLoaded) {
+            return $this->priceMap;
+        }
+
+        // Marked loaded up front: on a failed call the import falls back to
+        // deriving from Item.Price rather than retrying this per product.
+        $this->priceMapLoaded = true;
+
+        try {
+            $data = $this->get($this->url($orgId, 'items/pricelists'));
+        } catch (\RuntimeException $e) {
+            $this->warn('Could not read items/pricelists, falling back to Item.Price: ' . $e->getMessage());
+
+            return $this->priceMap;
+        }
+
+        foreach ($this->rows($data) as $row) {
+            $code = trim((string) ($row['Code'] ?? ''));
+            if ($code === '' || !isset($row['PriceWithoutVAT'], $row['PriceWithVAT'])) {
+                continue;
+            }
+
+            $this->priceMap[$code] = [
+                'net'   => (float) $row['PriceWithoutVAT'],
+                'gross' => (float) $row['PriceWithVAT'],
+            ];
+        }
+
+        return $this->priceMap;
+    }
+
+    /**
+     * Whether this organisation enters item prices inclusive of VAT.
+     *
+     * GET api/orgs/{orgId}/items/settings — PricesIncludeVAT is "D" (with VAT)
+     * or "N" (without). Only needed for items that items/pricelists did not
+     * cover; the pricelist states both figures outright.
+     */
+    public function pricesIncludeVat(): bool
+    {
+        if ($this->pricesIncludeVat !== null) {
+            return $this->pricesIncludeVat;
+        }
+
+        $this->ensureAuthenticated();
+
+        try {
+            $data = $this->get($this->url($this->getOrganizationId(), 'items/settings'));
+        } catch (\RuntimeException $e) {
+            $this->warn('Could not read items/settings; assuming item prices include VAT: ' . $e->getMessage());
+
+            return $this->pricesIncludeVat = true;
+        }
+
+        return $this->pricesIncludeVat = strtoupper(trim((string) ($data['PricesIncludeVAT'] ?? 'D'))) === 'D';
     }
 
     /**
@@ -156,6 +300,10 @@ class MinimaxClient implements ClientInterface
                 'PageSize'    => self::PAGE_SIZE,
                 'CurrentPage' => $page,
                 'Mode'        => 1,
+                // Explicit ordering: without it the server is free to return an
+                // unstable order and paging could repeat or skip rows.
+                'SortField'   => 'ItemCode',
+                'Order'       => 'A',
             ]));
 
             $rows      = $this->rows($data);
@@ -182,13 +330,65 @@ class MinimaxClient implements ClientInterface
     }
 
     /**
+     * Load the organisation's VAT rates in one call.
+     *
+     * GET api/orgs/{orgId}/vatrates — SearchResult<VatRate> of {VatRateId, Code,
+     * Percent}. Six rows for a Slovenian organisation, so this replaces one HTTP
+     * round trip per distinct rate. Failure is non-fatal: resolveVatPercent()
+     * still falls back to following each rate's ResourceUrl.
+     */
+    private function loadVatRates(string $orgId): void
+    {
+        if ($this->vatRatesLoaded) {
+            return;
+        }
+
+        $this->vatRatesLoaded = true;
+
+        try {
+            $data = $this->get($this->url($orgId, 'vatrates', ['PageSize' => self::PAGE_SIZE, 'CurrentPage' => 1]));
+        } catch (\RuntimeException $e) {
+            $this->warn('Could not read the VAT rate list, falling back to per-rate lookups: ' . $e->getMessage());
+
+            return;
+        }
+
+        foreach ($this->rows($data) as $row) {
+            $id = (int) ($row['VatRateId'] ?? $row['ID'] ?? 0);
+            if ($id <= 0 || !isset($row['Percent']) || !is_numeric($row['Percent'])) {
+                continue;
+            }
+
+            $this->vatPercentCache[$id] = (float) $row['Percent'];
+
+            if (strtoupper(trim((string) ($row['Code'] ?? ''))) === self::VAT_CODE_STANDARD) {
+                $this->standardVatPercent = (float) $row['Percent'];
+            }
+        }
+    }
+
+    /**
+     * The organisation's standard VAT percent (VatRate.Code "S"), or null.
+     *
+     * The product import uses it to pick the Shopware tax that stands in for an
+     * item whose own rate could not be resolved — a shop-side "first by position"
+     * guess can land on a reduced rate, which would under-tax the product.
+     */
+    public function getStandardVatPercent(): ?float
+    {
+        $this->ensureAuthenticated();
+        $this->loadVatRates($this->getOrganizationId());
+
+        return $this->standardVatPercent;
+    }
+
+    /**
      * Resolve an item's VAT percent from its VatRate link.
      *
-     * The organisation-scoped VAT rate list is not part of the published API
-     * reference, so rather than guessing an endpoint we follow the ResourceUrl
-     * that Minimax puts on every mMApiFkField. Returns null when the rate cannot
-     * be established — callers must fall back to a configured default rather
-     * than assume 0%.
+     * Served from the organisation's rate list; an ID missing from that list
+     * falls back to following the ResourceUrl that Minimax puts on every
+     * mMApiFkField. Returns null when the rate cannot be established — callers
+     * must fall back to a sensible default rather than assume 0%.
      */
     private function resolveVatPercent(mixed $vatRate): ?float
     {
@@ -200,6 +400,8 @@ class MinimaxClient implements ClientInterface
         if ($id <= 0) {
             return null;
         }
+
+        $this->loadVatRates($this->getOrganizationId());
 
         if (array_key_exists($id, $this->vatPercentCache)) {
             return $this->vatPercentCache[$id];
@@ -692,16 +894,59 @@ class MinimaxClient implements ClientInterface
             return $this->itemCache[$sku];
         }
 
-        try {
-            $data = $this->get($this->codeUrl($orgId, 'items', $sku));
-        } catch (\RuntimeException) {
-            return $this->itemCache[$sku] = null;
-        }
-
-        $record = $this->rows($data)[0] ?? $data;
-        $id     = $record['ItemId'] ?? $record['ItemID'] ?? $record['ID'] ?? null;
+        $item = $this->fetchItemByCode($sku, $orgId);
+        $id   = $item['ItemId'] ?? $item['ItemID'] ?? $item['ID'] ?? null;
 
         return $this->itemCache[$sku] = $id !== null ? (int) $id : null;
+    }
+
+    /**
+     * Read one item by its exact code, or null when there is no such item.
+     *
+     * The code({code}) route is tried first, but it puts the code inside a URL
+     * *path segment* and IIS rejects a good part of this catalogue there: a
+     * percent-encoded slash ("11870/2") and a trailing dot-suffix that looks
+     * like a file extension ("VELVET 100G B.02") both answer 404 at the web
+     * server, before the API ever sees them. 301 of 3 637 codes are affected.
+     *
+     * So a 404 falls back to `?SearchString=`, which is a documented /items
+     * filter and travels in the query string. SearchString matches loosely, so
+     * the rows are re-checked for an exact Code before one is accepted —
+     * returning a near-miss would attach the wrong item to an order row, which
+     * is the very failure the code() route exists to prevent.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function fetchItemByCode(string $sku, string $orgId): ?array
+    {
+        try {
+            $data   = $this->get($this->codeUrl($orgId, 'items', $sku));
+            $record = $this->rows($data)[0] ?? $data;
+
+            if (isset($record['ItemId']) || isset($record['ItemID']) || isset($record['ID'])) {
+                return $record;
+            }
+        } catch (\RuntimeException) {
+            // Fall through to the search fallback below.
+        }
+
+        try {
+            $data = $this->get($this->url($orgId, 'items', [
+                'SearchString' => $sku,
+                'PageSize'     => self::PAGE_SIZE,
+                'CurrentPage'  => 1,
+            ]));
+        } catch (\RuntimeException) {
+            return null;
+        }
+
+        foreach ($this->rows($data) as $row) {
+            if (trim((string) ($row['Code'] ?? '')) === $sku) {
+                return $row;
+            }
+        }
+
+        return null;
     }
 
     // -------------------------------------------------------------------------

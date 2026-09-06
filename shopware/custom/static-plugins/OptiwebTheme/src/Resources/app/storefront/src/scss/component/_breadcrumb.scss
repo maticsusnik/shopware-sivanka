@@ -2,8 +2,8 @@
 // smaller, tighter treatment for the product page; applied here for every page so there is
 // still a single rule.
 .breadcrumb {
-    color: $sivanka-text-soft;
-    font-family: $sivanka-sans;
+    color: $sv-ink-muted;
+    font-family: $sv-sans;
     font-size: 12.5px;
     line-height: 18.75px;
     align-items: center;
@@ -11,22 +11,26 @@
     margin: 0;
     gap: 8px;
 
+    // Reference: every crumb is weight 600 at 17.55px leading, ink-muted; only the
+    // last one goes ink. (DESIGN-SYSTEM.md gives the breadcrumb as $sv-meta
+    // #C9BDB6 — the reference uses ink-muted #6B5A55 for both crumbs and the
+    // separator, which is what is implemented here.)
     a,
     .breadcrumb-link {
-        font-family: $sivanka-sans;
+        font-family: $sv-sans;
         font-size: 12.5px;
-        font-weight: 400;
-        line-height: 18.75px;
-        color: $sivanka-text-soft;
+        font-weight: 600;
+        line-height: 17.55px;
+        color: $sv-ink-muted;
         text-decoration: none;
 
         &:hover {
-            color: $sivanka-primary;
+            color: $sv-bordo;
             text-decoration: none;
         }
 
         &.is-active {
-            color: $sivanka-text;
+            color: $sv-ink;
             font-weight: 600;
         }
     }
@@ -44,13 +48,14 @@
     .breadcrumb-link.is-active .breadcrumb-title,
     .breadcrumb-item:last-child .breadcrumb-title {
         font-weight: 600;
-        color: $sivanka-text;
+        color: $sv-ink;
     }
 
-    // Separators — thin "›" like the design (replaces the caret-right icon)
+    // Separators. The reference draws a 6x10 chevron at stroke 1.4 in the inherited
+    // ink-muted, with 8px of margin on top of the list's 8px gap.
     .icon {
-        color: $sivanka-text-soft;
-        opacity: 0.6;
+        color: $sv-ink-muted;
+        margin-inline: 8px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -60,11 +65,15 @@
             display: none;
         }
 
+        // A 6x10 chevron drawn from a rotated square — same silhouette as the
+        // reference's inline SVG, and it inherits currentColor.
         &::before {
-            content: "\203A"; // ›
-            font-size: 16px;
-            line-height: 1;
-            color: $sivanka-text-soft;
+            content: "";
+            width: 5px;
+            height: 5px;
+            border-right: 1.4px solid currentColor;
+            border-top: 1.4px solid currentColor;
+            transform: rotate(45deg);
         }
     }
 }

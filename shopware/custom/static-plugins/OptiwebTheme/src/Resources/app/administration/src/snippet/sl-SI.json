@@ -1,143 +1,223 @@
 {
-    "apps": {
-        "sw-cms": {
-            "detail": {
-                "label": {
-                    "blockCategory": {
-                        "sivanka": "Sivanka",
-                        "sivanka-storitve": "Sivanka storitve"
-                    }
-                }
-            }
-        }
-    },
+  "apps": {
     "sw-cms": {
-        "blocks": {
-            "sivanka": {
-                "sivankaServiceHero": {
-                    "label": "Storitev: naslovni del"
-                },
-                "sivankaServiceFeatures": {
-                    "label": "Storitev: kaj vključuje"
-                },
-                "sivankaServiceSteps": {
-                    "label": "Storitev: kako poteka"
-                },
-                "sivankaServiceFacts": {
-                    "label": "Storitev: informacije"
-                },
-                "sivankaServiceLinks": {
-                    "label": "Storitev: druge storitve"
-                },
-                "sivankaServiceGrid": {
-                    "label": "Storitve: seznam"
-                },
-                "sivankaServiceCta": {
-                    "label": "Storitev: poziv k dejanju"
-                }
-            }
-        },
-        "elements": {
-            "sivankaServiceIntro": {
-                "label": "Storitev: uvod",
-                "config": {
-                    "label": {
-                        "eyebrow": "Nadnaslov",
-                        "headline": "Naslov",
-                        "lead": "Opis",
-                        "headlineLevel": "Raven naslova",
-                        "headlineLevelH1": "H1 – glavni naslov strani",
-                        "headlineLevelH2": "H2 – naslov razdelka",
-                        "headlineLevelH3": "H3 – podnaslov",
-                        "variant": "Različica",
-                        "variantHero": "Naslovni del (velik naslov)",
-                        "variantCta": "Poziv k dejanju (manjši naslov)",
-                        "variantPlain": "Navaden razdelek"
-                    },
-                    "helpText": {
-                        "headlineLevel": "Na vsaki strani naj bo samo en H1."
-                    }
-                }
-            },
-            "sivankaServiceActions": {
-                "label": "Storitev: gumbi",
-                "config": {
-                    "label": {
-                        "primaryLabel": "Glavni gumb – besedilo",
-                        "primaryUrl": "Glavni gumb – povezava",
-                        "secondaryLabel": "Drugi gumb – besedilo",
-                        "secondaryUrl": "Drugi gumb – povezava",
-                        "newTab": "Odpri v novem zavihku"
-                    },
-                    "helpText": {
-                        "secondaryLabel": "Če polje pustite prazno, se drugi gumb ne prikaže."
-                    }
-                }
-            },
-            "sivankaIconCard": {
-                "label": "Storitev: kartica z ikono",
-                "config": {
-                    "label": {
-                        "icon": "Ikona",
-                        "title": "Naslov",
-                        "text": "Opis",
-                        "variant": "Različica",
-                        "variantCard": "Kartica (bela, z obrobo)",
-                        "variantFact": "Informacija (vodoravna, obarvana)"
-                    },
-                    "helpText": {
-                        "variant": "»Kartica« se uporablja v bloku »kaj vključuje«, »informacija« v bloku »informacije«."
-                    }
-                }
-            },
-            "sivankaStepCard": {
-                "label": "Storitev: korak",
-                "config": {
-                    "label": {
-                        "number": "Številka koraka",
-                        "title": "Naslov",
-                        "text": "Opis"
-                    },
-                    "helpText": {
-                        "number": "Številko vpišete ročno, ker Shopware elementu ne pove njegovega zaporedja."
-                    }
-                }
-            },
-            "sivankaServiceCard": {
-                "label": "Storitev: kartica s sliko",
-                "config": {
-                    "label": {
-                        "media": "Slika",
-                        "icon": "Ikona",
-                        "title": "Naslov",
-                        "text": "Opis",
-                        "url": "Povezava",
-                        "linkLabel": "Besedilo povezave",
-                        "variant": "Različica",
-                        "variantWide": "Široka (slika levo, opis desno)",
-                        "variantCompact": "Ozka (samo naslov in povezava)"
-                    },
-                    "helpText": {
-                        "text": "Opis se prikaže samo pri široki različici.",
-                        "variant": "»Široka« se uporablja v bloku »Storitve: seznam«, »ozka« v bloku »druge storitve«."
-                    }
-                }
-            },
-            "sivankaIcons": {
-                "ruler": "Meter",
-                "calculator": "Kalkulator",
-                "fabric": "Blago",
-                "home": "Trgovina / dom",
-                "shirt": "Oblačilo",
-                "scissors": "Škarje",
-                "needle": "Igla",
-                "bag": "Torba",
-                "zipper": "Zadrga",
-                "button": "Gumb",
-                "wrench": "Orodje",
-                "clock": "Ura",
-                "arrow": "Puščica"
-            }
+      "detail": {
+        "label": {
+          "blockCategory": {
+            "sivanka": "Sivanka",
+            "sivanka-storitve": "Sivanka storitve"
+          }
         }
+      }
     }
+  },
+  "sw-cms": {
+    "blocks": {
+      "sivanka": {
+        "sivankaServiceHero": {
+          "label": "Storitev: naslovni del"
+        },
+        "sivankaServiceFeatures": {
+          "label": "Storitev: kaj vključuje"
+        },
+        "sivankaServiceSteps": {
+          "label": "Storitev: kako poteka"
+        },
+        "sivankaServiceFacts": {
+          "label": "Storitev: informacije"
+        },
+        "sivankaServiceLinks": {
+          "label": "Storitev: druge storitve"
+        },
+        "sivankaServiceGrid": {
+          "label": "Storitve: seznam"
+        },
+        "sivankaServiceCta": {
+          "label": "Storitev: poziv k dejanju"
+        },
+        "sivankaHero": {
+          "label": "Domača stran: naslovni del"
+        },
+        "sivankaPromo": {
+          "label": "Domača stran: trije promo pasovi"
+        },
+        "sivankaHomeServices": {
+          "label": "Domača stran: naše storitve"
+        },
+        "sivankaWhy": {
+          "label": "Domača stran: zakaj izbrati nas"
+        },
+        "sivankaFaq": {
+          "label": "Domača stran: pogosta vprašanja"
+        }
+      }
+    },
+    "elements": {
+      "sivankaServiceIntro": {
+        "label": "Storitev: uvod",
+        "config": {
+          "label": {
+            "eyebrow": "Nadnaslov",
+            "headline": "Naslov",
+            "lead": "Opis",
+            "headlineLevel": "Raven naslova",
+            "headlineLevelH1": "H1 – glavni naslov strani",
+            "headlineLevelH2": "H2 – naslov razdelka",
+            "headlineLevelH3": "H3 – podnaslov",
+            "variant": "Različica",
+            "variantHero": "Naslovni del (velik naslov)",
+            "variantCta": "Poziv k dejanju (manjši naslov)",
+            "variantPlain": "Navaden razdelek",
+            "variantHome": "Domača stran (na sredini, z okrasom)"
+          },
+          "helpText": {
+            "headlineLevel": "Na vsaki strani naj bo samo en H1."
+          }
+        }
+      },
+      "sivankaServiceActions": {
+        "label": "Storitev: gumbi",
+        "config": {
+          "label": {
+            "primaryLabel": "Glavni gumb – besedilo",
+            "primaryUrl": "Glavni gumb – povezava",
+            "secondaryLabel": "Drugi gumb – besedilo",
+            "secondaryUrl": "Drugi gumb – povezava",
+            "newTab": "Odpri v novem zavihku"
+          },
+          "helpText": {
+            "secondaryLabel": "Če polje pustite prazno, se drugi gumb ne prikaže."
+          }
+        }
+      },
+      "sivankaIconCard": {
+        "label": "Storitev: kartica z ikono",
+        "config": {
+          "label": {
+            "icon": "Ikona",
+            "title": "Naslov",
+            "text": "Opis",
+            "variant": "Različica",
+            "variantCard": "Kartica (bela, z obrobo)",
+            "variantFact": "Informacija (vodoravna, obarvana)",
+            "variantMedallion": "Medaljon (domača stran)"
+          },
+          "helpText": {
+            "variant": "»Kartica« se uporablja v bloku »kaj vključuje«, »informacija« v bloku »informacije«."
+          }
+        }
+      },
+      "sivankaStepCard": {
+        "label": "Storitev: korak",
+        "config": {
+          "label": {
+            "number": "Številka koraka",
+            "title": "Naslov",
+            "text": "Opis"
+          },
+          "helpText": {
+            "number": "Številko vpišete ročno, ker Shopware elementu ne pove njegovega zaporedja."
+          }
+        }
+      },
+      "sivankaServiceCard": {
+        "label": "Storitev: kartica s sliko",
+        "config": {
+          "label": {
+            "media": "Slika",
+            "icon": "Ikona",
+            "title": "Naslov",
+            "text": "Opis",
+            "url": "Povezava",
+            "linkLabel": "Besedilo povezave",
+            "variant": "Različica",
+            "variantWide": "Široka (slika levo, opis desno)",
+            "variantCompact": "Ozka (samo naslov in povezava)",
+            "variantTile": "Ploščica (domača stran)",
+            "meta": "Rok / opomba"
+          },
+          "helpText": {
+            "text": "Opis se prikaže samo pri široki različici.",
+            "variant": "»Široka« se uporablja v bloku »Storitve: seznam«, »ozka« v bloku »druge storitve«.",
+            "meta": "Kratek zapis na dnu ploščice, npr. »2–5 delovnih dni«. Vidno samo pri ploščici."
+          }
+        }
+      },
+      "sivankaIcons": {
+        "ruler": "Meter",
+        "calculator": "Kalkulator",
+        "fabric": "Blago",
+        "home": "Trgovina / dom",
+        "shirt": "Oblačilo",
+        "scissors": "Škarje",
+        "needle": "Igla",
+        "bag": "Torba",
+        "zipper": "Zadrga",
+        "button": "Gumb",
+        "wrench": "Orodje",
+        "clock": "Ura",
+        "arrow": "Puščica",
+        "truck": "Dostava",
+        "store": "Trgovina",
+        "chat": "Svetovanje",
+        "heart": "Srce",
+        "thumbs-up": "Palec gor",
+        "user": "Oseba",
+        "gift": "Darilo",
+        "sparkle": "Novost"
+      },
+      "sivankaHero": {
+        "label": "Naslovni del (hero)",
+        "config": {
+          "label": {
+            "imageLeft": "Fotografija levo",
+            "imageRight": "Fotografija desno",
+            "headline": "Naslov",
+            "subheadline": "Podnaslov",
+            "primaryBtnLabel": "Glavni gumb — besedilo",
+            "primaryBtnUrl": "Glavni gumb — povezava",
+            "secondaryBtnLabel": "Drugi gumb — besedilo",
+            "secondaryBtnUrl": "Drugi gumb — povezava",
+            "trustLegend": "Pas z obljubami (štirje zapisi pod naslovnim delom)",
+            "trustIcon": "Ikona",
+            "trustTitle": "Naslov",
+            "trustSub": "Podnaslov"
+          },
+          "helpText": {
+            "headline": "Nova vrstica pomeni prelom vrstice v naslovu."
+          }
+        }
+      },
+      "sivankaPromoCard": {
+        "label": "Promo pas",
+        "config": {
+          "label": {
+            "media": "Fotografija",
+            "imageFocus": "Izrez fotografije",
+            "focusLeft": "Levi del",
+            "focusCenter": "Sredina",
+            "focusRight": "Desni del",
+            "title": "Naslov",
+            "text": "Besedilo",
+            "buttonLabel": "Besedilo gumba",
+            "url": "Povezava"
+          },
+          "helpText": {
+            "imageFocus": "Kateri del fotografije naj ostane viden, ko se pas oži.",
+            "url": "Pusti prazno, če pas ni klikljiv."
+          }
+        }
+      },
+      "sivankaProductSlider": {
+        "config": {
+          "label": {
+            "badge": "Oznaka na karticah"
+          },
+          "helpText": {
+            "badge": "Ista oznaka se izpiše na vseh izdelkih v tem vrtiljaku, npr. »Novo« ali »Priljubljeno«. Pusti prazno za brez oznake."
+          }
+        }
+      }
+    }
+  }
 }

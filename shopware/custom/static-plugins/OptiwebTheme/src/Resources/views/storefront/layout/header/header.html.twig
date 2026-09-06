@@ -11,25 +11,9 @@
             </div>
         {% endblock %}
 
-        {# Below sm the search bar is collapsed, so it needs a trigger. It lives in the
-           header rather than the bottom bar, which is deliberately kept to four icons. #}
-        {% block layout_header_search_toggle %}
-            <div class="col-auto order-1 d-sm-none header-search-toggle-col">
-                <button class="btn header-actions-btn header-search-toggle-btn collapsed"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#searchCollapse"
-                        aria-expanded="false"
-                        aria-controls="searchCollapse"
-                        aria-label="{{ 'header.searchButton'|trans|striptags }}">
-                    <svg class="header-search-toggle-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <circle cx="11" cy="11" r="7"></circle>
-                        <path d="m21 21-4.3-4.3"></path>
-                    </svg>
-                </button>
-            </div>
-        {% endblock %}
-
+        {# The reference keeps the search field visible at every width down to 340px,
+           so there is no collapse and no magnifier toggle. Below 900 the header wraps
+           and the field takes the second row. #}
         {% block layout_header_search %}
             <div class="col-12 order-2 col-sm order-sm-1 header-search-col">
                 {% sw_include '@Storefront/storefront/layout/header/search.html.twig' %}
@@ -54,22 +38,22 @@
                         {{ parent() }}
                     {% endblock %}
 
+                    {# Below $sv-bp-portrait this whole column becomes the fixed
+                       bottom bar (see layout/_header.scss), and the menu opener joins
+                       it as a fourth icon — the nav bar's own opener is hidden there.
+                       Above it the reference draws three header icons and the opener
+                       stays in the nav bar. #}
                     {% block layout_header_navigation_toggle %}
-                        <div class="col-auto d-lg-none">
-                            <div class="menu-button">
-                                {% block layout_header_navigation_toggle_tablet_button %}
-                                    <button
-                                            class="btn nav-main-toggle-btn header-actions-btn"
-                                            type="button"
-                                            data-off-canvas-menu-mobile="true"
-                                            aria-label="{{ 'general.menuLink'|trans|striptags }}"
-                                    >
-                                        {% block layout_header_navigation_toggle_tablet_button_icon %}
-                                            {% sw_icon 'list' style { pack: 'ow'} %}
-                                        {% endblock %}
-                                    </button>
-                                {% endblock %}
-                            </div>
+                        <div class="col-auto header-actions-menu">
+                            <button type="button"
+                                    class="btn header-actions-btn header-menu-btn"
+                                    data-off-canvas-menu-mobile="true"
+                                    aria-label="{{ 'general.menuLink'|trans|striptags }}">
+                                {% sw_include '@Storefront/storefront/utilities/sivanka-icon.html.twig' with {
+                                    sivankaIcon: 'menu',
+                                    sivankaIconSize: 22
+                                } only %}
+                            </button>
                         </div>
                     {% endblock %}
                 </div>

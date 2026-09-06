@@ -6,6 +6,7 @@ const {Component, Store} = Shopware;
 Component.register('optiweb-catalog-repeater-editor', {
     template,
     inject: ['repositoryFactory'],
+    emits: ['update', 'update:modelValue'],
     props: {
         modelValue: {
             type: Array,
@@ -36,8 +37,8 @@ Component.register('optiweb-catalog-repeater-editor', {
     },
 
     watch: {
-        value(newValue) {
-            this.catalogs = newValue;
+        modelValue(newValue) {
+            this.catalogs = newValue ?? [];
         }
     },
 
@@ -121,6 +122,7 @@ Component.register('optiweb-catalog-repeater-editor', {
 
         updateValue() {
             this.$emit('update', this.catalogs);
+            this.$emit('update:modelValue', this.catalogs);
         },
 
         // MEDIA
@@ -132,20 +134,20 @@ Component.register('optiweb-catalog-repeater-editor', {
             const mediaEntity = await this.mediaRepository.get(targetId);
             const index = this.getCatalogIndex(catalogId);
             this.updateCatalogMediaData(index, mediaType, mediaEntity);
-            this.$emit('element-update', this.element);
+            this.updateValue();
         },
 
         onMediaRemove(catalogId, mediaType) {
             const index = this.getCatalogIndex(catalogId);
             this.updateCatalogMediaData(index, mediaType, null);
-            this.$emit('element-update', this.element);
+            this.updateValue();
         },
 
         onMediaSelectionChanges(selection, catalogId, mediaType) {
             const media = selection[0];
             const index = this.getCatalogIndex(catalogId);
             this.updateCatalogMediaData(index, mediaType, media);
-            this.$emit('element-update', this.element);
+            this.updateValue();
         },
 
         onOpenAnyMediaModal(catalogId, mediaType) {

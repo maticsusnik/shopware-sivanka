@@ -1,15 +1,15 @@
 // ---- Sivanka Header ----
 
 .header-main {
-    background: $sivanka-white;
-    border-bottom: 1px solid $sivanka-border;
+    background: $sv-white;
+    // The reference uses the STRONG border on the header, topbar and nav bar —
+    // #E3D6C6, one step darker than the card border.
+    border-bottom: 1px solid $sv-border-strong;
 
     .container {
-        padding-block: 10px;
-
-        @include media-breakpoint-up(lg) {
-            padding-block: 14px;
-        }
+        // Reference: 14px top and bottom at every width. The old 10px below lg made
+        // the wrapped header 125px instead of 133px.
+        padding-block: 14px;
     }
 
     // Remove Bootstrap row's extra padding classes (pt-3 pb-sm-3)
@@ -20,17 +20,34 @@
         padding: 0 !important;
         margin-bottom: 0 !important;
 
-        // The search column goes full-width from md down, so the row has to be
-        // allowed to wrap at the same breakpoint — otherwise it is laid out on the
-        // same line as the actions and overhangs the viewport.
-        @include media-breakpoint-down(md) {
+        // Below 1280 the reference's header grid gains a 20px gap; above it the
+        // columns are 1fr / 520px / 1fr and butt together.
+        @media (max-width: $sv-bp-touch) {
+            gap: 20px;
+        }
+
+        // The reference wraps the header at 900: logo and icons share the first
+        // row, the search field takes the second. Bootstrap's md (768) is too late
+        // — between 900 and 768 the three columns are already crushed.
+        @media (max-width: $sv-bp-portrait) {
             flex-wrap: wrap;
+            gap: 12px;
         }
     }
 }
 
 // Logo column — flex:1 1 0 so it takes equal share of remaining space,
 // centering the fixed-width search between logo and actions
+// Logo ladder, from the reference: 224 -> 200 (<=1280) -> 176 (<=480) -> 150 (<=380).
+// The height stays 46 with object-fit:contain, so any logo the shop owner uploads
+// lands in the same box.
+$sv-logo-widths: (
+    null:            224px,
+    $sv-bp-touch:    200px,
+    $sv-bp-small:    176px,
+    $sv-bp-tiny:     150px,
+);
+
 .header-logo {
     &-col {
         flex: 1 1 0 !important;
@@ -39,6 +56,20 @@
         min-width: 0;
         padding: 0 !important;
         margin: 0 !important;
+
+        // From 1280 down the search column is `flex: 1 1 auto`; leaving the logo at
+        // `flex-basis: 0` with shrink 1 lets the field eat it entirely.
+        @media (max-width: $sv-bp-touch) {
+            flex: 0 0 auto !important;
+        }
+    }
+
+    // The link is inline-flex, so inside a block wrapper it sits on the text
+    // baseline and leaves a 7px descender gap below — which made the whole header
+    // 82px instead of the reference's 75px. Flex the wrapper so no line box forms.
+    &-main {
+        display: flex;
+        align-items: center;
     }
 
     &-main-link {
@@ -51,39 +82,51 @@
     &-picture {
         display: block;
         max-width: 100%;
-        max-height: 46px;
-        width: auto;
+        height: 46px;
     }
 
     // Constrain the actual image so it never overflows the logo column
     &-main-img {
         display: block;
-        width: auto;
-        height: auto;
+        height: 46px;
         max-width: 100%;
-        max-height: 46px;
         object-fit: contain;
+        object-position: left center;
+    }
+
+    @each $bp, $w in $sv-logo-widths {
+        @if $bp == null {
+            &-main-link,
+            &-picture,
+            &-main-img { width: $w; }
+        } @else {
+            @media (max-width: $bp) {
+                &-main-link,
+                &-picture,
+                &-main-img { width: $w; }
+            }
+        }
     }
 }
 
 // Search bar column
 .header-search {
     &-col {
-        flex: 0 0 460px;
-        max-width: 460px;
+        // Reference: a fixed 520px field centred between two 1fr columns.
+        flex: 0 0 520px;
+        max-width: 520px;
         padding-inline: 0;
 
-        @include media-breakpoint-up(xl) {
-            flex: 0 0 520px;
-            max-width: 520px;
+        // <=1280 the reference grid becomes `auto minmax(0,1fr) auto`: the field
+        // stops being fixed and takes whatever the logo and icons leave.
+        @media (max-width: $sv-bp-touch) {
+            flex: 1 1 auto;
+            max-width: none;
+            min-width: 0;
         }
 
-        @include media-breakpoint-down(lg) {
-            flex: 0 0 360px;
-            max-width: 360px;
-        }
-
-        @include media-breakpoint-down(md) {
+        // <=900 the header wraps and the field owns the second row outright.
+        @media (max-width: $sv-bp-portrait) {
             order: 3;
             flex: 0 0 100%;
             max-width: 100%;
@@ -96,10 +139,12 @@
 
     max-width: 100%;
 
-    // Padding sits on the collapse, not the column, so a closed search adds no height
-    @include media-breakpoint-down(md) {
+    // The reference keeps the search field visible at every width down to 340px —
+    // there is no collapse and no magnifier toggle in the header. The wrap at 900
+    // gives it a full row, so it never needs to be hidden.
+    @media (max-width: $sv-bp-portrait) {
         #searchCollapse {
-            padding-top: 10px;
+            padding-top: 0;
         }
     }
 
@@ -109,33 +154,38 @@
         .header-search-input {
             width: 100%;
             height: 46px;
-            border: 1.5px solid $sivanka-border !important;
-            border-radius: $sivanka-r8 !important;
+            // Reference: 1px #E3D6C6 (border-strong), not the 1.5px card border.
+            border: 1px solid $sv-border-strong !important;
+            border-radius: $sv-r-chrome !important;
             padding: 0 52px 0 18px !important;
-            font-family: $sivanka-sans;
+            font-family: $sv-sans;
             font-size: 14.5px;
-            color: $sivanka-text;
-            background: $sivanka-white !important;
+            color: $sv-ink;
+            background: $sv-white !important;
             transition: border-color 0.18s;
 
             &::placeholder {
-                color: $sivanka-text-soft !important;
+                color: $sv-ink-muted !important;
             }
 
             &:hover:not(:focus) {
-                border-color: #D9D3CE !important;
+                // Hover deepens the rule one step — the reference draws no hover
+                // state for the field, so this is derived from the link hover rule.
+                border-color: $sv-bordo !important;
                 cursor: text;
             }
 
             // Keep a subtle focus ring for a11y instead of the browser outline
             &:focus {
                 outline: none;
-                border-color: $sivanka-primary !important;
-                box-shadow: 0 0 0 3px rgba(160, 43, 107, 0.15);
+                border-color: $sv-bordo !important;
+                box-shadow: $sv-focus-ring;
             }
         }
 
-        // Search submit button — pink, right side
+        // Search submit — bordo, inset 5px from the top-right of the 46px field.
+        // Below 1280 it grows to the full 46px touch target and sits flush in the
+        // corner, exactly as the reference does it.
         .header-search-btn {
             position: absolute;
             right: 5px !important;
@@ -143,19 +193,31 @@
             left: auto !important;
             width: 36px;
             height: 36px;
-            border-radius: $sivanka-r8 !important;
-            background: $sivanka-primary !important;
-            color: $sivanka-white;
+            border-radius: $sv-r-chrome !important;
+            background: $sv-bordo !important;
+            color: $sv-white;
             display: flex;
             align-items: center;
             justify-content: center;
             border: none;
             padding: 0;
+            // The icon is the whole control; inheriting .btn's type metrics only
+            // changes the box.
+            font-size: 0;
+            line-height: 0;
+            font-weight: 400;
             z-index: 6;
             cursor: pointer;
 
+            @media (max-width: $sv-bp-touch) {
+                right: 0 !important;
+                top: 0 !important;
+                width: $sv-touch;
+                height: $sv-touch;
+            }
+
             &:hover {
-                background: $sivanka-primary-hover !important;
+                background: $sv-bordo-hover !important;
             }
 
             // Inline magnifier SVG — stroke-based, perfectly centered
@@ -163,14 +225,14 @@
                 width: 18px;
                 height: 18px;
                 display: block;
-                color: $sivanka-white;
+                color: $sv-white;
                 stroke: currentColor;
                 fill: none;
             }
 
             // Loading — the spinner takes the glyph's place, the field stays editable
             &.is-loading-indicator-before {
-                background: $sivanka-primary !important;
+                background: $sv-bordo !important;
                 opacity: 1;
 
                 .header-search-svg {
@@ -180,7 +242,7 @@
                 .loader {
                     margin: 0;
                     border-color: rgba(255, 255, 255, 0.4);
-                    border-top-color: $sivanka-white;
+                    border-top-color: $sv-white;
                 }
             }
         }
@@ -188,7 +250,7 @@
         // Hovering anywhere over the field darkens the submit button, matching the
         // magenta hover used across the theme.
         &:hover .header-search-btn:not(:disabled) {
-            background: $sivanka-primary-hover !important;
+            background: $sv-bordo-hover !important;
         }
 
         // Close button — hidden by default, shown by JS when input has text
@@ -199,9 +261,9 @@
             left: auto !important;
             width: 36px;
             height: 36px;
-            border-radius: $sivanka-r8 !important;
-            background: $sivanka-primary !important;
-            color: $sivanka-white;
+            border-radius: $sv-r-chrome !important;
+            background: $sv-bordo !important;
+            color: $sv-white;
             display: none; // default hidden
             align-items: center;
             justify-content: center;
@@ -215,7 +277,7 @@
             }
 
             &:hover {
-                background: $sivanka-primary-hover !important;
+                background: $sv-bordo-hover !important;
             }
 
             // Center the X glyph inside the button, sized to match the magnifier
@@ -237,7 +299,7 @@
                 height: 18px;
 
                 path {
-                    stroke: $sivanka-white !important;
+                    stroke: $sv-white !important;
                 }
             }
         }
@@ -266,17 +328,17 @@
 // The `.header-search-col .row { display:block }` rule above cascades into the
 // suggest markup (which uses Bootstrap `.row`) and would otherwise stack them.
 .header-search-col .search-suggest {
-    background: $sivanka-white;
-    border: 1px solid $sivanka-border;
-    border-radius: $sivanka-r8;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    background: $sv-white;
+    border: 1px solid $sv-border;
+    border-radius: $sv-r-chrome;
+    box-shadow: $sv-shadow-deep;
     overflow: hidden;
 
     // "No results" — a single, non-clickable meta row
     .search-suggest-no-result {
-        font-family: $sivanka-sans;
+        font-family: $sv-sans;
         font-size: 14px;
-        color: $sivanka-text-soft;
+        color: $sv-ink-muted;
         pointer-events: none;
     }
 
@@ -335,10 +397,10 @@
         justify-content: center;
         gap: 5px;
         width: 74px;
-        color: $sivanka-text;
+        color: $sv-ink;
         font-size: 11.5px;
         font-weight: 500;
-        font-family: $sivanka-sans;
+        font-family: $sv-sans;
         position: relative;
         padding: 4px 6px;
         background: none;
@@ -346,15 +408,15 @@
         cursor: pointer;
         text-decoration: none;
         line-height: 1.2;
-        border-radius: $sivanka-r8;
+        border-radius: $sv-r-chrome;
         transition: color 0.18s;
 
         &:hover {
-            color: $sivanka-primary;
+            color: $sv-bordo;
             background: none;
 
             .icon {
-                color: $sivanka-primary;
+                color: $sv-bordo;
             }
         }
 
@@ -365,7 +427,7 @@
         .icon {
             width: 26px;
             height: 26px;
-            color: $sivanka-text;
+            color: $sv-ink;
             transition: color 0.18s;
         }
     }
@@ -411,7 +473,7 @@
         padding: 4px 6px;
 
         &:hover {
-            color: $sivanka-primary;
+            color: $sv-bordo;
         }
     }
 
@@ -435,12 +497,12 @@
         width: auto !important;
         height: 16px !important;
         padding: 0 4px !important;
-        background-color: $sivanka-primary !important;
-        color: $sivanka-white !important;
+        background-color: $sv-bordo !important;
+        color: $sv-white !important;
         font-size: 10px !important;
         font-weight: 700 !important;
         line-height: 1 !important;
-        border-radius: 8px !important;
+        border-radius: $sv-r-chrome !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
@@ -468,7 +530,7 @@
         padding: 4px 6px;
 
         &:hover {
-            color: $sivanka-primary;
+            color: $sv-bordo;
         }
     }
 
@@ -483,18 +545,43 @@
         position: absolute !important;
         top: -3px !important;
         right: -3px !important;
-        background: $sivanka-primary !important;
-        color: $sivanka-white !important;
+        background: $sv-bordo !important;
+        color: $sv-white !important;
         font-size: 10px !important;
         font-weight: 700 !important;
         min-width: 16px;
         height: 16px;
-        border-radius: 8px !important;
+        border-radius: $sv-r-chrome !important;
         display: flex !important;
         align-items: center;
         justify-content: center;
         padding: 0 3px !important;
         line-height: 1;
+    }
+}
+
+// ============================================================
+//  Header icon controls — account, wishlist, cart, menu toggle
+//  Reference: 40x38 each, 8px radius, 12px gap, the row ending flush with the
+//  container's right edge. Below 1280 they grow to the 46px touch floor.
+//  Declared at top level: the per-component rules below set `width:auto`, and a
+//  sizing rule buried in a breakpoint block would not reach the desktop header.
+// ============================================================
+.header-actions-btn,
+.account-menu-btn,
+.header-cart-btn,
+.header-wishlist-btn,
+.nav-main-toggle-btn {
+    width: 40px;
+    height: 38px;
+    min-width: 40px;
+    padding: 0;
+    border-radius: $sv-r-chrome;
+
+    @media (max-width: $sv-bp-touch) {
+        width: $sv-touch;
+        height: $sv-touch;
+        min-width: $sv-touch;
     }
 }
 
@@ -504,33 +591,33 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        color: $sivanka-text;
+        color: $sv-ink;
         font-size: 11.5px;
         font-weight: 500;
-        font-family: $sivanka-sans;
+        font-family: $sv-sans;
         position: relative;
         width: auto;
         padding: 4px 6px;
         background: none;
         border: none;
         line-height: 1.2;
-        border-radius: $sivanka-r8;
+        border-radius: $sv-r-chrome;
         transition: color 0.18s;
         cursor: pointer;
 
         &:hover {
-            color: $sivanka-primary;
+            color: $sv-bordo;
             background: none;
 
             .icon {
-                color: $sivanka-primary;
+                color: $sv-bordo;
             }
         }
 
         .icon {
             width: 26px;
             height: 26px;
-            color: $sivanka-text;
+            color: $sv-ink;
             transition: color 0.18s;
         }
 
@@ -560,15 +647,15 @@
         .list-group-item,
         .btn-link {
             @include fontSpecs(14, 20, 400);
-            color: $sivanka-text;
+            color: $sv-ink;
             text-decoration: none;
 
             &:hover {
-                color: $sivanka-primary;
+                color: $sv-bordo;
                 background: none;
 
                 .icon {
-                    color: $sivanka-primary;
+                    color: $sv-bordo;
                 }
             }
         }
@@ -644,9 +731,8 @@
     .header-cart .header-cart-btn,
     .header-wishlist.header-actions-btn,
     .header-wishlist .header-wishlist-btn {
-        width: auto;
         min-width: 0;
-        padding: 4px 6px;
+        padding: 0;
     }
 
     .header-actions-col > .row {
@@ -664,5 +750,116 @@
     .header-logo-picture,
     .header-logo-main-img {
         max-height: 30px;
+    }
+}
+
+
+// =============================================================================
+//  Mobile action bar
+//  -----------------------------------------------------------------------
+//  Below $sv-bp-portrait the header keeps only the logo and the search field; the
+//  account / wishlist / cart / menu icons detach into a bar fixed to the bottom of
+//  the viewport, the way sivanka.dev.matic-susnik.com handles it.
+//
+//  This deliberately reverses the Phase 1 decision to keep four icons in the header
+//  at every width (the v2 reference draws them there) — Matic asked for the bottom
+//  bar on 2026-09-03. Everything else docked to the bottom edge has to clear it, so
+//  `--sv-action-bar` is published for the sort pill, the filter pill and the cookie
+//  banner to offset against.
+// =============================================================================
+$sv-action-bar-height: 59px;
+
+@media (max-width: $sv-bp-portrait) {
+    :root {
+        --sv-action-bar: #{$sv-action-bar-height};
+    }
+
+    // `.header-actions { &-col { … } }` above sets `padding: 0` and `flex` with
+    // `!important` to keep the desktop search field centred; the bar has to answer in
+    // kind or it renders 220px wide, hard against the right edge.
+    .header-actions-col {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1030;
+        width: auto;
+        height: $sv-action-bar-height;
+        padding-inline: $sv-gutter-sm !important;
+        justify-content: stretch;
+        background: $sv-white;
+        border-top: 1px solid $sv-border;
+        box-shadow: $sv-shadow-soft-up;
+
+        > .row {
+            flex: 1 1 auto;
+            width: 100%;
+            height: 100%;
+            flex-wrap: nowrap;
+            gap: 0;
+            justify-content: space-around;
+        }
+    }
+
+    // The logo and the search field share the header row again — with the icons gone
+    // there is room, so the field no longer needs a row of its own. `flex-basis: 0`
+    // rather than `auto`: the field inside is `width: 100%`, so an auto basis measures
+    // as the full row and wraps the pair onto two lines.
+    .header-main .row {
+        flex-wrap: nowrap;
+    }
+
+    .header-search-col {
+        flex: 1 1 0;
+        width: auto;
+        min-width: 0;
+        max-width: none;
+        order: 2;
+    }
+
+    .header-logo-col {
+        flex: 0 0 auto;
+        width: auto;
+        order: 1;
+        padding-right: $sv-gutter-sm;
+    }
+
+    // The bar owns navigation at this width, so the category bar goes with it —
+    // the hamburger opens the same offcanvas the bar's links live in.
+    .nav-main {
+        display: none;
+    }
+
+    // Every icon in the bar is a 46px touch target.
+    .header-actions-btn,
+    .header-menu-btn,
+    .account-menu-btn,
+    .header-cart .header-cart-btn,
+    .header-wishlist .header-wishlist-btn {
+        width: $sv-touch;
+        height: $sv-touch;
+        min-width: $sv-touch;
+        justify-content: center;
+    }
+
+    // Page content, and anything else docked to the bottom edge, has to clear the bar.
+    body {
+        padding-bottom: $sv-action-bar-height;
+    }
+
+    .scroll-up-button,
+    .cookie-permission-container,
+    .js-cookie-permission-container {
+        bottom: calc(#{$sv-action-bar-height} + 12px);
+    }
+}
+
+@media (min-width: ($sv-bp-portrait + 1px)) {
+    // Above the bar the opener lives in the nav bar, as the reference draws it — the
+    // header carries three icons, not four. `!important` because the cell-centring
+    // rule above is `.header-actions-col > .row > .col-auto:not(.d-lg-none):not(.d-none)`,
+    // five classes deep; the sibling `.d-lg-none` override next to it does the same.
+    .header-actions-col .header-actions-menu {
+        display: none !important;
     }
 }

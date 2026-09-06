@@ -1,73 +1,257 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
+// =============================================================================
+//  Sivanka v2 — typography
+//  Two faces only. Space Mono is NOT part of this system: it appears in zero
+//  reference pages and was removed from the font link. Do not reintroduce it.
+//  Eyebrows are Inter 700 uppercase.
+// =============================================================================
 
-$fontName: "HelveticaNeue";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');
 
-@font-face {
-    font-family: $fontName;
-    font-style: normal;
-    font-weight: 300;
-    font-display: swap;
-    src: url(/bundles/optiwebtheme/assets/fonts/HelveticaNeue-Light.ttf) format('truetype');
+
+// -----------------------------------------------------------------------------
+//  Role mixins — the extracted scale. Use these instead of re-typing sizes.
+//  Each is `size / line-height / tracking / colour` exactly as the reference draws it.
+// -----------------------------------------------------------------------------
+
+// Home hero H1. Ladder: 58 → 44 → 38 → 32 → 27 → 24
+@mixin sv-h1-hero {
+    font-family: $sv-serif;
+    font-size: 58px;
+    line-height: 1.14;
+    font-weight: $sv-heading-weight;
+    letter-spacing: -0.5px;
+    color: $sv-bordo-head;
+
+    @media (max-width: $sv-bp-tablet)   { font-size: 44px; }
+    @media (max-width: $sv-bp-portrait) { font-size: 38px; }
+    @media (max-width: $sv-bp-phone)    { font-size: 32px; letter-spacing: -0.3px; }
+    @media (max-width: $sv-bp-small)    { font-size: 27px; line-height: 1.2; }
+    @media (max-width: $sv-bp-tiny)     { font-size: 24px; }
 }
 
-@font-face {
-    font-family: $fontName;
-    font-style: normal;
-    font-weight: 400;
-    font-display: swap;
-    src: url(/bundles/optiwebtheme/assets/fonts/HelveticaNeue-Regular.ttf) format('truetype');
+// Subpage H1. Ladder: 40 → 36 → 32 → 29 → 26 → 23
+@mixin sv-h1-page {
+    font-family: $sv-serif;
+    font-size: 40px;
+    line-height: 46px;
+    font-weight: $sv-heading-weight;
+    letter-spacing: -0.4px;
+    color: $sv-bordo-head;
+
+    @media (max-width: $sv-bp-tablet)   { font-size: 36px; line-height: 1.15; }
+    @media (max-width: $sv-bp-portrait) { font-size: 32px; }
+    @media (max-width: $sv-bp-phone)    { font-size: 29px; letter-spacing: -0.3px; }
+    @media (max-width: $sv-bp-small)    { font-size: 26px; line-height: 1.2; }
+    @media (max-width: $sv-bp-tiny)     { font-size: 23px; }
 }
 
-@font-face {
-    font-family: $fontName;
-    font-style: normal;
-    font-weight: 600;
-    font-display: swap;
-    src: url(/bundles/optiwebtheme/assets/fonts/HelveticaNeue-Medium.ttf) format('truetype');
+// Product name — ink, not bordo.
+@mixin sv-h1-product {
+    font-family: $sv-serif;
+    font-size: 34px;
+    line-height: 39.1px;
+    font-weight: $sv-heading-weight;
+    letter-spacing: -0.34px;
+    color: $sv-ink;
+
+    @media (max-width: $sv-bp-phone) { font-size: 29px; line-height: 1.18; }
+    @media (max-width: $sv-bp-small) { font-size: 26px; }
+    @media (max-width: $sv-bp-tiny)  { font-size: 23px; }
 }
 
-@font-face {
-    font-family: $fontName;
-    font-style: normal;
-    font-weight: 700;
-    font-display: swap;
-    src: url(/bundles/optiwebtheme/assets/fonts/HelveticaNeue-Bold.ttf) format('truetype');
+// Section H2
+@mixin sv-h2 {
+    font-family: $sv-serif;
+    font-size: 34px;
+    line-height: 40px;
+    font-weight: $sv-heading-weight;
+    letter-spacing: -0.34px;
+    color: $sv-bordo-head;
+
+    @media (max-width: $sv-bp-portrait) { font-size: 30px; line-height: 1.18; }
+    @media (max-width: $sv-bp-phone)    { font-size: 27px; }
+    @media (max-width: $sv-bp-small)    { font-size: 24px; }
 }
 
+// H2 inside a cream panel — one step down
+@mixin sv-h2-panel {
+    @include sv-h2;
+    font-size: 32px;
+    line-height: 38px;
+    letter-spacing: -0.32px;
+
+    @media (max-width: $sv-bp-portrait) { font-size: 28px; line-height: 1.18; }
+    @media (max-width: $sv-bp-phone)    { font-size: 25px; }
+}
+
+// Card title (product, feature, fact, category tile, service card)
+@mixin sv-h3-card {
+    font-family: $sv-serif;
+    font-size: 21px;
+    line-height: 25.2px;
+    font-weight: $sv-heading-weight;
+    color: $sv-bordo-head;
+}
+
+// Step title — Inter, ink. Deliberately not Playfair.
+@mixin sv-h3-step {
+    font-family: $sv-sans;
+    font-size: 17px;
+    line-height: 24px;
+    font-weight: $sv-heading-weight;
+    color: $sv-ink;
+}
+
+// Overview card title (services overview, 264px image column)
+@mixin sv-h3-overview {
+    font-family: $sv-serif;
+    font-size: 22px;
+    line-height: 26.4px;
+    font-weight: $sv-heading-weight;
+    color: $sv-bordo-head;
+}
+
+// Cross-link title ("druge storitve")
+@mixin sv-h3-crosslink {
+    font-family: $sv-serif;
+    font-size: 19px;
+    line-height: 24px;
+    font-weight: $sv-heading-weight;
+    color: $sv-bordo-head;
+}
+
+// FAQ accordion question — Inter, ink. Not in DESIGN-SYSTEM.md; extracted from
+// the master page, where it appears 7 times.
+@mixin sv-faq-question {
+    font-family: $sv-sans;
+    font-size: 15.5px;
+    line-height: 23.25px;
+    font-weight: $sv-heading-weight;
+    color: $sv-ink;
+}
+
+// Footer column heading — Inter 12/700 uppercase INK. Distinct from the eyebrow,
+// which is 11.5px and bordo. Not in DESIGN-SYSTEM.md; 16 uses across all 8 pages.
+@mixin sv-footer-heading {
+    font-family: $sv-sans;
+    font-size: 12px;
+    line-height: 1.4;
+    font-weight: $sv-heading-weight-alt;
+    letter-spacing: .96px;
+    text-transform: uppercase;
+    color: $sv-ink;
+}
+
+// Product-detail "Opis" — the one 700 heading in the system.
+@mixin sv-h4-description {
+    font-family: $sv-serif;
+    font-size: 26px;
+    line-height: 31.2px;
+    font-weight: $sv-heading-weight-alt;
+    color: $sv-bordo-head;
+
+    @media (max-width: $sv-bp-phone) { font-size: 23px; line-height: 1.2; }
+}
+
+// Eyebrow / overline
+@mixin sv-eyebrow {
+    font-family: $sv-sans;
+    font-size: 11.5px;
+    line-height: 17.25px;
+    font-weight: $sv-heading-weight-alt;
+    letter-spacing: .96px;
+    text-transform: uppercase;
+    color: $sv-bordo;
+}
+
+// Lead paragraph
+@mixin sv-lead {
+    font-size: 16.5px;
+    line-height: 27.5px;
+    color: $sv-ink-muted;
+
+    @media (max-width: $sv-bp-portrait) { font-size: 16px;   line-height: 26px; }
+    @media (max-width: $sv-bp-phone)    { font-size: 15.5px; line-height: 25px; }
+    @media (max-width: $sv-bp-small)    { font-size: 14.5px; line-height: 23px; }
+}
+
+// Long-form product description — same size as the lead, looser leading
+@mixin sv-prose {
+    font-size: 16.5px;
+    line-height: 29.7px;
+    color: $sv-ink-muted;
+}
+
+// Body
+@mixin sv-body {
+    font-size: 14.5px;
+    line-height: 24px;
+    color: $sv-ink-muted;
+}
+
+// Meta / fact sub-line
+@mixin sv-meta {
+    font-size: 13.5px;
+    line-height: 20px;
+    color: $sv-ink-muted;
+}
+
+// Breadcrumb — separators and inactive crumbs are $sv-meta, the last crumb is ink
+@mixin sv-breadcrumb {
+    font-size: 12.5px;
+    line-height: 18.75px;
+    color: $sv-meta;
+}
+
+
+// -----------------------------------------------------------------------------
+//  Element defaults
+// -----------------------------------------------------------------------------
 body {
-    font-family: $sivanka-sans;
-    color: $sivanka-text;
+    font-family: $sv-sans;
+    // The reference's root box is 16/24 — DESIGN-SYSTEM.md's "Body 14.5/24" is the
+    // body-copy ROLE (@include sv-body), not the inherited root. Setting the root
+    // to 14.5 shrinks every unstyled control and label in the storefront.
+    font-size: 16px;
+    line-height: 24px;
+    color: $sv-ink;
+    background-color: $sv-bg;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-h1, h2, h3 {
-    font-family: $sivanka-serif;
-    letter-spacing: -0.01em;
-    line-height: 1.12;
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+    margin: 0;
+    font-weight: $sv-heading-weight;
 }
 
-h4, h5 {
-    font-family: $sivanka-sans;
+h1, h2, h3, .h1, .h2, .h3 {
+    font-family: $sv-serif;
+    color: $sv-bordo-head;
 }
 
-h1 {
-    @include fontSpecs(30, 36, 700, false, true);
+h4, h5, h6, .h4, .h5, .h6 {
+    font-family: $sv-sans;
+    color: $sv-ink;
 }
 
-h2 {
-    @include fontSpecs(26, 31.2, 700, false, true);
+// Defaults sit on the subpage ladder — the roles above override where needed.
+h1, .h1 { @include sv-h1-page; }
+h2, .h2 { @include sv-h2; }
+h3, .h3 { @include sv-h3-card; }
+
+h4, .h4 {
+    font-size: 17px;
+    line-height: 24px;
 }
 
-h3 {
-    @include fontSpecs(22, 26.4, 700, false, true);
+h5, .h5 {
+    font-size: 15.5px;
+    line-height: 23.25px;
 }
 
-h4 {
-    @include fontSpecs(18, 21.6, 700, false, true);
-}
-
-h5 {
-    @include fontSpecs(16, 24, 700, false, true);
+h6, .h6 {
+    font-size: 14.5px;
+    line-height: 22px;
 }

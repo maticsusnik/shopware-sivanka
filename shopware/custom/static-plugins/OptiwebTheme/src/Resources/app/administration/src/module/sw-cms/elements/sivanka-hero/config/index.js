@@ -1,26 +1,49 @@
 import template from './sw-cms-el-config-sivanka-hero.html.twig';
 import './sw-cms-el-config-sivanka-hero.scss';
+import { toLink } from '../../../link-value';
+import { sivankaIconOptions } from '../../sivanka-service-icons';
 
 const { Component, Mixin } = Shopware;
+
 Component.register('sw-cms-el-config-sivanka-hero', {
     template,
+
+    emits: ['element-update'],
+
     mixins: [Mixin.getByName('cms-element')],
-    data() {
-        return {
-            iconOptions: [
-                { value: 'users', label: 'Users / Community' },
-                { value: 'truck', label: 'Truck / Delivery' },
-                { value: 'shield', label: 'Shield / Quality' },
-                { value: 'headphones', label: 'Headphones / Support' },
-                { value: 'star', label: 'Star' },
-                { value: 'heart', label: 'Heart' },
-                { value: 'check', label: 'Check / Verified' },
-                { value: 'return', label: 'Return / Exchange' },
-            ]
-        };
+
+    computed: {
+        iconOptions() {
+            return sivankaIconOptions(this.$tc);
+        },
+
+        trustSlots() {
+            return [1, 2, 3, 4];
+        },
     },
-    created() { this.initElementConfig('sivanka-hero'); },
+
+    created() {
+        this.initElementConfig('sivanka-hero');
+
+        // Heroes saved before the buttons supported internal links hold a plain URL
+        // string here; `ow-url` needs the object shape, so lift them in place.
+        this.element.config.primaryBtnUrl.value = toLink(this.element.config.primaryBtnUrl.value);
+        this.element.config.secondaryBtnUrl.value = toLink(this.element.config.secondaryBtnUrl.value);
+    },
+
     methods: {
-        onUpdate() { this.$emit('element-update', this.element); }
-    }
+        onChange() {
+            this.$emit('element-update', this.element);
+        },
+
+        onPrimaryUrlChange(value) {
+            this.element.config.primaryBtnUrl.value = value;
+            this.onChange();
+        },
+
+        onSecondaryUrlChange(value) {
+            this.element.config.secondaryBtnUrl.value = value;
+            this.onChange();
+        },
+    },
 });

@@ -1,0 +1,23 @@
+{% block block_sivanka_why %}
+    <div class="col-12 cms-block-sivanka-why__inner">
+        <div class="sivanka-why">
+            {# Two tinted blobs bleed out of the panel corners; decorative only. #}
+            <span class="sivanka-why__blob sivanka-why__blob--top" aria-hidden="true"></span>
+            <span class="sivanka-why__blob sivanka-why__blob--bottom" aria-hidden="true"></span>
+
+            {% sw_include '@Storefront/storefront/block/sivanka-service/slot.html.twig' with {
+                slotName: 'heading',
+                slotClass: 'sivanka-why__heading'
+            } %}
+
+            <div class="sivanka-why__grid">
+                {% for slotName in ['cardOne', 'cardTwo', 'cardThree', 'cardFour'] %}
+                    {% sw_include '@Storefront/storefront/block/sivanka-service/slot.html.twig' with {
+                        slotName: slotName,
+                        slotClass: 'sivanka-why__cell'
+                    } %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -28,11 +28,11 @@ class SyncCommand extends Command
     protected function configure(): void
     {
         $this->addArgument('selectedSync', InputArgument::OPTIONAL, 'Selected sync(s) - can be separated with comma')
-            ->addOption('test', 't', InputOption::VALUE_NONE, 'Only process 10 items for each sync')
+            ->addOption('test', 't', InputOption::VALUE_NONE, 'Process only the first page of 10 items, then stop')
             ->addOption('listAvailable', 'l', InputOption::VALUE_NONE, 'List all available sync options')
-            ->addOption('ignoreHash', 'i', InputOption::VALUE_NONE, 'Ignore hashed values')
+            ->addOption('ignoreHash', 'i', InputOption::VALUE_NONE, 'Write every record even when nothing changed (forces a refresh)')
             ->addOption('ignoreMedia', 'm', InputOption::VALUE_NONE, 'Ignore media')
-            ->addOption('setId', 's', InputOption::VALUE_REQUIRED, 'Limit sync to specific ID/SKU')
+            ->addOption('setId', 's', InputOption::VALUE_REQUIRED, 'Limit the sync to a single ID/SKU, e.g. --setId=405204')
             ->addOption('dry-run', 'd', InputOption::VALUE_NONE, 'Resolve and log everything but write nothing')
             ->setDescription('Sync defined (or all if empty) endpoints in specified order.');
     }

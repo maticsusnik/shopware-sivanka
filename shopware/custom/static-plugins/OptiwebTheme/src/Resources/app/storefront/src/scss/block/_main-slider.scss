@@ -66,14 +66,14 @@
     .image-slider-item-container.color-white &__slide-content {
         h1,
         p {
-            color: $ow-color-white;
+            color: $sv-white;
         }
     }
 
     .image-slider-item-container.color-black &__slide-content {
         h1,
         p {
-            color: $ow-color-black;
+            color: $sv-ink;
         }
     }
     &__slide-description-wrapper {
@@ -85,19 +85,19 @@
         position: absolute;
         right: calc((2 * #{$nav-button-size}) + 20px);
         bottom: -60px;
-        background: $ow-color-base;
-        box-shadow: $ow-box-shadow;
+        background: $sv-bordo;
+        box-shadow: $sv-shadow-deep;
         @include padding('top', 32, true);
         @include padding('bottom', 32, true);
         @include padding('left', 32, true);
         @include padding('right', 32, true);
         @include fontSpecs(18, 21.6, 700, false, true);
         max-width: 400px;
-        color: $ow-color-white;
+        color: $sv-white;
 
         p {
             margin: 0;
-            color: $ow-color-white;
+            color: $sv-white;
         }
     }
     .image-slider-controls-container {
@@ -181,7 +181,7 @@
 
 .base-slider {
     .tns-nav button {
-        background: $ow-color-grey-7;
+        background: $sv-ink-muted;
         width: 12px;
         height: 12px;
         padding: 0;

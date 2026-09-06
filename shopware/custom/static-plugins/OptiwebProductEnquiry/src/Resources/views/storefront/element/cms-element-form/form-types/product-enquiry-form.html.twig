@@ -1,54 +1,6 @@
 {% set product = element.extensions.product %}
-
-<style>
-.enquiry-checkbox-wrap .form-check-input[type="checkbox"] {
-    width: 1.25em;
-    height: 1.25em;
-    border: 2px solid #adb5bd;
-    border-radius: 4px;
-    appearance: none;
-    -webkit-appearance: none;
-    background-color: #fff;
-    cursor: pointer;
-    flex-shrink: 0;
-    transition: background-color .15s, border-color .15s;
-    box-shadow: none !important;
-    outline: none !important;
-}
-.enquiry-checkbox-wrap .form-check-input[type="checkbox"]:checked {
-    background-color: #B4367C;
-    border-color: #B4367C;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 80%;
-}
-.enquiry-checkbox-wrap .form-check-input[type="checkbox"]:focus,
-.enquiry-checkbox-wrap .form-check-input[type="checkbox"]:focus-visible {
-    outline: none !important;
-    box-shadow: none !important;
-}
-.enquiry-checkbox-wrap .form-check-input.is-invalid {
-    border-color: #dc3545;
-    background-image: none;
-}
-.enquiry-checkbox-wrap .form-check-input.is-invalid:checked {
-    background-color: #dc3545;
-    border-color: #dc3545;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 80%;
-}
-.enquiry-success {
-    text-align: center;
-    padding: 2rem 1rem;
-}
-.enquiry-success p {
-    margin: 0;
-    font-size: 1.1rem;
-}
-</style>
+{% set enquiryProducts = element.extensions.products.items ?? [] %}
+{% set isMultiProduct = enquiryProducts|length > 1 %}
 
 <div class="form-content">
     <form action="{{ path('frontend.form.product-enquiry.send') }}"
@@ -58,7 +10,11 @@
 
         <input type="hidden" name="slotId" value="{{ element.id }}">
 
-        {% if product %}
+        {% if isMultiProduct %}
+            <div class="product-row product-row-multi mb-4">
+                {% include '@OptiwebProductEnquiry/storefront/component/product/quickview/enquiry-lines.html.twig' with { products: enquiryProducts } %}
+            </div>
+        {% elseif product %}
             <div class="row product-row mb-4">
                 <div class="col-12">
                     {% include '@OptiwebProductEnquiry/storefront/component/product/quickview/minimal.html.twig' with { product: product } %}
@@ -111,21 +67,23 @@
             </div>
         </div>
 
-        <div class="mb-3">
-            <label for="productQty" class="form-label">{{ 'optiwebProductEnquiry.form.qtyLabel'|trans }}*</label>
-            <div class="qtyField">
-                <input type="number"
-                       id="productQty"
-                       name="productQty"
-                       class="form-control"
-                       value="1"
-                       min="1"
-                       step="1"
-                       required
-                       style="max-width: 120px;">
+        {# Multi-product enquiries carry a quantity per line instead. #}
+        {% if not isMultiProduct %}
+            <div class="mb-3">
+                <label for="productQty" class="form-label">{{ 'optiwebProductEnquiry.form.qtyLabel'|trans }}*</label>
+                <div class="qtyField">
+                    <input type="number"
+                           id="productQty"
+                           name="productQty"
+                           class="form-control"
+                           value="1"
+                           min="1"
+                           step="1"
+                           required>
+                </div>
+                <div class="invalid-feedback"></div>
             </div>
-            <div class="invalid-feedback"></div>
-        </div>
+        {% endif %}
 
         <div class="mb-3">
             <label for="comment" class="form-label">{{ 'optiwebProductEnquiry.form.commentLabel'|trans }}</label>

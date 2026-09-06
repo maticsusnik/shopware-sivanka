@@ -1,0 +1,120 @@
+// =============================================================================
+//  Sivanka v2 — the button family
+//  -----------------------------------------------------------------------
+//  DESIGN-SYSTEM.md → Buttons. Both variants ALWAYS carry the 1px border: a
+//  borderless primary measures 2px shorter than the ghost beside it and the pair
+//  misaligns in a centred flex row.
+//
+//  The reference draws a few solo fills without a border (the promo-card CTA).
+//  Those are rendered here WITH the border and 1px less padding, so the painted
+//  box is pixel-identical while the system rule still holds.
+//
+//  Size ladder, straight off the reference:
+//    --lg   hero CTAs               15/22   14px 34px   6px
+//    (base) section CTAs            14/21   13px 28px   6px
+//    --sm   card / promo CTAs       14/24   10px 21px   4px
+// =============================================================================
+
+@mixin sv-btn-base {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    font-family: $sv-sans;
+    font-size: 14px;
+    line-height: 21px;
+    font-weight: 600;
+    padding: 13px 28px;
+    border: 1px solid transparent;
+    border-radius: $sv-r-btn;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color .18s, color .18s, border-color .18s;
+
+    &:hover,
+    &:focus {
+        text-decoration: none;
+    }
+}
+
+@mixin sv-btn-primary {
+    background: $sv-bordo;
+    color: $sv-white;
+    border-color: $sv-bordo;
+
+    &:hover,
+    &:focus {
+        background: $sv-bordo-hover;
+        border-color: $sv-bordo-hover;
+        color: $sv-white;
+    }
+}
+
+@mixin sv-btn-ghost {
+    background: $sv-white;
+    color: $sv-bordo;
+    border-color: $sv-bordo;
+
+    &:hover,
+    &:focus {
+        color: $sv-bordo-hover;
+        border-color: $sv-bordo-hover;
+        background: $sv-white;
+    }
+}
+
+.sv-btn {
+    @include sv-btn-base;
+
+    &--primary { @include sv-btn-primary; }
+    &--ghost   { @include sv-btn-ghost; }
+
+    // Hero CTAs
+    &--lg {
+        font-size: 15px;
+        line-height: 22px;
+        padding: 14px 34px;
+    }
+
+    // Card and promo CTAs — the small radius, one notch down the ladder. The
+    // reference leaves this one on `line-height: normal`, which resolves to 24px
+    // for 14px Inter and makes the box 46px tall.
+    &--sm {
+        font-size: 14px;
+        line-height: 24px;
+        padding: 10px 21px;
+        border-radius: $sv-r-btn-sm;
+        gap: 8px;
+    }
+
+    &--block {
+        width: 100%;
+    }
+
+    .sivanka-icon {
+        flex: none;
+    }
+}
+
+// -----------------------------------------------------------------------------
+//  Legacy aliases. The service blocks and the banners element were written
+//  against these names; point them at the v2 shapes rather than maintaining a
+//  second, drifting button.
+// -----------------------------------------------------------------------------
+.sivanka-btn-primary {
+    @include sv-btn-base;
+    @include sv-btn-primary;
+
+    &--sm {
+        font-size: 14px;
+        line-height: 24px;
+        padding: 10px 21px;
+        border-radius: $sv-r-btn-sm;
+    }
+}
+
+.sivanka-btn-outline {
+    @include sv-btn-base;
+    @include sv-btn-ghost;
+}

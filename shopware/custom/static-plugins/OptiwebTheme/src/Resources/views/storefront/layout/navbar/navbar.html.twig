@@ -1,5 +1,26 @@
 {% sw_extends '@Storefront/storefront/layout/navbar/navbar.html.twig' %}
 
+{# The v2 reference keeps the category bar on screen at every width down to 340px,
+   scrolling it horizontally rather than collapsing it behind a hamburger. Core's
+   `navbar-expand-lg` + `.collapse` does the opposite, so the wrapper is restated
+   here as always-expanded; layout/_main-navigation.scss adds the scroll. #}
+{% block layout_navbar_nav_element %}
+    <nav class="navbar navbar-expand main-navigation-menu"
+         id="main-navigation-menu"
+         itemscope="itemscope"
+         itemtype="https://schema.org/SiteNavigationElement"
+         data-navbar="true"
+         data-navbar-options="{{ navbarOptions|json_encode }}"
+         aria-label="{{ 'header.navigationAriaLabel'|trans|striptags }}">
+        <div class="navbar-collapse" id="main_nav">
+            <ul class="navbar-nav main-navigation-menu-list">
+                {{ block('layout_navbar_menu_home') }}
+                {{ block('layout_navbar_menu_items') }}
+            </ul>
+        </div>
+    </nav>
+{% endblock %}
+
 {% block layout_navbar_menu_home %}{% endblock %}
 
 {% block layout_navbar_menu_items %}
@@ -22,9 +43,10 @@
             {% if category.type == 'folder' %}
                 <li class="nav-item nav-item-{{ id }} {% if isMegaMenu %}{{ megaMenuClass }}{% endif %}" {% if isMegaMenu %}data-{{ megaMenuClass }}="true"{% endif %}>
                     {% if isMegaMenu %}
-                        <div class="nav-link nav-item-{{ id }}-link root main-navigation-link p-2{% if hasChildren %} dropdown-toggle{% endif %}">
+                        <div class="nav-link nav-item-{{ id }}-link root main-navigation-link p-2 sv-nav-opener sv-nav-opener--desktop{% if hasChildren %} dropdown-toggle{% endif %}">
                             <span itemprop="name" class="main-navigation-link-text">{{ name }} {% if hasChildren %}{% sw_icon 'expand' style { pack: 'ow', size: 'xs'} %}{% endif %}</span>
                         </div>
+                        {% sw_include '@Storefront/storefront/layout/navbar/menu-trigger.html.twig' with { label: name } only %}
                     {% else %}
                         <a class="nav-link nav-item-{{ id }}-link root main-navigation-link p-2{% if hasChildren %} dropdown-toggle{% endif %}"
                            href="#"
@@ -52,10 +74,11 @@
                 <li class="nav-item nav-item-{{ id }} {% if hasChildren %}dropdown position-static{% endif %} {% if isMegaMenu %}{{ megaMenuClass }}{% endif %}" {% if isMegaMenu %}data-{{ megaMenuClass }}="true"{% endif %}>
 
                     {% if isMegaMenu %}
-                        <div class="nav-link nav-item-{{ id }}-link root main-navigation-link p-2 mega-menu-link {% if hasChildren %} dropdown-toggle{% endif %}">
+                        <div class="nav-link nav-item-{{ id }}-link root main-navigation-link p-2 mega-menu-link sv-nav-opener sv-nav-opener--desktop{% if hasChildren %} dropdown-toggle{% endif %}">
                             {% sw_icon 'nav-button' style { pack: 'ow', size: 'xs'} %}
                             <span itemprop="name" class="main-navigation-link-text">{{ name }}</span>
                         </div>
+                        {% sw_include '@Storefront/storefront/layout/navbar/menu-trigger.html.twig' with { label: name } only %}
                     {% else %}
                         <a class="nav-link nav-item-{{ id }}-link root main-navigation-link p-2{% if hasChildren %} dropdown-toggle{% endif %}"
                            href="{{ seoUrl('frontend.navigation.page', { navigationId: id }) }}"

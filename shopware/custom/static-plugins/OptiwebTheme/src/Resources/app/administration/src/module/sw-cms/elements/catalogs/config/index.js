@@ -6,6 +6,8 @@ const {Component, Mixin} = Shopware;
 Component.register('sw-cms-el-config-catalogs', {
     template,
 
+    emits: ['element-update'],
+
     mixins: [
         Mixin.getByName('cms-element')
     ],
@@ -15,9 +17,11 @@ Component.register('sw-cms-el-config-catalogs', {
     },
 
     methods: {
-        onElementUpdate(element) {
-            this.element.config.catalogs.value = element;
-            this.$emit('element-update', element);
+        // The repeater hands over the catalogs array, not a CMS element — `element-update`
+        // must still carry this element so the page form updates the right slot.
+        onElementUpdate(catalogs) {
+            this.element.config.catalogs.value = catalogs;
+            this.$emit('element-update', this.element);
         },
     }
 });

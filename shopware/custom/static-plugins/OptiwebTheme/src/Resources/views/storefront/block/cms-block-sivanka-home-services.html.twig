@@ -1,0 +1,24 @@
+{% block block_sivanka_home_services %}
+    <div class="col-12 cms-block-sivanka-home-services__inner">
+        <div class="sivanka-home-services">
+            {% sw_include '@Storefront/storefront/block/sivanka-service/slot.html.twig' with {
+                slotName: 'heading',
+                slotClass: 'sivanka-home-services__heading'
+            } %}
+
+            <div class="sivanka-home-services__grid">
+                {% for slotName in ['cardOne', 'cardTwo', 'cardThree', 'cardFour'] %}
+                    {% sw_include '@Storefront/storefront/block/sivanka-service/slot.html.twig' with {
+                        slotName: slotName,
+                        slotClass: 'sivanka-home-services__cell'
+                    } %}
+                {% endfor %}
+            </div>
+
+            {% sw_include '@Storefront/storefront/block/sivanka-service/slot.html.twig' with {
+                slotName: 'actions',
+                slotClass: 'sivanka-home-services__actions'
+            } %}
+        </div>
+    </div>
+{% endblock %}

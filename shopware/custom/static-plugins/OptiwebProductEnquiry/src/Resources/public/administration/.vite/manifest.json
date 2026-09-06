@@ -1,6 +1,6 @@
 {
   "main.js": {
-    "file": "assets/optiweb-product-enquiry-DCKAla3G.js",
+    "file": "assets/optiweb-product-enquiry-DJFYFR7x.js",
     "name": "optiweb-product-enquiry",
     "src": "main.js",
     "isEntry": true,
@@ -12,7 +12,7 @@
     ]
   },
   "module/optiweb-product-enquiry/snippet/en-GB.json": {
-    "file": "assets/en-GB-BT2oDtSP.js",
+    "file": "assets/en-GB-lp_2ZTaN.js",
     "name": "en-GB",
     "src": "module/optiweb-product-enquiry/snippet/en-GB.json",
     "isDynamicEntry": true

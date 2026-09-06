@@ -1,115 +1,82 @@
+// =============================================================================
+//  Top bar
+//  Reference: every page's first band.
+//    background #F6EDE2 · border-bottom 1px #E3D6C6 · 12.5/18.75
+//    inner: max-width 1406, padding 11px 28px, flex, align-center, gap 26px
+//    item:  flex, gap 8px, ink-muted, 15x15 bordo glyph
+//    help:  margin-left auto, ink
+//
+//  The reference sheds items as the bar narrows rather than scrolling them:
+//    <=1100  only the first promise survives
+//    <=720   none of them do; only "Pomoč & kontakt" remains, left-aligned
+//  (An earlier pass ran the promises as a marquee below lg. That is a visual
+//  decision the design does not make, so it has been replaced by the reference
+//  behaviour — see the handover note.)
+// =============================================================================
+
 .sivanka-topbar {
-    background: $sivanka-beige;
-    border-bottom: 1px solid $sivanka-border;
+    background: $sv-cream;
+    border-bottom: 1px solid $sv-border-strong;
+    font-family: $sv-sans;
     font-size: 12.5px;
-    color: $sivanka-muted;
-    font-family: $sivanka-sans;
+    line-height: 18.75px;
+    color: $sv-ink-muted;
 
     .container {
         display: flex;
         align-items: center;
-        // wrap is the safety net: no width can push these items off the page
-        flex-wrap: wrap;
-        row-gap: 4px;
-        height: 42px;
         gap: 26px;
-        max-width: $header-width;
-        padding-inline: 28px;
+        max-width: $sv-container;
+        padding-block: 11px;
+        padding-inline: $sv-gutter-wide;
 
-        @include media-breakpoint-down(lg) {
-            height: 34px;
-            gap: 0;
-            padding-inline: 12px;
-            flex-wrap: nowrap;
-        }
-    }
-
-    // ---- Desktop: the three promises sit in a plain row, no ticker ----
-    .tb-marquee {
-        display: contents;
-    }
-
-    .tb-marquee-clone {
-        display: none;
-    }
-
-    // ---- Mobile: one continuous ticker instead of four items that never fit ----
-    @include media-breakpoint-down(lg) {
-        .tb-marquee {
-            display: block;
-            flex: 1 1 auto;
-            min-width: 0;
-            overflow: hidden;
-            // fade the ends so items enter and leave instead of being chopped
-            mask-image: linear-gradient(90deg, transparent, #000 24px, #000 calc(100% - 24px), transparent);
+        @media (max-width: $sv-bp-phone) {
+            padding-inline: $sv-gutter-sm;
         }
 
-        .tb-marquee-track {
-            display: flex;
-            width: max-content;
-            animation: tb-marquee 26s linear infinite;
-        }
-
-        .tb-marquee-group {
-            display: flex;
-            align-items: center;
-            gap: 26px;
-            padding-right: 26px;
-            flex: 0 0 auto;
-        }
-
-        .tb-marquee-clone {
-            display: flex;
-        }
-
-        // The help link is a real link; a moving target is bad UX, and the ticker
-        // needs the full bar width anyway.
-        .tb-item.tb-right {
-            display: none;
+        @media (max-width: $sv-bp-tiny) {
+            padding-inline: $sv-gutter-xs;
         }
     }
 
     .tb-item {
-        display: inline-flex;
+        display: flex;
         align-items: center;
         gap: 8px;
+        color: $sv-ink-muted;
         white-space: nowrap;
 
         .icon {
+            display: flex;
+            flex: 0 0 auto;
             width: 15px;
             height: 15px;
-            color: $sivanka-primary-light;
-            flex-shrink: 0;
+            color: $sv-bordo;
         }
     }
 
-    .tb-right {
+    .tb-help {
         margin-left: auto;
-    }
-
-    a {
-        color: inherit;
-        text-decoration: none;
+        color: $sv-ink;
 
         &:hover {
-            color: $sivanka-primary;
+            color: $sv-bordo;
         }
     }
 
-    // (The old rule here hid every item but the first below md, because four nowrap
-    // items could not fit. The ticker above replaces that — all three now scroll.)
-}
+    @media (max-width: $sv-bp-tablet) {
+        .tb-item--secondary {
+            display: none;
+        }
+    }
 
+    @media (max-width: $sv-bp-phone) {
+        .tb-item--primary {
+            display: none;
+        }
 
-// Translating by exactly one group's width lands the clone where the original was,
-// so the loop has no visible seam.
-@keyframes tb-marquee {
-    from { transform: translate3d(0, 0, 0); }
-    to   { transform: translate3d(-50%, 0, 0); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .sivanka-topbar .tb-marquee-track {
-        animation: none;
+        .tb-help {
+            margin-left: 0;
+        }
     }
 }

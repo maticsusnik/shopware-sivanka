@@ -2,7 +2,7 @@
     <div class="optiweb-catalog-repeater-editor">
         <div class="optiweb-catalog-repeater-editor__header">
             <h3>Catalogs</h3>
-            <sw-button @click="addCatalog">Add New Catalog</sw-button>
+            <mt-button variant="secondary" ghost @click="addCatalog">Add New Catalog</mt-button>
         </div>
         <div class="optiweb-catalog-repeater-editor__items">
             <div class="optiweb-catalog-repeater-editor__item" v-for="(catalog, index) in catalogs" :key="index">
@@ -107,7 +107,7 @@
 
                 </div>
                 <div class="optiweb-catalog-repeater-editor__item-footer">
-                    <sw-button @click="removeCatalog(index)">Remove Catalog</sw-button>
+                    <mt-button variant="critical" size="small" @click="removeCatalog(index)">Remove Catalog</mt-button>
                 </div>
             </div>
         </div>
