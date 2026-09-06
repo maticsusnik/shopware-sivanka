@@ -5,7 +5,7 @@
 .contact-section {
 
     .full-width {
-        background: linear-gradient(90deg, $ow-color-black 0%, rgba(0, 0, 0, 0.00) 100%);
+        background: linear-gradient(90deg, $sv-ink 0%, rgba(0, 0, 0, 0.00) 100%);
         padding-inline: 0;
     }
 
@@ -19,11 +19,11 @@
     }
 
     h2, h3, p, a {
-        color: $ow-color-white;
+        color: $sv-white;
     }
 
     .btn {
-        color: $ow-color-black;
+        color: $sv-ink;
     }
 }
 

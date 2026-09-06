@@ -1,11 +1,11 @@
 {% block sw_cms_element_main_slider_config %}
     <div class="optiweb-main-slider-config">
-        <sw-tabs>
-            <sw-tabs-item @click.native="activeSlide = index" v-for="(slide, index) in computedSlides" :ref="'tab' + index"
-                          :active="index == activeSlide">
-                Slide {{ index + 1 }}
-            </sw-tabs-item>
-        </sw-tabs>
+        <mt-tabs
+            :key="tabItems.length"
+            :items="tabItems"
+            :default-item="tabItems[activeSlide] ? tabItems[activeSlide].name : ''"
+            @new-item-active="onTabChange"
+        />
         <div v-for="(slide, index) in computedSlides">
             <div v-if="index === activeSlide">
 
@@ -94,10 +94,10 @@
                 </div>
             </div>
         </div>
-        <sw-button-group style="margin-top:32px">
+        <div style="margin-top:32px">
             <mt-button variant="primary" @click="createNewSlide" >
                 Add new slide
             </mt-button>
-        </sw-button-group>
+        </div>
     </div>
 {% endblock %}

@@ -1,10 +1,38 @@
 // $content-width is 1366px + $bs-gutter-x, so the container needs half a gutter of
 // padding per side to resolve to the 1366px inner column the design is built on.
 // Bootstrap's own --bs-gutter-x default (24px) would leave it at 1382px.
+//
+// The reference steps the gutter down as the page narrows: 20 -> 16 (<=720)
+// -> 12 (<=380), which is what keeps the 340px layout clear of the edges.
 .container, .cms-section .boxed {
     max-width: $content-width;
     margin-inline: auto;
-    padding-inline: calc(#{$bs-gutter-x} / 2);
+    padding-inline: $sv-gutter;
+
+    @media (max-width: $sv-bp-phone) {
+        padding-inline: $sv-gutter-sm;
+    }
+
+    @media (max-width: $sv-bp-tiny) {
+        padding-inline: $sv-gutter-xs;
+    }
+}
+
+// Bootstrap rows cancel the container's padding with a negative margin of
+// --bs-gutter-x / 2. Narrowing the gutter without narrowing that variable leaves
+// every .row hanging 4-8px past the viewport at 720 and below.
+// Bootstrap declares --bs-gutter-x on `.row` itself, so an ancestor declaration is
+// shadowed — the override has to sit on the row. Rows that opted out of gutters
+// (`g-0` / `gx-0`, e.g. the header) must keep their zero: this rule would otherwise
+// outrank the utility on source order and push them past the viewport.
+.row:not(.g-0):not(.gx-0):not([class*=" g-0"]):not([class*=" gx-0"]) {
+    @media (max-width: $sv-bp-phone) {
+        --bs-gutter-x: #{$sv-gutter-sm * 2};
+    }
+
+    @media (max-width: $sv-bp-tiny) {
+        --bs-gutter-x: #{$sv-gutter-xs * 2};
+    }
 }
 
 .btn .icon > svg {
@@ -20,8 +48,10 @@
     overflow: visible;
 }
 
+// The reference gives every page its own top rhythm — the breadcrumb's 12px, the
+// hero's 0, a section's 56px. A blanket 16px here pushed every page 16px down.
 .container-main {
-    padding-block: 1rem 0;
+    padding-block: 0;
 }
 
 header, footer, .nav-main {
@@ -49,8 +79,8 @@ header, footer, .nav-main {
 }
 
 .btn-grey {
-    color: $ow-color-black;
-    background: $ow-color-grey;
+    color: $sv-ink;
+    background: $sv-cream;
     @include fontSpecs(16, 24, 700, false, false);
     @include padding('bottom', 14, false);
     @include padding('top', 14, false);
@@ -58,8 +88,8 @@ header, footer, .nav-main {
     @include padding('right', 20, false);
 
     &:hover {
-        color: $ow-color-black;
-        background: $ow-color-grey-4;
+        color: $sv-ink;
+        background: $sv-border;
     }
 }
 
@@ -69,8 +99,8 @@ header, footer, .nav-main {
 
 .form-check-input {
     &[type=radio] {
-        border: 1px solid $ow-color-grey-7;
-        background: $ow-color-white;
+        border: 1px solid $sv-ink-muted;
+        background: $sv-white;
         cursor: pointer;
 
         &:before {
@@ -79,30 +109,30 @@ header, footer, .nav-main {
             width: 10px;
             height: 10px;
             margin: 2px;
-            background: $ow-color-white;
-            border: 1px solid $ow-color-grey-7;
-            border-radius: 50%;
+            background: $sv-white;
+            border: 1px solid $sv-ink-muted;
+            border-radius: $sv-r-round;
             pointer-events: none;
         }
 
         &:checked {
             --bs-form-check-bg-image: none;
-            border: 1px solid $ow-color-black;
+            border: 1px solid $sv-ink;
 
             &:before {
-                background: $ow-color-black;
-                border: 1px solid $ow-color-black;
+                background: $sv-ink;
+                border: 1px solid $sv-ink;
             }
         }
     }
 
     &[type=checkbox] {
         border-radius: 0;
-        border-color: $ow-color-black;
+        border-color: $sv-ink;
 
         &:checked {
-            background-color: $ow-color-black;
-            border-color: $ow-color-black;
+            background-color: $sv-ink;
+            border-color: $sv-ink;
         }
     }
 }
@@ -127,17 +157,17 @@ header, footer, .nav-main {
         padding: 8px 14px;
         font-size: 13px;
         font-weight: 600;
-        border: 1px solid $sivanka-border;
-        border-radius: $sivanka-r8;
-        background: $sivanka-white;
-        color: $sivanka-text;
+        border: 1px solid $sv-border;
+        border-radius: $sv-r-chrome;
+        background: $sv-white;
+        color: $sv-ink;
 
         &:hover,
         &:focus,
         &:active {
-            background: $ow-color-grey;
-            border-color: $sivanka-primary;
-            color: $sivanka-primary;
+            background: $sv-cream;
+            border-color: $sv-bordo;
+            color: $sv-bordo;
         }
     }
 
@@ -147,28 +177,47 @@ header, footer, .nav-main {
         padding: 11px 24px;
         font-size: 15px;
         font-weight: 600;
-        border: 1px solid $sivanka-primary;
-        border-radius: $sivanka-r8;
-        background: $sivanka-primary;
-        color: $sivanka-white;
+        border: 1px solid $sv-bordo;
+        border-radius: $sv-r-chrome;
+        background: $sv-bordo;
+        color: $sv-white;
 
         &:hover,
         &:focus,
         &:active {
-            background: $sivanka-primary-hover;
-            border-color: $sivanka-primary-hover;
-            color: $sivanka-white;
+            background: $sv-bordo-hover;
+            border-color: $sv-bordo-hover;
+            color: $sv-white;
         }
     }
 
     .cookie-permission-content {
         font-size: 13.5px;
         line-height: 1.5;
-        color: $sivanka-text;
+        color: $sv-ink;
 
         a {
-            color: $sivanka-primary;
+            color: $sv-bordo;
             font-weight: 600;
         }
     }
+}
+
+// ============================================================
+//  Small structural helpers that replace inline styles in Twig
+// ============================================================
+
+// Pre-JS state for the active-filter row. Deliberately NOT Bootstrap's `d-none`:
+// OwListingPlugin toggles `style.display` between none and flex, and `!important`
+// would make the inline value unreachable.
+.is-hidden {
+    display: none;
+}
+
+// A zero-size probe the filter panel measures against; it must take no space and
+// stay out of the accessibility tree's way.
+.filter-panel-measure-shim {
+    width: 0;
+    height: 0;
+    overflow: hidden;
 }

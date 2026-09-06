@@ -3,7 +3,7 @@ import './preview';
 
 Shopware.Service('cmsService').registerCmsBlock({
     name: 'sivanka-hero',
-    label: 'Sivanka Hero',
+    label: 'sw-cms.blocks.sivanka.sivankaHero.label',
     category: 'sivanka',
     component: 'sw-cms-block-sivanka-hero',
     previewComponent: 'sw-cms-preview-sivanka-hero',
@@ -12,7 +12,7 @@ Shopware.Service('cmsService').registerCmsBlock({
         marginTop: '0px',
         marginLeft: '0px',
         marginRight: '0px',
-        sizingMode: 'boxed'
+        sizingMode: 'full_width'
     },
     slots: {
         hero: 'sivanka-hero'

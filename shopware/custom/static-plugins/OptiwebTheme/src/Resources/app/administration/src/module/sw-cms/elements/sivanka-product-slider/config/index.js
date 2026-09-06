@@ -6,6 +6,7 @@ const { Criteria } = Shopware.Data;
 
 Component.register('sw-cms-el-config-sivanka-product-slider', {
     template,
+    emits: ['element-update'],
     mixins: [Mixin.getByName('cms-element')],
     inject: ['repositoryFactory'],
     data() {
@@ -43,15 +44,24 @@ Component.register('sw-cms-el-config-sivanka-product-slider', {
             this.element.config.selectionMode.value = val;
             if (val === 'manual') this.parentCategoryIdLocal = '';
             if (val === 'from-category') this.productIdsLocal = [];
+            this.onElementUpdate();
         },
         parentCategoryIdLocal(val) {
             this.element.config.parentCategoryId.value = val || '';
+            this.onElementUpdate();
         },
         productIdsLocal(val) {
             this.element.config.productIds.value = Array.isArray(val) ? val : [];
+            this.onElementUpdate();
         },
         imageIdLocal(val) {
             this.element.config.image.value = val || null;
+            this.onElementUpdate();
+        },
+    },
+    methods: {
+        onElementUpdate() {
+            this.$emit('element-update', this.element);
         },
     }
 });

@@ -19,7 +19,7 @@
 
         .error_404 {
             z-index: 1;
-            color: $ow-color-black;
+            color: $sv-ink;
             position: relative;
             @include margin('top', 40, true);
             @include margin('bottom', 50, true);

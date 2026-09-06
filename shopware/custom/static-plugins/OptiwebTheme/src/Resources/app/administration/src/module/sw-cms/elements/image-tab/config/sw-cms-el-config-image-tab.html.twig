@@ -3,12 +3,12 @@
         <sw-text-field label="Title" v-model="element.config.title.value">
         </sw-text-field>
 
-        <sw-tabs>
-            <sw-tabs-item @click.native="activeTab = index" v-for="(tab, index) in computedTabs" :ref="'tab' + index"
-                          :active="index == activeTab">
-                Image tab {{ index + 1 }}
-            </sw-tabs-item>
-        </sw-tabs>
+        <mt-tabs
+            :key="tabItems.length"
+            :items="tabItems"
+            :default-item="tabItems[activeTab] ? tabItems[activeTab].name : ''"
+            @new-item-active="onTabChange"
+        />
         <div v-for="(tab, index) in computedTabs">
             <div v-if="index === activeTab">
 
@@ -65,10 +65,10 @@
                 </div>
             </div>
         </div>
-        <sw-button-group style="margin-top:32px">
+        <div style="margin-top:32px">
             <mt-button variant="primary" @click="createNewTab" >
                 Add new image
             </mt-button>
-        </sw-button-group>
+        </div>
     </div>
 {% endblock %}

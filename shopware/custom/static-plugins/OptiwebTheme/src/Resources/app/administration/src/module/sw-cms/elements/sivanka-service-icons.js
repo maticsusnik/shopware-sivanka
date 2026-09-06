@@ -21,6 +21,14 @@ export const SIVANKA_SERVICE_ICON_KEYS = [
     'wrench',
     'clock',
     'arrow',
+    'truck',
+    'store',
+    'chat',
+    'heart',
+    'thumbs-up',
+    'user',
+    'gift',
+    'sparkle',
 ];
 
 export function sivankaIconSnippet(key) {

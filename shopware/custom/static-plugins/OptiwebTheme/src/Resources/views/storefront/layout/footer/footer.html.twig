@@ -7,11 +7,14 @@
 {% endblock %}
 
 {% block layout_footer_copyright %}
-<div class="container footer-copyright row justify-content-between">
-    <div class="footer-copyright-text col-auto px-0 px-xxl-3">
+{# The same container as every other band on the page, so the copyright lines up
+   with the footer columns above it. `px-xxl-3` used to add 16px to each cell at
+   >=1400 only, which pushed the text 15px right of the content column. #}
+<div class="container footer-copyright row g-0 justify-content-between">
+    <div class="footer-copyright-text col-auto px-0">
         {{ 'footer.copyrightInfo'|trans|sw_sanitize }}
     </div>
-    <div class="footer-copyright-links col-auto px-0 px-xxl-3">
+    <div class="footer-copyright-links col-auto px-0">
         <a href="{{ 'optiweb.privacyPolicyUrl'|trans }}"
            title="{{ 'optiweb.privacyPolicyText'|trans|sw_sanitize }}"
            class="footer-copyright-link">

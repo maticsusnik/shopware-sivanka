@@ -14,6 +14,19 @@
     </card>
 
     <card>
+        <title>Zgornja vrstica</title>
+        <title lang="en-GB">Top bar</title>
+
+        <input-field type="float">
+            <name>freeShippingThreshold</name>
+            <label>Prag za brezplačno dostavo (€)</label>
+            <label lang="en-GB">Free shipping threshold (EUR)</label>
+            <helpText>Znesek, nad katerim je dostava brezplačna. Prikaže se v zgornji vrstici in v košarici. Pustite prazno, da se sporočilo skrije.</helpText>
+            <helpText lang="en-GB">Order value above which shipping is free. Shown in the top bar and in the cart. Leave empty to hide the message.</helpText>
+        </input-field>
+    </card>
+
+    <card>
         <title>Footer information</title>
 
         <component name="sw-text-editor">

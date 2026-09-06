@@ -1,0 +1,140 @@
+// =============================================================================
+//  Sivanka v2 — base reset
+//  The reference pages carry a blunt reset (`p{margin:0}`, `ul,ol{list-style:none}`,
+//  `body{overflow-x:hidden}`). Those are safe in a single-file design mock and are
+//  NOT safe here:
+//   - `p{margin:0}` would collapse paragraph spacing inside CMS rich text and
+//     product descriptions, which the mock never renders.
+//   - `ul,ol{list-style:none}` would strip bullets from shop-owner-authored content.
+//   - `overflow-x:hidden` hides horizontal-overflow bugs instead of fixing them,
+//     and this build asserts `scrollWidth === clientWidth` at every breakpoint.
+//  So they are applied per component instead. Everything below is global.
+// =============================================================================
+
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
+// Trap: `select` in particular falls back to Arial without this. Bootstrap's
+// reboot declares it, but the Storefront's own form styling re-specifies
+// `font-family` on some controls — restate it at a higher cascade position.
+input,
+select,
+textarea,
+button {
+    font-family: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+img,
+svg {
+    max-width: 100%;
+}
+
+a {
+    color: $sv-bordo;
+    text-decoration: none;
+
+    &:hover,
+    &:focus {
+        color: $sv-bordo-hover;
+        text-decoration: none;
+    }
+}
+
+// -----------------------------------------------------------------------------
+//  Focus. The reference never draws a focus state; the verification checklist
+//  requires one on every interactive element. Derived: a 2px bordo ring at 2px
+//  offset, which clears every surface in the palette at AA and never overlaps
+//  the 1px component border.
+// -----------------------------------------------------------------------------
+:focus-visible {
+    outline: 2px solid $sv-bordo;
+    outline-offset: 2px;
+}
+
+// Bootstrap paints a box-shadow ring on .btn/.form-control; on a bordo fill it is
+// invisible. Let the outline above do the work instead.
+.btn:focus-visible,
+.form-control:focus-visible,
+.form-select:focus-visible {
+    box-shadow: none;
+}
+
+// -----------------------------------------------------------------------------
+//  Selection + scroll anchoring
+// -----------------------------------------------------------------------------
+::selection {
+    background: $sv-bordo-tint;
+    color: $sv-ink;
+}
+
+// -----------------------------------------------------------------------------
+//  Minimum touch target below 1280px.
+//  The reference applies this with a blanket `main a, main button { min-height:46px }`
+//  plus `display:inline-flex`. That is safe in a single-file mock with known markup
+//  and destructive here — it would rewrite stretched-link overlays, image links and
+//  card wrappers. So the rule is applied to the real interactive chrome instead,
+//  and the assertion sweep is what proves nothing was missed.
+//
+//  `min-height` does nothing on an inline box, so anything listed here also gets a
+//  flex display.
+// -----------------------------------------------------------------------------
+@media (max-width: $sv-bp-touch) {
+    .main-navigation .nav-link,
+    .nav-main .nav-link,
+    .sivanka-topbar a,
+    .header-logo-main-link,
+    .footer-main a,
+    .footer-bottom a,
+    .product-name,
+    .page-link,
+    .filter-panel-wrapper-toggle,
+    .btn,
+    .header-actions a,
+    .header-actions button,
+    .offcanvas a,
+    .offcanvas button,
+    .breadcrumb a,
+    .breadcrumb-link,
+    .category-navigation-link,
+    .product-wishlist-action,
+    .login-password-recover a,
+    .form-text a,
+    .checkout-aside a,
+    .account-menu a,
+    .account-aside a {
+        display: inline-flex;
+        align-items: center;
+        min-height: $sv-touch;
+    }
+
+    // Buttons centre their own content
+    .btn,
+    .page-link,
+    .filter-panel-wrapper-toggle,
+    .header-actions a,
+    .header-actions button {
+        justify-content: center;
+    }
+
+    // Icon-only controls are square
+    .header-actions a,
+    .header-actions button,
+    .page-link,
+    a[aria-label]:not(.header-logo-main-link):empty,
+    button[aria-label]:empty {
+        min-width: $sv-touch;
+    }
+
+    // The skip link is 1x1 until focused; it must still be a real target when it is.
+    .skip-to-content-link:focus,
+    .skip-to-content-link:focus-visible {
+        display: inline-flex;
+        align-items: center;
+        min-height: $sv-touch;
+    }
+}

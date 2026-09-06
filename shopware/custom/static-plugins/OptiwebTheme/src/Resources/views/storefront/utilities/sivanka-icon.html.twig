@@ -3,8 +3,12 @@
    Usage:
        {% sw_include '@Storefront/storefront/utilities/sivanka-icon.html.twig' with {
            sivankaIcon: 'ruler',
-           sivankaIconSize: 22
+           sivankaIconSize: 22,
+           sivankaIconStroke: 1.6
        } only %}
+
+   The reference draws its icon cards at stroke-width 1.6 (the default here) and the
+   two trust rows at 1.5, hence the override.
 
    The glyph inherits its color from `currentColor`. Keep the key list in sync with
    `Resources/app/administration/src/module/sw-cms/elements/sivanka-service-icons.js`. #}
@@ -22,15 +26,27 @@
         'button': '<circle cx="12" cy="12" r="7"/><circle cx="10" cy="10" r="1"/><circle cx="14" cy="10" r="1"/><circle cx="10" cy="14" r="1"/><circle cx="14" cy="14" r="1"/>',
         'wrench': '<path d="M14 7a4 4 0 1 0 4 4l3 3-3 3-3-3a4 4 0 0 1-4-4z"/><path d="M11 10L4 17l3 3 7-7"/>',
         'clock': '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
-        'arrow': '<path d="M5 12h14M13 6l6 6-6 6"/>'
+        'arrow': '<path d="M5 12h14M13 6l6 6-6 6"/>',
+        'truck': '<path d="M3 7h11v8H3zM14 9h4l3 3v3h-7z"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/>',
+        'store': '<path d="M4 9h16v11H4z"/><path d="M3 9l2-4h14l2 4"/><path d="M9 20v-6h6v6"/>',
+        'chat': '<path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12.5h5"/>',
+        'heart': '<path d="M12 20s-7-4.6-7-9.4A3.9 3.9 0 0 1 12 8a3.9 3.9 0 0 1 7 2.6C19 15.4 12 20 12 20z"/>',
+        'thumbs-up': '<path d="M7 10v10H4V10z"/><path d="M7 10l4-6a2 2 0 0 1 3 2l-1 4h5a2 2 0 0 1 2 2.4l-1.4 6A2 2 0 0 1 16.6 20H7z"/>',
+        'user': '<circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/>',
+        'gift': '<path d="M4 11h16v9H4z"/><path d="M3 7h18v4H3z"/><path d="M12 7v13"/><path d="M12 7S10.5 3.5 8.5 4.2 8 7 12 7zM12 7s1.5-3.5 3.5-2.8S16 7 12 7z"/>',
+        'sparkle': '<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M18 15.5l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/>',
+        'chevron-down': '<path d="M6 9.5l6 6 6-6"/>',
+        'arrow-left': '<path d="M19 12H5M11 6l-6 6 6 6"/>',
+        'menu': '<path d="M4 6h16M4 12h16M4 18h16"/>'
     } %}
 
     {% set sivankaIconSize = sivankaIconSize|default(22) %}
+    {% set sivankaIconStroke = sivankaIconStroke|default(1.6) %}
 
     {% if sivankaIconPaths[sivankaIcon] is defined %}
         <svg class="sivanka-icon sivanka-icon--{{ sivankaIcon }}"
              width="{{ sivankaIconSize }}" height="{{ sivankaIconSize }}" viewBox="0 0 24 24"
-             fill="none" stroke="currentColor" stroke-width="1.6"
+             fill="none" stroke="currentColor" stroke-width="{{ sivankaIconStroke }}"
              stroke-linecap="round" stroke-linejoin="round"
              aria-hidden="true" focusable="false">{{ sivankaIconPaths[sivankaIcon]|raw }}</svg>
     {% endif %}

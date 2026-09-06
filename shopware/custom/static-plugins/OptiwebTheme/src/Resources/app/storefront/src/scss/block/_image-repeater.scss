@@ -9,7 +9,7 @@
         position: absolute;
         width: 100%;
         height: 1px;
-        background: $ow-color-grey-9;
+        background: $sv-ink;
         display: block;
         top: 50%;
         z-index: 0;
@@ -17,7 +17,7 @@
 
     span {
         z-index: 1;
-        background: $ow-color-white;
+        background: $sv-white;
         position: relative;
         padding: 0 30px;
     }

@@ -2,6 +2,7 @@
 
 namespace OptiwebProductEnquiry\Core\Content\ProductEnquiry;
 
+use OptiwebProductEnquiry\Core\Content\ProductEnquiryLine\ProductEnquiryLineCollection;
 use Shopware\Core\Framework\DataAbstractionLayer\Entity;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityIdTrait;
 
@@ -19,7 +20,9 @@ class ProductEnquiryEntity extends Entity
     protected string $productNumber;
     protected ?string $productOption = null;
     protected int $quantity;
+    protected int $productCount = 1;
     protected ?string $message = null;
+    protected ?ProductEnquiryLineCollection $lines = null;
     protected ProductEnquiryStatus $status;
 
     public function getSalesChannelId(): string { return $this->salesChannelId; }
@@ -51,6 +54,10 @@ class ProductEnquiryEntity extends Entity
 
     public function getQuantity(): int { return $this->quantity; }
     public function setQuantity(int $quantity): void { $this->quantity = $quantity; }
+    public function getProductCount(): int { return $this->productCount; }
+    public function setProductCount(int $productCount): void { $this->productCount = $productCount; }
+    public function getLines(): ?ProductEnquiryLineCollection { return $this->lines; }
+    public function setLines(?ProductEnquiryLineCollection $lines): void { $this->lines = $lines; }
 
     public function getMessage(): ?string { return $this->message; }
     public function setMessage(?string $message): void { $this->message = $message; }

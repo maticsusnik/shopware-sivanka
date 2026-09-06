@@ -16,8 +16,8 @@
 .is--sidebar .filter-panel-item {
     // Each filter becomes its own rounded, bordered card (design mock)
     margin: 0;
-    border: 1px solid $sivanka-card-border;
-    border-radius: $sivanka-r16;
+    border: 1px solid $sv-border;
+    border-radius: $sv-r-panel;
     padding: 4px 20px 18px;
 
     &-toggle {
@@ -25,22 +25,22 @@
         margin-top: 0;
         transition: none;
         padding: 14px 0 8px;
-        font-family: $sivanka-serif;
+        font-family: $sv-serif;
         font-size: 18px;
-        font-weight: 700;
-        color: $sivanka-text;
+        font-weight: 600;
+        color: $sv-ink;
 
         .icon, svg {
-            color: $sivanka-primary;
+            color: $sv-bordo;
         }
 
         &[aria-expanded=true] {
-            color: $sivanka-text;
+            color: $sv-ink;
             margin-bottom: 0;
             border-bottom: none;
 
             .icon, svg {
-                color: $sivanka-primary;
+                color: $sv-bordo;
             }
         }
 
@@ -77,7 +77,7 @@
         padding: 0;
         font-size: 11.5px;
         font-weight: 400;
-        color: $sivanka-text-soft;
+        color: $sv-ink-muted;
         position: relative;
     }
 
@@ -86,15 +86,15 @@
     .max-input {
         width: 100%;
         min-width: 0;
-        border: 1px solid $sivanka-input-border;
-        border-radius: 10px;
+        border: 1px solid $sv-border;
+        border-radius: $sv-r-field;
         height: 40px;
         padding: 0 26px 0 12px;
         font-size: 14px;
-        color: $sivanka-text;
+        color: $sv-ink;
 
         &:focus {
-            border-color: $sivanka-primary-light;
+            border-color: $sv-bordo;
             box-shadow: none;
         }
     }
@@ -104,7 +104,7 @@
         position: absolute;
         right: 12px;
         bottom: 11px;
-        color: $sivanka-text-soft;
+        color: $sv-ink-muted;
         font-size: 13px;
         pointer-events: none;
     }
@@ -113,12 +113,12 @@
     .filter-range-divider {
         align-self: flex-start;
         margin-top: 28px;
-        color: #c9bcb4;
+        color: $sv-meta;
     }
 
     .form-check-input[type=checkbox] {
         border-radius: 0;
-        border-color: $ow-color-grey-7;
+        border-color: $sv-ink-muted;
         width: 1.5rem;
         height: 1.5rem;
         margin-top: 0;
@@ -173,8 +173,8 @@
 
     /* Handle */
     &::-webkit-scrollbar-thumb {
-        background: #767676;
-        border-radius: 10px;
+        background: $sv-ink-muted;
+        border-radius: $sv-r-field;
     }
 
     .filter-multi-select-list-item.disabled,
@@ -212,8 +212,8 @@
 
         /* Handle */
         &::-webkit-scrollbar-thumb {
-            background: #767676;
-            border-radius: 10px;
+            background: $sv-ink-muted;
+            border-radius: $sv-r-field;
         }
     }
 }

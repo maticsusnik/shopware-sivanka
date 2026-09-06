@@ -1,6 +1,6 @@
 {% block element_sivanka_icon_card %}
     {% set config = element.fieldConfig.elements %}
-    {% set variant = config.variant.value in ['card', 'fact'] ? config.variant.value : 'card' %}
+    {% set variant = config.variant.value in ['card', 'fact', 'medallion'] ? config.variant.value : 'card' %}
 
     <div class="cms-element-{{ element.type }} sivanka-icon-card sivanka-icon-card--{{ variant }}">
         {% block element_sivanka_icon_card_icon %}
@@ -8,7 +8,7 @@
                 <span class="sivanka-icon-card__icon">
                     {% sw_include '@Storefront/storefront/utilities/sivanka-icon.html.twig' with {
                         sivankaIcon: config.icon.value,
-                        sivankaIconSize: 22
+                        sivankaIconSize: variant == 'medallion' ? 32 : 22
                     } only %}
                 </span>
             {% endif %}
@@ -18,6 +18,10 @@
             <div class="sivanka-icon-card__body">
                 {% if config.title.value %}
                     <h3 class="sivanka-icon-card__title">{{ config.title.value }}</h3>
+                {% endif %}
+                {# The medallion card separates title from copy with a short bordo rule. #}
+                {% if variant == 'medallion' and config.title.value and config.text.value %}
+                    <span class="sivanka-icon-card__rule" aria-hidden="true"></span>
                 {% endif %}
                 {% if config.text.value %}
                     <p class="sivanka-icon-card__text">{{ config.text.value|nl2br }}</p>

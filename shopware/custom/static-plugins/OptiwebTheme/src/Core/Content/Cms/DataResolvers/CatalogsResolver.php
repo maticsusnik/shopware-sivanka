@@ -47,13 +47,14 @@ class CatalogsResolver extends AbstractCmsElementResolver
         $images = $result->get("media");
         $catalogs = $this->getCatalogs($slot);
 
-        if (!$images) return;
+        $assocImages = [];
+        if ($images) {
+            $assocImages = $images->reduce(function ($assocMedia, $image) {
+                $assocMedia[$image->getId()] = $image;
 
-        $assocImages = $images->reduce(function ($assocMedia, $image) {
-            $assocMedia[$image->getId()] = $image;
-
-            return $assocMedia;
-        }, []);
+                return $assocMedia;
+            }, []);
+        }
 
         foreach ($catalogs as $index => $catalog) {
             if (!isset($catalog["image"]["value"]) || !isset($assocImages[$catalog["image"]["value"]])) {

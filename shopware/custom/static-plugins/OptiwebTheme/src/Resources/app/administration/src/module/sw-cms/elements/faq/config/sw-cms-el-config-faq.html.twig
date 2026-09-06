@@ -11,17 +11,17 @@
                                    :copyableTooltip="false">
                 </sw-textarea-field>
                 <div>
-                    <sw-button variant="danger" size="small" @click="removeFaq(index)">
+                    <mt-button variant="critical" size="small" @click="removeFaq(index)">
                         Remove
-                    </sw-button>
+                    </mt-button>
                 </div>
             </div>
         </div>
         <div v-else>
             <sw-alert variant="info">Insert faq questions.</sw-alert>
         </div>
-        <sw-button variant="ghost" @click="createNewFaq()">
+        <mt-button variant="secondary" ghost @click="createNewFaq()">
             Add new faq
-        </sw-button>
+        </mt-button>
     </div>
 {% endblock %}

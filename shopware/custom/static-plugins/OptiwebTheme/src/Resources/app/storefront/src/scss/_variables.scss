@@ -1,34 +1,143 @@
-$ow-color-black: #000000;
-$ow-color-white: #FFFFFF;
-$ow-color-base: #A02B6B;
-$ow-color-grey: #F7F3F0;
-$ow-color-grey-border: #E6E2DE;
-$ow-color-grey-1: $ow-color-grey;
-$ow-color-grey-3: $ow-color-grey-border;
-$ow-color-grey-4: #D9D9D9;
-$ow-color-grey-7: #888;
-$ow-color-grey-9: #303030;
+// =============================================================================
+//  Sivanka v2 — design tokens
+//  -----------------------------------------------------------------------
+//  Extracted from docs/Sivanka v2 (6)/handoff_sivanka_v2/reference/, verified
+//  across all 8 approved pages. The reference HTML is the source of truth; where
+//  it disagreed with DESIGN-SYSTEM.md the HTML won (see the notes below).
+//
+//  Nothing outside this file is a token. If a value you need is not here, derive
+//  it from the nearest one and add it here with a comment — never inline a hex,
+//  a radius or a shadow in a partial.
+// =============================================================================
 
-$ow-color-red-stock: #F43319;
-$ow-color-green-stock: #2DCB48;
-$ow-color-orange-stock: #F68B1E;
 
-$ow-box-shadow: 0 16px 40px 0 rgba(0, 0, 0, 0.10);
+// -----------------------------------------------------------------------------
+//  Colour — 11 values, nothing else
+// -----------------------------------------------------------------------------
+$sv-bordo:          #8E2247;  // primary: buttons, links, icons, badges, active
+$sv-bordo-hover:    #6E1A37;  // hover/focus on anything bordo
+$sv-bordo-head:     #5C1229;  // h1, h2, card titles, listing prices
+$sv-bordo-tint:     #F7E9EE;  // icon medallions, tinted surfaces
+$sv-ink:            #2E1A20;  // body text, product name, product price
+$sv-ink-muted:      #6B5A55;  // descriptions, leads, secondary labels
+$sv-meta:           #C9BDB6;  // breadcrumb separators, fine print
+$sv-bg:             #FDF8F2;  // page background
+$sv-cream:          #F6EDE2;  // topbar, bands, panels, buy box
+$sv-border:         #EADFD1;  // cards, inputs, dividers
+$sv-border-strong:  #E3D6C6;  // search field, topbar underline
+$sv-white:          #FFFFFF;  // card and panel surfaces
+
+//  Two sanctioned exceptions — nothing else may leave the list above.
+$sv-in-stock:       #2E7D53;  // "Na zalogi" on product detail
+$sv-shadow-soft:    0 2px 8px rgba(0, 0, 0, .1);            // small chrome
+$sv-shadow-deep:    0 18px 44px -26px rgba(92, 18, 41, .35); // hero imagery — warm, not black
+
+//  Two derived shadow roles the design does not draw:
+//   - the same soft shadow cast upward, for bars docked to the bottom edge
+//   - the focus ring; the reference draws no focus state at all and the checklist
+//     requires one. Bordo at 15% clears every surface in the palette.
+$sv-shadow-soft-up: 0 -2px 8px rgba(0, 0, 0, .1);
+$sv-focus-ring:     0 0 0 3px rgba(142, 34, 71, .15);
+
+//  Derived states the design does not draw (listed for review):
+//   - low stock      -> bordo, reads as "attention" and stays on-brand
+//   - out of stock   -> ink-muted, reads as "unavailable" rather than "error"
+//  Semantic state colours. The design draws none, and the verification checklist
+//  forbids any colour outside the palette — so every state is derived from it:
+//   - error   -> bordo. Already a deep red, in-palette, legible on cream and white.
+//                Error text also carries weight 600 and an icon, so the meaning does
+//                not rest on hue alone.
+//   - success -> the sanctioned in-stock green, same semantic.
+//   - surfaces for both are cream, not a tinted red/green.
+$sv-error:          $sv-bordo;
+$sv-success:        $sv-in-stock;
+$sv-state-surface:  $sv-cream;
+
+$sv-low-stock:      $sv-bordo;
+$sv-out-of-stock:   $sv-ink-muted;
+
+//  Cream overlay gradients over photography use ONE family only.
+$sv-overlay-rgb:    250, 242, 236;
+@function sv-overlay($alpha) {
+    @return rgba($sv-overlay-rgb, $alpha);
+}
+
+
+// -----------------------------------------------------------------------------
+//  Type
+// -----------------------------------------------------------------------------
+//  Space Mono is NOT part of this system. It appears in zero reference files.
+//  Eyebrows are Inter 700 uppercase.
+$sv-serif: 'Playfair Display', Georgia, serif;  // all headings, product-detail price
+$sv-sans:  'Inter', sans-serif;                 // body, UI, eyebrows
+
+//  Headings are weight 600 — with exactly one sanctioned exception, the
+//  product-detail "Opis" heading, which the reference draws at 700.
+$sv-heading-weight:      600;
+$sv-heading-weight-alt:  700;
+
+
+// -----------------------------------------------------------------------------
+//  Shape — every radius is a SINGLE value. No asymmetric shorthands anywhere.
+//  8px is a real role (69 uses across all 8 pages) even though DESIGN-SYSTEM.md
+//  omits it; 12px covers both cards and the product-detail CTA.
+// -----------------------------------------------------------------------------
+$sv-r-badge:   3px;   // "Novo", "Priljubljeno"
+$sv-r-btn-sm:  4px;   // product-card add-to-cart (ghost)
+$sv-r-btn:     6px;   // link CTAs — hero, "Vse storitve", "Obiščite trgovino"
+$sv-r-chrome:  8px;   // header search + icon buttons, cream info panels and chips
+$sv-r-field:  10px;   // filter inputs, sort select, pagination items
+$sv-r-card:   12px;   // cards, and the product-detail "Dodaj v košarico"
+$sv-r-panel:  14px;   // cream panels, buy box, hero imagery, CTA band
+$sv-r-round:  50%;    // icon medallions, step numbers, round icon buttons
+
+
+// -----------------------------------------------------------------------------
+//  Layout
+// -----------------------------------------------------------------------------
+$sv-container:        1406px;  // outer container
+$sv-inner:            1366px;  // inner content column
+$sv-gutter:             20px;  // outer container padding, desktop → 1100
+$sv-gutter-sm:          16px;  // ≤720
+$sv-gutter-xs:          12px;  // ≤380
+$sv-gutter-wide:        28px;  // topbar and cream panels — the reference's second
+                               // `padding` declaration overrides the first
+$sv-card-product:      330px;
+$sv-card-category:     259px;
+$sv-card-overview-img: 220px;
+$sv-touch:              46px;  // minimum touch target below 1280
+
+
+// -----------------------------------------------------------------------------
+//  Breakpoints in use: 1420 · 1280 · 1200 · 1150 · 1100 · 900 · 720 · 480 · 380
+//  Verified down to 340px with zero horizontal scroll.
+// -----------------------------------------------------------------------------
+$sv-bp-footer:  1420px;
+$sv-bp-touch:   1280px;
+$sv-bp-split:   1200px;  // two-column page layouts wrap
+$sv-bp-overview:1150px;  // 2-up overview card grid goes single column
+$sv-bp-tablet:  1100px;
+$sv-bp-portrait: 900px;
+$sv-bp-phone:    720px;
+$sv-bp-small:    480px;
+$sv-bp-tiny:     380px;
+
+
+// =============================================================================
+//  Non-token plumbing kept from the previous theme
+// =============================================================================
 $assets-path: '/bundles/optiwebtheme/assets';
 
-/**
- * bootstrap variables
- */
 :root {
-    --bs-success-rgb: 45, 203, 72;
+    --bs-success-rgb: 46, 125, 83;  // $sv-in-stock
 }
 
 /**
  * General sizes
  */
 $bs-gutter-x: 40px;
-$content-width: 1366px + $bs-gutter-x;
-$header-width: 1366px + $bs-gutter-x;
+$content-width: $sv-inner + $bs-gutter-x;
+$header-width: $sv-inner + $bs-gutter-x;
 $wide-content-width: 1880px + $bs-gutter-x;
 $general-element-margin: 80; //in px
 
@@ -54,50 +163,6 @@ $product-buy-spacer: 20px;
  * checkout
  */
 $max-price-width: 100px;
-
-// ---- Sivanka Design System ----
-$sivanka-white:         #FFFFFF;
-$sivanka-primary:       #A02B6B;
-$sivanka-primary-light: #D05C8C;
-$sivanka-primary-hover: #87245A;
-$sivanka-accent:        #F7DCE7;
-$sivanka-beige:         #F7F3F0;
-$sivanka-text:          #1B1B1B;
-$sivanka-muted:         $sivanka-text;
-$sivanka-border:        #E6E2DE;
-$sivanka-gold:          #E8A100;
-
-// Warmer border tones used by the listing/category design mock
-$sivanka-card-border:   #F0EBE6; // product cards, sidebar cards
-$sivanka-input-border:  #EBEBEB; // form inputs, sort select, pagination
-$sivanka-side-hover:    #FAF2F7; // sidebar link / subcategory pill hover
-$sivanka-text-muted:    #6B5560; // secondary copy (descriptions)
-$sivanka-text-soft:     #8A7C74; // meta text (counts, breadcrumb)
-$sivanka-heading-dark:  #2A1420; // deep plum used for prices / h1
-
-// Product-detail design mock
-$sivanka-info-bg:       #FAF1F5; // buy-box info panel
-$sivanka-info-border:   #F2E3EA; // buy-box panel border
-$sivanka-divider:       #F0DBE6; // qty/price row separators
-$sivanka-gallery-bg:    $sivanka-white; // product gallery image frame (cream #FAF7F4 removed)
-$sivanka-qty-border:    #E7CDDA; // quantity stepper border
-$sivanka-in-stock:      #2E7D53; // "Na zalogi" availability label
-
-$sivanka-serif: "Playfair Display", Georgia, serif;
-$sivanka-sans:  "Inter", sans-serif;
-$sivanka-mono:  "Space Mono", monospace;
-
-$sivanka-r4:  4px;
-$sivanka-r8:  8px;
-$sivanka-r12: 12px;
-$sivanka-r16: 16px;
-$sivanka-r24: 24px;
-
-// Services pages (storitve) — CMS service blocks/elements
-$sivanka-accent-soft:   #FBEAF2; // icon tiles, soft magenta fill
-$sivanka-accent-border: #E6C7D8; // soft magenta hairline
-$sivanka-surface-tint:  #FAF1F5; // "fact" cards
-$sivanka-text-lead:     #4A3B43; // hero lead paragraph
 
 
 @keyframes spinner {

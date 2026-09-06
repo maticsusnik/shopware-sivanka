@@ -1,0 +1,50 @@
+{% sw_extends '@Storefront/storefront/page/wishlist/index.html.twig' %}
+
+{#
+ # Bulk-enquiry bar above the wishlist.
+ #
+ # It is rendered for the guest case too, even though the cards themselves only
+ # arrive later over AJAX: the JS plugin keeps itself hidden until it can see at
+ # least one checkbox, so the bar simply appears once the list has loaded.
+ #}
+{% block page_wishlist %}
+    {% set enquiryFormId = config('OptiwebProductEnquiry.config.enquiryForm') %}
+    {# Unset means on: the field was added after the plugin was installed, so no
+       default was ever written to system_config for existing shops. #}
+    {% set wishlistEnquiryEnabled = config('OptiwebProductEnquiry.config.wishlistEnquiry') ?? true %}
+
+    {% if enquiryFormId and wishlistEnquiryEnabled %}
+        <div class="wishlist-enquiry-bar is-empty"
+             data-optiweb-wishlist-enquiry="true"
+             data-optiweb-wishlist-enquiry-options="{{ {
+                 modalUrl: path('frontend.cms.page', { id: enquiryFormId })
+             }|json_encode }}"
+             data-snippet-select-all="{{ 'optiwebProductEnquiry.wishlist.selectAll'|trans|striptags }}"
+             data-snippet-deselect-all="{{ 'optiwebProductEnquiry.wishlist.deselectAll'|trans|striptags }}"
+             data-snippet-summary-one="{{ 'optiwebProductEnquiry.wishlist.summaryOne'|trans|striptags }}"
+             data-snippet-summary-many="{{ 'optiwebProductEnquiry.wishlist.summaryMany'|trans|striptags }}"
+             data-snippet-summary-none="{{ 'optiwebProductEnquiry.wishlist.summaryNone'|trans|striptags }}"
+             data-snippet-unexpected-error="{{ 'optiwebProductEnquiry.errors.unexpectedError'|trans|striptags }}">
+
+            <div class="wishlist-enquiry-bar-inner">
+                <div class="wishlist-enquiry-bar-text">
+                    <span class="wishlist-enquiry-bar-title">{{ 'optiwebProductEnquiry.wishlist.barTitle'|trans }}</span>
+                    <span class="wishlist-enquiry-bar-subtitle js-wishlist-enquiry-summary"></span>
+                </div>
+
+                <div class="wishlist-enquiry-bar-actions">
+                    <button type="button" class="btn btn-link js-wishlist-enquiry-toggle-all">
+                        {{ 'optiwebProductEnquiry.wishlist.deselectAll'|trans }}
+                    </button>
+
+                    <button type="button" class="btn btn-primary js-wishlist-enquiry-submit">
+                        {% sw_icon 'envelope' style { 'class': '' } %}
+                        <span class="text">{{ 'optiwebProductEnquiry.wishlist.send'|trans }}</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {{ parent() }}
+{% endblock %}

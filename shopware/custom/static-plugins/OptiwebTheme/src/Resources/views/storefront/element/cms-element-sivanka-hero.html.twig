@@ -1,81 +1,93 @@
+{# Home hero — reference/Sivanka Home v2 redesign.dc.html, section 1.
+
+   Full-bleed 520px band: two independently swappable photographs pinned left and
+   right at 32% (28 ≤900), each masked so it fades to nothing by the centre. The
+   middle of the band is the plain cream surface and the centred copy sits on it
+   directly — no overlay over the imagery. A white trust strip overlaps the band's
+   bottom edge by 58px (40 ≤900, 28 ≤720).
+
+   Below 720 the right photograph is dropped, the left one fills the band unmasked,
+   and the scrim carries a cream veil so the copy stays legible over it. #}
 {% block element_sivanka_hero %}
 {% set data = element.data %}
 {% if data is not empty %}
+{% set trustItems = [
+    { icon: data.trust1Icon, title: data.trust1Title, sub: data.trust1Sub },
+    { icon: data.trust2Icon, title: data.trust2Title, sub: data.trust2Sub },
+    { icon: data.trust3Icon, title: data.trust3Title, sub: data.trust3Sub },
+    { icon: data.trust4Icon, title: data.trust4Title, sub: data.trust4Sub }
+] %}
 <section class="sivanka-hero">
-    <div class="container">
-        <div class="sivanka-hero__box">
-            {% if data.backgroundImage %}
-            <div class="sivanka-hero__media">
-                {% sw_thumbnails 'sivanka-hero-bg' with {
-                    media: data.backgroundImage,
-                    sizes: { default: '1440px' },
-                    attributes: { class: 'sivanka-hero__photo', alt: data.headline|striptags|default('') }
+    <div class="sivanka-hero__box">
+        <div class="sivanka-hero__wash"></div>
+
+        {% if data.imageLeft %}
+            <div class="sivanka-hero__photo sivanka-hero__photo--left">
+                {% sw_thumbnails 'sivanka-hero-left' with {
+                    media: data.imageLeft,
+                    sizes: { default: '700px' },
+                    attributes: { alt: data.imageLeft.translated.alt ?: '' }
                 } %}
             </div>
-            <div class="sivanka-hero__scrim"></div>
+        {% endif %}
+
+        {% if data.imageRight %}
+            <div class="sivanka-hero__photo sivanka-hero__photo--right">
+                {% sw_thumbnails 'sivanka-hero-right' with {
+                    media: data.imageRight,
+                    sizes: { default: '700px' },
+                    attributes: { alt: data.imageRight.translated.alt ?: '' }
+                } %}
+            </div>
+        {% endif %}
+
+        <div class="sivanka-hero__scrim"></div>
+
+        <div class="sivanka-hero__text">
+            {% if data.headline %}
+                <h1 class="sivanka-hero__headline">{{ data.headline|nl2br }}</h1>
             {% endif %}
 
-            <div class="sivanka-hero__text">
-                {% if data.headline %}
-                <h1>
-                    {{ data.headline }}{% if data.headlineEmphasis %}<br><span class="sivanka-hero__em">{{ data.headlineEmphasis }}</span>{% endif %}
-                </h1>
-                {% endif %}
+            {% if data.subheadline %}
+                <p class="sivanka-hero__lead">{{ data.subheadline }}</p>
+            {% endif %}
 
-                {% if data.subheadline %}
-                <p>{{ data.subheadline }}</p>
-                {% endif %}
-
-                {% if data.primaryBtnLabel or data.secondaryBtnLabel %}
+            {% if data.primaryBtnLabel or data.secondaryBtnLabel %}
                 <div class="sivanka-hero__cta">
                     {% if data.primaryBtnLabel %}
-                    <a class="sivanka-btn-primary" href="{{ data.primaryBtnUrl ?: '#' }}">{{ data.primaryBtnLabel }}</a>
+                        <a class="sv-btn sv-btn--lg sv-btn--primary" href="{{ data.primaryBtnUrl ?: '#' }}">{{ data.primaryBtnLabel }}</a>
                     {% endif %}
                     {% if data.secondaryBtnLabel %}
-                    <a class="sivanka-btn-outline" href="{{ data.secondaryBtnUrl ?: '#' }}">{{ data.secondaryBtnLabel }}</a>
+                        <a class="sv-btn sv-btn--lg sv-btn--ghost" href="{{ data.secondaryBtnUrl ?: '#' }}">{{ data.secondaryBtnLabel }}</a>
                     {% endif %}
                 </div>
-                {% endif %}
-
-                {% set trustItems = [
-                    { icon: data.trust1Icon, title: data.trust1Title, sub: data.trust1Sub },
-                    { icon: data.trust2Icon, title: data.trust2Title, sub: data.trust2Sub },
-                    { icon: data.trust3Icon, title: data.trust3Title, sub: data.trust3Sub },
-                ] %}
-                {% if data.trust1Title or data.trust2Title or data.trust3Title %}
-                <div class="sivanka-hero__trust">
-                    {% for t in trustItems %}{% if t.title %}
-                    <div class="sivanka-trust">
-                        <span class="sivanka-trust__ic">
-                        {% if t.icon == 'truck' %}
-                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h11v8H3zM14 9h4l3 3v3h-7z"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
-                        {% elseif t.icon == 'shield' %}
-                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
-                        {% elseif t.icon == 'headphones' %}
-                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 13v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="13" width="4" height="6" rx="1.5"/><rect x="17" y="13" width="4" height="6" rx="1.5"/></svg>
-                        {% elseif t.icon == 'star' %}
-                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                        {% elseif t.icon == 'heart' %}
-                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-4.5-9.5-9C1 9 2.5 5.5 6 5.5c2 0 3.2 1.2 4 2.3.8-1.1 2-2.3 4-2.3 3.5 0 5 3.5 3.5 6.5C19 16.5 12 21 12 21Z"/></svg>
-                        {% elseif t.icon == 'return' %}
-                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8a9 9 0 0 1 16-3M3 5v3h3"/><path d="M21 16a9 9 0 0 1-16 3M21 19v-3h-3"/></svg>
-                        {% elseif t.icon == 'check' %}
-                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>
-                        {% else %}
-                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5"/><path d="M16 11l2 2 3-3"/></svg>
-                        {% endif %}
-                        </span>
-                        <div>
-                            <b>{{ t.title }}</b>
-                            {% if t.sub %}<span>{{ t.sub }}</span>{% endif %}
-                        </div>
-                    </div>
-                    {% endif %}{% endfor %}
-                </div>
-                {% endif %}
-            </div>
+            {% endif %}
         </div>
     </div>
+
+    {% if data.trust1Title or data.trust2Title or data.trust3Title or data.trust4Title %}
+        <div class="sivanka-hero__trustwrap">
+            <div class="sivanka-trust">
+                {% for item in trustItems %}
+                    {% if item.title %}
+                        <div class="sivanka-trust__item">
+                            <span class="sivanka-trust__medallion">
+                                {% sw_include '@Storefront/storefront/utilities/sivanka-icon.html.twig' with {
+                                    sivankaIcon: item.icon,
+                                    sivankaIconSize: 28,
+                                    sivankaIconStroke: 1.5
+                                } only %}
+                            </span>
+                            <span class="sivanka-trust__body">
+                                <b class="sivanka-trust__title">{{ item.title }}</b>
+                                {% if item.sub %}<span class="sivanka-trust__sub">{{ item.sub }}</span>{% endif %}
+                            </span>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
 </section>
 {% endif %}
 {% endblock %}

@@ -1,0 +1,12 @@
+{% block block_sivanka_promo %}
+    <div class="col-12 cms-block-sivanka-promo__inner">
+        <div class="sivanka-promo">
+            {% for slotName in ['promoOne', 'promoTwo', 'promoThree'] %}
+                {% sw_include '@Storefront/storefront/block/sivanka-service/slot.html.twig' with {
+                    slotName: slotName,
+                    slotClass: 'sivanka-promo__cell'
+                } %}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

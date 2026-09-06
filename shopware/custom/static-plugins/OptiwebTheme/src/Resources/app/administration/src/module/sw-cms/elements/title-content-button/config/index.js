@@ -20,8 +20,10 @@ Shopware.Component.register('sw-cms-el-config-title-content-button', {
         }
     },
 
+    emits: ['element-update'],
+
     mixins: [
-        'cms-element'
+        Shopware.Mixin.getByName('cms-element')
     ],
 
     created() {

@@ -10,25 +10,21 @@
     &__eyebrow {
         display: block;
         margin-bottom: 14px;
-        font-family: $sivanka-mono;
-        font-size: 11.5px;
-        font-weight: 700;
-        line-height: 17px;
-        letter-spacing: 1.61px;
+        @include sv-eyebrow;
         text-transform: uppercase;
-        color: $sivanka-primary;
+        color: $sv-bordo;
     }
 
     &__headline {
         margin: 0 0 18px;
-        font-family: $sivanka-serif;
+        font-family: $sv-serif;
         font-weight: 600;
-        color: $sivanka-text;
+        color: $sv-ink;
     }
 
     &__lead {
         margin: 0;
-        color: $sivanka-text-lead;
+        color: $sv-ink-muted;
         text-wrap: pretty;
     }
 
@@ -58,7 +54,7 @@
             font-size: 28px;
             line-height: 34px;
             letter-spacing: -0.28px;
-            color: $sivanka-heading-dark;
+            color: $sv-bordo-head;
         }
 
         .sivanka-intro__lead {
@@ -72,6 +68,28 @@
         font-size: 32px;
         line-height: 38px;
         letter-spacing: -0.32px;
+    }
+
+    // Home-page section heading: centred, on the section H2 role, with the
+    // rule-heart-rule flourish underneath and the lead centred below that.
+    &--home {
+        text-align: center;
+
+        .sivanka-intro__headline {
+            @include sv-h2;
+            margin: 0;
+        }
+
+        .sv-flourish {
+            justify-content: center;
+        }
+
+        .sivanka-intro__lead {
+            margin: 12px auto 0;
+            max-width: 640px;
+            font-size: 15.5px;
+            line-height: 25px;
+        }
     }
 }
 
@@ -100,15 +118,15 @@
 
     &__text {
         margin: 0;
-        color: $sivanka-text-muted;
+        color: $sv-ink-muted;
         text-wrap: pretty;
     }
 
     &--card {
         padding: 28px;
-        background: $sivanka-white;
-        border: 1px solid $sivanka-card-border;
-        border-radius: $sivanka-r16;
+        background: $sv-white;
+        border: 1px solid $sv-border;
+        border-radius: $sv-r-panel;
 
         .sivanka-icon-card__icon {
             display: flex;
@@ -117,14 +135,14 @@
             width: 46px;
             height: 46px;
             margin-bottom: 18px;
-            border-radius: $sivanka-r12;
-            background: $sivanka-accent-soft;
-            color: $sivanka-primary;
+            border-radius: $sv-r-card;
+            background: $sv-bordo-tint;
+            color: $sv-bordo;
         }
 
         .sivanka-icon-card__title {
             margin-bottom: 10px;
-            font-family: $sivanka-serif;
+            font-family: $sv-serif;
             font-size: 21px;
             font-weight: 600;
             line-height: 25px;
@@ -141,8 +159,8 @@
         align-items: center;
         gap: 16px;
         padding: 22px 26px;
-        background: $sivanka-surface-tint;
-        border-radius: $sivanka-r16;
+        background: $sv-cream;
+        border-radius: $sv-r-panel;
 
         .sivanka-icon-card__icon {
             flex: 0 0 46px;
@@ -151,9 +169,9 @@
             justify-content: center;
             width: 46px;
             height: 46px;
-            border-radius: $sivanka-r12;
-            background: $sivanka-white;
-            color: $sivanka-primary;
+            border-radius: $sv-r-card;
+            background: $sv-white;
+            color: $sv-bordo;
         }
 
         .sivanka-icon-card__title {
@@ -173,9 +191,9 @@
 .sivanka-step-card {
     height: 100%;
     padding: 28px;
-    background: $sivanka-white;
-    border: 1px solid $sivanka-border;
-    border-radius: $sivanka-r16;
+    background: $sv-white;
+    border: 1px solid $sv-border;
+    border-radius: $sv-r-panel;
 
     &__number {
         display: flex;
@@ -184,10 +202,10 @@
         width: 36px;
         height: 36px;
         margin-bottom: 18px;
-        border-radius: 50%;
-        background: $sivanka-primary;
-        color: $sivanka-white;
-        font-family: $sivanka-mono;
+        border-radius: $sv-r-round;
+        background: $sv-bordo;
+        color: $sv-white;
+        font-family: $sv-sans;
         font-size: 14px;
         font-weight: 700;
     }
@@ -203,7 +221,7 @@
         margin: 0;
         font-size: 14.5px;
         line-height: 24px;
-        color: $sivanka-text-muted;
+        color: $sv-ink-muted;
         text-wrap: pretty;
     }
 }
@@ -213,17 +231,17 @@
     display: block;
     height: 100%;
     overflow: hidden;
-    background: $sivanka-white;
-    border: 1px solid $sivanka-card-border;
-    border-radius: $sivanka-r16;
-    color: $sivanka-text;
+    background: $sv-white;
+    border: 1px solid $sv-border;
+    border-radius: $sv-r-panel;
+    color: $sv-ink;
     text-decoration: none;
     transition: border-color 0.18s;
 
     &:hover,
     &:focus {
-        border-color: $sivanka-accent-border;
-        color: $sivanka-text;
+        border-color: $sv-border;
+        color: $sv-ink;
         text-decoration: none;
     }
 
@@ -246,14 +264,14 @@
         justify-content: center;
         width: 42px;
         height: 42px;
-        border-radius: 11px;
-        background: $sivanka-accent-soft;
-        color: $sivanka-primary;
+        border-radius: $sv-r-card;
+        background: $sv-bordo-tint;
+        color: $sv-bordo;
     }
 
     &__title {
         margin: 0;
-        font-family: $sivanka-serif;
+        font-family: $sv-serif;
         font-weight: 600;
     }
 
@@ -261,7 +279,7 @@
         margin: 12px 0 16px;
         font-size: 14.5px;
         line-height: 24px;
-        color: $sivanka-text-muted;
+        color: $sv-ink-muted;
         text-wrap: pretty;
     }
 
@@ -271,12 +289,12 @@
         gap: 8px;
         font-size: 14px;
         font-weight: 600;
-        color: $sivanka-primary;
+        color: $sv-bordo;
     }
 
     /* wide — image column left, copy right (services overview) */
     &--wide {
-        border-radius: 18px;
+        border-radius: $sv-r-panel;
 
         &.sivanka-service-card--has-media {
             display: grid;
@@ -300,7 +318,7 @@
         .sivanka-service-card__image {
             width: 220px;
             height: 220px;
-            border-radius: 14px;
+            border-radius: $sv-r-panel;
 
             @include media-breakpoint-down(sm) {
                 width: 100%;
@@ -366,5 +384,208 @@
         .sivanka-service-card__link-label {
             @include visually-hidden;
         }
+    }
+
+    /* tile — the home "Kaj naredimo za vas" card: photograph on top, an icon
+       medallion straddling its bottom edge, centred copy, the lead time pinned to
+       the bottom and the link under it. */
+    &--tile {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        background: $sv-white;
+        border: 1px solid $sv-border;
+        border-radius: $sv-r-card;
+        overflow: hidden;
+        color: $sv-ink;
+        text-align: center;
+
+        &:hover {
+            color: $sv-ink;
+            text-decoration: none;
+        }
+
+        .sivanka-service-card__media {
+            position: relative;
+            display: block;
+            padding: 0;
+        }
+
+        .sivanka-service-card__image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            display: block;
+            border-radius: 0;
+        }
+
+        .sivanka-service-card__medallion {
+            position: absolute;
+            left: 50%;
+            bottom: -26px;
+            transform: translateX(-50%);
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: $sv-white;
+            border: 1px solid $sv-border;
+            border-radius: $sv-r-round;
+            color: $sv-bordo;
+        }
+
+        .sivanka-service-card__body {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            padding: 38px 24px 24px;
+        }
+
+        // No photograph, so no medallion to clear.
+        &:not(.sivanka-service-card--has-media) .sivanka-service-card__body {
+            padding-top: 28px;
+        }
+
+        .sivanka-service-card__head {
+            display: block;
+        }
+
+        .sivanka-service-card__title {
+            font-family: $sv-serif;
+            font-size: 19px;
+            font-weight: $sv-heading-weight;
+            line-height: 26px;
+            color: $sv-bordo-head;
+        }
+
+        .sivanka-service-card__text {
+            display: block;
+            margin: 10px 0 14px;
+            font-size: 14px;
+            line-height: 22px;
+            color: $sv-ink-muted;
+            text-wrap: pretty;
+        }
+
+        // Lead time / price note. Inter 700 uppercase, but ink-muted rather than the
+        // bordo eyebrow — the reference keeps it quiet at the foot of the card.
+        .sivanka-service-card__meta {
+            display: block;
+            margin-top: auto;
+            font-size: 11px;
+            font-weight: $sv-heading-weight-alt;
+            letter-spacing: 1.1px;
+            text-transform: uppercase;
+            color: $sv-ink-muted;
+        }
+
+        .sivanka-service-card__link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 14px 0 0;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: $sv-bordo;
+        }
+    }
+}
+
+/* ---------- sivanka-icon-card: medallion (home "Zakaj izbrati Šivanko?") ------- */
+// A white card in the cream panel: 66px tinted medallion, Playfair title, a short
+// bordo rule, then the copy. Below 720 it turns into a row and drops the rule.
+.sivanka-icon-card--medallion {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    background: $sv-white;
+    border: 1px solid $sv-border;
+    border-radius: $sv-r-card;
+    padding: 30px 24px 28px;
+
+    .sivanka-icon-card__icon {
+        width: 66px;
+        height: 66px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: $sv-bordo-tint;
+        border-radius: $sv-r-round;
+        color: $sv-bordo;
+        margin-bottom: 18px;
+        flex: 0 0 auto;
+
+        svg {
+            width: 32px;
+            height: 32px;
+        }
+    }
+
+    .sivanka-icon-card__body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-width: 0;
+    }
+
+    .sivanka-icon-card__title {
+        font-family: $sv-serif;
+        font-size: 19px;
+        font-weight: $sv-heading-weight;
+        line-height: 26px;
+        color: $sv-bordo-head;
+    }
+
+    .sivanka-icon-card__rule {
+        display: block;
+        width: 26px;
+        height: 1px;
+        background: $sv-bordo;
+        opacity: .35;
+        margin: 12px 0;
+    }
+
+    .sivanka-icon-card__text {
+        font-size: 14.5px;
+        line-height: 23px;
+        color: $sv-ink-muted;
+    }
+
+    // Below 720 the card turns into a row: the medallion on the left, the title and
+    // the copy stacked in a column beside it. The reference puts the title and the
+    // copy side by side here — a by-product of its flat markup — which reads badly on
+    // a phone; Matic asked for the stack.
+    @media (max-width: $sv-bp-phone) {
+        flex-direction: row;
+        align-items: center;
+        text-align: left;
+        gap: 16px;
+        padding: 20px;
+
+        .sivanka-icon-card__icon {
+            flex: 0 0 54px;
+            width: 54px;
+            height: 54px;
+            margin-bottom: 0;
+        }
+
+        .sivanka-icon-card__rule {
+            display: none;
+        }
+
+        .sivanka-icon-card__body {
+            flex: 1 1 auto;
+            align-items: flex-start;
+            text-align: left;
+        }
+    }
+
+    @media (max-width: $sv-bp-tiny) {
+        padding: 16px;
+        gap: 13px;
     }
 }

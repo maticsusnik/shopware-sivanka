@@ -1,5 +1,22 @@
 {% sw_extends '@Storefront/storefront/component/product/card/badges.html.twig' %}
 
+{# The reference draws one badge per card, top-left of the image frame: a 3px bordo
+   chip in Inter 700 uppercase. A rail can stamp its own label on every card
+   (`sliderBadge`); otherwise the product's own topseller / new flags apply. #}
+{% block component_product_badges_topseller %}
+    {% if sliderBadge is defined and sliderBadge %}
+        <span class="badge badge-slider">{{ sliderBadge }}</span>
+    {% elseif product.markAsTopseller %}
+        <span class="badge badge-topseller">{{ 'listing.boxLabelTopseller'|trans|sw_sanitize }}</span>
+    {% endif %}
+{% endblock %}
+
+{% block component_product_badges_new %}
+    {% if (sliderBadge is not defined or not sliderBadge) and product.isNew %}
+        <span class="badge badge-new">{{ 'listing.boxLabelNew'|trans|sw_sanitize }}</span>
+    {% endif %}
+{% endblock %}
+
 {% block component_product_badges_discount %}
     {% set price = product.calculatedPrice %}
     {% if product.calculatedPrices.count > 0 %}

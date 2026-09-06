@@ -5,8 +5,13 @@
     {% set hasImage = leftImage is not null %}
 
     <div class="sivanka-product-slider-wrapper container">
+        {# Home-page section headings are centred and carry the rule-heart-rule
+           flourish — see utilities/sivanka-flourish.html.twig. #}
         {% if title %}
-            <h2 class="cms-element-title-paragraph">{{ title }}</h2>
+            <div class="sivanka-sec-head sivanka-sec-head--centred">
+                <h2 class="cms-element-title-paragraph">{{ title }}</h2>
+                {% sw_include '@Storefront/storefront/utilities/sivanka-flourish.html.twig' %}
+            </div>
         {% endif %}
 
         <div class="row g-4 align-items-start">

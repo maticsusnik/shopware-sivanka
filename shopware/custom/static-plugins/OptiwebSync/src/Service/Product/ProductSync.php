@@ -28,8 +28,14 @@ class ProductSync extends AbstractSyncBase
     private float  $defaultTaxRate = 0.0;
     private string $currencyId     = '';
 
-    /** Whether Minimax item prices already include VAT. */
-    private bool $priceIncludesVat = false;
+    /**
+     * Only consulted for an item that items/pricelists did not cover; the
+     * pricelist states net and gross outright.
+     */
+    private bool $priceIncludesVat = true;
+
+    /** Items priced by falling back to Item.Price instead of the pricelist. */
+    private int $priceFallbacks = 0;
 
     /** @var array<string, array{id: string, stock: int, taxId: string, gross: ?float, net: ?float}> productNumber → current Shopware state */
     private array $productMap = [];
@@ -100,11 +106,11 @@ class ProductSync extends AbstractSyncBase
 
     protected function initialize(): void
     {
-        $this->priceIncludesVat = (bool) $this->systemConfigService->get('OptiwebSync.config.minimaxItemPriceIncludesVat');
+        $this->priceIncludesVat = $this->minimaxClient->pricesIncludeVat();
 
-        $this->loadDefaultTax();
         $this->currencyId = $this->resolveCurrencyId();
         $this->taxRateMap = $this->buildTaxRateMap();
+        $this->loadDefaultTax();
         $this->productMap = $this->buildProductMap();
 
         if ($this->defaultTaxId === '' || $this->currencyId === '') {
@@ -112,17 +118,29 @@ class ProductSync extends AbstractSyncBase
         }
 
         OwLogger::addVisibleLog($this->logger, sprintf(
-            'ProductSync initialized. Default tax: %s (%.2f%%) | Currency: %s | Known products: %d | Minimax prices include VAT: %s',
-            $this->defaultTaxId,
+            'ProductSync initialized. Default tax: %.2f%% (%s) | Currency: %s | Known products: %d | '
+            . 'Prices: items/pricelists (Item.Price fallback treats it as %s) | Only SKU: %s | Force write: %s',
             $this->defaultTaxRate,
+            $this->defaultTaxId,
             $this->currencyId,
             count($this->productMap),
-            $this->priceIncludesVat ? 'yes' : 'no',
+            $this->priceIncludesVat ? 'gross' : 'net',
+            $this->setId ?? '(all)',
+            $this->ignoreHash ? 'yes' : 'no',
         ));
     }
 
     protected function fetchPage(int $page, int $pageSize, array $loopData): array
     {
+        // --setId=<SKU> narrows the run to a single product: one item, one page.
+        if ($this->setId !== null) {
+            $this->sourceHasMorePages = false;
+            $rows                     = $this->minimaxClient->getProductBySku($this->setId);
+            $this->logClientWarnings();
+
+            return $rows;
+        }
+
         $result = $this->minimaxClient->getProductsPage($page, $pageSize);
 
         $this->sourceHasMorePages = (bool) $result['hasMore'];
@@ -149,8 +167,10 @@ class ProductSync extends AbstractSyncBase
                 continue;
             }
 
-            $price = (float) ($product['price'] ?? 0.0);
-            $stock = max(0, (int) round((float) ($product['stock'] ?? 0)));
+            // Stock is floored, never rounded: Minimax carries fractional
+            // quantities for anything sold by the metre (23.5 m of lining), and
+            // rounding 23.5 up to 24 advertises a metre that does not exist.
+            $stock = max(0, (int) floor((float) ($product['stock'] ?? 0)));
 
             // A VAT rate we could not resolve is NOT 0% — fall back to the shop's
             // default tax rather than silently zero-rating the product.
@@ -158,7 +178,7 @@ class ProductSync extends AbstractSyncBase
             $taxId = $this->resolveTaxId($vat, $sku);
             $rate  = $vat !== null ? (float) $vat : $this->defaultTaxRate;
 
-            [$gross, $net] = $this->splitPrice($price, $rate);
+            [$gross, $net] = $this->resolvePrice($product, $rate);
             $existing      = $this->productMap[$sku] ?? null;
 
             if ($existing === null) {
@@ -191,7 +211,9 @@ class ProductSync extends AbstractSyncBase
                 continue;
             }
 
-            if ($this->isUnchanged($existing, $stock, $taxId, $gross, $net)) {
+            // -i / --ignoreHash forces the write even when nothing differs,
+            // which is how a product is repaired after a bad import.
+            if (!$this->ignoreHash && $this->isUnchanged($existing, $stock, $taxId, $gross, $net)) {
                 ++$this->unchanged;
                 continue;
             }
@@ -229,6 +251,15 @@ class ProductSync extends AbstractSyncBase
             ));
         }
 
+        if ($this->priceFallbacks > 0) {
+            OwLogger::warning($this->logger, sprintf(
+                'ProductSync: %d product(s) had no items/pricelists row; their price was derived from Item.Price '
+                . 'treated as %s.',
+                $this->priceFallbacks,
+                $this->priceIncludesVat ? 'gross' : 'net',
+            ));
+        }
+
         OwLogger::addVisibleLog($this->logger, sprintf(
             'ProductSync totals: %d created (inactive), %d updated, %d unchanged, %d skipped.',
             $this->created,
@@ -243,18 +274,31 @@ class ProductSync extends AbstractSyncBase
     // -------------------------------------------------------------------------
 
     /**
-     * Split a Minimax item price into Shopware's gross/net pair.
+     * Resolve a Minimax item's Shopware gross/net pair.
      *
-     * Minimax exposes a single `Price` per item plus a separate VatRate link. Its
-     * document rows follow the convention `Price` = without VAT and
-     * `PriceWithVAT` = with VAT, so an item price is treated as net by default.
-     * The `minimaxItemPriceIncludesVat` setting flips that for an organisation
-     * that maintains gross item prices instead.
+     * Minimax's items/pricelists states PriceWithoutVAT and PriceWithVAT for
+     * every item, so normally nothing is derived here — which matters, because
+     * a bare `Item.Price` is net or gross depending on the organisation's
+     * price-entry setting and guessing wrong shifts the whole catalogue by the
+     * VAT rate. Only an item missing from the pricelist is derived from
+     * `Item.Price`, using that setting as read from items/settings.
+     *
+     * @param array{net?: float|null, gross?: float|null, price?: float} $product
      *
      * @return array{0: float, 1: float} [gross, net]
      */
-    private function splitPrice(float $price, float $vatRate): array
+    private function resolvePrice(array $product, float $vatRate): array
     {
+        $net   = $product['net'] ?? null;
+        $gross = $product['gross'] ?? null;
+
+        if ($net !== null && $gross !== null) {
+            return [round((float) $gross, 4), round((float) $net, 6)];
+        }
+
+        ++$this->priceFallbacks;
+
+        $price  = (float) ($product['price'] ?? 0.0);
         $factor = 1 + ($vatRate / 100);
 
         if ($this->priceIncludesVat) {
@@ -368,10 +412,30 @@ class ProductSync extends AbstractSyncBase
         return [(float) $entry['gross'], (float) $entry['net']];
     }
 
+    /**
+     * Pick the tax an item falls back to when its Minimax rate cannot be read.
+     *
+     * Preferably the Shopware tax matching Minimax's own standard rate (VatRate
+     * code "S" — 22% in SI). Ordering the tax table by position is not enough on
+     * its own: taxes this sync creates land at position 0, so a reduced 9.5% rate
+     * created for one item ends up ahead of the shop's standard rate and every
+     * unresolved product is then under-taxed.
+     */
     private function loadDefaultTax(): void
     {
+        $standard = $this->minimaxClient->getStandardVatPercent();
+
+        if ($standard !== null && isset($this->taxRateMap[$this->rateKey($standard)])) {
+            $this->defaultTaxId   = $this->taxRateMap[$this->rateKey($standard)];
+            $this->defaultTaxRate = $standard;
+
+            return;
+        }
+
+        // No usable standard rate — take the highest rate the shop defines, which
+        // errs towards over- rather than under-taxing.
         $row = $this->connection->fetchAssociative(
-            'SELECT LOWER(HEX(id)) AS id, tax_rate FROM tax ORDER BY position ASC, tax_rate DESC LIMIT 1'
+            'SELECT LOWER(HEX(id)) AS id, tax_rate FROM tax ORDER BY tax_rate DESC, position ASC LIMIT 1'
         );
 
         if (is_array($row)) {
@@ -441,9 +505,13 @@ class ProductSync extends AbstractSyncBase
         $id     = Uuid::randomHex();
         $name   = rtrim(rtrim(number_format($percent, 2, '.', ''), '0'), '.') . '%';
         $result = $this->shopwareClient->upsertData('tax', [
-            'id'      => $id,
-            'name'    => $name,
-            'taxRate' => $percent,
+            'id'       => $id,
+            'name'     => $name,
+            'taxRate'  => $percent,
+            // Sorted behind the shop's own rates on purpose: position 0 would put
+            // a sync-created reduced rate ahead of the standard one everywhere
+            // Shopware orders taxes by position.
+            'position' => 100,
         ], true);
 
         if (($result['status'] ?? '') !== 'ok') {

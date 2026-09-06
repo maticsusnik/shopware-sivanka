@@ -15,6 +15,10 @@ Shopware.Service('cmsService').registerCmsElement({
             source: 'static', 
             value: { text: 'Products' } 
         },
+        badge: {
+            source: 'static',
+            value: ''
+        },
         selectionMode: { 
             source: 'static', 
             value: 'manual' 

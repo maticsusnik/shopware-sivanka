@@ -12,9 +12,9 @@
 
 .cms-element-buy-box {
     padding: 40px;
-    background: $sivanka-info-bg;
-    border: 1px solid $sivanka-info-border;
-    border-radius: 20px;
+    background: $sv-cream;
+    border: 1px solid $sv-border;
+    border-radius: $sv-r-panel;
 
     @include media-breakpoint-down(md) {
         padding: 24px;
@@ -86,7 +86,7 @@
     }
 
     &-configurator-option-label {
-        background: $ow-color-white;
+        background: $sv-white;
         padding:6px 10px;
         @include fontSpecs(16, 24, 400, false, false);
         &.disabled {
@@ -95,9 +95,9 @@
     }
 
     &-quantity-group {
-        background: $ow-color-white;
-        border-radius: 6px;
-        border: 1px solid $ow-color-grey-4;
+        background: $sv-white;
+        border-radius: $sv-r-btn;
+        border: 1px solid $sv-border;
         width: auto;
 
         .btn-minus {
@@ -124,7 +124,7 @@
 
     &-configurator-select-input {
         padding: 12px;
-        border: 1px solid $ow-color-grey-4;
+        border: 1px solid $sv-border;
         @include fontSpecs(16, 24, 400, false, false);
         background-image: url("#{$assets-path}/images/caret-down.svg");
         background-size: 24px;
@@ -179,11 +179,15 @@
     }
 
     .icon-wishlist {
-        color: $ow-color-black;
+        color: $sv-ink;
     }
 
+    .product-wishlist-btn-content,
     .product-wishlist-btn-content-sm {
         @include fontSpecs(16, 24, 400, false, false);
+        // Core leaves this at the UA default (black); the reference draws the
+        // whole "Dodaj na seznam želja" affordance in bordo.
+        color: $sv-bordo;
         text-decoration: none;
         margin-left: 0.75rem;
     }
@@ -221,21 +225,27 @@
 
 .product-detail-properties-table {
     .properties-row {
-        border-bottom: 1px solid $ow-color-grey-4;
+        border-bottom: 1px solid $sv-border;
         @include fontSpecs(18, 24, 400, 0.27, true);
     }
 
     .properties-label {
-        color: $ow-color-grey-7;
+        color: $sv-ink-muted;
         font-weight: 400;
     }
 
     .properties-value {
+        // Core leaves the value cell at the UA default (black) — the table sits on
+        // ink for values and ink-muted for labels.
+        color: $sv-ink;
         text-align: right;
     }
 }
 
-.product-detail-specification-title, .product-detail-document-title {
+// Type comes from the shared `sv-h4-description` role further down, next to the
+// "Opis" heading these sit alongside.
+.product-detail-specification-title,
+.product-detail-document-title {
     @include margin('top', 40, true);
 }
 
@@ -250,10 +260,10 @@
         a{
             @include fontSpecs(16, 24, 400, false, false);
             text-decoration: none;
-            color: $ow-color-grey-9;
+            color: $sv-ink;
 
             &:hover{
-                color: $ow-color-black;
+                color: $sv-ink;
                 .product-documents__name{
                     text-decoration: underline;
                 }
@@ -304,9 +314,9 @@
         // and .gallery-slider-single-image — sit inside .gallery-slider, so framing that
         // covers both and stays put.
         .gallery-slider {
-            border: 1px solid $sivanka-card-border;
-            border-radius: 20px;
-            background: $sivanka-gallery-bg;
+            border: 1px solid $sv-border;
+            border-radius: $sv-r-panel;
+            background: $sv-white;
             padding: 24px;
             overflow: hidden;
         }
@@ -371,11 +381,11 @@
             width: 40px;
             height: 40px;
             padding: 0;
-            border: 1px solid $sivanka-card-border;
-            border-radius: 50%;
+            border: 1px solid $sv-border;
+            border-radius: $sv-r-round;
             background: rgba(255, 255, 255, 0.92);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-            color: $sivanka-text;
+            box-shadow: $sv-shadow-soft;
+            color: $sv-ink;
             opacity: 0;
             transition: opacity 0.18s, border-color 0.18s, color 0.18s;
 
@@ -391,8 +401,8 @@
 
             &:hover,
             &:focus-visible {
-                border-color: $sivanka-primary;
-                color: $sivanka-primary;
+                border-color: $sv-bordo;
+                color: $sv-bordo;
             }
 
             &[disabled] {
@@ -427,23 +437,23 @@
         }
 
         .gallery-slider-thumbnails-item-inner {
-            border: 1px solid $sivanka-card-border;
-            border-radius: 12px;
+            border: 1px solid $sv-border;
+            border-radius: $sv-r-card;
         }
 
         .gallery-slider-thumbnails-item.tns-nav-active .gallery-slider-thumbnails-item-inner,
         .gallery-slider-thumbnails-item:hover .gallery-slider-thumbnails-item-inner {
-            border: 2px solid $sivanka-primary;
+            border: 2px solid $sv-bordo;
         }
     }
 
     // ---- INFO / BUY BOX ----
     .product-detail-name {
-        font-family: $sivanka-serif;
+        font-family: $sv-serif;
         font-size: 34px;
-        font-weight: 700;
+        font-weight: 600;
         line-height: 1.15;
-        color: $sivanka-heading-dark;
+        color: $sv-bordo-head;
         margin-bottom: 8px;
 
         @include media-breakpoint-down(md) {
@@ -453,18 +463,18 @@
 
     .product-detail-ordernumber-container {
         font-size: 13.5px;
-        color: $sivanka-text-soft;
+        color: $sv-ink-muted;
         margin-bottom: 20px;
 
         .product-detail-ordernumber-label {
-            color: $sivanka-text-soft;
+            color: $sv-ink-muted;
         }
     }
 
     .product-detail-short-description {
         font-size: 15.5px;
         line-height: 1.65;
-        color: $sivanka-text;
+        color: $sv-ink;
         margin-bottom: 28px;
     }
 
@@ -482,8 +492,8 @@
 
     .buy-widget-container > fieldset.col-4,
     .buy-widget-container > .col-8.text-end {
-        border-top: 1px solid $sivanka-divider;
-        border-bottom: 1px solid $sivanka-divider;
+        border-top: 1px solid $sv-border;
+        border-bottom: 1px solid $sv-border;
         padding-top: 20px;
         padding-bottom: 20px;
         margin-top: 0;
@@ -497,47 +507,47 @@
 
     // Quantity stepper
     .product-detail-quantity-group {
-        border: 1px solid $sivanka-qty-border;
-        border-radius: 10px;
-        background: $sivanka-white;
+        border: 1px solid $sv-border;
+        border-radius: $sv-r-field;
+        background: $sv-white;
         overflow: hidden;
 
         .btn-minus,
         .btn-plus {
-            color: $sivanka-primary;
+            color: $sv-bordo;
             background: transparent;
 
             .icon {
-                color: $sivanka-primary;
+                color: $sv-bordo;
             }
 
             &:hover,
             &:focus {
-                background: $sivanka-side-hover;
-                color: $sivanka-primary;
+                background: $sv-bordo-tint;
+                color: $sv-bordo;
             }
         }
 
         .quantity-selector-group-input {
             font-weight: 600;
-            color: $sivanka-text;
+            color: $sv-ink;
         }
     }
 
     .buy-widget-container .input-group-text {
         background: transparent;
         border: none;
-        color: $sivanka-text-soft;
+        color: $sv-ink-muted;
         font-size: 14px;
     }
 
     // Price — Playfair, large, deep plum
     .product-detail-price-container .product-price,
     .product-detail-price-container .product-price-wrapper .product-price {
-        font-family: $sivanka-serif;
+        font-family: $sv-serif;
         font-size: 30px;
-        font-weight: 700;
-        color: $sivanka-heading-dark;
+        font-weight: 600;
+        color: $sv-bordo-head;
     }
 
     // Stock indicator — sits BELOW the bordered qty/price box (design)
@@ -552,24 +562,24 @@
         margin: 0;
         font-size: 14px;
         line-height: 21px;
-        color: $sivanka-heading-dark;
+        color: $sv-bordo-head;
     }
 
     .delivery-information.delivery-available {
-        color: $sivanka-in-stock;
+        color: $sv-in-stock;
 
         // The dot ships as Bootstrap .bg-success (bright green); match the label
         // so the two greens don't fight.
         .delivery-status-indicator {
-            background-color: $sivanka-in-stock !important;
+            background-color: $sv-in-stock !important;
         }
     }
 
     // Add-to-cart button — solid brand pink, radius 12
     .btn-buy {
-        background: $sivanka-primary;
-        border-color: $sivanka-primary;
-        border-radius: 12px;
+        background: $sv-bordo;
+        border-color: $sv-bordo;
+        border-radius: $sv-r-card;
         padding: 16px 20px;
         font-size: 16px;
         font-weight: 600;
@@ -578,8 +588,8 @@
         &:hover,
         &:focus,
         &:active {
-            background: $sivanka-primary-hover !important;
-            border-color: $sivanka-primary-hover !important;
+            background: $sv-bordo-hover !important;
+            border-color: $sv-bordo-hover !important;
         }
 
         // cart icon 22px like the design (base rule blows it up to 2rem)
@@ -608,9 +618,9 @@
         gap: 8px;
         width: 100%;
         background: transparent;
-        color: $sivanka-primary;
-        border: 1.5px solid $sivanka-primary;
-        border-radius: 12px;
+        color: $sv-bordo;
+        border: 1.5px solid $sv-bordo;
+        border-radius: $sv-r-card;
         padding: 16px 20px;
         font-size: 16px;
         font-weight: 600;
@@ -639,19 +649,19 @@
         // so the colour has to be forced there rather than on the <svg>
         .icon svg use,
         svg use {
-            fill: $sivanka-primary !important;
+            fill: $sv-bordo !important;
         }
 
         &:hover,
         &:focus,
         &:active {
-            background: $sivanka-primary;
-            border-color: $sivanka-primary;
-            color: $ow-color-white;
+            background: $sv-bordo;
+            border-color: $sv-bordo;
+            color: $sv-white;
 
             .icon svg use,
             svg use {
-                fill: $ow-color-white !important;
+                fill: $sv-white !important;
             }
         }
     }
@@ -659,53 +669,55 @@
     // Wishlist link below the cart button — pink text + heart, centered
     .product-wishlist-btn {
         justify-content: center;
-        color: $sivanka-primary;
+        color: $sv-bordo;
         margin-top: 16px;
 
         .icon,
         .icon-wishlist {
-            color: $sivanka-primary !important;
+            color: $sv-bordo !important;
         }
 
         .product-wishlist-btn-content-sm {
-            color: $sivanka-primary;
+            color: $sv-bordo;
             font-weight: 600;
         }
 
         &:hover {
-            color: $sivanka-primary-hover;
+            color: $sv-bordo-hover;
 
             .icon,
             .icon-wishlist,
             .product-wishlist-btn-content-sm {
-                color: $sivanka-primary-hover !important;
+                color: $sv-bordo-hover !important;
             }
         }
     }
 
-    // ---- DESCRIPTION ("Opis") ----
-    .product-detail-description-title {
-        font-family: $sivanka-serif;
-        font-size: 26px;
-        font-weight: 700;
-        color: $sivanka-heading-dark;
+    // ---- DESCRIPTION ("Opis") and the spec / documents headings beside it ----
+    // The reference draws "Opis" as the one 700-weight heading in the system; the
+    // specification and documents headings are its siblings on the same page and
+    // share the role, so they share the mixin rather than a copy of its values.
+    .product-detail-description-title,
+    .product-detail-specification-title,
+    .product-detail-document-title {
+        @include sv-h4-description;
         margin-bottom: 18px;
     }
 
     .product-detail-description-text {
         font-size: 15.5px;
         line-height: 1.8;
-        color: $sivanka-text-muted;
+        color: $sv-ink-muted;
     }
 
     // ---- RELATED / CROSS-SELLING ("Podobni izdelki") ----
     .cross-selling-tab-title,
     .product-cross-selling-tab-navigation-title,
     .cms-element-cross-selling .product-slider-title {
-        font-family: $sivanka-serif;
+        font-family: $sv-serif;
         font-size: 28px;
-        font-weight: 700;
-        color: $sivanka-heading-dark;
+        font-weight: 600;
+        color: $sv-bordo-head;
     }
 }
 // ============================================================

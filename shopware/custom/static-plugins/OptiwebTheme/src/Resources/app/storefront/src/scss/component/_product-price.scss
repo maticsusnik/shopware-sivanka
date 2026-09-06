@@ -46,7 +46,7 @@
     .final-price {
         color: transparent;
         animation: skeletonShimmer 1.5s linear 0s infinite normal forwards running;
-        background: linear-gradient(to right, #dee2e6 8%, #f8f9fa 18%, #dee2e6 28%);
+        background: linear-gradient(to right, $sv-border 8%, $sv-cream 18%, $sv-border 28%);
         background-size: 800px 100px;
         * {
             color: transparent !important;

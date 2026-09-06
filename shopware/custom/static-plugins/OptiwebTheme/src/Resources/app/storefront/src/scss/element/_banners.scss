@@ -6,11 +6,11 @@
 
 .cms-element-banners {
     &__title {
-        font-family: $sivanka-serif;
+        font-family: $sv-serif;
         font-size: 32px;
         font-weight: 600;
         margin-bottom: 32px;
-        color: $sivanka-text;
+        color: $sv-ink;
     }
 
     &__grid {
@@ -33,7 +33,7 @@
 
     // Legacy plain banner item
     &__item {
-        border-radius: $sivanka-r16;
+        border-radius: $sv-r-panel;
         overflow: hidden;
     }
 
@@ -42,7 +42,7 @@
         display: block;
         aspect-ratio: 16 / 9;
         overflow: hidden;
-        border-radius: $sivanka-r16;
+        border-radius: $sv-r-panel;
 
         img {
             width: 100%;
@@ -56,7 +56,7 @@
         position: absolute;
         padding: 24px;
         max-width: 60%;
-        color: $sivanka-white;
+        color: $sv-white;
 
         &.pos-v-top    { top: 0; }
         &.pos-v-middle { top: 50%; transform: translateY(-50%); }
@@ -70,7 +70,7 @@
 
 // ---- Shared Sivanka Banner Base ----
 .sivanka-banner {
-    border-radius: $sivanka-r16;
+    border-radius: $sv-r-panel;
     overflow: hidden;
     position: relative;
     min-height: 268px;
@@ -79,10 +79,10 @@
     justify-content: center;
     padding: 34px;
     text-decoration: none;
-    color: $sivanka-text;
+    color: $sv-ink;
 
     h3 {
-        font-family: $sivanka-serif;
+        font-family: $sv-serif;
         font-size: 25px;
         font-weight: 600;
         margin-bottom: 10px;
@@ -90,9 +90,9 @@
     }
 
     p {
-        font-family: $sivanka-sans;
+        font-family: $sv-sans;
         font-size: 13.5px;
-        color: $sivanka-muted;
+        color: $sv-ink;
         margin-bottom: 18px;
         max-width: 30ch;
     }
@@ -116,7 +116,7 @@
 
     // ---- image-cta (b1) ----
     &--image-cta {
-        color: $sivanka-text;
+        color: $sv-ink;
 
         &:hover {
             text-decoration: none;
@@ -136,8 +136,8 @@
         // and the motif survives the crop instead of being centred under the copy.
         .sivanka-banner__art img { object-position: right center; }
 
-        h3 { font-size: 26px; color: $sivanka-heading-dark; }
-        p  { color: $sivanka-text-muted; }
+        h3 { font-size: 26px; color: $sv-bordo-head; }
+        p  { color: $sv-ink-muted; }
     }
 
     // ---- accent-icon (b2) ----
@@ -146,21 +146,21 @@
         text-align: left;
         padding: 34px;
         // design gradient (beats the inline bgColor fallback)
-        background: linear-gradient(160deg, #FBE0EE, #F6CFE1) !important;
+        background: linear-gradient(160deg, $sv-bordo-tint, $sv-cream) !important;
 
-        h3 { font-family: $sivanka-serif; font-size: 23px; color: $sivanka-heading-dark; }
-        p  { color: #6B4A5A; }
+        h3 { font-family: $sv-serif; font-size: 23px; color: $sv-bordo-head; }
+        p  { color: $sv-ink-muted; }
     }
 
     &__icon-box {
         width: 46px;
         height: 46px;
-        border-radius: $sivanka-r12;
-        background: $sivanka-white;
+        border-radius: $sv-r-card;
+        background: $sv-white;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: $sivanka-primary;
+        color: $sv-bordo;
         margin-bottom: 16px;
         flex-shrink: 0;
         line-height: 0;
@@ -171,7 +171,7 @@
             justify-content: center;
             width: 22px;
             height: 22px;
-            color: $sivanka-primary;
+            color: $sv-bordo;
             line-height: 0;
         }
 
@@ -183,10 +183,10 @@
     }
 
     &__text-link {
-        font-family: $sivanka-sans;
+        font-family: $sv-sans;
         font-size: 13.5px;
         font-weight: 600;
-        color: $sivanka-primary;
+        color: $sv-bordo;
         text-decoration: none;
         display: inline-flex;
         align-items: center;
@@ -195,7 +195,7 @@
 
         &:hover {
             gap: 11px;
-            color: $sivanka-primary;
+            color: $sv-bordo;
         }
     }
 
@@ -220,33 +220,30 @@
         position: absolute;
         right: 24px;
         top: 24px;
-        background: $sivanka-white;
-        border-radius: 14px;
+        background: $sv-white;
+        border-radius: $sv-r-panel;
         padding: 20px 22px;
         max-width: 210px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        box-shadow: $sv-shadow-deep;
         z-index: 1;
 
-        h3 { font-family: $sivanka-serif; font-size: 19px; margin-bottom: 8px; color: $sivanka-heading-dark; }
-        p  { font-size: 13px; line-height: 1.5; color: $sivanka-text-muted; margin-bottom: 14px; max-width: none; }
+        h3 { font-family: $sv-serif; font-size: 19px; margin-bottom: 8px; color: $sv-bordo-head; }
+        p  { font-size: 13px; line-height: 1.5; color: $sv-ink-muted; margin-bottom: 14px; max-width: none; }
     }
 
-    // Banner CTA buttons are pills in the design
+    // Banner CTA buttons follow the link-CTA radius. The v2 references contain no
+    // pills at all — the old 999px was a v1 treatment.
     .sivanka-btn-primary {
-        border-radius: 999px;
+        border-radius: $sv-r-btn;
         padding: 11px 24px;
         font-size: 14px;
     }
 }
 
-// Eyebrow label (small uppercase Space Mono, above the title)
+// Eyebrow label — Inter 700 uppercase, above the title
 .sivanka-eyebrow {
-    font-family: $sivanka-mono;
-    font-size: 11.5px;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: $sivanka-primary;
+    @include sv-eyebrow;
+    color: $sv-bordo;
     display: block;
     margin-bottom: 10px;
 }

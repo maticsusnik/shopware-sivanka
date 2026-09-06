@@ -1,6 +1,6 @@
 {% block element_sivanka_service_card %}
     {% set config = element.fieldConfig.elements %}
-    {% set variant = config.variant.value in ['wide', 'compact'] ? config.variant.value : 'wide' %}
+    {% set variant = config.variant.value in ['wide', 'compact', 'tile'] ? config.variant.value : 'wide' %}
     {% set media = element.data.media %}
     {% set url = config.url.value %}
     {% set tag = url ? 'a' : 'div' %}
@@ -20,6 +20,17 @@
                             loading: 'lazy'
                         }
                     } %}
+
+                    {# The tile lifts the icon out of the head and floats it as a medallion
+                       straddling the bottom edge of the photograph. #}
+                    {% if variant == 'tile' and config.icon.value %}
+                        <span class="sivanka-service-card__medallion">
+                            {% sw_include '@Storefront/storefront/utilities/sivanka-icon.html.twig' with {
+                                sivankaIcon: config.icon.value,
+                                sivankaIconSize: 24
+                            } only %}
+                        </span>
+                    {% endif %}
                 </div>
             {% endif %}
         {% endblock %}
@@ -27,7 +38,7 @@
         {% block element_sivanka_service_card_body %}
             <div class="sivanka-service-card__body">
                 <div class="sivanka-service-card__head">
-                    {% if config.icon.value %}
+                    {% if config.icon.value and variant != 'tile' %}
                         <span class="sivanka-service-card__icon">
                             {% sw_include '@Storefront/storefront/utilities/sivanka-icon.html.twig' with {
                                 sivankaIcon: config.icon.value,
@@ -40,8 +51,12 @@
                     {% endif %}
                 </div>
 
-                {% if config.text.value and variant == 'wide' %}
+                {% if config.text.value and variant != 'compact' %}
                     <p class="sivanka-service-card__text">{{ config.text.value|nl2br }}</p>
+                {% endif %}
+
+                {% if config.meta.value and variant == 'tile' %}
+                    <span class="sivanka-service-card__meta">{{ config.meta.value }}</span>
                 {% endif %}
 
                 {% if url %}
@@ -49,7 +64,7 @@
                         <span class="sivanka-service-card__link-label">{{ config.linkLabel.value|default('Več') }}</span>
                         {% sw_include '@Storefront/storefront/utilities/sivanka-icon.html.twig' with {
                             sivankaIcon: 'arrow',
-                            sivankaIconSize: 16
+                            sivankaIconSize: 15
                         } only %}
                     </span>
                 {% endif %}

@@ -6,7 +6,7 @@
 
 .header-cart .header-cart-badge,
 .header-wishlist .header-wishlist-badge {
-    color: $ow-color-white;
+    color: $sv-white;
 }
 
 
@@ -28,15 +28,15 @@
         .list-group-item,
         .btn-link {
             @include fontSpecs(14, 20, 400);
-            color: $ow-color-black;
+            color: $sv-ink;
             text-decoration: none;
 
             &:hover {
-                color: $ow-color-base;
+                color: $sv-bordo;
                 background: none;
 
                 .icon {
-                    color: $ow-color-base;
+                    color: $sv-bordo;
                 }
             }
         }

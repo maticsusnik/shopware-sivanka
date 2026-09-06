@@ -1,0 +1,32 @@
+.sw-cms-el-preview-sivanka-promo-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    height: 100%;
+    min-height: 70px;
+    padding: 14px;
+    border-radius: 6px;
+    background: linear-gradient(90deg, #F6EDE2 0%, #F6EDE2 45%, #E3D6C6 100%);
+
+    &__title {
+        width: 56%;
+        height: 9px;
+        border-radius: 2px;
+        background: #5C1229;
+    }
+
+    &__text {
+        width: 72%;
+        height: 6px;
+        border-radius: 2px;
+        background: #C9BDB6;
+    }
+
+    &__btn {
+        width: 40px;
+        height: 12px;
+        border-radius: 3px;
+        background: #8E2247;
+    }
+}

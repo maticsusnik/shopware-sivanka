@@ -2,12 +2,12 @@
     <div class="optiweb-documents-upload-config">
         <sw-text-field label="Headline" v-model="element.config.title.value"></sw-text-field>
 
-        <sw-tabs>
-            <sw-tabs-item @click.native="activeDocument = index" v-for="(document, index) in computedDocuments" :ref="'tab' + index"
-                          :active="index == activeDocument">
-                Document {{ index + 1 }}
-            </sw-tabs-item>
-        </sw-tabs>
+        <mt-tabs
+            :key="tabItems.length"
+            :items="tabItems"
+            :default-item="tabItems[activeDocument] ? tabItems[activeDocument].name : ''"
+            @new-item-active="onTabChange"
+        />
         <div v-for="(document, index) in computedDocuments">
             <div v-if="index === activeDocument">
 

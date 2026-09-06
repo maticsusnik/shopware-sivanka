@@ -1,5 +1,21 @@
 {% sw_extends '@Storefront/storefront/component/product/card/box-wishlist.html.twig' %}
 
+{#
+ # The wishlist card shows the product number, matching the enquiry modal.
+ # The block has to be declared here: `component_product_box_product_number`
+ # exists nowhere in the Storefront's card chain, and calling sw_block() for a
+ # block that was never declared is a hard Twig error — it took the whole
+ # wishlist page down with a 500, for guests and logged-in customers alike.
+ #}
+{% block component_product_box_product_number %}
+    {% if product.productNumber %}
+        <div class="product-wishlist-info-item product-wishlist-info-number">
+            <span class="product-number-label">{{ 'detail.ordernumberLabel'|trans }}</span>
+            <span class="product-number-value">{{ product.productNumber }}</span>
+        </div>
+    {% endif %}
+{% endblock %}
+
 {% block component_product_box_info %}
     <div class="product-info product-wishlist-info">
 

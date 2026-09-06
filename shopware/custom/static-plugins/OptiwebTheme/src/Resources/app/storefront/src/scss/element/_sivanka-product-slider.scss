@@ -2,11 +2,16 @@
     max-width: $wide-content-width;
     margin-inline: auto;
     padding-inline: 0;
-    margin-bottom: 2rem;
+    // The section rhythm lives on the block wrapper, same as the other home
+    // sections in block/_sivanka-home.scss. The 2rem bottom margin this used to
+    // carry put 32px of dead space under the rail and left the gap *above* the
+    // slider at zero, so each slider sat welded to the section before it.
+    padding-top: 57px;
+    margin-bottom: 0;
 
     .icon > svg,
     .icon > svg path {
-        fill: $ow-color-black;
+        fill: $sv-ink;
     }
 
     .content {
@@ -17,18 +22,11 @@
         }
     }
 
+    // Section H2 — the shared role. Margins move to .sivanka-sec-head so the
+    // flourish sits 12px under the heading and the 28px gap is below both.
     .cms-element-title-paragraph {
-        font-family: $sivanka-serif;
-        font-size: 32px;
-        font-weight: 600;
-        line-height: 1.12;
-        color: $sivanka-text;
-        margin-bottom: 28px;
-        margin-top: 0;
-
-        @include media-breakpoint-down(md) {
-            font-size: 24px;
-        }
+        @include sv-h2;
+        margin: 0;
     }
     .sivanka-product-slider-wrapper {
         position: relative;
@@ -42,49 +40,26 @@
         }
     }
 
-    // Circular arrow controls, top-right aligned with the title (design .arrows .arr)
+    // Reference: the prev/next pair sits centred 26px BELOW the rail, never pinned
+    // to the top-right of the section. Size, shape and the colour split come from
+    // component/_slider-controls.scss; only the positioning reset is local.
     .product-slider-controls-container {
-        position: absolute;
-        top: 2px;
-        right: calc(#{$bs-gutter-x} / 2); // respect the wrapper's horizontal padding
-        z-index: 3;
+        position: static;
+        z-index: 2;
     }
 
-    .product-slider-controls {
-        display: flex;
-        gap: 8px;
-        margin: 0;
-    }
-
+    // Size, shape and the prev/next colour split live in
+    // component/_slider-controls.scss; only the positioning reset is local.
     .product-slider-controls-prev,
     .product-slider-controls-next {
         position: relative;
         inset: auto;
-        width: 36px;
-        height: 36px;
-        padding: 0;
-        border-radius: 50%;
-        border: 1.5px solid $sivanka-border;
-        background: $sivanka-white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: $sivanka-text;
-        cursor: pointer;
-        line-height: 0;
-        transition: border-color 0.18s, color 0.18s;
-
-        &:hover {
-            border-color: $sivanka-primary;
-            color: $sivanka-primary;
-        }
+        transform: none;
 
         .icon {
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 16px;
-            height: 16px;
             color: inherit;
 
             svg {
@@ -151,7 +126,7 @@
         position: absolute;
         bottom: 1rem;
         right: 1rem;
-        background: $ow-color-white;
+        background: $sv-white;
         font-size: 0;
         padding: 0.5rem;
 
@@ -175,53 +150,6 @@
 
     .content {
         margin-top: 0.75rem;
-    }
-
-    &-controls {
-        position: relative;
-        height: 0;
-
-        .icon {
-            width: calc(#{$nav-button-size} - 2 * 8px);
-            height: calc(#{$nav-button-size} - 2 * 8px);
-
-            svg {
-                top: 0;
-            }
-        }
-    }
-
-    &-controls-prev {
-        right: $nav-button-size;
-    }
-
-    &-controls-next {
-        right: 0;
-    }
-
-    &-controls-prev,
-    &-controls-next {
-        position: absolute;
-        left: unset;
-        top: unset;
-        bottom: calc(#{$nav-button-size} / 2);
-        padding: 8px;
-        width: $nav-button-size;
-        height: $nav-button-size;
-        line-height: normal;
-        transform: none;
-        transition: opacity 0.15s ease;
-        cursor: pointer;
-        background: $ow-color-white;
-        border: 1px solid $ow-color-white;
-
-        &:hover {
-            border: 1px solid $ow-color-base;
-
-            svg, svg path {
-                fill: $ow-color-base;
-            }
-        }
     }
 }
 

@@ -1,10 +1,13 @@
 .is-ctl-navigation {
-    h1 {
-        font-family: $sivanka-serif;
+    // Scope this to the listing's own title, which the layout renders as a text
+    // element. A bare `.is-ctl-navigation h1` outranks every component's own H1
+    // rule (0,1,1 beats 0,1,0) — it silently reset the home hero to 40px.
+    .cms-element-text h1 {
+        font-family: $sv-serif;
         font-size: 40px;
-        font-weight: 700;
+        font-weight: 600;
         line-height: 1.15;
-        color: $sivanka-heading-dark;
+        color: $sv-bordo-head;
         padding-block: 1rem 0.75rem;
         margin: 0;
 
@@ -66,11 +69,11 @@
     }
 
     &-label {
-        font-family: $sivanka-sans;
+        font-family: $sv-sans;
         font-size: 14px;
         font-weight: 400;
         line-height: 21px;
-        color: $sivanka-text;
+        color: $sv-ink;
     }
 
     &.panel-content {
@@ -79,19 +82,19 @@
 
     &-panel {
         &-wrapper-toggle {
-            border-radius: 50px;
-            background: $ow-color-grey-9;
+            border-radius: $sv-r-btn;
+            background: $sv-ink;
             position: fixed;
             left: 50%;
             transform: translateX(-50%);
             bottom: 0.75rem;
-            color: $ow-color-white;
+            color: $sv-white;
             z-index: 5;
             padding-block: 0.5rem;
             padding-inline: 2rem;
 
             .icon {
-                color: $ow-color-white;
+                color: $sv-white;
 
                 svg {
                     top: 0.25em;
@@ -99,8 +102,8 @@
             }
 
             &:hover, &:focus {
-                background: $ow-color-black;
-                color: $ow-color-white;
+                background: $sv-ink;
+                color: $sv-white;
             }
         }
     }
@@ -120,22 +123,22 @@
         height: 40px;
         padding: 0 6px;
         margin: 0;
-        border: 1px solid $sivanka-input-border;
-        border-radius: 10px;
+        border: 1px solid $sv-border;
+        border-radius: $sv-r-field;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #4a545b;
-        font-family: $sivanka-sans;
+        color: $sv-ink-muted;
+        font-family: $sv-sans;
         font-size: 14px;
         font-weight: 600;
-        background: $sivanka-white;
+        background: $sv-white;
         transition: border-color 0.16s, color 0.16s, background 0.16s;
 
         &:hover {
-            border-color: $sivanka-primary;
-            color: $sivanka-primary;
-            background: $sivanka-white;
+            border-color: $sv-bordo;
+            color: $sv-bordo;
+            background: $sv-white;
             z-index: 1;
         }
 
@@ -153,9 +156,9 @@
     // Active page — solid pink
     .page-item.active .page-link,
     .page-link.is-active {
-        background: $sivanka-primary;
-        border-color: $sivanka-primary;
-        color: $sivanka-white;
+        background: $sv-bordo;
+        border-color: $sv-bordo;
+        color: $sv-white;
     }
 
     .page-item.disabled .page-link {
@@ -177,11 +180,11 @@
 
 .search {
     &-super-title {
-        color: $ow-color-grey-7;
+        color: $sv-ink-muted;
     }
 
     &-headline {
-        border-bottom: 1px solid $ow-color-grey-4;
+        border-bottom: 1px solid $sv-border;
         margin-bottom: 1.25rem;
         padding-block: 1rem 2.75rem;
 
@@ -211,7 +214,7 @@
     }
 
     .btn {
-        border-radius: 7px;
+        border-radius: $sv-r-chrome;
         padding: 0 10px;
 
         @include media-breakpoint-down(lg) {
@@ -219,10 +222,10 @@
         }
 
         &.filter-active {
-            border: 1px solid $ow-color-black;
+            border: 1px solid $sv-ink;
 
             &:hover {
-                color: $ow-color-black;
+                color: $sv-ink;
             }
         }
     }

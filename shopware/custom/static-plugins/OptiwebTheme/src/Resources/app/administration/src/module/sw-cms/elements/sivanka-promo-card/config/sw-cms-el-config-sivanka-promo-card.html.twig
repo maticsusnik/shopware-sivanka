@@ -1,0 +1,43 @@
+{% block sw_cms_el_config_sivanka_promo_card %}
+<div class="sw-cms-el-config-sivanka-promo-card">
+    <sw-media-field
+        v-model:value="element.config.media.value"
+        :label="$tc('sw-cms.elements.sivankaPromoCard.config.label.media')"
+        :allow-empty="true"
+        @update:value="onChange"
+    />
+
+    <mt-select
+        v-model="element.config.imageFocus.value"
+        :label="$tc('sw-cms.elements.sivankaPromoCard.config.label.imageFocus')"
+        :help-text="$tc('sw-cms.elements.sivankaPromoCard.config.helpText.imageFocus')"
+        :options="focusOptions"
+        @update:model-value="onChange"
+    />
+
+    <mt-text-field
+        v-model="element.config.title.value"
+        :label="$tc('sw-cms.elements.sivankaPromoCard.config.label.title')"
+        @update:model-value="onChange"
+    />
+
+    <mt-textarea
+        v-model="element.config.text.value"
+        :label="$tc('sw-cms.elements.sivankaPromoCard.config.label.text')"
+        @update:model-value="onChange"
+    />
+
+    <mt-text-field
+        v-model="element.config.buttonLabel.value"
+        :label="$tc('sw-cms.elements.sivankaPromoCard.config.label.buttonLabel')"
+        @update:model-value="onChange"
+    />
+
+    <mt-text-field
+        v-model="element.config.url.value"
+        :label="$tc('sw-cms.elements.sivankaPromoCard.config.label.url')"
+        :help-text="$tc('sw-cms.elements.sivankaPromoCard.config.helpText.url')"
+        @update:model-value="onChange"
+    />
+</div>
+{% endblock %}

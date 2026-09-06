@@ -1,20 +1,27 @@
-{# The three service promises. Included twice by top-bar.html.twig: on mobile the bar
-   becomes a continuous ticker and the second copy is what makes the loop seamless. #}
-<span class="tb-item">
+{# The three service promises. Order matters: below 1100px the reference keeps only
+   the first, and below 720px none of them — see layout/_topbar.scss. The secondary
+   pair therefore carries its own class rather than relying on :nth-of-type, which
+   would shift when the free-shipping promise is switched off in the config. #}
+
+{# The threshold comes from OptiwebTheme.config.freeShippingThreshold so the promise
+   can never drift from the shipping rule; an empty field drops the item entirely. #}
+{% if sivankaFreeShippingAmount|default(null) %}
+    <span class="tb-item tb-item--primary">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 7h11v8H3zM14 9h4l3 3v3h-7z"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/>
+        </svg>
+        {{ 'sivanka.topbarDelivery'|trans({'%amount%': sivankaFreeShippingAmount}) }}
+    </span>
+{% endif %}
+<span class="tb-item tb-item--secondary">
     <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M3 7h11v8H3zM14 9h4l3 3v3h-7z"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/>
+        <path d="M12 20s-7-4.6-7-9.4A3.9 3.9 0 0 1 12 8a3.9 3.9 0 0 1 7 2.6C19 15.4 12 20 12 20z"/>
     </svg>
-    {{ 'sivanka.topbarDelivery'|trans|default('Brezplačna dostava nad 60 €') }}
+    {{ 'sivanka.topbarQuality'|trans }}
 </span>
-<span class="tb-item">
+<span class="tb-item tb-item--secondary">
     <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/>
+        <path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12.5h5"/>
     </svg>
-    {{ 'sivanka.topbarQuality'|trans|default('Vrhunska kakovost za ustvarjalce') }}
-</span>
-<span class="tb-item">
-    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M4 13v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="13" width="4" height="6" rx="1.5"/><rect x="17" y="13" width="4" height="6" rx="1.5"/>
-    </svg>
-    {{ 'sivanka.topbarSupport'|trans|default('Z veseljem vam pomagamo') }}
+    {{ 'sivanka.topbarSupport'|trans }}
 </span>

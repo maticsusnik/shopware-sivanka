@@ -16,7 +16,8 @@
             "submit": "Send Enquiry",
             "commentLabel": "Your message",
             "commentPlaceholder": "Please describe your enquiry...",
-            "qtyLabel": "Quantity"
+            "qtyLabel": "Quantity",
+            "productsLabel": "Products in this enquiry"
         },
         "success": {
             "message": "Thank you for your enquiry. We will get back to you shortly."
@@ -26,7 +27,18 @@
             "productNotFound": "The requested product could not be found.",
             "missingProductId": "No product was specified for this enquiry.",
             "missingMailTemplate": "The mail template is not configured. Please contact the administrator.",
-            "unexpectedError": "An unexpected error occurred. Please try again later."
+            "unexpectedError": "An unexpected error occurred. Please try again later.",
+            "noProductsSelected": "Select at least one product."
+        },
+        "wishlist": {
+            "include": "Include in enquiry",
+            "barTitle": "Enquiry for several products",
+            "send": "Send enquiry",
+            "selectAll": "Select all",
+            "deselectAll": "Clear selection",
+            "summaryOne": "1 product selected.",
+            "summaryMany": "%count% products selected.",
+            "summaryNone": "Select at least one product."
         }
     }
 }

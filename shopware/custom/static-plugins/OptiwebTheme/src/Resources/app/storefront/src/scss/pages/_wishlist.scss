@@ -1,3 +1,14 @@
+// The wishlist page is not in the 8 reference pages. Derived from the listing
+// header: the same page H1 role, the same content column.
+// Core nests its own rule (`font-weight: bold; color: $sw-headline-color`) under a
+// parent selector, so a bare class here loses on specificity — hence the doubled
+// class plus element.
+.wishlist-listing-header,
+h1.wishlist-listing-header,
+h1.wishlist-listing-header.wishlist-listing-header {
+    @include sv-h1-page;
+}
+
 .wishlist-headline {
     height: 100px;
 }

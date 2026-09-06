@@ -1,0 +1,357 @@
+// =============================================================================
+//  Home sections — promo trio, services grid, reasons panel, FAQ grid
+//  reference/Sivanka Home v2 redesign.dc.html
+//
+//  Every section shares the same shell: the theme .container resolves to the
+//  1406/1366 pair the reference uses, so only the vertical rhythm and the grid
+//  live here.
+// =============================================================================
+
+// The reference's per-section top padding, applied to the CMS block wrapper so the
+// rhythm survives whatever margins the layout editor sets.
+.cms-block-sivanka-promo         { padding-top: 52px; }
+.cms-block-sivanka-home-services { padding-top: 60px; }
+.cms-block-sivanka-why           { padding-top: 60px; }
+.cms-block-sivanka-faq           { padding-top: 64px; padding-bottom: 72px; }
+
+// A centred section heading and its lead sit 34px above the grid below it.
+.sivanka-home-services__heading,
+.sivanka-why__heading,
+.sivanka-faq-block__heading {
+    margin-bottom: 34px;
+}
+
+
+// -----------------------------------------------------------------------------
+//  Promo trio
+// -----------------------------------------------------------------------------
+.sivanka-promo {
+    display: grid;
+    // The middle card is the wide one — 1.24fr against 1fr either side.
+    grid-template-columns: 1fr 1.24fr 1fr;
+    gap: 20px;
+
+    @media (max-width: $sv-bp-tablet) {
+        grid-template-columns: 1fr 1fr;
+
+        // Two columns: the first card spans the row rather than leaving a gap.
+        > .sivanka-promo__cell:first-child {
+            grid-column: 1 / -1;
+        }
+    }
+
+    @media (max-width: $sv-bp-portrait) {
+        grid-template-columns: 1fr;
+
+        > .sivanka-promo__cell:first-child {
+            grid-column: auto;
+        }
+    }
+
+    // The wide middle card carries a larger title and a narrower text column.
+    > .sivanka-promo__cell:nth-child(2) {
+        .sivanka-promo-card__title {
+            font-size: 30px;
+        }
+
+        .sivanka-promo-card__body {
+            max-width: 58%;
+
+            @media (max-width: $sv-bp-tablet) { max-width: 54%; }
+            @media (max-width: $sv-bp-portrait) { max-width: 62%; }
+            @media (max-width: $sv-bp-phone) { max-width: 100%; }
+        }
+    }
+}
+
+.sivanka-promo__cell {
+    display: flex;
+}
+
+.sivanka-promo-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    min-height: 250px;
+    padding: 32px 34px;
+    border-radius: $sv-r-btn;
+    overflow: hidden;
+    color: $sv-ink;
+
+    @media (max-width: $sv-bp-phone) {
+        min-height: 220px;
+        padding: 26px 24px;
+    }
+
+    @media (max-width: $sv-bp-small) {
+        min-height: 200px;
+        padding: 22px 20px;
+    }
+
+    &:hover {
+        color: $sv-ink;
+        text-decoration: none;
+    }
+
+    picture,
+    &__image {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    &--focus-left   .sivanka-promo-card__image { object-position: 25% 50%; }
+    &--focus-center .sivanka-promo-card__image { object-position: 50% 50%; }
+    &--focus-right  .sivanka-promo-card__image { object-position: 75% 50%; }
+
+    &__scrim {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            90deg,
+            sv-overlay(.95) 0%,
+            sv-overlay(.86) 45%,
+            sv-overlay(.1) 92%
+        );
+
+        // One column: the copy runs the full width, so the wash falls vertically.
+        @media (max-width: $sv-bp-phone) {
+            background: linear-gradient(
+                180deg,
+                sv-overlay(.95) 0%,
+                sv-overlay(.88) 60%,
+                sv-overlay(.45) 100%
+            );
+        }
+    }
+
+    &__body {
+        position: relative;
+        max-width: 62%;
+
+        @media (max-width: $sv-bp-tablet) { max-width: 54%; }
+        @media (max-width: $sv-bp-portrait) { max-width: 62%; }
+        @media (max-width: $sv-bp-phone) { max-width: 100%; }
+    }
+
+    &__title {
+        display: block;
+        font-family: $sv-serif;
+        font-size: 26px;
+        font-weight: $sv-heading-weight;
+        line-height: 1.2;
+        color: $sv-bordo-head;
+    }
+
+    &__text {
+        display: block;
+        margin: 12px 0 20px;
+        font-size: 15.5px;
+        line-height: 25px;
+        color: $sv-ink-muted;
+        text-wrap: pretty;
+    }
+
+    &__btn {
+        // The reference draws this CTA borderless; it is rendered with the system's
+        // 1px border and 1px less padding, so the painted box is identical.
+        display: inline-flex;
+    }
+}
+
+
+// -----------------------------------------------------------------------------
+//  Services grid — "Kaj naredimo za vas"
+// -----------------------------------------------------------------------------
+.sivanka-home-services {
+    &__grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 22px;
+
+        @media (max-width: $sv-bp-tablet) {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        @media (max-width: $sv-bp-phone) {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    &__cell {
+        display: flex;
+    }
+
+    &__actions {
+        display: flex;
+        justify-content: center;
+        margin-top: 28px;
+
+        .sivanka-actions {
+            justify-content: center;
+        }
+    }
+}
+
+
+// -----------------------------------------------------------------------------
+//  Reasons panel — "Zakaj izbrati Šivanko?"
+// -----------------------------------------------------------------------------
+.sivanka-why {
+    position: relative;
+    background: $sv-cream;
+    border: 1px solid $sv-border;
+    border-radius: $sv-r-panel;
+    padding: 44px 44px 48px;
+    overflow: hidden;
+
+    @media (max-width: $sv-bp-portrait) {
+        padding: 34px 28px 36px;
+    }
+
+    @media (max-width: $sv-bp-phone) {
+        padding: 30px 20px 32px;
+    }
+
+    @media (max-width: $sv-bp-tiny) {
+        padding: 24px 16px 26px;
+    }
+
+    &__blob {
+        position: absolute;
+        border-radius: $sv-r-round;
+        background: $sv-bordo-tint;
+
+        &--top {
+            top: -90px;
+            right: -70px;
+            width: 260px;
+            height: 260px;
+            opacity: .55;
+        }
+
+        &--bottom {
+            bottom: -120px;
+            left: -80px;
+            width: 280px;
+            height: 280px;
+            opacity: .4;
+        }
+
+        // Stacked cards leave no room for the blobs to read as decoration.
+        @media (max-width: $sv-bp-phone) {
+            display: none;
+        }
+    }
+
+    &__heading,
+    &__grid {
+        position: relative;
+    }
+
+    // The panel heading is one step down from the section H2.
+    &__heading .sivanka-intro__headline {
+        @include sv-h2-panel;
+    }
+
+    &__heading {
+        margin-bottom: 36px;
+    }
+
+    &__grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 22px;
+
+        @media (max-width: $sv-bp-tablet) {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        @media (max-width: $sv-bp-phone) {
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+    }
+
+    &__cell {
+        display: flex;
+    }
+}
+
+
+// -----------------------------------------------------------------------------
+//  FAQ grid — illustration + prose on the left, accordion on the right
+// -----------------------------------------------------------------------------
+.sivanka-faq-block {
+    &__grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 32px;
+        align-items: start;
+
+        @media (max-width: $sv-bp-portrait) {
+            grid-template-columns: 1fr;
+            gap: 26px;
+        }
+    }
+
+    // The core image element resolves to `.cms-image-container.is-cover`, which sets
+    // `height: 100%` on both the container and the img. An `aspect-ratio` on the img
+    // cannot beat an explicit height, so the ratio goes on the container instead.
+    &__media {
+        margin-bottom: 22px;
+
+        .cms-element-image {
+            display: block;
+            width: 100%;
+        }
+
+        .cms-image-container {
+            display: block;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 660 / 420;
+            border-radius: $sv-r-card;
+            overflow: hidden;
+        }
+
+        picture,
+        img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+
+    // The core text element carries the 16.5/29.7 prose role on `.cms-element-text p`;
+    // the reference sets this paragraph at 15/25, so the override has to be at least
+    // as specific as that selector.
+    &__text .cms-element-text {
+        font-size: 15px;
+        line-height: 25px;
+        color: $sv-ink-muted;
+        text-wrap: pretty;
+
+        p {
+            margin: 0;
+            font-size: inherit;
+            line-height: inherit;
+            color: inherit;
+        }
+
+        p + p {
+            margin-top: 14px;
+        }
+    }
+
+    &__list .ow-faq__wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+}

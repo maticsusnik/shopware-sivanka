@@ -1,11 +1,11 @@
 // Shared admin-editor styling for the Sivanka service (storitve) CMS blocks and elements.
 // These styles only affect the CMS layout editor, never the storefront.
 
-$sivanka-cms-primary: #a02b6b;
-$sivanka-cms-tint: #fbeaf2;
-$sivanka-cms-border: #e6c7d8;
-$sivanka-cms-muted: #6b5560;
-$sivanka-cms-surface: #f0ebe6;
+$sivanka-cms-primary: #8e2247;
+$sivanka-cms-tint: #f7e9ee;
+$sivanka-cms-border: #eadfd1;
+$sivanka-cms-muted: #6b5a55;
+$sivanka-cms-surface: #f6ede2;
 
 @mixin sivanka-service-block-preview {
     display: flex;
@@ -37,4 +37,38 @@ $sivanka-cms-surface: #f0ebe6;
 
 @mixin sivanka-service-block-full-row {
     grid-column: 1 / -1;
+}
+
+// A block thumbnail that actually looks like the block: a cream card on the page
+// ground, with the block's own shapes drawn as flat bars.
+@mixin sivanka-cms-thumb {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    height: 100%;
+    padding: 10px;
+    background: #fdf8f2;
+}
+
+@mixin sivanka-cms-thumb-heading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+
+    &::before {
+        content: "";
+        width: 46%;
+        height: 7px;
+        border-radius: 2px;
+        background: #5c1229;
+    }
+
+    &::after {
+        content: "";
+        width: 22px;
+        height: 1px;
+        background: #8e2247;
+        opacity: .45;
+    }
 }

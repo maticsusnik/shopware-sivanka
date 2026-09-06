@@ -1,26 +1,91 @@
 /*
 Override variable defaults
 ==================================================
-This file is used to override default SCSS variables from the Shopware Storefront or Bootstrap.
-
-Because of the !default flags, theme variable overrides have to be declared beforehand.
+Loaded BEFORE @Storefront, so Bootstrap and the Shopware Storefront pick these up
+through their `!default` flags. It therefore cannot `@import "variables"` — the
+token file is loaded later, from base.scss. The literals below are copies of the
+Sivanka v2 tokens; keep them in sync with scss/_variables.scss.
 https://getbootstrap.com/docs/5.3/customize/sass/#variable-defaults
 */
 
-// Sivanka brand primary — used by Bootstrap for .btn-primary, focus rings, etc.
-$primary: #A02B6B;
+// Bordo — $sv-bordo. Drives .btn-primary, links, focus rings, form-check states.
+$primary: #8E2247;
 
-// Base font size — bump the whole storefront up from Shopware's 0.875rem (14px) default
+// Page background — $sv-bg
+$body-bg: #FDF8F2;
+
+// Body text — $sv-ink
+$body-color: #2E1A20;
+
+// Inter for everything. Bootstrap's reboot then hands `font-family: inherit` to
+// button/input/optgroup/select/textarea; scss/_reset.scss re-states it because
+// the storefront's own resets otherwise let `select` fall back to Arial.
+$font-family-base: 'Inter', sans-serif;
+$headings-font-family: 'Playfair Display', Georgia, serif;
+$headings-font-weight: 600;
+$headings-color: #5C1229;
+
+// Base font size — bump the whole storefront up from Shopware's 0.875rem (14px)
 $font-size-base: 1rem; // 16px
 
-// Base text colour — darker, matches the Sivanka design ($sivanka-text)
-$body-color: #1B1B1B;
-
-// Border radii
+// Border radii — every value is a single token, never a shorthand.
+// $sv-r-chrome / $sv-r-btn-sm / $sv-r-card
 $border-radius:    8px;
 $border-radius-sm: 4px;
 $border-radius-lg: 12px;
 
-// Input focus ring colour
-$input-focus-border-color: #D05C8C;
-$input-focus-box-shadow: 0 0 0 0.2rem rgba(160, 43, 107, 0.15);
+// Borders and dividers — $sv-border
+$border-color: #EADFD1;
+
+// Focus ring — bordo, not the old pink
+$input-focus-border-color: #8E2247;
+$input-focus-box-shadow: 0 0 0 3px rgba(142, 34, 71, 0.15); // $sv-focus-ring
+
+// Form controls — $sv-r-field, $sv-border, $sv-ink
+$input-border-color: #EADFD1;
+$input-color: #2E1A20;
+$input-border-radius: 10px;
+$input-placeholder-color: #C9BDB6;
+
+// -----------------------------------------------------------------------------
+//  Bootstrap's semantic ramp. Left alone, `tint-color()` / `shade-color()` mint
+//  new colours from $primary (e.g. bg-primary-subtle -> #E8D3DA) and those land on
+//  real pages — the skip-to-content link, alerts, badges. Pin every one of them to
+//  a palette value so nothing outside the 11 can be generated.
+//  The design draws no error/warning/info colours; see scss/_variables.scss for
+//  how each is derived.
+// -----------------------------------------------------------------------------
+$secondary: #6B5A55;  // $sv-ink-muted
+$success:   #2E7D53;  // $sv-in-stock
+$danger:    #8E2247;  // $sv-bordo
+$warning:   #8E2247;  // $sv-bordo
+$info:      #6B5A55;  // $sv-ink-muted
+$light:     #F6EDE2;  // $sv-cream
+$dark:      #2E1A20;  // $sv-ink
+
+$primary-text-emphasis:   #5C1229;
+$secondary-text-emphasis: #2E1A20;
+$success-text-emphasis:   #2E7D53;
+$danger-text-emphasis:    #5C1229;
+$warning-text-emphasis:   #5C1229;
+$info-text-emphasis:      #2E1A20;
+$light-text-emphasis:     #2E1A20;
+$dark-text-emphasis:      #2E1A20;
+
+$primary-bg-subtle:   #F7E9EE;
+$secondary-bg-subtle: #F6EDE2;
+$success-bg-subtle:   #F6EDE2;
+$danger-bg-subtle:    #F7E9EE;
+$warning-bg-subtle:   #F7E9EE;
+$info-bg-subtle:      #F6EDE2;
+$light-bg-subtle:     #FDF8F2;
+$dark-bg-subtle:      #EADFD1;
+
+$primary-border-subtle:   #EADFD1;
+$secondary-border-subtle: #EADFD1;
+$success-border-subtle:   #EADFD1;
+$danger-border-subtle:    #EADFD1;
+$warning-border-subtle:   #EADFD1;
+$info-border-subtle:      #EADFD1;
+$light-border-subtle:     #EADFD1;
+$dark-border-subtle:      #E3D6C6;

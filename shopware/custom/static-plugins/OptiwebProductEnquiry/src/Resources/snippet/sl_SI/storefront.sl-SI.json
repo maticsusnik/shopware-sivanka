@@ -16,7 +16,8 @@
             "submit": "Pošlji povpraševanje",
             "commentLabel": "Vaše sporočilo",
             "commentPlaceholder": "Opišite vaše povpraševanje...",
-            "qtyLabel": "Količina"
+            "qtyLabel": "Količina",
+            "productsLabel": "Izdelki v povpraševanju"
         },
         "success": {
             "message": "Hvala za povpraševanje, odgovorimo v najkrajšem možnem času."
@@ -26,7 +27,18 @@
             "productNotFound": "Zahtevanega izdelka ni bilo mogoče najti.",
             "missingProductId": "Za to povpraševanje ni bil določen noben izdelek.",
             "missingMailTemplate": "E-poštna predloga ni konfigurirana. Prosimo, kontaktirajte administratorja.",
-            "unexpectedError": "Prišlo je do nepričakovane napake. Prosimo, poskusite znova."
+            "unexpectedError": "Prišlo je do nepričakovane napake. Prosimo, poskusite znova.",
+            "noProductsSelected": "Izberite vsaj en izdelek."
+        },
+        "wishlist": {
+            "include": "Vključi v povpraševanje",
+            "barTitle": "Povpraševanje za več izdelkov",
+            "send": "Pošlji povpraševanje",
+            "selectAll": "Izberi vse",
+            "deselectAll": "Odstrani izbiro",
+            "summaryOne": "Izbran je 1 izdelek.",
+            "summaryMany": "Izbranih izdelkov: %count%.",
+            "summaryNone": "Izberite vsaj en izdelek."
         }
     }
 }

@@ -13,20 +13,75 @@
     }
 }
 
+// The bar is `padding-block: 16px` around a 17px link row plus a 1px border — 50px.
+// The flyout offset is derived from this, so keep the two in step.
+$sv-navbar-pad-block: 16px;
+
 .nav-main {
-    border-bottom: 1px solid $sivanka-border;
-    background-color: $sivanka-white;
+    // Reference: the strong border, same as the topbar and header.
+    border-bottom: 1px solid $sv-border-strong;
+    background-color: $sv-white;
+
+    // Reference: the bar is `padding: 16px 20px` around a 17px-tall list, so 50px
+    // including the border. Below 1280 the links take a 48px min-height and the bar
+    // grows to 81px.
+    .container {
+        padding-block: $sv-navbar-pad-block;
+    }
+
+    // `navbar-expand` gives the collapse `flex-basis: auto`, which lets the list
+    // size to its content instead of the bar — the scroller then never scrolls.
+    .navbar-collapse {
+        min-width: 0;
+        max-width: 100%;
+    }
 
     .navbar-nav {
         display: flex;
         align-items: center;
+        flex-wrap: nowrap;
         width: 100%;
-        height: 50px;
+        max-width: 100%;
+        min-width: 0;
+        height: 17px;
+        // Reference: the list itself carries the nav weight and leading.
+        font-weight: 500;
+        line-height: 16px;
 
-        li {
-            &:nth-child(2) {
-                margin-left: auto;
+        // The reference pushes everything after the menu opener to the right.
+        li:nth-child(2) {
+            margin-left: auto;
+        }
+    }
+
+    // Below 1280 the reference turns the bar into a horizontal scroller instead of
+    // collapsing it: items keep their order, the right-alignment is dropped, and
+    // the scrollbar is hidden.
+    @media (max-width: $sv-bp-touch) {
+        .navbar-nav {
+            overflow-x: auto;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+            height: 48px;
+
+            &::-webkit-scrollbar {
+                display: none;
             }
+
+            li:nth-child(2) {
+                margin-left: 0;
+            }
+        }
+
+        .nav-item {
+            flex: 0 0 auto;
+            white-space: nowrap;
+        }
+
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            min-height: 48px;
         }
     }
 }
@@ -50,11 +105,11 @@
     padding: 0;
 
     .nav-link {
-        font-family: $sivanka-sans;
+        font-family: $sv-sans;
         font-size: 16px;
         font-weight: 500;
         padding-block: 0;
-        color: $sivanka-text;
+        color: $sv-ink;
         display: inline-flex;
         align-items: center;
         gap: 6px;
@@ -87,13 +142,13 @@
             right: 0;
             bottom: -3px;
             height: 2.5px;
-            background: $sivanka-primary;
+            background: $sv-bordo;
             transform: scaleX(0);
             transition: transform 0.2s;
         }
 
         &:hover, &:focus, &:focus-visible {
-            color: $sivanka-primary;
+            color: $sv-bordo;
             box-shadow: none;
 
             &::after {
@@ -102,15 +157,15 @@
         }
 
         &.active {
-            color: $sivanka-text;
+            color: $sv-ink;
         }
 
         &.mega-menu-link {
             cursor: pointer;
-            color: $sivanka-text !important;
+            color: $sv-ink !important;
 
             &:hover, &:focus, &:focus-visible {
-                color: $sivanka-text !important;
+                color: $sv-ink !important;
             }
 
             &::after {
@@ -119,12 +174,70 @@
         }
     }
 
+    // Reference: 32px between items, 24px below 1280.
+    // Reference: 32px between items, 24px below 1280. The item box is the label's
+    // own height so the hover rule sits 3px under the text rather than at the foot
+    // of the bar.
     .nav-item {
         display: flex;
         align-items: center;
+        align-self: center;
 
         &:not(:last-child) {
-            @include padding('right', 32, true);
+            padding-right: 32px;
+
+            @media (max-width: $sv-bp-touch) {
+                padding-right: 24px;
+            }
+        }
+    }
+}
+
+// ============================================================
+//  The "Izdelki" menu opener
+//  Two controls, one visible at a time. Shopware 6.7 ships the Bootstrap display
+//  utilities as plain, non-responsive, non-!important rules (`.d-lg-none {
+//  display:none }` with no media query), so `d-none` / `d-lg-none` cannot be used
+//  to switch them — a two-class selector beats them outright.
+//  Above lg the flyout div drives the mega menu; below it the button opens the
+//  offcanvas, because OwMegaMenu bails out under 992px.
+// ============================================================
+// Scoped under .nav-main: `.navbar .nav-link { display: inline-flex }` is a
+// two-class selector and would otherwise beat a bare `.sv-nav-opener--touch`,
+// leaving both openers on screen at once.
+.nav-main {
+    .sv-nav-opener--desktop {
+        display: inline-flex;
+        padding: 0 !important;
+
+        @include media-breakpoint-down(lg) {
+            display: none;
+        }
+    }
+
+    // Deliberately NOT `.mega-menu-link`: a `@media (min-width: 992px)` rule gives
+    // `.ow-mega-menu > .nav-link.mega-menu-link { display: flex }`, which would put
+    // the touch opener back on screen next to the desktop one.
+    .sv-nav-opener--touch {
+        display: none;
+        background: none;
+        border: 0;
+        padding: 0 !important;
+        color: $sv-ink;
+        cursor: pointer;
+
+        &:hover,
+        &:focus,
+        &:focus-visible {
+            color: $sv-ink;
+        }
+
+        &::after {
+            display: none;
+        }
+
+        @include media-breakpoint-down(lg) {
+            display: inline-flex;
         }
     }
 }
@@ -154,17 +267,17 @@
 
 // Mobile/tablet nav toggle — no purple hover
 .nav-main-toggle-btn {
-    color: $sivanka-text;
+    color: $sv-ink;
 
     &:hover {
-        color: $sivanka-text;
+        color: $sv-ink;
         background: none;
     }
 
     .icon {
         width: 22px;
         height: 22px;
-        color: $sivanka-text;
+        color: $sv-ink;
     }
 }
 
@@ -178,7 +291,7 @@
     top: 0;
     left: 0;
     width: 100%;
-    background: $ow-color-grey-1;
+    background: $sv-cream;
 
     .offcanvas-body {
         padding-block: 1.5rem;
@@ -203,7 +316,7 @@
                 padding-inline: 1rem;
 
                 &:not(:first-child) .navigation-offcanvas-content {
-                    border-left: 1px solid $ow-color-grey-border;
+                    border-left: 1px solid $sv-border;
                 }
             }
         }
@@ -215,13 +328,13 @@
 
         &-link {
             @include fontSpecs(14, 20, 400);
-            color: $ow-color-black;
+            color: $sv-ink;
             padding-block: 0.5rem;
             padding-left: 1rem;
             padding-right: 0;
 
             &-icon, .icon {
-                color: $ow-color-grey-7;
+                color: $sv-ink-muted;
             }
 
             &.is-active, &:hover {
@@ -246,7 +359,7 @@
                 color: inherit;
 
                 .icon {
-                    color: $ow-color-black;
+                    color: $sv-ink;
                 }
             }
         }
@@ -268,11 +381,16 @@
 
 .dropdown-menu {
     border: 0;
-    background: $ow-color-grey-1;
+    background: $sv-cream;
     padding: 1.5rem;
 
     &[data-bs-popper] {
-        top: 56px;
+        // The flyout is positioned against `.navbar`, which is only as tall as the
+        // 17px link row — the bar's own height comes from `.nav-main .container`'s
+        // 16px block padding plus the 1px border. A hard-coded offset drifts the
+        // moment either changes; 56px left the flyout 22px below the bar, and the
+        // pointer crossing that dead band closed the menu before it could be used.
+        top: calc(100% + #{$sv-navbar-pad-block} + 1px);
         margin: 0;
     }
 }
@@ -289,7 +407,7 @@
         .nav-item {
             margin: 0;
             @include fontSpecs(14, 20, 400);
-            color: $ow-color-black;
+            color: $sv-ink;
             padding-block: 0.5rem;
             padding-inline: 1rem;
 

@@ -1,1 +1,16 @@
-// sivanka-hero config
+.sw-cms-el-config-sivanka-hero {
+    &__legend {
+        margin: 16px 0 8px;
+        font-weight: 600;
+    }
+
+    &__trust-item {
+        padding-bottom: 8px;
+    }
+
+    &__trust-number {
+        margin: 0 0 4px;
+        font-weight: 600;
+        opacity: .6;
+    }
+}

@@ -1,0 +1,126 @@
+// =============================================================================
+//  Home rail — the shared horizontal scroller
+//  reference/Sivanka Home v2 redesign.dc.html: [data-r="rail"] / [data-r="track"]
+//
+//  A flex track of fixed-width cards inside an overflow container. Above 1100 the
+//  track is clipped and the arrows move it; from 1100 down it becomes a native
+//  swipeable scroller that bleeds into the container gutter, snapping card to card.
+// =============================================================================
+.sv-rail {
+    position: relative;
+
+    &__track {
+        display: flex;
+        gap: 18px;
+        // Scrollable at every width so the rail can be dragged and wheel-scrolled;
+        // the scrollbar itself stays hidden, as the reference draws no chrome.
+        // `scroll-behavior` stays `auto` on purpose — the arrows animate on rAF so the
+        // endless loop can rewrite `scrollLeft` mid-animation (see sv-rail.plugin.js).
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+
+        // The reference bleeds the rail to the screen edge below 1100. Matic asked for
+        // it to stay inside the content column instead, so the cards line up with the
+        // section heading at every width.
+    }
+
+    // The card itself is the flex child in the reference, so it stretches to the
+    // tallest card in the track. Ours sits inside a wrapper, so pass the stretch on.
+    // Snap only where the browser does the scrolling itself. With a mouse the rail is
+    // dragged and the arrows animate it frame by frame; snapping would fight both.
+    @media (hover: none) and (pointer: coarse) {
+        .sv-rail__track {
+            scroll-snap-type: x mandatory;
+        }
+
+        .sv-rail__item {
+            scroll-snap-align: start;
+        }
+    }
+
+    // Mouse dragging
+    &__track {
+        cursor: grab;
+    }
+
+    &.is--pressing &__track {
+        cursor: grabbing;
+        user-select: none;
+    }
+
+    // Only once the pointer has actually travelled: taking the links out of the hit
+    // test on mousedown would stop the browser firing a click at all.
+    &.is--dragging a,
+    &.is--dragging img {
+        pointer-events: none;
+    }
+
+    &__item {
+        flex: 0 0 auto;
+        display: flex;
+
+        > * {
+            flex: 1 1 auto;
+            width: 100%;
+            min-width: 0;
+        }
+    }
+
+    // ---- controls: centred 26px below the track ---------------------------
+    &__controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 26px;
+    }
+
+    &__arr {
+        @include sv-slider-arrow;
+    }
+
+    &__next {
+        @include sv-slider-arrow-next;
+    }
+
+    // Fewer cards than fit: no arrows to show.
+    &--static &__controls {
+        display: none;
+    }
+
+    // ---- card widths, straight off the reference --------------------------
+    &--categories {
+        .sv-rail__track { gap: 18px; }
+
+        .sv-rail__item {
+            width: $sv-card-category;
+
+            @media (max-width: $sv-bp-phone) { width: 190px; }
+            @media (max-width: $sv-bp-small) { width: 164px; }
+            @media (max-width: $sv-bp-tiny)  { width: 148px; }
+        }
+    }
+
+    &--products {
+        .sv-rail__track { gap: 16px; }
+
+        .sv-rail__item {
+            width: $sv-card-product;
+
+            @media (max-width: $sv-bp-phone) { width: 250px; }
+            @media (max-width: $sv-bp-small) { width: 224px; }
+            @media (max-width: $sv-bp-tiny)  { width: 208px; }
+        }
+
+        // A card's hover shadow must not be clipped by the track above 1100.
+        .sv-rail__track {
+            padding-block: 2px;
+        }
+    }
+}

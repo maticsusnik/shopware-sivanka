@@ -20,20 +20,20 @@
     gap: 10px;
 
     &__text {
-        color: $ow-color-black;
+        color: $sv-ink;
         @include fontSpecs(14, 20, 400);
     }
 }
 
 .out-of-stock{
     .dot{
-        background-color: $ow-color-red-stock;
+        background-color: $sv-out-of-stock;
     }
 }
 
 .low-stock{
     .dot{
-        background-color: $ow-color-orange-stock;
+        background-color: $sv-low-stock;
     }
 }
 
@@ -41,8 +41,8 @@
     width: 11px;
     height: 11px;
     display: block;
-    background-color: $ow-color-green-stock;
-    border-radius: 100%;
+    background-color: $sv-in-stock;
+    border-radius: $sv-r-round;
     position: relative;
     top: 0;
 }
@@ -70,13 +70,13 @@
     &.tns-nav-active,
     &:hover {
         .gallery-slider-thumbnails-item-inner {
-            border-color: $ow-color-base;
+            border-color: $sv-bordo;
         }
     }
 }
 
 .gallery-slider-thumbnails-item-inner {
-    border: 1px solid $ow-color-grey-4;
+    border: 1px solid $sv-border;
     border-radius: 0;
     padding: 0;
     width: 100%;

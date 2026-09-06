@@ -8,7 +8,7 @@
     h2,
     .h2 {
         margin: 0 0 28px;
-        font-family: $sivanka-serif;
+        font-family: $sv-serif;
         font-size: 32px;
         font-weight: 600;
         line-height: 38px;
@@ -53,8 +53,8 @@
 
     &__media {
         overflow: hidden;
-        border-radius: $sivanka-r24;
-        box-shadow: $ow-box-shadow;
+        border-radius: $sv-r-panel;
+        box-shadow: $sv-shadow-deep;
 
         // The core "image" element nests the picture in an alignment wrapper that
         // shrinks to the intrinsic width; stretch the whole chain to the frame.
@@ -95,8 +95,8 @@
 // The cream panel is rounded so the block also works inside a boxed CMS section.
 // Put the section in "full width" mode for an edge-to-edge band.
 .sivanka-service-steps {
-    background: $sivanka-beige;
-    border-radius: $sivanka-r24;
+    background: $sv-cream;
+    border-radius: $sv-r-panel;
 
     &__inner {
         padding: 56px 40px;
@@ -118,11 +118,11 @@
 
     // On the cream panel the "fact" cards turn white so they stay readable.
     .sivanka-icon-card--fact {
-        background: $sivanka-white;
-        border: 1px solid $sivanka-border;
+        background: $sv-white;
+        border: 1px solid $sv-border;
 
         .sivanka-icon-card__icon {
-            background: $sivanka-accent-soft;
+            background: $sv-bordo-tint;
         }
     }
 }
@@ -175,8 +175,8 @@
     gap: 32px;
     margin-bottom: 64px;
     padding: 38px 44px;
-    background: linear-gradient(160deg, #FBE0EE, #F6CFE1);
-    border-radius: 20px;
+    background: linear-gradient(160deg, $sv-bordo-tint, $sv-cream);
+    border-radius: $sv-r-panel;
 
     @include media-breakpoint-down(md) {
         flex-direction: column;

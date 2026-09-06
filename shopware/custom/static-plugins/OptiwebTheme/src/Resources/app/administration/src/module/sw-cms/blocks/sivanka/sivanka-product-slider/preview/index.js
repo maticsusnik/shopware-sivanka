@@ -1,10 +1,12 @@
 import template from './sw-cms-preview-sivanka-product-slider.html.twig';
 import './sw-cms-preview-sivanka-product-slider.scss';
 
-const { Component } = Shopware;
+Shopware.Component.register('sw-cms-preview-sivanka-product-slider', {
+    template,
 
-Component.register('sw-cms-preview-sivanka-product-slider', { template });
-
-
-
-
+    computed: {
+        assetFilter() {
+            return Shopware.Filter.getByName('asset');
+        },
+    },
+});

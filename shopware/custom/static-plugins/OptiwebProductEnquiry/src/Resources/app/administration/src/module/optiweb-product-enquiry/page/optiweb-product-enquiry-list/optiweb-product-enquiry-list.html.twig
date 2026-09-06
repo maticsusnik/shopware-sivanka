@@ -43,6 +43,20 @@
             <template #column-firstName="{ item }">
                 {{ item.firstName }} {{ item.lastName }}
             </template>
+            <template #column-productName="{ item }">
+                {{ item.productName }}
+                <sw-label
+                    v-if="item.productCount > 1"
+                    appearance="pill"
+                    size="small"
+                >
+                    {{ $tc('optiwebProductEnquiry.admin.list.moreProducts', item.productCount - 1, { count: item.productCount - 1 }) }}
+                </sw-label>
+            </template>
+            <template #column-quantity="{ item }">
+                <template v-if="item.productCount > 1">&mdash;</template>
+                <template v-else>{{ item.quantity }}</template>
+            </template>
             <template #column-status="{ item }">
                 <sw-label :variant="item.status === 'new' ? 'warning' : 'success'" appearance="pill">
                     {{ $tc('optiwebProductEnquiry.admin.detail.status.' + item.status) }}

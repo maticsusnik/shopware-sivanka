@@ -3,6 +3,10 @@ services:
     tags:
       - { name: shopware.entity.definition }
 
+  OptiwebProductEnquiry\Core\Content\ProductEnquiryLine\ProductEnquiryLineDefinition:
+    tags:
+      - { name: shopware.entity.definition }
+
   OptiwebProductEnquiry\Content\Cms\DataResolver\Element\ProductEnquiryCmsElementResolver:
     arguments:
       $salutationRepository: '@salutation.repository'

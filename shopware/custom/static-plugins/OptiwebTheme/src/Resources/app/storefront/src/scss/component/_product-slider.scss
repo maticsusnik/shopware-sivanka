@@ -35,8 +35,8 @@
                 width: 1.5rem;
                 height: 1.5rem;
                 border: 2px solid transparent;
-                border-top-color: $ow-color-black;
-                border-radius: 50%;
+                border-top-color: $sv-ink;
+                border-radius: $sv-r-round;
                 animation: spinner .6s linear infinite;
                 transform: translate(-50%, -50%);
             }
@@ -77,10 +77,10 @@
             border: 1px solid transparent;
 
             &:hover {
-                border: 1px solid $ow-color-base;
+                border: 1px solid $sv-bordo;
 
                 svg, svg path {
-                    fill: $ow-color-base;
+                    fill: $sv-bordo;
                 }
             }
         }

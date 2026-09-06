@@ -5,6 +5,12 @@
                 label="Title"
                 @change="$emit('element-update', element)" />
 
+        <mt-text-field
+                v-model="element.config.badge.value"
+                :label="$tc('sw-cms.elements.sivankaProductSlider.config.label.badge')"
+                :help-text="$tc('sw-cms.elements.sivankaProductSlider.config.helpText.badge')"
+                @update:model-value="$emit('element-update', element)" />
+
         <sw-single-select
                 :label="'Selection mode'"
                 :placeholder="'Choose mode'"

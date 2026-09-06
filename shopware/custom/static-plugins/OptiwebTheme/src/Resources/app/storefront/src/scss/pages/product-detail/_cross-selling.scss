@@ -24,7 +24,7 @@
 
 .cross-selling-slider {
     &.cross-selling {
-        background: $ow-color-grey-1;
+        background: $sv-cream;
     }
 
     .cms-element-product-slider {
@@ -44,5 +44,45 @@
 
     .cms-element-title-paragraph {
         margin-bottom: 1rem;
+    }
+}
+
+// =============================================================================
+//  "Sorodni izdelki" — reference/Sivanka Product.dc.html
+//  A left-aligned section heading over a 4-up grid of the standard product card.
+//  The reference draws no responsive rule for this grid; it follows the services
+//  grid's ladder, which is the system's answer for a 4-up row.
+// =============================================================================
+.sivanka-related {
+    &__group {
+        padding-block: 56px 8px;
+    }
+
+    // Subpage heading: left-aligned in the content column, no flourish.
+    &__title {
+        @include sv-h2;
+        margin: 0 0 24px;
+    }
+
+    &__grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+
+        @media (max-width: $sv-bp-tablet) {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        @media (max-width: $sv-bp-phone) {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    &__cell {
+        display: flex;
+
+        > * {
+            width: 100%;
+        }
     }
 }

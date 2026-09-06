@@ -15,11 +15,11 @@ Shopware.Service('cmsService').registerCmsElement({
             source: 'static',
             value: []
         },
+        // Plain string: the config field binds `title.value` to a text field and the
+        // storefront prints it directly, so an object here renders as "Array".
         title: {
             source: 'static',
-            value: {
-                text: 'Lorem ipsum dolor sit amet'
-            }
+            value: 'Lorem ipsum dolor sit amet'
         },
         update: {
             source: 'static',

@@ -29,6 +29,15 @@ Component.register('sw-cms-el-config-image-tab', {
         }
     },
     computed: {
+        // `mt-tabs` is driven by an items array; the deprecated `sw-tabs` +
+        // `sw-tabs-item` slot form is dropped in 6.8.
+        tabItems() {
+            return (this.computedTabs || []).map((item, index) => ({
+                name: `tab-${index}`,
+                label: `Tab ${index + 1}`,
+            }));
+        },
+
         computedTabs() {
             return this.element.config.tabs.value;
         },
@@ -43,8 +52,20 @@ Component.register('sw-cms-el-config-image-tab', {
         //END MEDIA
     },
     methods: {
+        onTabChange(name) {
+            this.activeTab = Number(String(name).replace('tab-', '')) || 0;
+        },
+
         createdComponent() {
             this.initElementConfig('image-tab');
+
+            // Titles saved before this config used a plain string are `{ text: '...' }`,
+            // which a text field would show as "[object Object]".
+            const title = this.element.config.title.value;
+            if (title && typeof title === 'object') {
+                this.element.config.title.value = title.text ?? '';
+            }
+
             if (!this.element.config.tabs.value.length) {
                 this.createNewTab();
             }
@@ -112,8 +133,8 @@ Component.register('sw-cms-el-config-image-tab', {
         },
         removeTab(index) {
             this.element.config.tabs.value.splice(index, 1);
-            this.activeTab = 0;
-            this.$refs.tab0[0].clickEvent();
+            this.activeTab = Math.max(0, Math.min(this.activeTab, this.element.config.tabs.value.length - 1));
+            this.$emit('element-update', this.element);
         },
         newTabTemplate() {
             const tab = {

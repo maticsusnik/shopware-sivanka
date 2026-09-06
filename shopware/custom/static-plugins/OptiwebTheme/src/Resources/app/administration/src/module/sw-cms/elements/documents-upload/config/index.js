@@ -29,6 +29,15 @@ Component.register('sw-cms-el-config-documents-upload', {
         }
     },
     computed: {
+        // `mt-tabs` is driven by an items array; the deprecated `sw-tabs` +
+        // `sw-tabs-item` slot form is dropped in 6.8.
+        tabItems() {
+            return (this.computedDocuments || []).map((item, index) => ({
+                name: `tab-${index}`,
+                label: `Document ${index + 1}`,
+            }));
+        },
+
         computedDocuments() {
             return this.element.config.documents.value;
         },
@@ -43,6 +52,10 @@ Component.register('sw-cms-el-config-documents-upload', {
         //END MEDIA
     },
     methods: {
+        onTabChange(name) {
+            this.activeDocument = Number(String(name).replace('tab-', '')) || 0;
+        },
+
         createdComponent() {
             this.initElementConfig('documents-upload');
             if (!this.element.config.documents.value.length) {
@@ -112,8 +125,8 @@ Component.register('sw-cms-el-config-documents-upload', {
         },
         removeDocument(index) {
             this.element.config.documents.value.splice(index, 1);
-            this.activeDocument = 0;
-            this.$refs.tab0[0].clickEvent();
+            this.activeDocument = Math.max(0, Math.min(this.activeDocument, this.element.config.documents.value.length - 1));
+            this.$emit('element-update', this.element);
         },
         newDocumentTemplate() {
             const document = {

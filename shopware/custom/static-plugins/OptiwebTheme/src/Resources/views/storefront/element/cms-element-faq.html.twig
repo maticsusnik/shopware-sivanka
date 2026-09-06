@@ -1,6 +1,12 @@
 {% set seoSchema = '' %}
 {% block element_faq %}
-    {% set faqValues = block.slots.getSlot("content").config.faq.value ?? block.slots.getSlot("faq").config.faq.value %}
+    {# Callers may pass the slot in as `element` (the newer blocks do) or rely on the
+       block's own `content` / `faq` slot (the legacy category block does). #}
+    {% set faqElement = element|default(null) %}
+    {% if faqElement is null and block is defined %}
+        {% set faqElement = block.slots.getSlot('content') ?: block.slots.getSlot('faq') %}
+    {% endif %}
+    {% set faqValues = faqElement ? faqElement.fieldConfig.elements.faq.value : null %}
     {% if faqValues %}
         <div class="ow-faq">
             <div class="ow-faq__wrapper">

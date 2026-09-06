@@ -29,6 +29,15 @@ Component.register('sw-cms-el-config-main-slider', {
         }
     },
     computed: {
+        // `mt-tabs` is driven by an items array; the deprecated `sw-tabs` +
+        // `sw-tabs-item` slot form is dropped in 6.8.
+        tabItems() {
+            return (this.computedSlides || []).map((item, index) => ({
+                name: `tab-${index}`,
+                label: `Slide ${index + 1}`,
+            }));
+        },
+
         computedSlides() {
             return this.element.config.slides.value;
         },
@@ -43,6 +52,10 @@ Component.register('sw-cms-el-config-main-slider', {
         //END MEDIA
     },
     methods: {
+        onTabChange(name) {
+            this.activeSlide = Number(String(name).replace('tab-', '')) || 0;
+        },
+
         createdComponent() {
             this.initElementConfig('main-slider');
             if (!this.element.config.slides.value.length) {
@@ -128,8 +141,8 @@ Component.register('sw-cms-el-config-main-slider', {
         },
         removeSlide(index) {
             this.element.config.slides.value.splice(index, 1);
-            this.activeSlide = 0;
-            this.$refs.tab0[0].clickEvent();
+            this.activeSlide = Math.max(0, Math.min(this.activeSlide, this.element.config.slides.value.length - 1));
+            this.$emit('element-update', this.element);
         },
         newSlideTemplate() {
             const slide = {

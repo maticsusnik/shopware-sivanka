@@ -7,6 +7,16 @@
     {{ parent() }}
 {% endblock %}
 
+{# The reference draws the badge INSIDE the image frame, 10px from its top-left
+   corner. Core renders it as a sibling of the frame, so it lands on the card corner
+   instead — move it into the frame, which is the positioned box. #}
+{% block component_product_box_badges %}{% endblock %}
+
+{% block component_product_box_image_inner %}
+    {{ parent() }}
+    {% sw_include '@Storefront/storefront/component/product/card/badges.html.twig' %}
+{% endblock %}
+
 {% block component_product_box_rating %}{% endblock %}
 
 {% block component_product_box_variant_characteristics %}{% endblock %}

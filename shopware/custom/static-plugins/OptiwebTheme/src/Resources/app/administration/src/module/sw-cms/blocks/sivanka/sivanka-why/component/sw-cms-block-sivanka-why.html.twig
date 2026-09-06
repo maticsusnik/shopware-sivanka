@@ -1,0 +1,13 @@
+{% block sw_cms_block_sivanka_why %}
+<div class="sw-cms-block-sivanka-why">
+    <div class="sw-cms-block-sivanka-why__heading">
+        <slot name="heading">{% block sw_cms_block_sivanka_why_slot_heading %}{% endblock %}</slot>
+    </div>
+    <div class="sw-cms-block-sivanka-why__grid">
+        <div><slot name="cardOne">{% block sw_cms_block_sivanka_why_slot_cardone %}{% endblock %}</slot></div>
+        <div><slot name="cardTwo">{% block sw_cms_block_sivanka_why_slot_cardtwo %}{% endblock %}</slot></div>
+        <div><slot name="cardThree">{% block sw_cms_block_sivanka_why_slot_cardthree %}{% endblock %}</slot></div>
+        <div><slot name="cardFour">{% block sw_cms_block_sivanka_why_slot_cardfour %}{% endblock %}</slot></div>
+    </div>
+</div>
+{% endblock %}

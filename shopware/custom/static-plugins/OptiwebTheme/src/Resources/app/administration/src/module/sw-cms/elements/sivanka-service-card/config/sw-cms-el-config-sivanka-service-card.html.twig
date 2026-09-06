@@ -46,6 +46,15 @@
     />
     {% endblock %}
 
+    {% block sw_cms_el_config_sivanka_service_card_meta %}
+    <mt-text-field
+        v-model="element.config.meta.value"
+        :label="$tc('sw-cms.elements.sivankaServiceCard.config.label.meta')"
+        :help-text="$tc('sw-cms.elements.sivankaServiceCard.config.helpText.meta')"
+        @update:model-value="onChange"
+    />
+    {% endblock %}
+
     {% block sw_cms_el_config_sivanka_service_card_url %}
     <div class="sw-cms-el-config-sivanka-service-card__url">
         <div class="sw-field__label">

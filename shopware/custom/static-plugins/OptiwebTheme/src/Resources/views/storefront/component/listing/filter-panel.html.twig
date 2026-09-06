@@ -24,7 +24,7 @@
         {% for property in properties.entities %}
             {% set isPropertyManufacturer = property.id == propertyManufacturer %}
             {% if isPropertyManufacturer and hideManufacturerFilter %}
-                <div style="width:0;height: 0;overflow: hidden">
+                <div class="filter-panel-measure-shim">
             {% endif %}
             {% sw_include '@Storefront/storefront/component/listing/filter/filter-property-select.html.twig' with {
                 elements: property.options,

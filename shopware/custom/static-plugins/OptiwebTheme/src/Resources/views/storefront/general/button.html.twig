@@ -1,27 +1,35 @@
-{% set attribute = "" %}
-{% set link = "" %}
-{% set enableLoading = '' %}
+{# Renders a link stored by the administration's `ow-url` component.
+   Shape: { type: 'external'|'internal', link, entity, entityId, text }.
+   Values saved before `ow-url` existed are a plain URL string, which is handled too. #}
+{% set link = '' %}
+{% set isExternal = false %}
+{% set label = button is iterable ? button.text|default('') : '' %}
 
-{% if button.type == "external" %}
-    {% set attribute = "target='_blank'" %}
-    {% set link = button.link %}
-{% else %}
-    {% if button.entity === 'category' and button.entityId %}
+{% if button is not iterable %}
+    {% set link = button|default('') %}
+{% elseif button.type == 'internal' %}
+    {% if button.entity == 'category' and button.entityId %}
         {% set link = seoUrl('frontend.navigation.page', { navigationId: button.entityId }) %}
-    {% elseif button.entity === 'product' and button.entityId %}
-        {% set link = seoUrl('frontend.detail.page', {productId: button.entityId}) %}
+    {% elseif button.entity == 'product' and button.entityId %}
+        {% set link = seoUrl('frontend.detail.page', { productId: button.entityId }) %}
     {% endif %}
+{% else %}
+    {% set link = button.link|default('') %}
+    {% set isExternal = link is not empty %}
 {% endif %}
 
-{% if button.enableLoading %}
-    {% set enableLoading = true %}
-{% endif %}
+{# An unconfigured button used to still render as an empty pill; only render a real one. #}
+{% if link is not empty or label is not empty %}
+    {% set enableLoading = button is iterable and button.enableLoading|default(false) %}
 
-<a class="btn btn-primary {{ button.className }} {% if enableLoading %}btn-loading{% endif %}" href="{{ link }}">
-    {% if enableLoading %}
-        <div class="spinner-border" role="status">
-            <span class="sr-only">Loading...</span>
-        </div>
-    {% endif %}
-    <span>{{ button.text }}</span>
-</a>
+    <a class="btn btn-primary {{ button is iterable ? button.className|default('') : '' }}{% if enableLoading %} btn-loading{% endif %}"
+       href="{{ link ?: '#' }}"
+       {% if isExternal %}target="_blank" rel="noopener noreferrer"{% endif %}>
+        {% if enableLoading %}
+            <div class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        {% endif %}
+        <span>{{ label }}</span>
+    </a>
+{% endif %}

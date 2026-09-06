@@ -170,7 +170,7 @@ class OrderExportSync extends AbstractSyncBase
                 $this->exportOrder($order, $send);
             } catch (\Throwable $e) {
                 ++$this->failed;
-                OwLogger::error($this->logger, 'Order ' . $order->getOrderNumber() . ' export failed', ['error' => $e->getMessage()]);
+                OwLogger::exception($this->logger, 'Order ' . $order->getOrderNumber() . ' export failed', $e);
                 $this->markOrder($order, GlobalVariables::STATUS_ERROR, null, $e->getMessage());
             }
         }
