@@ -4,9 +4,10 @@
 {% set searchWidgetOptions = { searchWidgetMinChars: shopware.minSearchLength } %}
 
 {% block layout_header_search %}
-    {# The reference keeps the field visible at every width down to 340px. The id is
-       kept so the vendor SearchWidget plugin's aria wiring still resolves. #}
-    <div id="searchCollapse">
+    {# `collapse` is Bootstrap's, and it is what makes the mobile magnifier work: the
+       toggle in header.html.twig targets this id. Above 900 the panel is forced open
+       again in SCSS, so the desktop field stays exactly as the reference draws it. #}
+    <div class="collapse" id="searchCollapse">
         <div class="header-search">
             {% block layout_header_search_form %}
                 {{ parent() }}

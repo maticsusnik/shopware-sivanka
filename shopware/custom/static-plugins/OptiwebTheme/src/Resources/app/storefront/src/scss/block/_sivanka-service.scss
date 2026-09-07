@@ -168,23 +168,40 @@
 }
 
 /* ---------- cta ---------- */
+// A centred cream card, not the old two-column band: flat $sv-cream with the
+// 1px border, 44px of padding and everything stacked in a 660px column in the
+// middle. The heading, its flourish and the lead come from the intro element's
+// `--cta` variant; the buttons sit 26px under the copy.
 .sivanka-service-cta {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 32px;
-    margin-bottom: 64px;
-    padding: 38px 44px;
-    background: linear-gradient(160deg, $sv-bordo-tint, $sv-cream);
+    margin-bottom: 72px;
+    padding: 44px;
+    background: $sv-cream;
+    border: 1px solid $sv-border;
     border-radius: $sv-r-panel;
+    text-align: center;
+
+    &__inner {
+        max-width: 660px;
+        margin: 0 auto;
+    }
+
+    &__actions {
+        margin-top: 26px;
+    }
+
+    // Centred pair, 12px apart — the design's CTA gap, one notch tighter than the
+    // left-aligned 14px the actions element uses elsewhere.
+    .sivanka-actions {
+        justify-content: center;
+        gap: 12px;
+    }
 
     @include media-breakpoint-down(md) {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 28px;
+        margin-bottom: 48px;
+        padding: 32px 24px;
+    }
 
-        &__actions {
-            width: 100%;
-        }
+    @media (max-width: $sv-bp-phone) {
+        padding: 26px 18px;
     }
 }

@@ -25,7 +25,43 @@
         color: $sivanka-cms-muted;
     }
 
+    // The rule-heart-rule signature, scaled down for the editor.
+    &__flourish {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 8px;
+        color: $sivanka-cms-primary;
+
+        &::before,
+        &::after {
+            content: "";
+            width: 26px;
+            height: 1px;
+            background: currentColor;
+            opacity: .45;
+        }
+
+        svg {
+            width: 12px;
+            height: 12px;
+        }
+    }
+
+    // Centred variants: the storitve CTA card and the home section headings.
+    &.is--cta,
+    &.is--home {
+        text-align: center;
+
+        .sw-cms-el-sivanka-service-intro__lead {
+            margin: 8px auto 0;
+        }
+    }
+
     &.is--cta &__headline {
-        font-size: 18px;
+        margin-bottom: 0;
+        font-size: 24px;
+        color: #5c1229;
     }
 }

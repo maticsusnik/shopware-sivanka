@@ -188,7 +188,16 @@ class ShopwareClient implements ClientInterface
             return;
         }
 
-        $this->bulkData[][$uniqueIdentifier] = [
+        // Distinct key per operation: the sync API keys its operations by name,
+        // so queueing two under the same identifier used to drop the first one
+        // silently when the queue was flattened.
+        $key    = $uniqueIdentifier;
+        $suffix = 1;
+        while (isset($this->bulkData[$key])) {
+            $key = $uniqueIdentifier . '-' . ++$suffix;
+        }
+
+        $this->bulkData[$key] = [
             'entity'  => $entity,
             'action'  => $action,
             'payload' => $payload,
@@ -205,7 +214,7 @@ class ShopwareClient implements ClientInterface
             return;
         }
 
-        $json           = json_encode(array_merge(...$this->bulkData));
+        $json           = json_encode($this->bulkData);
         $this->bulkData = [];
 
         if ($json === false) {

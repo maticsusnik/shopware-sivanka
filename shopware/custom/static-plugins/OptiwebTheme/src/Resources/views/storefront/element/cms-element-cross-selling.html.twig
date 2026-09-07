@@ -2,9 +2,11 @@
 
 {# "Sorodni izdelki" — reference/Sivanka Product.dc.html.
 
-   The reference draws a plain 4-up grid under a left-aligned section heading, not a
-   slider: on a product page the row is short enough to show whole, and a rail there
-   competes with the gallery for the same gesture.
+   Drawn as the same native horizontal rail the home page uses for "Pravkar prišlo"
+   and "Najbolj priljubljeno" (`component/_rail.scss` + `sv-rail.plugin.js`): a flex
+   track of fixed-width cards that swipes on touch and pages on the arrow pair. At
+   1366 the 330px card still lands four across, so the reference's 4-up row survives
+   on desktop while a phone gets a swipe instead of a four-card column.
 
    The products come from the product's own cross-selling when an editor has set one
    up in the administration; otherwise Core\Content\Product\SalesChannel\CrossSelling\
@@ -18,23 +20,29 @@
         <div class="product-detail-cross-selling sivanka-related">
             {% for item in groups %}
                 {% set crossSelling = item.crossSelling %}
+                {% set groupName = crossSelling.translated.name ?: crossSelling.name %}
 
                 <section class="sivanka-related__group">
-                    {% if crossSelling.translated.name ?: crossSelling.name %}
-                        <h2 class="sivanka-related__title">
-                            {{ crossSelling.translated.name ?: crossSelling.name }}
-                        </h2>
+                    {% if groupName %}
+                        <h2 class="sivanka-related__title">{{ groupName }}</h2>
                     {% endif %}
 
-                    <div class="sivanka-related__grid">
-                        {% for product in item.products %}
-                            <div class="sivanka-related__cell">
-                                {% sw_include '@Storefront/storefront/component/product/card/box.html.twig' with {
-                                    'layout': 'standard',
-                                    'displayMode': 'cover',
-                                } %}
-                            </div>
-                        {% endfor %}
+                    <div class="sv-rail sv-rail--products sivanka-related__rail"
+                         data-sv-rail="true"
+                         role="region"
+                         aria-label="{{ groupName|striptags }}">
+                        <div class="sv-rail__track" tabindex="0">
+                            {% for product in item.products %}
+                                <div class="sv-rail__item">
+                                    {% sw_include '@Storefront/storefront/component/product/card/box.html.twig' with {
+                                        'layout': 'standard',
+                                        'displayMode': 'cover',
+                                    } %}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        {% sw_include '@Storefront/storefront/utilities/sivanka-rail-controls.html.twig' %}
                     </div>
                 </section>
             {% endfor %}

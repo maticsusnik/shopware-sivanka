@@ -52,9 +52,20 @@
             row-gap: 26px;
         }
 
+        // From here down the wrapped row gains a rule of its own (see `.nl-svc`), and
+        // the item padding is already 22px, so the gap has to go or the rule sits
+        // 48px below one row and 23px above the next.
+        @media (max-width: $sv-bp-portrait) {
+            row-gap: 0;
+        }
+
         @media (max-width: $sv-bp-phone) {
             grid-template-columns: minmax(0, 1fr);
-            row-gap: 22px;
+            // No row gap once stacked. The divider is drawn on each item's own top
+            // edge, so a grid gap would pile all the whitespace ABOVE the rule and
+            // leave the icon welded to its underside. The breathing room has to come
+            // from the items' own padding instead — see `.nl-svc` below.
+            row-gap: 0;
         }
     }
 
@@ -90,9 +101,22 @@
         }
 
         // One column: no columns left to divide, and every item after the first
-        // carries the row rule instead.
+        // carries the row rule instead. Stacked, the items read better centred than
+        // ragged-left against the full page width.
+        //
+        // 20px above and below every rule, so it sits centred in the whitespace. The
+        // outer edges are trimmed so the strip's own 34/36 container padding still
+        // sets the distance to the band edges rather than stacking on top of these.
         @media (max-width: $sv-bp-phone) {
-            padding: 0;
+            padding: 20px 0;
+            justify-content: center;
+            // Stacked to one column there is width to spare above the copy but none
+            // beside it, so the medallion moves on top of its text instead of eating
+            // 56px + gap out of the line the two-line label has to fit into.
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            text-align: center;
 
             &,
             &:nth-child(even) {
@@ -101,6 +125,14 @@
 
             &:nth-child(n + 2) {
                 border-top: 1px solid $sv-border;
+            }
+
+            &:first-child {
+                padding-top: 0;
+            }
+
+            &:last-child {
+                padding-bottom: 0;
             }
         }
 

@@ -505,6 +505,25 @@
         justify-content: flex-end;
     }
 
+    // The stepper is a fixed piece of furniture — minus, field, plus, unit — so it
+    // sizes to its own content rather than to a third of the row. At `col-4` the
+    // fieldset is 113px on a 390px screen, which is narrower than the stepper: the
+    // `.input-group`'s default `flex-wrap: wrap` then dropped the "kos" unit onto a
+    // second line under the buttons. Let the fieldset shrink-to-fit and give the
+    // price the remainder.
+    .buy-widget-container > fieldset.col-4 {
+        flex: 0 0 auto;
+        width: auto;
+        max-width: none;
+    }
+
+    .buy-widget-container > .col-8.text-end {
+        flex: 1 1 0;
+        width: auto;
+        max-width: none;
+        min-width: 0;
+    }
+
     // Quantity stepper
     .product-detail-quantity-group {
         border: 1px solid $sv-border;
@@ -528,9 +547,22 @@
             }
         }
 
+        // One line, always: minus / field / plus / unit.
+        flex-wrap: nowrap;
+
         .quantity-selector-group-input {
             font-weight: 600;
             color: $sv-ink;
+            // Wide enough for four digits; the 80px default plus the unit label is
+            // more than the buy column has to give on a phone.
+            width: 3.25rem;
+            max-width: 3.25rem;
+            flex: 0 0 auto;
+            text-align: center;
+        }
+
+        .input-group-text {
+            white-space: nowrap;
         }
     }
 
@@ -806,5 +838,39 @@
             max-width: none;
             width: auto;
         }
+    }
+}
+
+// ============================================================
+//  Mobile reading order: name, then image, then the rest
+//  The reference keeps the H1 inside the cream buy panel, which on a phone lands
+//  below a 342px gallery. `cms-element-image-gallery.html.twig` renders a second,
+//  mobile-only copy above the picture; below `lg` that one shows and the panel's is
+//  hidden, above `lg` the reverse. Exactly one is ever displayed.
+// ============================================================
+@include media-breakpoint-down(lg) {
+    .cms-element-buy-box .product-detail-name-container {
+        display: none;
+    }
+
+    // `.is-ctl-product .product-detail-name` (0,2,0) sets an 8px bottom margin for the
+    // desktop panel copy and outranked the 14px declared here, which is why the title
+    // sat almost against the gallery frame. Match its weight and give the heading real
+    // air before the picture.
+    .is-ctl-product .product-detail-name--mobile,
+    .product-detail-name--mobile {
+        font-family: $sv-serif;
+        font-size: 26px;
+        font-weight: $sv-heading-weight;
+        line-height: 1.2;
+        letter-spacing: -0.26px;
+        color: $sv-ink;
+        margin: 0 0 20px;
+    }
+
+    // …and the same again under the thumbnails, so the gallery is not welded to the
+    // cream buy panel.
+    .is-ctl-product .product-detail-media {
+        margin-bottom: 28px;
     }
 }

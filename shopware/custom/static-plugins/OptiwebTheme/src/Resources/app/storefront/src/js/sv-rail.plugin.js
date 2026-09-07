@@ -15,7 +15,9 @@ import Plugin from 'src/plugin-system/plugin.class';
  * On top of the scroller this adds:
  *   - an endless loop, by MOVING the edge card to the other end rather than cloning
  *     it. Clones would duplicate every wishlist button and buy form in the rail and
- *     leave them unbound; recycling the real node keeps every binding intact.
+ *     leave them unbound; recycling the real node keeps every binding intact. The one
+ *     exception is `cloneToLoop`, opt-in per rail, for a track whose items are inert
+ *     and too few to loop on their own — the home hero's two photographs.
  *   - mouse dragging, with the click that follows a drag suppressed.
  *   - the arrow pair, animated on rAF rather than `behavior: 'smooth'`, so the loop
  *     can rewrite `scrollLeft` mid-animation without cancelling it.
@@ -27,6 +29,17 @@ export default class SvRailPlugin extends Plugin {
         nextSelector: '.sv-rail__next',
         /** Pointer travel, in px, past which the following click is a drag, not a tap. */
         dragThreshold: 6,
+        /**
+         * Duplicate the track's items until there is runway to loop (see
+         * `_fillForLoop`). OFF by default and deliberately so: a product card carries
+         * a wishlist button and a buy form, and a clone of those is an unbound
+         * duplicate — the whole reason `_recycle` moves real nodes instead of cloning.
+         * Opt in with `data-sv-rail-options='{"cloneToLoop":true}'` only where the
+         * items are inert, as the home hero's two photographs are.
+         */
+        cloneToLoop: false,
+        /** Hard ceiling on cloning, so a mis-measured track cannot fill the DOM. */
+        maxItems: 12,
     };
 
     init() {
@@ -41,24 +54,74 @@ export default class SvRailPlugin extends Plugin {
         this.dragging = false;
         this.dragged = false;
         this.raf = null;
+        // The set to clone from, captured before `_recycle` starts reordering.
+        this.originals = Array.from(this.track.children);
 
+        this._fillForLoop();
         this._measure();
         this._registerEvents();
         this._update();
     }
 
+    /** The widest item in the track — the unit of runway the loop needs. */
+    _widest() {
+        return Array.from(this.track.children)
+            .reduce((max, el) => Math.max(max, el.getBoundingClientRect().width), 0);
+    }
+
     /**
-     * Looping needs enough runway that moving the first card to the end always frees
-     * some: with less content than that the rail is a plain, finite scroller.
+     * Looping needs TWO items of runway, not one.
+     *
+     * `_recycle` moves the first item to the end and pulls `scrollLeft` back by its
+     * width, so the scroll position has to be able to travel a whole item PAST the one
+     * being moved. With exactly one item of overflow the position is already pinned at
+     * its maximum when the recycle fires: the forward pass shifts the order and the
+     * backward pass immediately shifts it back, the two cancel, and the rail sits
+     * still. That is precisely what the home hero did — two full-width slides give
+     * exactly one item of runway — and it read as "the arrows are dead".
+     *
+     * Below that threshold the rail is an honest finite scroller with end-stopped
+     * arrows, which works. `>= widest` was the old test and is the bug.
      */
     _measure() {
         const overflow = this.track.scrollWidth - this.track.clientWidth;
-        const widest = Array.from(this.track.children)
-            .reduce((max, el) => Math.max(max, el.getBoundingClientRect().width), 0);
+        const widest = this._widest();
 
-        this.loops = overflow > 1 && overflow >= widest;
+        this.loops = overflow > 1 && overflow >= widest * 2;
         this.el.classList.toggle('sv-rail--static', overflow <= 1);
         this.el.classList.toggle('sv-rail--loops', this.loops);
+    }
+
+    /**
+     * Clone the item set until the track has the two items of runway `_measure` wants.
+     * Only ever called when `cloneToLoop` is set — see the option's note.
+     *
+     * A track with no box of its own (the hero above 720 puts both the wrapper and the
+     * track at `display: contents`) measures zero and is skipped: there is nothing to
+     * scroll there, and cloning against a zero client width would just run to the cap.
+     * The resize handler calls this again, so crossing into the slider layout still
+     * gets its clones.
+     */
+    _fillForLoop() {
+        if (!this.options.cloneToLoop || !this.track.clientWidth) {
+            return;
+        }
+
+        while (this.track.children.length + this.originals.length <= this.options.maxItems
+            && this.track.scrollWidth - this.track.clientWidth < this._widest() * 2) {
+            this.originals.forEach((item) => {
+                const clone = item.cloneNode(true);
+
+                clone.classList.add('sv-rail__item--clone');
+                // A clone is the same picture twice over as far as a screen reader is
+                // concerned, and it must not collect a tab stop of its own.
+                clone.setAttribute('aria-hidden', 'true');
+                clone.querySelectorAll('a, button, input, select, textarea')
+                    .forEach((el) => el.setAttribute('tabindex', '-1'));
+
+                this.track.appendChild(clone);
+            });
+        }
     }
 
     _registerEvents() {
@@ -71,6 +134,9 @@ export default class SvRailPlugin extends Plugin {
         }, { passive: true });
 
         window.addEventListener('resize', () => {
+            // Cloning first: a rail that only becomes a slider below a breakpoint has
+            // no box to measure until it gets there.
+            this._fillForLoop();
             this._measure();
             this._update();
         }, { passive: true });
@@ -91,6 +157,8 @@ export default class SvRailPlugin extends Plugin {
             this._stop();
             this.dragging = true;
             this.dragged = false;
+            this.velocity = 0;
+            this.lastMoveAt = performance.now();
             this.startX = event.clientX;
             this.lastX = event.clientX;
             // Cursor only. `is--dragging` also takes the links out of the hit test, and
@@ -122,6 +190,15 @@ export default class SvRailPlugin extends Plugin {
                 // rail tears through the whole list in a few frames.
                 const dx = event.clientX - this.lastX;
                 this._scrollTo(this.track.scrollLeft - dx);
+
+                // Rolling velocity for the flick on release. Smoothed, because a raw
+                // last-frame delta is noisy enough that an ordinary drag reads as a
+                // flick roughly one time in three.
+                const now = performance.now();
+                const dt = Math.max(1, now - (this.lastMoveAt || now));
+
+                this.velocity = (this.velocity || 0) * 0.7 + (dx / dt) * 0.3;
+                this.lastMoveAt = now;
             }
 
             this.lastX = event.clientX;
@@ -143,7 +220,20 @@ export default class SvRailPlugin extends Plugin {
             }
 
             if (wasDrag) {
-                this._settle();
+                // A quick flick should carry on rather than stopping dead under the
+                // finger. Anything slower just settles onto the nearest card edge.
+                const speed = Math.abs(this.velocity || 0);
+
+                if (speed > 0.45 && !this._reducedMotion()) {
+                    // px/ms -> cards, capped so a hard flick cannot fling the whole rail.
+                    const cards = Math.min(3, Math.max(1, Math.round(speed * 1.6)));
+
+                    this._page(-Math.sign(this.velocity) * cards);
+                } else {
+                    this._settle();
+                }
+
+                this.velocity = 0;
             }
         };
 
@@ -197,6 +287,20 @@ export default class SvRailPlugin extends Plugin {
         }
 
         this.recycling = true;
+
+        // Snap has to be off for the two writes below, exactly as it is for an
+        // animation frame (see `_animate`). This runs from the scroll event too, which
+        // arrives a tick AFTER the animation released snapping — and with snapping
+        // live the browser re-snapped between the forward and backward passes, so the
+        // rail advanced two slides instead of one on a phone. The `getBoundingClientRect`
+        // in the loop forces the style recalc that makes the class take effect, and the
+        // position is back on a snap point before it comes off again.
+        const wasScripted = this.el.classList.contains('is--scripted');
+
+        if (!wasScripted) {
+            this.el.classList.add('is--scripted');
+        }
+
         const gap = this._gap();
 
         // Guarded: a mis-measured gap must not spin here.
@@ -222,6 +326,10 @@ export default class SvRailPlugin extends Plugin {
 
             this.track.insertBefore(last, this.track.firstElementChild);
             this.track.scrollLeft += width;
+        }
+
+        if (!wasScripted) {
+            this.el.classList.remove('is--scripted');
         }
 
         this.recycling = false;
@@ -277,8 +385,17 @@ export default class SvRailPlugin extends Plugin {
 
     // ---- arrows -----------------------------------------------------------
 
-    _page(direction) {
-        this._animate(this._step() * direction, () => this._snap());
+    /**
+     * `amount` is in cards: +1 is one card forward, -2 two back.
+     *
+     * Finishes on `_settle`, not `_snap`. From an aligned rail the two are the same —
+     * a whole number of cards lands on a card edge and `_settle` finds nothing to do.
+     * They differ after a flick, which starts wherever the finger let go: `_snap` only
+     * corrects offsets under 4px, so a full-width slide (the home hero) came to rest
+     * showing two half photographs.
+     */
+    _page(amount) {
+        this._animate(this._step() * amount, () => this._settle());
     }
 
     _stop() {
@@ -289,38 +406,82 @@ export default class SvRailPlugin extends Plugin {
     }
 
     /**
-     * Ease the track by `distance`, a frame at a time. `behavior: 'smooth'` would be
-     * cancelled the first time `_recycle()` rewrites `scrollLeft` mid-flight.
+     * Ease the track by `distance`. Two constraints shape this:
+     *
+     *  - `behavior: 'smooth'` is unusable: `_recycle()` rewrites `scrollLeft`
+     *    mid-flight and the browser cancels the smooth scroll the moment it does.
+     *  - For the same reason the tween cannot interpolate towards an absolute target,
+     *    because the target moves. So it accumulates an eased *distance* and applies
+     *    the delta since the previous frame, which survives recycling.
+     *
+     * The curve is a fixed-duration cubic ease-out. The previous version decayed by a
+     * share of the remaining distance each frame with a 1.2px floor, which has no
+     * defined end and spends its last third crawling — the "doesn't feel normal" part.
      */
     _animate(distance, onDone) {
         this._stop();
 
+        // Snap off for the duration. `component/_rail.scss` turns `scroll-snap-type:
+        // x mandatory` on wherever the pointer is coarse — i.e. on every phone — and
+        // the browser re-snaps after each of the `scrollLeft` writes below, including
+        // the one `_recycle` makes when it moves an item between the ends. The result
+        // on a real phone was an arrow that worked exactly once and then stuck. The
+        // rail is aligned on a snap point by the time the class comes off, so handing
+        // the scrolling back changes nothing.
+        this.el.classList.add('is--scripted');
+
         const total = Math.abs(distance);
         const sign = Math.sign(distance);
-        let travelled = 0;
-        let previous = performance.now();
+
+        const finish = () => {
+            this.raf = null;
+            onDone?.();
+
+            // A callback may have started another leg — `_page` settles onto the
+            // nearest card edge when it lands. Keep snapping suppressed until that
+            // one finishes too, or it fights the tail of the movement.
+            if (!this.raf) {
+                this.el.classList.remove('is--scripted');
+            }
+
+            this._update();
+        };
+
+        // Someone who has asked the OS for less motion gets the position, not the trip.
+        if (total < 1 || this._reducedMotion()) {
+            this._scrollTo(this.track.scrollLeft + distance);
+            finish();
+
+            return;
+        }
+
+        // Long throws take a little longer than short ones, but not proportionally —
+        // a flat duration makes a one-card nudge feel sluggish and a full page abrupt.
+        const duration = Math.min(560, 260 + total * 0.35);
+        const started = performance.now();
+        let applied = 0;
 
         const frame = (now) => {
-            const elapsed = Math.min(now - previous, 32);
-            previous = now;
+            const t = Math.min(1, (now - started) / duration);
+            // Cubic ease-out: quick departure, settled arrival.
+            const eased = (1 - ((1 - t) ** 3)) * total;
+            const move = eased - applied;
 
-            const remaining = total - travelled;
-            // Ease out: cover a fixed share of what is left each millisecond.
-            const move = Math.min(remaining, Math.max(1.2, remaining * elapsed * 0.011));
-
-            travelled += move;
+            applied = eased;
             this._scrollTo(this.track.scrollLeft + (move * sign));
 
-            if (travelled < total - 0.5) {
+            if (t < 1) {
                 this.raf = requestAnimationFrame(frame);
             } else {
-                this.raf = null;
-                onDone?.();
-                this._update();
+                finish();
             }
         };
 
         this.raf = requestAnimationFrame(frame);
+    }
+
+    _reducedMotion() {
+        return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true;
     }
 
     _update() {

@@ -6,6 +6,7 @@ use OptiwebCustomFields\Services\CustomFieldsManager;
 use Shopware\Core\Framework\Plugin;
 use Shopware\Core\Framework\Plugin\Context\InstallContext;
 use Shopware\Core\Framework\Plugin\Context\UninstallContext;
+use Shopware\Core\Framework\Plugin\Context\UpdateContext;
 use Shopware\Core\System\CustomField\CustomFieldTypes;
 
 class OptiwebCustomFields extends Plugin
@@ -17,6 +18,22 @@ class OptiwebCustomFields extends Plugin
         $context = $installContext->getContext();
         CustomFieldsManager::create
         ($this->getCustomFieldsConfig(), $this->container, $context);
+    }
+
+    /**
+     * The field set is written on install only, so a plugin that is already installed
+     * would never learn about a newly added field. Re-running the creator on update
+     * upserts by name: existing fields keep their id and their stored values, new ones
+     * are added.
+     */
+    public function postUpdate(UpdateContext $updateContext): void
+    {
+        parent::postUpdate($updateContext);
+        CustomFieldsManager::create(
+            $this->getCustomFieldsConfig(),
+            $this->container,
+            $updateContext->getContext()
+        );
     }
 
     public function uninstall(UninstallContext $uninstallContext): void
@@ -116,6 +133,22 @@ class OptiwebCustomFields extends Plugin
                         'customFieldPosition' => 10
                     ],
                     'active' => true
+                ],
+                [
+                    'name' => 'custom_product_hidePrice',
+                    'type' => CustomFieldTypes::CHECKBOX,
+                    'config' => [
+                        'label' => [
+                            'en-GB' => 'Hide Price',
+                            'sl-SI' => 'Skrij ceno',
+                        ],
+                        'helpText' => [
+                            'en-GB' => 'Hides the price and the add-to-cart button. The product can only be enquired about.',
+                            'sl-SI' => 'Skrije ceno in gumb za dodajanje v košarico. Za izdelek je mogoče samo povpraševanje.',
+                        ],
+                        'customFieldPosition' => 20
+                    ],
+                    'active' => true
                 ]
             ],
             'relations' => [
@@ -146,6 +179,22 @@ class OptiwebCustomFields extends Plugin
                             'sl-SI' => 'Ni na prodaj (Vsi izdelki v kategoriji)',
                         ],
                         'customFieldPosition' => 10
+                    ],
+                    'active' => true
+                ],
+                [
+                    'name' => 'custom_category_hidePrice',
+                    'type' => CustomFieldTypes::CHECKBOX,
+                    'config' => [
+                        'label' => [
+                            'en-GB' => 'Hide Prices (All Products in Category)',
+                            'sl-SI' => 'Skrij cene (Vsi izdelki v kategoriji)',
+                        ],
+                        'helpText' => [
+                            'en-GB' => 'Hides the price and the add-to-cart button for every product in this category and its subcategories. Those products can only be enquired about.',
+                            'sl-SI' => 'Skrije ceno in gumb za dodajanje v košarico za vse izdelke v tej kategoriji in podkategorijah. Za te izdelke je mogoče samo povpraševanje.',
+                        ],
+                        'customFieldPosition' => 20
                     ],
                     'active' => true
                 ]

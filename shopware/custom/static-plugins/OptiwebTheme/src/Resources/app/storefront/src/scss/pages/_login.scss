@@ -1,24 +1,60 @@
+// =============================================================================
+//  Auth pages — /account/login and /account/register (body `.is-ctl-auth`)
+//
+//  These two share one template: a two-tab strip over a single panel, with the
+//  login form in one pane and the registration form in the other. The page
+//  predates the v2 design system and showed it — a borderless white slab bled
+//  across the content column, the tab titles were Inter 700 UPPERCASE (the only
+//  uppercase headings in the system), and the login pane's fields carried their own
+//  white 8px treatment while the register pane's beside them were $sv-bg at 10px.
+//
+//  Rebuilt on the system's own parts: the tab strip sits on the page ground, the
+//  pane below it is the same bordered card as the buy box and the checkout aside,
+//  and both panes share ONE field and button treatment.
+//
+//  Note the body class is `is-ctl-auth`, not `is-ctl-account` — `pages/_account.scss`
+//  deliberately does not reach these pages, which is why their field styling has to
+//  be stated here.
+// =============================================================================
+
 .login-container {
-    max-width: 800px;
-    margin: 0 auto;
-    @include padding('top', 40, true);
-    @include padding('bottom', 40, true);
-    @include padding('left', 20, false);
-    @include padding('right', 20, false);
-    background: $sv-white;
+    max-width: 860px;
+    margin-inline: auto;
+    // The page ground, not a white slab: the panel below carries the surface.
+    background: transparent;
+    padding-inline: $sv-gutter;
+    @include padding('top', 24, true);
+    @include padding('bottom', 64, true);
+
+    @media (max-width: $sv-bp-phone) {
+        padding-inline: $sv-gutter-sm;
+    }
+
+    @media (max-width: $sv-bp-tiny) {
+        padding-inline: $sv-gutter-xs;
+    }
 }
 
+// The outer `.card` is only a grouping element here — `component/_bootstrap-shape.scss`
+// gives every `.card` the panel radius, so it has to be explicitly de-carded or a
+// second, offset rounded edge shows behind the pane.
 .card-tabs-registration {
     border: none;
+    border-radius: 0;
     box-shadow: none;
     background: transparent;
 }
 
+.card-tabs-registration .card-body {
+    padding: 0;
+}
+
+// ---- tab strip -------------------------------------------------------------
 .register-login-tab-navigation {
     border: none;
     padding: 0;
     background: transparent;
-    @include margin('bottom', 40, true);
+    @include margin('bottom', 24, true);
 }
 
 .register-login-tab-navigation-list {
@@ -36,59 +72,74 @@
     position: relative;
 }
 
-
+// The rule under the strip runs the full width — $sv-border under the inactive tab,
+// bordo under the active one — so the pair reads as one control rather than two
+// buttons. Bootstrap's `.nav-tabs` chrome (its own borders and the white active
+// background) is unset here, not layered over.
 .login-tab-navigation-link,
 .register-tab-navigation-link {
     display: block;
-    @include padding('top', 16, false);
-    @include padding('bottom', 16, false);
-    @include padding('left', 20, false);
-    @include padding('right', 20, false);
+    padding: 4px 4px 14px;
     text-decoration: none;
-    color: $sv-ink;
     background: transparent;
     border: none;
-    border-bottom: 3px solid transparent;
-    transition: all 0.3s ease;
+    border-bottom: 3px solid $sv-border;
+    transition: color .18s, border-color .18s;
     position: relative;
 
-    &:hover {
-        color: $sv-ink;
+    &:hover,
+    &:focus {
         background: transparent;
-        border-bottom-color: transparent;
+
+        .tabs-title {
+            color: $sv-bordo;
+        }
     }
 
     &.active {
-        color: $sv-ink;
         background: transparent;
-        border-bottom: 3px solid $sv-bordo;
+        border-bottom-color: $sv-bordo;
     }
 }
 
+// Playfair, sentence case. The uppercase Inter 700 this replaces was the only
+// uppercase heading in the system outside the footer column labels and the eyebrow.
 .tabs-title {
-    @include fontSpecs(24, 28.8, 700, false, true);
-    @include margin('bottom', 8, false);
-    color: $sv-ink;
-    text-transform: uppercase;
+    @include sv-h3-overview;
+    color: $sv-ink-muted;
+    text-transform: none;
+    @include margin('bottom', 4, false);
+    transition: color .18s;
+
+    @media (max-width: $sv-bp-small) {
+        font-size: 19px;
+        line-height: 24px;
+    }
+}
+
+.login-tab-navigation-link.active .tabs-title,
+.register-tab-navigation-link.active .tabs-title {
+    color: $sv-bordo-head;
 }
 
 .tabs-legend {
-    @include fontSpecs(14, 20, 400, false, false);
+    @include fontSpecs(13.5, 20, 400, false, false);
     color: $sv-ink-muted;
 }
 
+// ---- the pane: the system's bordered card ----------------------------------
 .register-login-tabs-content {
     background: $sv-white;
-    //@include padding('top', 40, true);
-    //@include padding('bottom', 40, true);
-    //@include padding('left', 40, true);
-    //@include padding('right', 40, true);
-    border-radius: 0;
-    min-height: 400px;
-}
+    border: 1px solid $sv-border;
+    border-radius: $sv-r-panel;
+    padding: 36px 40px 40px;
+    // The 400px floor this replaces left ~80px of empty card under the login
+    // button; each pane is tall enough to stand on its own content.
+    min-height: 0;
 
-.card-tabs-registration .card-body {
-    padding: 0;
+    @include media-breakpoint-down(md) {
+        padding: 24px 20px 28px;
+    }
 }
 
 .tab-pane {
@@ -99,128 +150,242 @@
     }
 }
 
-.login-header {
-    @include fontSpecs(26, 31.2, 700, false, true);
-    @include margin('bottom', 32, true);
-    color: $sv-bordo-head;
-    text-align: left;
-}
-
-.login-form-group {
-    @include margin('bottom', 24, true);
-}
-
-.form-label {
-    display: block;
-    @include fontSpecs(14, 20, 400, false, false);
-    @include margin('bottom', 8, false);
-    color: $sv-ink;
-    text-align: left;
-}
-
-// This form predates the Sivanka design system: it used square corners and the old
-// grey border, so the login tab looked nothing like the register tab beside it.
-// Matched to the shared input treatment (8px radius, $sv-border, pink focus).
-.login-input {
-    width: 100%;
-    @include padding('top', 7, false);
-    @include padding('bottom', 7, false);
-    @include padding('left', 12, false);
-    @include padding('right', 12, false);
-    @include fontSpecs(16, 24, 400, false, false);
-    border: 1px solid $sv-border;
-    border-radius: $sv-r-chrome;
-    background: $sv-white;
-    color: $sv-ink;
-    transition: border-color 0.18s ease, box-shadow 0.18s ease;
-
-    &:focus {
-        outline: none;
-        border-color: $sv-bordo;
-        box-shadow: $sv-focus-ring;
+// Core wraps each form in its own `.card.login-card` / `.card` — inside the pane
+// that is a card in a card, and `_bootstrap-shape.scss` rounds it.
+.register-login-tabs-content {
+    .card,
+    .login-card {
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+        margin-bottom: 0;
     }
 
-    &::placeholder {
-        color: $sv-ink-muted;
-    }
-}
-
-.login-password-recover {
-    @include margin('top', 8, false);
-    @include margin('bottom', 24, true);
-    text-align: left;
-}
-
-.login-password-recover-link {
-    color: $sv-bordo;
-    text-decoration: underline;
-    @include fontSpecs(14, 20, 400, false, false);
-
-    &:hover {
-        color: $sv-bordo-hover;
-        text-decoration: underline;
-    }
-}
-
-.login-submit {
-    @include margin('top', 32, true);
-}
-
-// Same shape as every other primary action (register's "Nadaljuj", checkout, cart):
-// 12px radius, sentence case — it used to be a square, UPPERCASE outlier.
-.login-submit-button {
-    width: 100%;
-    @include fontSpecs(20, 32, 700, false, true);
-    @include padding('bottom', 12, true);
-    @include padding('top', 12, true);
-    @include padding('left', 24, true);
-    @include padding('right', 24, true);
-    background: $sv-bordo;
-    border: 1px solid $sv-bordo;
-    border-radius: $sv-r-card;
-    color: $sv-white;
-    cursor: pointer;
-    transition: background-color 0.18s ease, border-color 0.18s ease;
-    text-transform: none;
-
-    &:hover {
-        background: $sv-bordo-hover;
-        border-color: $sv-bordo-hover;
-    }
-
-    &:focus {
-        outline: none;
-        box-shadow: $sv-focus-ring;
-    }
-
-    span {
-        color: $sv-white;
-    }
-}
-
-// Register form styling
-.component-account-register {
     .card-body {
         padding: 0;
     }
 }
 
-// Responsive adjustments
-@include media-breakpoint-down(md) {
-    .login-container {
-        @include padding('left', 16, false);
-        @include padding('right', 16, false);
+// ---- headings inside a pane -------------------------------------------------
+// "Sem že stranka!", "Sem nova stranka!", "Vaš naslov" — core emits all of them as
+// `h2.card-title`, so they are styled once here rather than per pane. (The old
+// `.login-header` rule addressed a block name that no longer exists in 6.7: core
+// renamed `component_account_login_form_card_title` to `component_account_login_header`,
+// and the selector had been dead ever since.)
+.is-ctl-auth {
+    .card-title {
+        @include sv-h3-overview;
+        padding: 0 0 10px;
+        @include margin('bottom', 20, true);
+        border-bottom: 1px solid $sv-border;
     }
 
-    .register-login-tabs-content {
-        @include padding('left', 24, false);
-        @include padding('right', 24, false);
-    }
-
-    .login-tab-navigation-link,
-    .register-tab-navigation-link {
-        @include padding('left', 16, false);
-        @include padding('right', 16, false);
+    .login-form-description,
+    .register-form-description {
+        @include fontSpecs(14, 22, 400, false, false);
+        color: $sv-ink-muted;
+        @include margin('bottom', 24, true);
     }
 }
 
+// ---- one field treatment for both panes ------------------------------------
+// $sv-r-field + $sv-bg is what `pages/_account.scss` and the register pane already
+// use; the login pane's own white/8px variant was the outlier.
+.is-ctl-auth {
+    .form-control,
+    .form-select,
+    .login-input {
+        width: 100%;
+        padding: 11px 12px;
+        @include fontSpecs(16, 24, 400, false, false);
+        border: 1px solid $sv-border;
+        border-radius: $sv-r-field;
+        background-color: $sv-bg;
+        color: $sv-ink;
+        box-shadow: none;
+        transition: border-color .18s ease, box-shadow .18s ease;
+
+        &:focus {
+            outline: none;
+            border-color: $sv-bordo;
+            box-shadow: $sv-focus-ring;
+        }
+
+        &::placeholder {
+            color: $sv-ink-muted;
+        }
+    }
+
+    .form-select {
+        background-image: url("#{$assets-path}/images/caret-down.svg");
+        background-size: 20px;
+    }
+
+    label,
+    .form-label {
+        display: block;
+        @include fontSpecs(14, 20, 400, false, false);
+        @include margin('bottom', 6, false);
+        color: $sv-ink-muted;
+        font-weight: 600;
+        text-align: left;
+    }
+
+    .form-check-input {
+        accent-color: $sv-bordo;
+
+        &:checked {
+            background-color: $sv-bordo;
+            border-color: $sv-bordo;
+        }
+    }
+}
+
+.login-form-group {
+    @include margin('bottom', 20, true);
+}
+
+// ---- password recovery link -------------------------------------------------
+.login-password-recover {
+    @include margin('top', 4, false);
+    @include margin('bottom', 24, true);
+    text-align: left;
+
+    a,
+    .login-password-recover-link {
+        color: $sv-bordo;
+        text-decoration: underline;
+        @include fontSpecs(14, 20, 400, false, false);
+
+        &:hover {
+            color: $sv-bordo-hover;
+            text-decoration: underline;
+        }
+    }
+}
+
+// ---- buttons --------------------------------------------------------------
+// `_general.scss` hands every `.btn-primary` 20px/700, a v1 metric that survives
+// nowhere else on a form: the product-detail "Dodaj v košarico" is 16/600 at the
+// card radius, and every action on these pages is the same kind of thing. Stated for
+// the whole controller so the recovery page's pair is covered too, and `.btn-lg`
+// (Bootstrap's own bump, on the register submit) is named or it wins back the size.
+.is-ctl-auth {
+    .btn-primary,
+    .btn-primary.btn-lg,
+    .btn-outline-secondary,
+    .btn-outline-secondary.btn-lg,
+    .btn-light {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        @include fontSpecs(16, 24, 600, false, false);
+        padding: 15px 24px;
+        border-radius: $sv-r-card;
+        cursor: pointer;
+        text-transform: none;
+        transition: background-color .18s ease, border-color .18s ease, color .18s ease;
+
+        &:focus {
+            outline: none;
+            box-shadow: $sv-focus-ring;
+        }
+    }
+
+    .btn-primary,
+    .btn-primary.btn-lg {
+        background: $sv-bordo;
+        border: 1px solid $sv-bordo;
+        color: $sv-white;
+
+        &:hover,
+        &:focus {
+            background: $sv-bordo-hover;
+            border-color: $sv-bordo-hover;
+            color: $sv-white;
+        }
+
+        span {
+            color: $sv-white;
+        }
+    }
+
+    // "Nazaj" on the recovery form — the system's ghost, not Bootstrap's grey.
+    .btn-outline-secondary,
+    .btn-outline-secondary.btn-lg,
+    .btn-light {
+        background: $sv-white;
+        border: 1px solid $sv-bordo;
+        color: $sv-bordo;
+
+        &:hover,
+        &:focus {
+            background: $sv-white;
+            border-color: $sv-bordo-hover;
+            color: $sv-bordo-hover;
+        }
+    }
+
+    // A form's own submit fills its column; a pair of choices does not.
+    .login-submit,
+    .register-submit {
+        @include margin('top', 28, true);
+    }
+
+    .login-submit .btn,
+    .login-submit-button,
+    .register-submit .btn {
+        display: flex;
+        width: 100%;
+    }
+}
+
+// ---- password recovery / reset ---------------------------------------------
+// Same controller, no tab strip: core wraps the form in a bare `.card` (which
+// `component/_bootstrap-shape.scss` rounds but leaves unpainted), so it read as
+// loose text on the page ground next to the panelled login form.
+.is-ctl-auth {
+    .account-recover-password-form,
+    .account-reset-password-form {
+        background: $sv-white;
+        border: 1px solid $sv-border;
+        border-radius: $sv-r-panel;
+        padding: 36px 40px 40px;
+
+        @include media-breakpoint-down(md) {
+            padding: 24px 20px 28px;
+        }
+
+        .card-title {
+            padding-inline: 0;
+        }
+
+        .card-body {
+            padding: 0;
+        }
+
+        // Core stacks the "Nazaj" / "Zahtevajte e-pošto" pair in a plain block with
+        // no separation, so the ghost and the fill touched along one edge.
+        .account-recover-password-form-actions,
+        .account-reset-password-form-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            @include margin('top', 24, true);
+        }
+    }
+
+    .account-recover-password,
+    .account-reset-password {
+        @include padding('top', 24, true);
+        @include padding('bottom', 64, true);
+    }
+}
+
+// Register pane: core's own card grouping again, plus the privacy notice.
+.component-account-register {
+    .card-body {
+        padding: 0;
+    }
+}

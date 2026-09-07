@@ -96,7 +96,10 @@
         display: block;
         text-decoration: none;
         color: $sv-ink;
-
+        border: 1px solid #EADFD1;
+        border-radius: 12px;
+        padding: 12px;
+        background: white;
         &:hover .category-grid__img {
             box-shadow: $sv-shadow-deep;
 

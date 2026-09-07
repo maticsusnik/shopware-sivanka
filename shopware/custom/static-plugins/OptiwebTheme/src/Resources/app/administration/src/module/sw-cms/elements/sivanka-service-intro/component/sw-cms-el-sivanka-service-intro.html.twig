@@ -6,6 +6,13 @@
     <component :is="headlineTag" class="sw-cms-el-sivanka-service-intro__headline">
         {{ element.config.headline.value }}
     </component>
+    {# The centred variants (home sections, storitve CTA) carry the rule-heart-rule
+       signature under the heading; the left-aligned ones do not. #}
+    <span v-if="hasFlourish" class="sw-cms-el-sivanka-service-intro__flourish" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 20s-7-4.6-7-9.4A3.9 3.9 0 0 1 12 8a3.9 3.9 0 0 1 7 2.6C19 15.4 12 20 12 20z"/>
+        </svg>
+    </span>
     <p v-if="element.config.lead.value" class="sw-cms-el-sivanka-service-intro__lead">
         {{ element.config.lead.value }}
     </p>

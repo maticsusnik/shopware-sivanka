@@ -1,10 +1,14 @@
 {% block sw_cms_block_sivanka_service_cta %}
+{# Mirrors the storefront: one centred cream card with the copy and the buttons
+   stacked in a narrow column, not two columns side by side. #}
 <div class="sw-cms-block-sivanka-service-cta">
-    <div class="sw-cms-block-sivanka-service-cta__slot sw-cms-block-sivanka-service-cta__slot--intro">
-        <slot name="intro">{% block sw_cms_block_sivanka_service_cta_slot_intro %}{% endblock %}</slot>
-    </div>
-    <div class="sw-cms-block-sivanka-service-cta__slot sw-cms-block-sivanka-service-cta__slot--actions">
-        <slot name="actions">{% block sw_cms_block_sivanka_service_cta_slot_actions %}{% endblock %}</slot>
+    <div class="sw-cms-block-sivanka-service-cta__inner">
+        <div class="sw-cms-block-sivanka-service-cta__slot sw-cms-block-sivanka-service-cta__slot--intro">
+            <slot name="intro">{% block sw_cms_block_sivanka_service_cta_slot_intro %}{% endblock %}</slot>
+        </div>
+        <div class="sw-cms-block-sivanka-service-cta__slot sw-cms-block-sivanka-service-cta__slot--actions">
+            <slot name="actions">{% block sw_cms_block_sivanka_service_cta_slot_actions %}{% endblock %}</slot>
+        </div>
     </div>
 </div>
 {% endblock %}

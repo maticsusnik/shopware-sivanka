@@ -1,5 +1,20 @@
 {% sw_extends '@Storefront/storefront/component/product/card/price-unit.html.twig' %}
 
+{# `component_product_box_price_info` is the whole price area — the main price, the
+   cheapest/from price and the reference unit price ("€5,00 / 1 kg"). A product whose
+   price is hidden must drop all of it, not just the headline figure, so the guard
+   sits on the outer block rather than on `component_product_box_price`.
+
+   `_isHidePrice` is set by ProductAvailabilitySubscriber from the product's own
+   "Hide Price" custom field or from the "Hide Prices" flag on any category above it.
+   Those products are enquiry-only (the subscriber also marks them not sellable), so
+   there is nothing left on the card that needs a price. #}
+{% block component_product_box_price_info %}
+    {% if not (product.customFields._isHidePrice ?? false) %}
+        {{ parent() }}
+    {% endif %}
+{% endblock %}
+
 {% block component_product_box_price %}
     {# Products the ERP sync left unpriced would otherwise advertise "0,00 €".
        They are enquiry-only (see ProductAvailabilitySubscriber), so label them as such. #}

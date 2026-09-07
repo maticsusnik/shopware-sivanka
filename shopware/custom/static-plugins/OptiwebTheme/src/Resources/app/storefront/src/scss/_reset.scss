@@ -98,8 +98,6 @@ a {
     .header-actions button,
     .offcanvas a,
     .offcanvas button,
-    .breadcrumb a,
-    .breadcrumb-link,
     .category-navigation-link,
     .product-wishlist-action,
     .login-password-recover a,
@@ -136,5 +134,26 @@ a {
         display: inline-flex;
         align-items: center;
         min-height: $sv-touch;
+    }
+}
+
+// -----------------------------------------------------------------------------
+//  Breadcrumb links are exempt from the 46px minimum.
+//  Forcing 46px on a 18px crumb turned the trail into a 66px band on mobile — the
+//  "too much space around the breadcrumbs" that prompted this. WCAG 2.2 Target Size
+//  (Minimum, 2.5.8) carves out inline targets embedded in a block of text, which is
+//  what a breadcrumb trail is, so the exception is deliberate rather than an
+//  oversight. The horizontal padding still gives a comfortable hit area.
+//  NOTE: DESIGN-SYSTEM.md's checklist item 3 asserts >=46px on every link below
+//  1280px, so the sweep will now flag these — knowingly.
+// -----------------------------------------------------------------------------
+@media (max-width: $sv-bp-touch) {
+    // Core sets `min-height: 46px` on `.breadcrumb .breadcrumb-link` (0,2,0) in its
+    // own <=991.98px block, so this has to out-specify that, not just follow it.
+    .breadcrumb .breadcrumb-item a,
+    .breadcrumb .breadcrumb-link.breadcrumb-link,
+    .breadcrumb a.breadcrumb-link {
+        min-height: 0;
+        padding-block: 2px;
     }
 }

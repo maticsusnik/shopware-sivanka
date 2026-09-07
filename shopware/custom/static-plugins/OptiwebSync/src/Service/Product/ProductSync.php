@@ -2,6 +2,7 @@
 
 namespace OptiwebSync\Service\Product;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Monolog\Logger;
 use OptiwebSync\Client\MinimaxClient;
@@ -37,7 +38,10 @@ class ProductSync extends AbstractSyncBase
     /** Items priced by falling back to Item.Price instead of the pricelist. */
     private int $priceFallbacks = 0;
 
-    /** @var array<string, array{id: string, stock: int, taxId: string, gross: ?float, net: ?float}> productNumber → current Shopware state */
+    /**
+     * @var array<string, array{id: string, number: string, stock: int, taxId: string, gross: ?float, net: ?float}>
+     *      numberKey() of the product number → current Shopware state
+     */
     private array $productMap = [];
 
     /** @var array<string, string> tax rate (e.g. "22.00") → Shopware tax ID */
@@ -50,6 +54,21 @@ class ProductSync extends AbstractSyncBase
     private int $updated = 0;
     private int $unchanged = 0;
     private int $skipped = 0;
+
+    /** Products Shopware rejected, written one by one after their batch failed. */
+    private int $failed = 0;
+
+    /** @var list<string> A sample of the rejected products, for the summary log. */
+    private array $failedSkus = [];
+
+    /**
+     * Products whose stored number differed from Minimax's in case or trailing
+     * whitespace — the same product to the database, a different string to us.
+     */
+    private int $renumbered = 0;
+
+    /** @var list<string> A sample of the rewrites above, for the summary log. */
+    private array $renumberedSkus = [];
 
     /** Products whose Minimax VAT rate could not be resolved. */
     private int $defaultTaxFallbacks = 0;
@@ -111,7 +130,7 @@ class ProductSync extends AbstractSyncBase
         $this->currencyId = $this->resolveCurrencyId();
         $this->taxRateMap = $this->buildTaxRateMap();
         $this->loadDefaultTax();
-        $this->productMap = $this->buildProductMap();
+        $this->productMap = $this->fetchProducts();
 
         if ($this->defaultTaxId === '' || $this->currencyId === '') {
             throw new \RuntimeException('ProductSync: could not resolve the default tax or currency.');
@@ -156,6 +175,12 @@ class ProductSync extends AbstractSyncBase
 
     protected function import(array $dataArray, array $loopData): int
     {
+        // Ask the database about every number this page does not already know:
+        // a product number that exists in Shopware but under a spelling our map
+        // is not keyed by would otherwise be inserted a second time, and the
+        // resulting duplicate-key error fails the whole page.
+        $this->hydrateUnknownProducts($dataArray);
+
         $upserts = [];
 
         foreach ($dataArray as $product) {
@@ -166,6 +191,8 @@ class ProductSync extends AbstractSyncBase
                 ++$this->skipped;
                 continue;
             }
+
+            $key = $this->numberKey($sku);
 
             // Stock is floored, never rounded: Minimax carries fractional
             // quantities for anything sold by the metre (23.5 m of lining), and
@@ -179,7 +206,7 @@ class ProductSync extends AbstractSyncBase
             $rate  = $vat !== null ? (float) $vat : $this->defaultTaxRate;
 
             [$gross, $net] = $this->resolvePrice($product, $rate);
-            $existing      = $this->productMap[$sku] ?? null;
+            $existing      = $this->productMap[$key] ?? null;
 
             if ($existing === null) {
                 $id = Uuid::randomHex();
@@ -200,30 +227,48 @@ class ProductSync extends AbstractSyncBase
                 // Remember it immediately: a SKU repeated later in the same run
                 // must update this row, not insert a second one and trip the
                 // product_number unique constraint (which fails the whole batch).
-                $this->productMap[$sku] = [
-                    'id'    => $id,
-                    'stock' => $stock,
-                    'taxId' => $taxId,
-                    'gross' => $gross,
-                    'net'   => $net,
+                $this->productMap[$key] = [
+                    'id'     => $id,
+                    'number' => $sku,
+                    'stock'  => $stock,
+                    'taxId'  => $taxId,
+                    'gross'  => $gross,
+                    'net'    => $net,
                 ];
 
                 continue;
             }
 
+            // The stored number is the same product to the database but not the
+            // same string — rewrite it to Minimax's spelling so the next run
+            // matches it outright.
+            $repairNumber = $existing['number'] !== $sku;
+
             // -i / --ignoreHash forces the write even when nothing differs,
             // which is how a product is repaired after a bad import.
-            if (!$this->ignoreHash && $this->isUnchanged($existing, $stock, $taxId, $gross, $net)) {
+            if (!$repairNumber && !$this->ignoreHash && $this->isUnchanged($existing, $stock, $taxId, $gross, $net)) {
                 ++$this->unchanged;
                 continue;
             }
 
-            $upserts[] = [
+            $upsert = [
                 'id'    => $existing['id'],
                 'taxId' => $taxId,
                 'stock' => $stock,
                 'price' => $this->pricePayload($gross, $net),
             ];
+
+            if ($repairNumber) {
+                $upsert['productNumber']          = $sku;
+                $this->productMap[$key]['number'] = $sku;
+
+                ++$this->renumbered;
+                if (count($this->renumberedSkus) < 20) {
+                    $this->renumberedSkus[] = sprintf('"%s" → "%s"', $existing['number'], $sku);
+                }
+            }
+
+            $upserts[] = $upsert;
             ++$this->updated;
         }
 
@@ -260,12 +305,30 @@ class ProductSync extends AbstractSyncBase
             ));
         }
 
+        if ($this->renumbered > 0) {
+            OwLogger::warning($this->logger, sprintf(
+                'ProductSync: %d product number(s) were stored in a spelling Minimax does not use (case or '
+                . 'trailing whitespace) and have been rewritten. Sample: %s',
+                $this->renumbered,
+                implode(', ', $this->renumberedSkus),
+            ));
+        }
+
+        if ($this->failed > 0) {
+            OwLogger::warning($this->logger, sprintf(
+                'ProductSync: %d product(s) were rejected by Shopware and skipped. Sample: %s',
+                $this->failed,
+                implode(', ', $this->failedSkus),
+            ));
+        }
+
         OwLogger::addVisibleLog($this->logger, sprintf(
-            'ProductSync totals: %d created (inactive), %d updated, %d unchanged, %d skipped.',
+            'ProductSync totals: %d created (inactive), %d updated, %d unchanged, %d skipped, %d rejected.',
             $this->created,
             $this->updated,
             $this->unchanged,
             $this->skipped,
+            $this->failed,
         ));
     }
 
@@ -347,9 +410,65 @@ class ProductSync extends AbstractSyncBase
     // -------------------------------------------------------------------------
 
     /**
-     * @return array<string, array{id: string, stock: int, taxId: string, gross: ?float, net: ?float}>
+     * The key a product number is looked up by.
+     *
+     * It has to mirror `uniq.product.product_number__version_id`, the index
+     * behind CONTENT__DUPLICATE_PRODUCT_NUMBER: that index is utf8mb4_unicode_ci
+     * over a PAD SPACE collation, so "700625 " and "ART-1" are the same product
+     * as "700625" and "art-1" as far as the insert is concerned. Keying this map
+     * by the raw string instead makes such a product look absent, and the insert
+     * that follows takes the whole batch down with it.
      */
-    private function buildProductMap(): array
+    private function numberKey(string $number): string
+    {
+        return mb_strtolower(rtrim($number, ' '));
+    }
+
+    /**
+     * Look up the products this page has no entry for by their number, letting
+     * the database's own collation decide what "already exists" means.
+     *
+     * This also keeps a long run honest: anything created after initialize()
+     * built the map — by an editor, or by a page whose write partially landed —
+     * is picked up instead of being inserted again.
+     *
+     * @param array<int, array<string, mixed>> $dataArray
+     */
+    private function hydrateUnknownProducts(array $dataArray): void
+    {
+        $unknown = [];
+
+        foreach ($dataArray as $product) {
+            $sku = trim((string) ($product['sku'] ?? ''));
+            if ($sku === '') {
+                continue;
+            }
+
+            $key = $this->numberKey($sku);
+            if ($key === '' || isset($this->productMap[$key])) {
+                continue;
+            }
+
+            $unknown[$key] = $sku;
+        }
+
+        if ($unknown === []) {
+            return;
+        }
+
+        foreach ($this->fetchProducts(array_values($unknown)) as $key => $row) {
+            $this->productMap[$key] = $row;
+        }
+    }
+
+    /**
+     * Read live-version products, keyed by numberKey().
+     *
+     * @param list<string>|null $numbers null for the whole catalogue
+     *
+     * @return array<string, array{id: string, number: string, stock: int, taxId: string, gross: ?float, net: ?float}>
+     */
+    private function fetchProducts(?array $numbers = null): array
     {
         $sql = <<<'SQL'
             SELECT
@@ -364,21 +483,32 @@ class ProductSync extends AbstractSyncBase
               AND product_number != ''
         SQL;
 
+        $params = ['liveVersion' => Uuid::fromHexToBytes(Defaults::LIVE_VERSION)];
+        $types  = [];
+
+        if ($numbers !== null) {
+            if ($numbers === []) {
+                return [];
+            }
+
+            $sql .= ' AND product_number IN (:numbers)';
+            $params['numbers'] = $numbers;
+            $types['numbers']  = ArrayParameterType::STRING;
+        }
+
         $map = [];
 
-        $rows = $this->connection->fetchAllAssociative($sql, [
-            'liveVersion' => Uuid::fromHexToBytes(Defaults::LIVE_VERSION),
-        ]);
-
-        foreach ($rows as $row) {
+        foreach ($this->connection->fetchAllAssociative($sql, $params, $types) as $row) {
             [$gross, $net] = $this->readStoredPrice($row['price']);
+            $number        = (string) $row['product_number'];
 
-            $map[$row['product_number']] = [
-                'id'    => $row['id'],
-                'stock' => (int) $row['stock'],
-                'taxId' => (string) ($row['tax_id'] ?? ''),
-                'gross' => $gross,
-                'net'   => $net,
+            $map[$this->numberKey($number)] = [
+                'id'     => $row['id'],
+                'number' => $number,
+                'stock'  => (int) $row['stock'],
+                'taxId'  => (string) ($row['tax_id'] ?? ''),
+                'gross'  => $gross,
+                'net'    => $net,
             ];
         }
 
@@ -544,6 +674,11 @@ class ProductSync extends AbstractSyncBase
      * `upsert` is the only write action the sync API accepts (alongside
      * `delete`), for both new and existing rows.
      *
+     * The sync API rejects a batch as a whole, so a payload Shopware refuses is
+     * halved and retried until the offending products are isolated: one bad row
+     * used to cost the other 99 on its page — and, because the error travelled
+     * up to the page loop, every page after it as well.
+     *
      * @param array<int, array<string, mixed>> $payload
      */
     private function flush(array $payload): void
@@ -552,8 +687,80 @@ class ProductSync extends AbstractSyncBase
             return;
         }
 
-        $this->shopwareClient->bulkAddData('product-upsert', 'product', 'upsert', $payload, true);
-        $this->shopwareClient->bulkDataProcessQueue(true);
+        try {
+            $this->shopwareClient->bulkAddData('product-upsert', 'product', 'upsert', $payload, true);
+            $this->shopwareClient->bulkDataProcessQueue(true);
+
+            return;
+        } catch (\Throwable $e) {
+            if (count($payload) === 1) {
+                $this->recordFailure((array) reset($payload), $e);
+
+                return;
+            }
+
+            OwLogger::warning($this->logger, sprintf(
+                'ProductSync: a batch of %d product(s) was rejected, retrying in halves. %s',
+                count($payload),
+                $e->getMessage(),
+            ));
+        }
+
+        foreach (array_chunk($payload, (int) ceil(count($payload) / 2)) as $chunk) {
+            $this->flush($chunk);
+        }
+    }
+
+    /**
+     * @param array<string, mixed> $product
+     */
+    private function recordFailure(array $product, \Throwable $e): void
+    {
+        ++$this->failed;
+
+        // Only a create carries a name, so this also keeps the totals honest.
+        $wasCreate = isset($product['name']);
+
+        if ($wasCreate) {
+            --$this->created;
+        } else {
+            --$this->updated;
+        }
+
+        $sku = (string) ($product['productNumber'] ?? $this->numberForId((string) ($product['id'] ?? '')));
+
+        // A create that never landed must not leave its optimistic map entry
+        // behind: the id in it does not exist, so a later page repeating this SKU
+        // would send an update against nothing.
+        if ($wasCreate && $sku !== '') {
+            unset($this->productMap[$this->numberKey($sku)]);
+        }
+
+        if (count($this->failedSkus) < 20) {
+            $this->failedSkus[] = $sku !== '' ? $sku : (string) ($product['id'] ?? '?');
+        }
+
+        OwLogger::warning($this->logger, sprintf(
+            'ProductSync: Shopware rejected product "%s" — skipped. %s',
+            $sku,
+            $e->getMessage(),
+        ));
+    }
+
+    /** Reverse the product map for a log line; only ever called on a failure. */
+    private function numberForId(string $id): string
+    {
+        if ($id === '') {
+            return '';
+        }
+
+        foreach ($this->productMap as $entry) {
+            if ($entry['id'] === $id) {
+                return $entry['number'];
+            }
+        }
+
+        return '';
     }
 
     private function logClientWarnings(): void

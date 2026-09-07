@@ -13,6 +13,22 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class ProductAvailabilitySubscriber implements EventSubscriberInterface
 {
+    /**
+     * Category custom field that makes every product below it enquiry-only.
+     */
+    private const CATEGORY_FIELD_NOT_SELLABLE = 'custom_category_notSellable';
+
+    /**
+     * Category custom field that hides the price of every product below it. Hiding a
+     * price implies enquiry-only: a shopper must never be able to buy something whose
+     * price the shop refuses to show.
+     */
+    private const CATEGORY_FIELD_HIDE_PRICE = 'custom_category_hidePrice';
+
+    private const PRODUCT_FIELD_NOT_SELLABLE = 'custom_product_notSellable';
+
+    private const PRODUCT_FIELD_HIDE_PRICE = 'custom_product_hidePrice';
+
     public function __construct(
         private readonly EntityRepository $categoryRepository
     ) {
@@ -33,7 +49,7 @@ class ProductAvailabilitySubscriber implements EventSubscriberInterface
         // }
 
         $entities = $event->getEntities();
-        
+
         if (empty($entities)) {
             return;
         }
@@ -59,19 +75,28 @@ class ProductAvailabilitySubscriber implements EventSubscriberInterface
 
         // Load categories with their custom fields if we have any category IDs
         $notSellableCategoryIds = [];
+        $hidePriceCategoryIds = [];
         if (!empty($categoryIds)) {
             $criteria = new Criteria($categoryIds);
             $categories = $this->categoryRepository->search($criteria, $context)->getEntities();
 
-            // Create a map of category IDs that are not sellable
+            // Create a map of category IDs that are not sellable / price-less
             foreach ($categories as $category) {
                 if (!$category instanceof CategoryEntity) {
                     continue;
                 }
-                
+
                 $customFields = $category->getCustomFields();
-                if ($customFields && ($customFields['custom_category_notSellable'] ?? false) === true) {
+                if (!$customFields) {
+                    continue;
+                }
+
+                if (($customFields[self::CATEGORY_FIELD_NOT_SELLABLE] ?? false) === true) {
                     $notSellableCategoryIds[] = $category->getId();
+                }
+
+                if (($customFields[self::CATEGORY_FIELD_HIDE_PRICE] ?? false) === true) {
+                    $hidePriceCategoryIds[] = $category->getId();
                 }
             }
         }
@@ -83,11 +108,16 @@ class ProductAvailabilitySubscriber implements EventSubscriberInterface
             }
 
             $isNotSellable = false;
+            $isHidePrice = false;
 
-            // Check product's own custom field
+            // Check product's own custom fields
             $customFields = $product->getCustomFields() ?? [];
-            if (($customFields['custom_product_notSellable'] ?? false) === true) {
+            if (($customFields[self::PRODUCT_FIELD_NOT_SELLABLE] ?? false) === true) {
                 $isNotSellable = true;
+            }
+
+            if (($customFields[self::PRODUCT_FIELD_HIDE_PRICE] ?? false) === true) {
+                $isHidePrice = true;
             }
 
             // A product the ERP sync left without a price must never be buyable for 0,00 €
@@ -95,21 +125,27 @@ class ProductAvailabilitySubscriber implements EventSubscriberInterface
                 $isNotSellable = true;
             }
 
-            // Check if product belongs to a not-sellable category (using categoryTree)
-            if (!$isNotSellable && !empty($notSellableCategoryIds)) {
-                $categoryTree = $product->getCategoryTree();
-                if ($categoryTree && is_array($categoryTree)) {
-                    foreach ($categoryTree as $categoryId) {
-                        if (in_array($categoryId, $notSellableCategoryIds, true)) {
-                            $isNotSellable = true;
-                            break;
-                        }
-                    }
+            // Check if product belongs to a not-sellable / hidden-price category (using categoryTree)
+            $categoryTree = $product->getCategoryTree();
+            if (is_array($categoryTree) && $categoryTree !== []) {
+                if (!$isNotSellable && $this->inAnyCategory($categoryTree, $notSellableCategoryIds)) {
+                    $isNotSellable = true;
+                }
+
+                if (!$isHidePrice && $this->inAnyCategory($categoryTree, $hidePriceCategoryIds)) {
+                    $isHidePrice = true;
                 }
             }
 
-            // Set custom field on product so templates can easily check it
+            // A hidden price means the product cannot be bought either — the templates
+            // then swap "add to cart" for the enquiry button off `_isNotSellable`.
+            if ($isHidePrice) {
+                $isNotSellable = true;
+            }
+
+            // Set custom fields on product so templates can easily check them
             $customFields['_isNotSellable'] = $isNotSellable;
+            $customFields['_isHidePrice'] = $isHidePrice;
             $product->assign(['customFields' => $customFields]);
 
             // If product is not sellable, set availableStock to 0 to make it unavailable
@@ -120,6 +156,25 @@ class ProductAvailabilitySubscriber implements EventSubscriberInterface
                 ]);
             }
         }
+    }
+
+    /**
+     * @param array<string> $categoryTree
+     * @param array<string> $flaggedCategoryIds
+     */
+    private function inAnyCategory(array $categoryTree, array $flaggedCategoryIds): bool
+    {
+        if ($flaggedCategoryIds === []) {
+            return false;
+        }
+
+        foreach ($categoryTree as $categoryId) {
+            if (in_array($categoryId, $flaggedCategoryIds, true)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -142,4 +197,3 @@ class ProductAvailabilitySubscriber implements EventSubscriberInterface
         return $price !== null && $price->getGross() <= 0.0;
     }
 }
-

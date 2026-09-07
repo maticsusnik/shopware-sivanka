@@ -36,7 +36,7 @@ Shopware.Service('cmsService').registerCmsBlock({
                 config: {
                     primaryLabel: { source: 'static', value: 'Pokličite nas' },
                     primaryUrl: { source: 'static', value: '' },
-                    secondaryLabel: { source: 'static', value: '' },
+                    secondaryLabel: { source: 'static', value: 'Obiščite trgovino' },
                     secondaryUrl: { source: 'static', value: '' },
                     newTab: { source: 'static', value: false },
                 },

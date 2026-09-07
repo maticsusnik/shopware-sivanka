@@ -97,5 +97,15 @@
 
 {% block buy_widget_price %}{% endblock %}
 {% block buy_widget_tax %}{% endblock %}
+
+{# Core still writes lowPrice/highPrice meta for a multi-price product even though the
+   visible price container is gone. Hiding a price in the markup but publishing it to
+   search engines defeats the point of the flag. #}
+{% block buy_widget_data_rich_snippet_price_range %}
+    {% if not (page.product.customFields._isHidePrice ?? false) %}
+        {{ parent() }}
+    {% endif %}
+{% endblock %}
+
 {% block buy_widget_delivery_informations %}{% endblock %}
 

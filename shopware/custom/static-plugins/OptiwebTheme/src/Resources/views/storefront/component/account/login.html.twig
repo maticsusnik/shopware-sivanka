@@ -1,8 +1,14 @@
 {% sw_extends '@Storefront/storefront/component/account/login.html.twig' %}
 
-{% block component_account_login_form_card_title %}
-    <h2 class="login-header">{{ cardTitle|default("account.loginHeader"|trans|sw_sanitize) }}</h2>
-{% endblock %}
+{# The login pane of the two-tab auth page. Styling lives in `pages/_login.scss`,
+   which covers BOTH panes — the register pane beside this one renders from core.
+
+   Only the two field blocks are overridden, to swap core's `form-input.html.twig`
+   include for markup carrying `.login-form-group` / `.login-input`. Two further
+   overrides used to sit here against block names core renamed in 6.7
+   (`..._form_card_title`, `..._form_password_recover`) and had silently stopped
+   applying; the heading is now styled as the shared `.card-title` and the recovery
+   link block is spelled the way core spells it. #}
 
 {% block component_account_login_form_mail %}
     <div class="form-group login-form-group">
@@ -43,7 +49,7 @@
     </div>
 {% endblock %}
 
-{% block component_account_login_form_password_recover %}
+{% block component_account_login_password_recover %}
     <div class="login-password-recover">
         <a href="{{ path('frontend.account.recover.page') }}"
            class="login-password-recover-link"
