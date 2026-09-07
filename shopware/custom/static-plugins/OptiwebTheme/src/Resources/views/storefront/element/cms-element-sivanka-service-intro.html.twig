@@ -17,9 +17,10 @@
         {% endblock %}
 
         {% block element_sivanka_service_intro_flourish %}
-            {# Home-page section headings are centred and carry the rule-heart-rule
-               signature; subpage headings are left-aligned and do not. #}
-            {% if variant == 'home' and config.headline.value %}
+            {# Centred headings carry the rule-heart-rule signature: the home-page
+               section headings and the storitve CTA card. Subpage headings are
+               left-aligned and do not. #}
+            {% if variant in ['home', 'cta'] and config.headline.value %}
                 {% sw_include '@Storefront/storefront/utilities/sivanka-flourish.html.twig' %}
             {% endif %}
         {% endblock %}

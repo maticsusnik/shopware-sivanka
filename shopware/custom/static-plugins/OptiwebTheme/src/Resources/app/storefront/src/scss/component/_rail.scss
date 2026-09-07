@@ -61,10 +61,20 @@
         pointer-events: none;
     }
 
+    // While the plugin owns the scroll position — an arrow press, a flick, a settle,
+    // a mouse drag — the browser must not also be snapping. Its snap runs after every
+    // programmatic `scrollLeft` write, so on a coarse pointer (where the snap rule
+    // above applies, i.e. every phone) it undid each frame of the animation and the
+    // arrows appeared dead after the first press. Three classes, so this outranks the
+    // `.sv-rail .sv-rail__track` the media query emits.
+    &.is--scripted &__track,
+    &.is--dragging &__track {
+        scroll-snap-type: none;
+    }
+
     &__item {
         flex: 0 0 auto;
         display: flex;
-
         > * {
             flex: 1 1 auto;
             width: 100%;

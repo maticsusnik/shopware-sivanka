@@ -58,6 +58,11 @@
     // Two 50% blocks are unusable on a phone — stack them instead
     @include media-breakpoint-down(sm) {
         flex-direction: column;
+        // Stacked, the filter block renders nothing: below `sm` the filters live in
+        // the fixed "Filter" pill and its offcanvas, so the block is a zero-height
+        // flex item. The 1rem column gap was therefore pure dead space between the
+        // "Kategorije" button and the sort bar under it.
+        gap: 0;
     }
 }
 

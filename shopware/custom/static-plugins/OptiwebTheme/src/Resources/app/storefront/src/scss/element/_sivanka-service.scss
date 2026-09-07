@@ -48,19 +48,35 @@
         }
     }
 
+    // Storitve CTA card: centred, one notch below the hero — Playfair 34/40 in
+    // bordo-head, the rule-heart-rule flourish 12px under it and the lead 12px
+    // under that. The 660px column is owned by the block, so the lead only
+    // centres itself here.
     &--cta {
+        text-align: center;
+
         .sivanka-intro__headline {
-            margin-bottom: 10px;
-            font-size: 28px;
-            line-height: 34px;
-            letter-spacing: -0.28px;
+            margin: 0;
+            font-size: 34px;
+            line-height: 40px;
+            letter-spacing: -0.34px;
             color: $sv-bordo-head;
+
+            @include media-breakpoint-down(md) {
+                font-size: 27px;
+                line-height: 33px;
+                letter-spacing: -0.27px;
+            }
+        }
+
+        .sv-flourish {
+            justify-content: center;
         }
 
         .sivanka-intro__lead {
-            max-width: 620px;
-            font-size: 15px;
-            line-height: 24px;
+            margin: 12px 0 0;
+            font-size: 15.5px;
+            line-height: 25px;
         }
     }
 
@@ -588,4 +604,16 @@
         padding: 16px;
         gap: 13px;
     }
+}
+
+// =============================================================================
+//  Home: service tiles without the lead-time note
+//  The tile variant carries a `__meta` line ("2–5 delovnih dni", "Brezplačno · brez
+//  naročanja") that belongs to the Storitve overview, where the same tile is reused
+//  and the lead time is the point. On the home page it is noise under an already
+//  complete card, so Matic asked for it to be dropped there only — hidden rather
+//  than removed from the template so the element keeps its administration field.
+// =============================================================================
+.is-ctl-navigation.is-act-home .sivanka-service-card__meta {
+    display: none;
 }

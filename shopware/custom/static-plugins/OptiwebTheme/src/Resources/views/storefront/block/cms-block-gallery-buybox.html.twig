@@ -1,0 +1,18 @@
+{% sw_extends '@Storefront/storefront/block/cms-block-gallery-buybox.html.twig' %}
+
+{# On a phone the product name has to be the first thing on screen. The gallery is
+   342px tall, so a title rendered inside the buy panel below it sat under the fold.
+   The reference draws the name inside the cream panel on desktop, so it cannot simply
+   be moved — instead a mobile-only copy is emitted here, ahead of the media column,
+   and the panel's copy is hidden below `lg` (see pages/_product.scss). Exactly one is
+   displayed at any width, and `display:none` keeps the other out of the accessibility
+   tree, so screen readers still announce a single H1. #}
+{% block block_gallery_buybox_column_left %}
+    {% if page.product is defined and page.product.translated.name %}
+        <h1 class="product-detail-name product-detail-name--mobile d-lg-none">
+            {{ page.product.translated.name }}
+        </h1>
+    {% endif %}
+
+    {{ parent() }}
+{% endblock %}

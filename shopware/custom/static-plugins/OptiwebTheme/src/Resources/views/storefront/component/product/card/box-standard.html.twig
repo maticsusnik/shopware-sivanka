@@ -12,8 +12,19 @@
    instead — move it into the frame, which is the positioned box. #}
 {% block component_product_box_badges %}{% endblock %}
 
+{# Core makes the card clickable with a `.stretched-link` on the product NAME. Its
+   overlay loses to the image frame over part of the picture, so the lower third of
+   every tile swallowed the click. Giving the picture its own link is stacking-proof
+   and is what a shopper expects anyway. `tabindex=-1` + `aria-hidden` keep it out of
+   the tab order and off the accessibility tree — the name link is still the one
+   labelled link for the product, so this adds no duplicate stop for keyboard or SR. #}
 {% block component_product_box_image_inner %}
-    {{ parent() }}
+    <a href="{{ seoUrl('frontend.detail.page', { productId: product.id }) }}"
+       class="product-image-link"
+       tabindex="-1"
+       aria-hidden="true">
+        {{ parent() }}
+    </a>
     {% sw_include '@Storefront/storefront/component/product/card/badges.html.twig' %}
 {% endblock %}
 

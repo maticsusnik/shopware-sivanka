@@ -38,6 +38,7 @@ class CustomFieldsManager
                     $customFieldsGroup['id'] = $existingFieldSet->getId();
                 }
             }
+            unset($customFieldsGroup);
         }
 
         // Match existing custom fields by name within each group and add ID if they match
@@ -49,7 +50,9 @@ class CustomFieldsManager
                         $customField['id'] = $existingCustomField->getId();
                     }
                 }
+                unset($customField);
             }
+            unset($customFieldsGroup);
         }
 
         // Match existing field relationships by entity name and parent set ID, then add ID if they match
@@ -64,10 +67,19 @@ class CustomFieldsManager
                         $relation['id'] = $existingCustomRelation->getId();
                     }
                 }
+                unset($relation);
             }
+            unset($customFieldsGroup);
         }
 
-        // Create custom field sets first
+        // Create custom field sets first.
+        //
+        // The `unset()` calls above are load-bearing: the loops that resolve existing
+        // ids iterate `$customFieldsGroups` by reference, and a reference left bound to
+        // the last group turns this by-value loop into a writer — every iteration
+        // assigns its group into that slot, so the last group is processed once for
+        // every group and never itself. That is how a newly added category field
+        // silently failed to appear while the product one did.
         foreach ($customFieldsGroups as $customFieldsGroup) {
             $customFieldSetData = [
                 'id' => $customFieldsGroup['id'] ?? null,

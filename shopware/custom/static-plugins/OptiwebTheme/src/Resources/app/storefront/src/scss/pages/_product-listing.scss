@@ -61,7 +61,12 @@ select.sorting.form-select {
     row-gap: 8px;
 }
 
-.cms-element-product-listing .cms-listing-row {
+// Tighter card grid on a phone. The `:not()` chain matches the weight of the
+// `--bs-gutter-x` ladder in `_general.scss`
+// (`.row:not(.g-0):not(.gx-0):not([class*=" g-0"]):not([class*=" gx-0"])`, five classes
+// deep) — without it the ladder's 32px won below 720 and the two cards in a row sat a
+// full gutter apart while each one lost 8px of its own width.
+.cms-element-product-listing .cms-listing-row:not(.g-0):not(.gx-0):not([class*=" g-0"]):not([class*=" gx-0"]) {
     @include media-breakpoint-down(md) {
         --bs-gutter-x: 15px;
         --bs-gutter-y: 15px;

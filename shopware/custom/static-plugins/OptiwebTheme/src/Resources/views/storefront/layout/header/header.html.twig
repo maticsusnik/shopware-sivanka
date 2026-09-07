@@ -11,10 +11,26 @@
             </div>
         {% endblock %}
 
-        {# The reference keeps the search field visible at every width down to 340px,
-           so there is no collapse and no magnifier toggle. Below 900 the header wraps
-           and the field takes the second row. #}
+        {# Above 900 the reference keeps the search field open in the header row. Below
+           that it costs more width than the logo can spare, so it collapses to a
+           magnifier here and the field opens full-width on its own row underneath.
+           Both live in the same flex row; the SCSS decides which one shows. #}
         {% block layout_header_search %}
+            <div class="col-auto header-search-toggle-col">
+                <button class="btn header-search-toggle-btn collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#searchCollapse"
+                        aria-expanded="false"
+                        aria-controls="searchCollapse"
+                        aria-label="{{ 'header.searchButton'|trans|striptags }}">
+                    <svg class="header-search-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="7"></circle>
+                        <path d="m21 21-4.3-4.3"></path>
+                    </svg>
+                </button>
+            </div>
+
             <div class="col-12 order-2 col-sm order-sm-1 header-search-col">
                 {% sw_include '@Storefront/storefront/layout/header/search.html.twig' %}
             </div>

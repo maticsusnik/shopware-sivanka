@@ -8,9 +8,9 @@
 //  cream surface and the centred copy sits on it directly. No veil over the photos:
 //  the earlier full-width wash washed them out, which is what this replaces.
 //
-//  Below 720 the right photograph is dropped, the left one fills the band with its
-//  mask removed, and only *then* does a cream veil appear — at that width the copy
-//  has no choice but to sit on top of the photograph.
+//  Below 720 the overlay is abandoned altogether: the two photographs become a
+//  full-width swipeable slider and the copy moves out from under them onto the plain
+//  page ground. See "Phone: slider on top, copy underneath" at the foot of this file.
 //
 //  A white trust strip overlaps the band's bottom edge by 58px (40 ≤900, 28 ≤720).
 // =============================================================================
@@ -70,6 +70,24 @@
         background: $sv-cream;
     }
 
+    // The rail wrapper generates no box above 720, so the photographs stay direct
+    // children of `__box` and keep the absolute edge pinning below. `display: contents`
+    // also leaves the track with a zero client width, which is what makes the rail
+    // plugin measure no overflow and mark itself `--static` (arrows hidden, no drag).
+    &__media,
+    &__track {
+        display: contents;
+    }
+
+    // Above 720 the band is an overlay with one photograph pinned to each edge, so the
+    // extra copies the rail plugin appends to give the phone slider its loop runway
+    // (`cloneToLoop`) have no place in it — each would land exactly on top of the
+    // original it was cloned from. Two classes, so this beats `--left` / `--right`
+    // whatever their order.
+    .sv-rail__item.sv-rail__item--clone {
+        display: none;
+    }
+
     // Two separately swappable media fields, not one background image — the shop
     // owner replaces each edge photograph on its own in the layout editor.
     &__photo {
@@ -77,6 +95,13 @@
         top: 0;
         width: 32%;
         height: 100%;
+        // The photos are `.sv-rail__item`s so the rail plugin can page them below 720
+        // (see the foot of this file), but a hero slide is a photograph, not a card:
+        // the component's card frame has to come back off at every width.
+        border: 0;
+        border-radius: 0;
+        padding: 0;
+        background: transparent;
 
         picture,
         img {
@@ -93,56 +118,58 @@
         &--left {
             left: 0;
             // Full strength at the outer edge, gone by the centre.
-            -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 52%, transparent 100%);
-            mask-image: linear-gradient(90deg, #000 0%, #000 52%, transparent 100%);
-
+            //-webkit-mask-image: linear-gradient(90deg, #000 0%, #000 52%, transparent 100%);
+            //mask-image: linear-gradient(90deg, #000 0%, #000 52%, transparent 100%);
+            &::after {
+                content: "";
+                position: absolute;
+                top: 50%;
+                right: -60%;
+                width: 350px;
+                height: 150%;
+                transform: translateY(-50%);
+                border-radius: 45%;
+                background: #f5ecdf;
+                box-shadow: -50px 0 30px 0px #f5ecdf;
+            }
             img {
                 object-position: 72% 50%;
             }
 
-            // Below 720 the right photograph is dropped and this one fills the band,
-            // unmasked, with the veil below taking over legibility duty.
-            @media (max-width: $sv-bp-phone) {
-                width: 100%;
-                -webkit-mask-image: none;
-                mask-image: none;
-            }
         }
 
         &--right {
             right: 0;
-            -webkit-mask-image: linear-gradient(270deg, #000 0%, #000 52%, transparent 100%);
-            mask-image: linear-gradient(270deg, #000 0%, #000 52%, transparent 100%);
-
+            //-webkit-mask-image: linear-gradient(270deg, #000 0%, #000 52%, transparent 100%);
+            //mask-image: linear-gradient(270deg, #000 0%, #000 52%, transparent 100%);
+            &:after {
+                content: "";
+                position: absolute;
+                z-index: 2;
+                width: 350px;
+                height: 150%;
+                left: -60%;
+                top: 50%;
+                transform: translateY(-50%);
+                border-radius: 45%;
+                background: #f5ecdf;
+                box-shadow: 50px 0 30px 0px #f5ecdf;
+            }
             img {
                 object-position: 38% 50%;
-            }
-
-            @media (max-width: $sv-bp-phone) {
-                display: none;
             }
         }
     }
 
     // No veil across the photographs on desktop — the masks already clear the middle
     // of the band down to bare cream, so the copy needs nothing over the imagery.
+    // Kept as a hook only: the masks clear the middle of the band down to bare cream
+    // on desktop, and below 720 the copy no longer sits over any photograph at all, so
+    // nothing needs veiling at either width.
     &__scrim {
         position: absolute;
         inset: 0;
         background: transparent;
-
-        // One unmasked photograph spanning the full band: here the copy really does
-        // sit on top of the picture, so the cream veil comes back.
-        @media (max-width: $sv-bp-phone) {
-            background: linear-gradient(
-                90deg,
-                sv-overlay(.6) 0%,
-                sv-overlay(.88) 6%,
-                sv-overlay(.9) 50%,
-                sv-overlay(.88) 94%,
-                sv-overlay(.6) 100%
-            );
-        }
     }
 
     &__text {
@@ -243,6 +270,115 @@
     }
 }
 
+// =============================================================================
+//  Phone: slider on top, copy underneath
+//  At 720 and below the two edge photographs stop being scenery behind the copy and
+//  become the content: one full-width slide each in the shared `sv-rail` scroller,
+//  swipeable, with the arrow pair over the bottom-right corner. The headline, lead
+//  and buttons then sit under the slider on the plain page ground, so the cream veil
+//  that used to keep them legible over the picture is gone with the overlay.
+// =============================================================================
+@media (max-width: $sv-bp-phone) {
+    .sivanka-hero {
+        &__box {
+            // No fixed band any more — the box is just a stack of slider then copy.
+            height: auto;
+            overflow: visible;
+        }
+
+        // The band's cream ground and its (now unused) veil both belong to the overlay
+        // layout; the copy underneath reads on the page ground like every other block.
+        &__wash,
+        &__scrim {
+            display: none;
+        }
+
+        &__media {
+            display: block;
+            position: relative;
+        }
+
+        // The loop's extra slides — see the `--clone` note above.
+        .sv-rail__item.sv-rail__item--clone {
+            display: flex;
+        }
+
+        &__track {
+            display: flex;
+            gap: 0;
+            height: 320px;
+            // No `scroll-snap-type` here on purpose. `component/_rail.scss` turns
+            // snapping on only under `(hover: none) and (pointer: coarse)`, where the
+            // browser owns the scrolling; everywhere else the plugin drives
+            // `scrollLeft` itself, frame by frame, and mandatory snapping re-snaps
+            // after every one of those writes — which is what made the arrows appear
+            // dead and a mouse drag rubber-band.
+
+            @media (max-width: $sv-bp-small) {
+                height: 270px;
+            }
+
+            @media (max-width: $sv-bp-tiny) {
+                height: 230px;
+            }
+        }
+
+        &__photo {
+            position: relative;
+            flex: 0 0 100%;
+            width: 100%;
+            height: 100%;
+            scroll-snap-align: start;
+
+            // The cream blobs that soften each photograph's inner edge on desktop are
+            // absolutely positioned 60% of the photo's width outside it. Once the
+            // photo becomes a relatively-positioned slide they overflowed the track:
+            // its `scrollWidth` read 1014 instead of 780 on a 390px screen, which threw
+            // off both the rail's overflow measurement and the loop arithmetic — and
+            // painted a cream ellipse over the slides into the bargain. There is no
+            // edge to soften when a slide fills the frame.
+            &::after {
+                content: none;
+            }
+            // The fade toward the band centre only makes sense beside a second
+            // photograph; a full-width slide keeps its whole frame.
+            -webkit-mask-image: none;
+            mask-image: none;
+
+            img {
+                object-position: 50% 50%;
+            }
+        }
+
+        // Over the picture rather than under it: 26px of arrows below a 320px slide
+        // would push the headline most of a screen down.
+        .sv-rail__controls {
+            position: absolute;
+            right: $sv-gutter-sm;
+            bottom: 12px;
+            margin: 0;
+            z-index: 2;
+        }
+
+        &__text {
+            height: auto;
+            padding: 28px $sv-gutter-sm 0;
+        }
+
+        &__headline {
+            max-width: none;
+        }
+    }
+
+    // The white trust card overlaps the band's bottom edge in the overlay layout. With
+    // the copy now ending on the page ground there is no edge left to overlap — the
+    // negative margin would simply drop it on top of the buttons.
+    .sivanka-hero__trustwrap {
+        margin-top: 32px;
+    }
+}
+
+
 .sivanka-trust {
     max-width: $sv-inner;
     margin-inline: auto;
@@ -288,6 +424,15 @@
         }
 
         @media (max-width: $sv-bp-phone) {
+            // Stacked into one column the items read better centred than ragged-left,
+            // and the medallion sits above its label rather than beside it — the same
+            // treatment the footer service strip takes at this width.
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            text-align: center;
+
             &,
             &:nth-child(even) {
                 border-left: 0;

@@ -4,6 +4,24 @@
         display: none;
     }
 
+    // The trigger is a `div.nav-link`, not an `a`, so the `> a.nav-link.active` reset
+    // further down never matched it. Core still draws its own underline on the label
+    // (`.main-navigation-link-text { border-bottom: 2px solid transparent }`), which
+    // turns bordo once this category is the active one — that is the stray underline.
+    .mega-menu-link {
+        .main-navigation-link-text {
+            border-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        // `layout/_main-navigation.scss` lifts nav icons 2px so they sit on the text
+        // baseline. This trigger is a centred flex row, so the lift only knocks the
+        // glyph 2px off the label's centre.
+        .icon svg {
+            top: 2px;
+        }
+    }
+
     @media (min-width: 992px) {
         position: static;
         > a.nav-link.active {

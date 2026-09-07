@@ -75,6 +75,18 @@
         flex: 1;
     }
 
+
+    // The image is its own link (see box-standard.html.twig). It must fill the frame
+    // so the whole picture is a hit target, and sit above the card's stretched-link
+    // overlay so the click lands on it rather than being swallowed.
+    .product-image-link {
+        position: relative;
+        z-index: 2;
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+
     // Product name
     .product-name {
         font-family: $sv-sans;

@@ -1,6 +1,25 @@
 @import "../../../../sivanka-service-shared";
 
+// The block is a single centred card in the design, so the editor draws the card
+// too instead of the old 1fr/auto two-column grid.
 .sw-cms-block-sivanka-service-cta {
-    @include sivanka-service-block-grid(1fr auto);
-    align-items: center;
+    padding: 24px 20px;
+    background: $sivanka-cms-surface;
+    border: 1px solid $sivanka-cms-border;
+    border-radius: 6px;
+    text-align: center;
+
+    &__inner {
+        max-width: 520px;
+        margin: 0 auto;
+    }
+
+    &__slot--actions {
+        margin-top: 16px;
+    }
+
+    // Centre the button pair the element renders left-aligned elsewhere.
+    .sw-cms-el-sivanka-service-actions {
+        justify-content: center;
+    }
 }

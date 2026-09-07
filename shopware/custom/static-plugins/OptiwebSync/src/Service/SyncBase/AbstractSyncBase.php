@@ -11,6 +11,15 @@ use Throwable;
 
 abstract class AbstractSyncBase implements SyncBaseInterface
 {
+    /**
+     * How many pages in a row may fail before the run gives up.
+     *
+     * A single rejected page is survivable — the rest of the source is still
+     * worth importing — but a source that answers nothing but errors must not
+     * be paged through to the end.
+     */
+    private const MAX_CONSECUTIVE_PAGE_ERRORS = 5;
+
     protected SystemConfigService $systemConfigService;
     protected Logger $logger;
     protected bool $ignoreHash = false;
@@ -110,9 +119,13 @@ abstract class AbstractSyncBase implements SyncBaseInterface
      */
     private function runImport(int $pageSize, array $loopData): void
     {
-        $page = 1;
+        $page              = 1;
+        $consecutiveErrors = 0;
+        $failedPages       = [];
 
         while (true) {
+            $dataLength = 0;
+
             try {
                 $data       = $this->fetchPage($page, $pageSize, $loopData);
                 $dataLength = count($data);
@@ -132,12 +145,24 @@ abstract class AbstractSyncBase implements SyncBaseInterface
                     $countInserted = $this->import($data, $loopData);
                     OwLogger::addVisibleLog($this->logger, "$countInserted synced.");
                 }
+
+                $consecutiveErrors = 0;
             } catch (Throwable $error) {
                 // Includes the fetch itself: a single failed page must not abort
                 // the whole run, but we also must not loop on it forever.
                 OwLogger::exception($this->logger, $this->getName() . " sync error on page $page", $error);
 
-                return;
+                $failedPages[] = $page;
+
+                if (++$consecutiveErrors >= self::MAX_CONSECUTIVE_PAGE_ERRORS) {
+                    OwLogger::addVisibleLog($this->logger, sprintf(
+                        '%s: stopping after %d consecutive page failures.',
+                        $this->getName(),
+                        $consecutiveErrors,
+                    ));
+
+                    break;
+                }
             }
 
             // --test means "show me a sample", so it stops after one page.
@@ -146,14 +171,23 @@ abstract class AbstractSyncBase implements SyncBaseInterface
             if ($this->testMode) {
                 OwLogger::addVisibleLog($this->logger, $this->getName() . ': TEST MODE — stopping after the first page.');
 
-                return;
+                break;
             }
 
             if (!$this->hasMorePages($page, $dataLength, $pageSize)) {
-                return;
+                break;
             }
 
             ++$page;
+        }
+
+        if ($failedPages !== []) {
+            OwLogger::warning($this->logger, sprintf(
+                '%s: %d page(s) failed and were skipped: %s. Re-run the sync to pick them up.',
+                $this->getName(),
+                count($failedPages),
+                implode(', ', $failedPages),
+            ));
         }
     }
 

@@ -26,7 +26,8 @@ use Symfony\Component\HttpFoundation\Request;
  * The design shows a related-products row on every product. Shopware only fills one
  * when an editor has configured cross-selling on that product, so this decorator
  * supplies a fallback: the newest products from the same category, minus the product
- * being viewed.
+ * being viewed. It asks for twice the four the row shows so the rail has something to
+ * page to.
  *
  * Anything configured in the administration wins — the fallback only runs when the
  * inner route comes back with nothing to show, so an editor's own selection is never
@@ -34,7 +35,13 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class FallbackCrossSellingRoute extends AbstractProductCrossSellingRoute
 {
-    private const LIMIT = 4;
+    /**
+     * The design draws a four-up row, and the rail shows four 330px cards across on
+     * desktop. Fetching eight fills a second page for the rail's arrows instead of
+     * leaving them dead, and a rail that comes back with fewer simply does not
+     * overflow — `SvRailPlugin` marks it `sv-rail--static` and hides the arrows.
+     */
+    private const LIMIT = 8;
 
     /**
      * @param SalesChannelRepository<ProductCollection> $productRepository

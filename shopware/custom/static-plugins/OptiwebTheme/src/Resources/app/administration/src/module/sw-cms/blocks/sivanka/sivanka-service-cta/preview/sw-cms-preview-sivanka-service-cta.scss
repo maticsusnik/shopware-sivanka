@@ -1,5 +1,61 @@
 @import "../../../../sivanka-service-shared";
 
+// Draws the block instead of labelling it: the centred cream card with the
+// heading, its flourish, two lines of copy and the button pair.
 .sw-cms-preview-sivanka-service-cta {
-    @include sivanka-service-block-preview;
+    @include sivanka-cms-thumb;
+    justify-content: center;
+
+    &__panel {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 8px;
+        background: $sivanka-cms-surface;
+        border: 1px solid $sivanka-cms-border;
+        border-radius: 5px;
+    }
+
+    &__head {
+        @include sivanka-cms-thumb-heading;
+        width: 100%;
+    }
+
+    &__lead {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        width: 100%;
+
+        span {
+            display: block;
+            height: 3px;
+            border-radius: 2px;
+            background: $sivanka-cms-border;
+        }
+
+        span:first-child { width: 74%; }
+        span:last-child  { width: 54%; }
+    }
+
+    &__buttons {
+        display: flex;
+        gap: 5px;
+        margin-top: 2px;
+
+        i {
+            display: block;
+            width: 30px;
+            height: 9px;
+            border: 1px solid $sivanka-cms-primary;
+            border-radius: 2px;
+            background: $sivanka-cms-primary;
+
+            &.is--ghost {
+                background: #fff;
+            }
+        }
+    }
 }

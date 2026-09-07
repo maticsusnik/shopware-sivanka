@@ -6,8 +6,9 @@
    directly — no overlay over the imagery. A white trust strip overlaps the band's
    bottom edge by 58px (40 ≤900, 28 ≤720).
 
-   Below 720 the right photograph is dropped, the left one fills the band unmasked,
-   and the scrim carries a cream veil so the copy stays legible over it. #}
+   Below 720 the band stops being an overlay: the two photographs become a full-width
+   swipeable slider (the shared `sv-rail` component) and the copy moves out from under
+   them onto the plain page ground, where it needs no veil to stay legible. #}
 {% block element_sivanka_hero %}
 {% set data = element.data %}
 {% if data is not empty %}
@@ -21,25 +22,45 @@
     <div class="sivanka-hero__box">
         <div class="sivanka-hero__wash"></div>
 
-        {% if data.imageLeft %}
-            <div class="sivanka-hero__photo sivanka-hero__photo--left">
-                {% sw_thumbnails 'sivanka-hero-left' with {
-                    media: data.imageLeft,
-                    sizes: { default: '700px' },
-                    attributes: { alt: data.imageLeft.translated.alt ?: '' }
-                } %}
-            </div>
-        {% endif %}
+        {# The two photographs are wrapped in the shared rail component. Above 720 the
+           wrapper and its track are `display: contents`, so the photos remain direct
+           children of the band and keep their absolute edge pinning — the rail plugin
+           measures a zero-width track there, marks itself `--static` and does nothing.
+           Below 720 the wrapper becomes a real box and the same two photos are a
+           full-width swipeable slider, with the copy moved out from under them. #}
+        <div class="sivanka-hero__media sv-rail"
+             data-sv-rail="true"
+             {# Two full-width slides give the recycler exactly one item of runway,
+                which is one short of what an endless loop needs, so the rail freezes
+                on its last slide. The slides are plain photographs with nothing bound
+                to them, so here — and only here — the plugin may clone to fill it. #}
+             data-sv-rail-options='{"cloneToLoop": true}'
+             role="region"
+             aria-label="{{ data.headline|default('')|striptags }}">
+            <div class="sivanka-hero__track sv-rail__track" tabindex="0">
+                {% if data.imageLeft %}
+                    <div class="sivanka-hero__photo sivanka-hero__photo--left sv-rail__item">
+                        {% sw_thumbnails 'sivanka-hero-left' with {
+                            media: data.imageLeft,
+                            sizes: { default: '700px' },
+                            attributes: { alt: data.imageLeft.translated.alt ?: '' }
+                        } %}
+                    </div>
+                {% endif %}
 
-        {% if data.imageRight %}
-            <div class="sivanka-hero__photo sivanka-hero__photo--right">
-                {% sw_thumbnails 'sivanka-hero-right' with {
-                    media: data.imageRight,
-                    sizes: { default: '700px' },
-                    attributes: { alt: data.imageRight.translated.alt ?: '' }
-                } %}
+                {% if data.imageRight %}
+                    <div class="sivanka-hero__photo sivanka-hero__photo--right sv-rail__item">
+                        {% sw_thumbnails 'sivanka-hero-right' with {
+                            media: data.imageRight,
+                            sizes: { default: '700px' },
+                            attributes: { alt: data.imageRight.translated.alt ?: '' }
+                        } %}
+                    </div>
+                {% endif %}
             </div>
-        {% endif %}
+
+            {% sw_include '@Storefront/storefront/utilities/sivanka-rail-controls.html.twig' %}
+        </div>
 
         <div class="sivanka-hero__scrim"></div>
 

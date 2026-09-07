@@ -1,14 +1,18 @@
 {% block block_sivanka_service_cta %}
     <div class="col-12 cms-block-sivanka-service-cta">
+        {# Design: one centred cream card, not a two-column band. The copy and the
+           buttons stack in a 660px column in the middle of a 44px-padded panel. #}
         <div class="sivanka-service-cta">
-            {% sw_include '@Storefront/storefront/block/sivanka-service/slot.html.twig' with {
-                slotName: 'intro',
-                slotClass: 'sivanka-service-cta__text'
-            } %}
-            {% sw_include '@Storefront/storefront/block/sivanka-service/slot.html.twig' with {
-                slotName: 'actions',
-                slotClass: 'sivanka-service-cta__actions'
-            } %}
+            <div class="sivanka-service-cta__inner">
+                {% sw_include '@Storefront/storefront/block/sivanka-service/slot.html.twig' with {
+                    slotName: 'intro',
+                    slotClass: 'sivanka-service-cta__text'
+                } %}
+                {% sw_include '@Storefront/storefront/block/sivanka-service/slot.html.twig' with {
+                    slotName: 'actions',
+                    slotClass: 'sivanka-service-cta__actions'
+                } %}
+            </div>
         </div>
     </div>
 {% endblock %}

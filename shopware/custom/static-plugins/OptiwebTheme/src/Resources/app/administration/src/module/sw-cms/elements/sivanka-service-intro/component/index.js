@@ -5,6 +5,9 @@ const { Component, Mixin } = Shopware;
 
 const HEADLINE_TAGS = ['h1', 'h2', 'h3'];
 
+// Variants the design centres and gives the rule-heart-rule flourish to.
+const FLOURISH_VARIANTS = ['home', 'cta'];
+
 Component.register('sw-cms-el-sivanka-service-intro', {
     template,
 
@@ -15,6 +18,11 @@ Component.register('sw-cms-el-sivanka-service-intro', {
             const level = this.element?.config?.headlineLevel?.value;
 
             return HEADLINE_TAGS.includes(level) ? level : 'h2';
+        },
+
+        hasFlourish() {
+            return FLOURISH_VARIANTS.includes(this.element?.config?.variant?.value)
+                && Boolean(this.element?.config?.headline?.value);
         },
     },
 

@@ -118,3 +118,23 @@
     @include sv-btn-base;
     @include sv-btn-ghost;
 }
+
+// ============================================================
+//  Long labels must wrap, not spill
+//  "Pošlji povpraševanje" is 20 characters; in a 390px column it outgrew its button
+//  and the text ran past the edge. Buttons here are fixed-height flex rows, which
+//  forces the label onto one line — so allow the wrap and let the box grow, keeping
+//  the touch-target height as a floor rather than a ceiling.
+//
+//  `break-word`, not `anywhere`: `anywhere` also counts the break opportunities when
+//  the browser works out the box's min-content width, so a flex button shrank to its
+//  longest *syllable* and split "povpraševanje" mid-word even where the whole word
+//  fitted. `break-word` breaks a word only when it genuinely cannot fit a line of its
+//  own, which is the spill this rule exists to stop.
+// ============================================================
+.btn,
+.sv-btn {
+    white-space: normal;
+    overflow-wrap: break-word;
+    height: auto;
+}

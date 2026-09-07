@@ -799,6 +799,13 @@
     }
 
     // ---- Summary ----
+    // Core already rules off the bottom of the item list. With the summary's own top
+    // rule that made two hairlines 16px apart stacked just above the checkout button.
+    // The summary's rule is the one that belongs to this block, so drop core's.
+    .offcanvas-cart-items {
+        border-bottom: 0;
+    }
+
     .offcanvas-summary,
     .offcanvas-cart-summary {
         border-top: 1px solid $sv-border;

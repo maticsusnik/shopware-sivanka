@@ -54,6 +54,19 @@
     padding-block: 0;
 }
 
+// …but that rhythm assumes a breadcrumb. `.cms-breadcrumb` is always emitted and the
+// trail inside it is not: a product reached by a URL with no category path (e.g.
+// /DRSNIK-25-CRN-ST.ZLATO/700526) renders an empty, zero-height wrapper, and the
+// gallery then starts hard against the nav bar. Pay the breadcrumb's own inset only
+// when there is no breadcrumb to pay it, so every page that has one is untouched.
+.container-main:not(:has(.breadcrumb)) {
+    padding-top: 24px;
+
+    @media (max-width: $sv-bp-phone) {
+        padding-top: 16px;
+    }
+}
+
 header, footer, .nav-main {
     .container, .cms-section .boxed {
         max-width: $header-width;
