@@ -103,9 +103,13 @@ class FallbackCrossSellingRoute extends AbstractProductCrossSellingRoute
             return new ProductCollection();
         }
 
-        // `categoriesRo` is the read-only tree that includes inherited assignments, so
-        // a variant sitting only on its parent's category still finds neighbours.
-        $categoryIds = $current->getCategoryTree() ?? [];
+        // Direct assignments only. `categoryTree` is the denormalised tree, and
+        // ProductCategoryDenormalizer fills it with each category's whole `path` —
+        // so it always carries the sales channel's root category, and filtering on it
+        // matches the entire catalogue: every product then gets the same eight newest
+        // products. `categoryIds` is inherited, so a variant still sees the categories
+        // its parent is assigned to.
+        $categoryIds = $current->getCategoryIds() ?? [];
 
         if ($categoryIds === []) {
             return new ProductCollection();
