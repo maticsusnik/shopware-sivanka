@@ -26,7 +26,13 @@
                         <a href="{{ category.link }}" class="category-grid__item">
                             <div class="category-grid__img{% if not category.media %} category-grid__img--placeholder{% endif %}">
                                 {% if category.media %}
-                                    <img src="{{ category.media.url }}" alt="{{ category.name }}" loading="lazy">
+                                    {# Thumbnails instead of the original file, and the
+                                       utility adds width/height so the tile reserves its box. #}
+                                    {% sw_thumbnails 'category-grid-thumbnails' with {
+                                        media: category.media,
+                                        sizes: { default: '240px' },
+                                        attributes: { alt: category.name, loading: 'lazy' }
+                                    } %}
                                 {% elseif category.category_icon.url %}
                                     <span class="category-grid__badge">
                                         <img src="{{ category.category_icon.url }}"

@@ -1,0 +1,82 @@
+// =============================================================================
+//  Notice bar
+//  The shop's own dismissible message above the header ("Na dopustu smo ...").
+//  Not in the design mocks: it sits above the cream top bar, so it takes the
+//  bordo brand colour to read as an announcement rather than more chrome.
+//  Same container metrics as the top bar so the text lines up with the logo.
+// =============================================================================
+
+.sivanka-notice {
+    background: $sv-bordo;
+    color: $sv-white;
+    font-family: $sv-sans;
+    font-size: 13.5px;
+    line-height: 20px;
+
+    .container {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        max-width: $sv-container;
+        padding-block: 10px;
+        padding-inline: $sv-gutter-wide;
+
+        @media (max-width: $sv-bp-phone) {
+            padding-inline: $sv-gutter-sm;
+        }
+
+        @media (max-width: $sv-bp-tiny) {
+            padding-inline: $sv-gutter-xs;
+        }
+    }
+
+    &__text {
+        flex: 1 1 auto;
+        margin: 0;
+        text-align: center;
+    }
+
+    &__link {
+        margin-left: 6px;
+        color: $sv-white;
+        font-weight: 600;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+
+        &:hover,
+        &:focus-visible {
+            color: $sv-white;
+            text-decoration-thickness: 2px;
+        }
+    }
+
+    &__close {
+        display: flex;
+        flex: 0 0 auto;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        padding: 0;
+        border: 0;
+        border-radius: $sv-r-round;
+        background: transparent;
+        color: $sv-white;
+        cursor: pointer;
+
+        svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        &:hover,
+        &:focus-visible {
+            background: rgba(255, 255, 255, .15);
+        }
+
+        &:focus-visible {
+            outline: 2px solid $sv-white;
+            outline-offset: 1px;
+        }
+    }
+}

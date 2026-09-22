@@ -5,9 +5,12 @@
       "css": [
         "/bundles/optiwebtheme/administration/assets/optiweb-theme-CMKOAHYP.css"
       ],
-      "dynamic": [],
+      "dynamic": [
+        "/bundles/optiwebtheme/administration/assets/sl-SI-BCpb9lbH.js",
+        "/bundles/optiwebtheme/administration/assets/en-GB-CjVGshjj.js"
+      ],
       "js": [
-        "/bundles/optiwebtheme/administration/assets/optiweb-theme-DKzWp5NK.js"
+        "/bundles/optiwebtheme/administration/assets/optiweb-theme-C2bjXy8E.js"
       ],
       "legacy": false,
       "preload": []

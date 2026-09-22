@@ -34,6 +34,16 @@ svg {
     max-width: 100%;
 }
 
+// Images carry width/height attributes (utilities/thumbnail.html.twig) so the browser
+// can reserve their box before they load. The attributes are only there for the ratio:
+// `height: auto` keeps a width-constrained image from being stretched to the attribute
+// height. It is the initial value, so images without the attributes are unaffected, and
+// a bare element selector loses to every component rule that sets its own height.
+// (Not `:where()` — scssphp's @extend matching crashes on it and theme:compile fails.)
+img {
+    height: auto;
+}
+
 a {
     color: $sv-bordo;
     text-decoration: none;
@@ -88,7 +98,8 @@ a {
     .nav-main .nav-link,
     .sivanka-topbar a,
     .header-logo-main-link,
-    .footer-main a,
+    // `.footer-main a` is deliberately not here: 46px per link spread the footer
+    // columns far apart and stretched the round social icons into ovals.
     .footer-bottom a,
     .product-name,
     .page-link,

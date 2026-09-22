@@ -18,7 +18,8 @@ import Plugin from 'src/plugin-system/plugin.class';
  *     leave them unbound; recycling the real node keeps every binding intact. The one
  *     exception is `cloneToLoop`, opt-in per rail, for a track whose items are inert
  *     and too few to loop on their own — the home hero's two photographs.
- *   - mouse dragging, with the click that follows a drag suppressed.
+ *   - mouse and touch dragging, one card per gesture, with the click that follows a
+ *     drag suppressed; a horizontal wheel / trackpad swipe also moves one card.
  *   - the arrow pair, animated on rAF rather than `behavior: 'smooth'`, so the loop
  *     can rewrite `scrollLeft` mid-animation without cancelling it.
  */
@@ -40,6 +41,8 @@ export default class SvRailPlugin extends Plugin {
         cloneToLoop: false,
         /** Hard ceiling on cloning, so a mis-measured track cannot fill the DOM. */
         maxItems: 12,
+        /** Quiet time, in ms, that ends one wheel/trackpad gesture (see `_registerWheel`). */
+        wheelGestureGap: 180,
     };
 
     init() {
@@ -142,15 +145,53 @@ export default class SvRailPlugin extends Plugin {
         }, { passive: true });
 
         this._registerDrag();
+        this._registerWheel();
+    }
+
+    // ---- wheel / trackpad -------------------------------------------------
+
+    /**
+     * A horizontal trackpad swipe or shift+wheel moves exactly one card. Left to the
+     * browser, one long swipe (plus the OS inertia that follows it) scrolls freely
+     * through the looping rail and runs across a whole row of cards.
+     *
+     * A gesture is a burst of wheel events; the next card is only taken once the
+     * events have been quiet for `wheelGestureGap`, so the inertia tail of one swipe
+     * cannot start another move. Vertical wheel scrolling is left alone so the page
+     * still scrolls when the pointer happens to rest on a rail.
+     */
+    _registerWheel() {
+        this.wheelLocked = false;
+        this.wheelTimer = null;
+
+        this.track.addEventListener('wheel', (event) => {
+            const dx = event.shiftKey && !event.deltaX ? event.deltaY : event.deltaX;
+
+            if (Math.abs(dx) <= Math.abs(event.deltaY) && !event.shiftKey) {
+                return;
+            }
+
+            event.preventDefault();
+
+            clearTimeout(this.wheelTimer);
+            this.wheelTimer = setTimeout(() => {
+                this.wheelLocked = false;
+            }, this.options.wheelGestureGap);
+
+            if (this.wheelLocked || Math.abs(dx) < 4) {
+                return;
+            }
+
+            this.wheelLocked = true;
+            this._page(Math.sign(dx));
+        }, { passive: false });
     }
 
     // ---- dragging ---------------------------------------------------------
 
     _registerDrag() {
         this.track.addEventListener('pointerdown', (event) => {
-            // Touch and pen keep the browser's own scrolling, which is smoother than
-            // anything we can do here and keeps scroll-snap working.
-            if (event.pointerType !== 'mouse' || event.button !== 0) {
+            if (event.pointerType === 'mouse' && event.button !== 0) {
                 return;
             }
 
@@ -160,7 +201,12 @@ export default class SvRailPlugin extends Plugin {
             this.velocity = 0;
             this.lastMoveAt = performance.now();
             this.startX = event.clientX;
+            this.startY = event.clientY;
             this.lastX = event.clientX;
+            // How far this gesture has moved the rail, clamped to one card either way
+            // (see `pointermove`). Measured from the card the gesture started on.
+            this.dragTravel = 0;
+            this.dragStep = this._step();
             // Cursor only. `is--dragging` also takes the links out of the hit test, and
             // adding it here would mean mousedown and mouseup land on different targets
             // — the browser then fires no click at all and a plain click stops working.
@@ -172,13 +218,26 @@ export default class SvRailPlugin extends Plugin {
                 return;
             }
 
-            if (!this.dragged
-                && Math.abs(event.clientX - this.startX) > this.options.dragThreshold) {
-                this.dragged = true;
-                // Claim the pointer only once it is a drag, so a plain click on a card
-                // still reaches the link.
-                this.track.setPointerCapture(event.pointerId);
-                this.el.classList.add('is--dragging');
+            if (!this.dragged) {
+                const dx = Math.abs(event.clientX - this.startX);
+                const dy = Math.abs(event.clientY - this.startY);
+
+                // A touch that sets off vertically is the page being scrolled — the
+                // track is `touch-action: pan-y`, so the browser does that natively.
+                if (event.pointerType !== 'mouse' && dy > this.options.dragThreshold && dy > dx) {
+                    this.dragging = false;
+                    this.el.classList.remove('is--pressing');
+
+                    return;
+                }
+
+                if (dx > this.options.dragThreshold) {
+                    this.dragged = true;
+                    // Claim the pointer only once it is a drag, so a plain click on a
+                    // card still reaches the link.
+                    this.track.setPointerCapture(event.pointerId);
+                    this.el.classList.add('is--dragging');
+                }
             }
 
             if (this.dragged) {
@@ -189,7 +248,19 @@ export default class SvRailPlugin extends Plugin {
                 // the next move undoes the shift, which triggers another recycle, and the
                 // rail tears through the whole list in a few frames.
                 const dx = event.clientX - this.lastX;
-                this._scrollTo(this.track.scrollLeft - dx);
+
+                // One card per gesture: the rail follows the finger/mouse, but never
+                // further than one card from where the gesture began. Before this a
+                // long swipe dragged straight through several cards, and on a phone
+                // the native momentum then carried on through the looping rail.
+                const wanted = this.dragTravel - dx;
+                const clamped = Math.max(-this.dragStep, Math.min(this.dragStep, wanted));
+                const delta = clamped - this.dragTravel;
+
+                if (delta !== 0) {
+                    this._scrollTo(this.track.scrollLeft + delta);
+                    this.dragTravel = clamped;
+                }
 
                 // Rolling velocity for the flick on release. Smoothed, because a raw
                 // last-frame delta is noisy enough that an ordinary drag reads as a
@@ -220,20 +291,23 @@ export default class SvRailPlugin extends Plugin {
             }
 
             if (wasDrag) {
-                // A quick flick should carry on rather than stopping dead under the
-                // finger. Anything slower just settles onto the nearest card edge.
-                const speed = Math.abs(this.velocity || 0);
+                // Land on the neighbouring card when the gesture travelled a fifth of a
+                // card or ended in a flick; otherwise go back to the card it started on.
+                // Either way the rail moves by at most one card.
+                const travel = this.dragTravel;
+                const flick = Math.abs(this.velocity || 0) > 0.45;
+                let direction = 0;
 
-                if (speed > 0.45 && !this._reducedMotion()) {
-                    // px/ms -> cards, capped so a hard flick cannot fling the whole rail.
-                    const cards = Math.min(3, Math.max(1, Math.round(speed * 1.6)));
-
-                    this._page(-Math.sign(this.velocity) * cards);
-                } else {
-                    this._settle();
+                if (Math.abs(travel) > this.dragStep * 0.2) {
+                    direction = Math.sign(travel);
+                } else if (flick) {
+                    direction = -Math.sign(this.velocity);
                 }
 
+                this._animate(direction * this.dragStep - travel, () => this._settle());
+
                 this.velocity = 0;
+                this.dragTravel = 0;
             }
         };
 

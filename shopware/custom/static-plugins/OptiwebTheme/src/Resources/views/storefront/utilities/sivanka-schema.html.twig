@@ -1,0 +1,160 @@
+{#
+ # Site-wide schema.org graph (JSON-LD), included from layout/meta.html.twig.
+ #
+ #  - every page: OnlineStore (the organisation) + WebSite with a SearchAction
+ #  - homepage:   Store — the physical shop, with address and opening hours
+ #
+ # Page-level types stay where core renders them as microdata (Product/Offer on the
+ # product page, BreadcrumbList on category and product pages); the FAQPage comes from
+ # element/cms-element-faq.html.twig. The nodes reference each other by `@id`, so the
+ # graph and the microdata describe one organisation, not several.
+ #
+ # Business data comes from the plugin config card "Structured data (SEO)". The footer
+ # address and hours are free HTML and cannot be parsed reliably, hence separate fields.
+ #}
+{% block sivanka_schema %}
+    {% set cfg = config('OptiwebTheme').config %}
+
+    {% set homeUrl = url('frontend.home.page') %}
+    {% set orgId = homeUrl ~ '#organization' %}
+    {% set name = (cfg.schemaBusinessName ?? '')|trim ?: (context.salesChannel.translated.name ?? basicConfig.shopName) %}
+    {% set logo = theme_config('sw-logo-desktop') %}
+    {% set email = (cfg.schemaEmail ?? '')|trim %}
+    {% set phone = (cfg.schemaPhone ?? '')|trim %}
+    {% set street = (cfg.schemaStreet ?? '')|trim %}
+    {% set language = app.request.locale|default('sl-SI')|replace({ '_': '-' }) %}
+
+    {% set sameAs = [] %}
+    {% for key in ['facebookLink', 'instagramLink', 'xLink', 'linkedinLink'] %}
+        {% if (cfg[key] ?? '')|trim starts with 'http' %}
+            {% set sameAs = sameAs|merge([cfg[key]|trim]) %}
+        {% endif %}
+    {% endfor %}
+
+    {% set address = null %}
+    {% if street %}
+        {% set address = {
+            '@type': 'PostalAddress',
+            streetAddress: street,
+            postalCode: (cfg.schemaPostalCode ?? '')|trim,
+            addressLocality: (cfg.schemaCity ?? '')|trim,
+            addressCountry: (cfg.schemaCountry ?? '')|trim|upper ?: 'SI'
+        } %}
+    {% endif %}
+
+    {# ---- OnlineStore ------------------------------------------------------ #}
+    {% set organization = {
+        '@type': 'OnlineStore',
+        '@id': orgId,
+        name: name,
+        url: homeUrl
+    } %}
+    {% if logo %}
+        {% set organization = organization|merge({ logo: { '@type': 'ImageObject', url: logo }, image: logo }) %}
+    {% endif %}
+    {% if email %}
+        {% set organization = organization|merge({ email: email }) %}
+    {% endif %}
+    {% if phone %}
+        {% set organization = organization|merge({ telephone: phone }) %}
+    {% endif %}
+    {% if address %}
+        {% set organization = organization|merge({ address: address }) %}
+    {% endif %}
+    {% if sameAs|length %}
+        {% set organization = organization|merge({ sameAs: sameAs }) %}
+    {% endif %}
+    {% if email or phone %}
+        {% set contactPoint = { '@type': 'ContactPoint', contactType: 'customer service', availableLanguage: ['sl'] } %}
+        {% if email %}{% set contactPoint = contactPoint|merge({ email: email }) %}{% endif %}
+        {% if phone %}{% set contactPoint = contactPoint|merge({ telephone: phone }) %}{% endif %}
+        {% set organization = organization|merge({ contactPoint: contactPoint }) %}
+    {% endif %}
+
+    {# ---- WebSite + sitelinks search box ------------------------------------- #}
+    {% set website = {
+        '@type': 'WebSite',
+        '@id': homeUrl ~ '#website',
+        url: homeUrl,
+        name: name,
+        inLanguage: language,
+        publisher: { '@id': orgId },
+        potentialAction: {
+            '@type': 'SearchAction',
+            target: {
+                '@type': 'EntryPoint',
+                urlTemplate: url('frontend.search.page') ~ '?search={search_term_string}'
+            },
+            'query-input': 'required name=search_term_string'
+        }
+    } %}
+
+    {% set graph = [organization, website] %}
+
+    {# ---- Store (homepage only) ---------------------------------------------- #}
+    {% if app.request.attributes.get('_route') == 'frontend.home.page' and address %}
+        {% set dayNames = { Mo: 'Monday', Tu: 'Tuesday', We: 'Wednesday', Th: 'Thursday', Fr: 'Friday', Sa: 'Saturday', Su: 'Sunday' } %}
+        {% set dayKeys = dayNames|keys %}
+        {% set hours = [] %}
+
+        {# One rule per line, "Mo-Th 08:00-17:00" or "Mo,We 09:00-12:00". A line that
+           does not parse is skipped rather than published half-read. #}
+        {% for line in (cfg.schemaOpeningHours ?? '')|replace({ "\r": '' })|split("\n") %}
+            {% set parts = line|trim|split(' ')|filter(p => p != '') %}
+            {% if parts|length == 2 and parts[1] matches '/^\\d{1,2}:\\d{2}-\\d{1,2}:\\d{2}$/' %}
+                {% set times = parts[1]|split('-') %}
+                {% set days = [] %}
+                {% for group in parts[0]|split(',') %}
+                    {% set range = group|split('-') %}
+                    {% set fromIdx = null %}
+                    {% set toIdx = null %}
+                    {% for key in dayKeys %}
+                        {% if key == range[0] %}{% set fromIdx = loop.index0 %}{% endif %}
+                        {% if key == (range[1] ?? range[0]) %}{% set toIdx = loop.index0 %}{% endif %}
+                    {% endfor %}
+                    {% if fromIdx is not null and toIdx is not null and fromIdx <= toIdx %}
+                        {% for i in fromIdx..toIdx %}
+                            {% set days = days|merge([dayNames[dayKeys[i]]]) %}
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+                {% if days|length %}
+                    {% set hours = hours|merge([{
+                        '@type': 'OpeningHoursSpecification',
+                        dayOfWeek: days,
+                        opens: times[0],
+                        closes: times[1]
+                    }]) %}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+
+        {% set store = {
+            '@type': 'Store',
+            '@id': homeUrl ~ '#store',
+            name: name,
+            url: homeUrl,
+            address: address,
+            parentOrganization: { '@id': orgId }
+        } %}
+        {% if logo %}{% set store = store|merge({ image: logo }) %}{% endif %}
+        {% if email %}{% set store = store|merge({ email: email }) %}{% endif %}
+        {% if phone %}{% set store = store|merge({ telephone: phone }) %}{% endif %}
+        {% if hours|length %}{% set store = store|merge({ openingHoursSpecification: hours }) %}{% endif %}
+        {% if (cfg.schemaLatitude ?? '')|trim and (cfg.schemaLongitude ?? '')|trim %}
+            {% set store = store|merge({ geo: {
+                '@type': 'GeoCoordinates',
+                latitude: cfg.schemaLatitude|trim,
+                longitude: cfg.schemaLongitude|trim
+            } }) %}
+        {% endif %}
+
+        {% set graph = graph|merge([store]) %}
+    {% endif %}
+
+    {# HEX_TAG turns `<` / `>` into < / >, so no config value can close the
+       script element; slashes can then stay unescaped for readability. #}
+    <script type="application/ld+json">
+        {{ { '@context': 'https://schema.org', '@graph': graph }|json_encode(constant('JSON_UNESCAPED_UNICODE') b-or constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}
+    </script>
+{% endblock %}

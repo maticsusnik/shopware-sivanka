@@ -885,8 +885,27 @@ $sv-action-bar-height: 52px;
         padding: 0;
     }
 
+    // 50px header (2px + the 46px icon row + 1px + the 1px border). The 14px the
+    // desktop header uses on both sides made the phone header 75px tall.
+    .header-main .container {
+        padding-block: 2px 1px;
+    }
+
+    // Open search: 6px under the icon row, and its own 10px below — with the header
+    // padding down to 1px the field would otherwise sit on the bottom border. Padding,
+    // not margin, so Bootstrap's collapse animation measures it with the field.
     .header-search-col .header-search {
-        margin-top: 12px;
+        margin-top: 0;
+        margin-bottom: 0;
+        padding-top: 6px;
+        padding-bottom: 10px;
+    }
+
+    // Core keeps the panel open from `sm` (576) up, so between 576 and 900 the field
+    // was always showing and the magnifier toggled nothing. Collapsed until tapped at
+    // every width that has the toggle. Same specificity as core's rule, later source.
+    .header-search-col .collapse:not(.show) {
+        display: none;
     }
 
     // The bar owns navigation at this width, so the category bar goes with it —

@@ -1,11 +1,27 @@
 {
   "main.js": {
-    "file": "assets/optiweb-theme-DKzWp5NK.js",
+    "file": "assets/optiweb-theme-C2bjXy8E.js",
     "name": "optiweb-theme",
     "src": "main.js",
     "isEntry": true,
+    "dynamicImports": [
+      "module/optiweb-notice-bar/snippet/sl-SI.json",
+      "module/optiweb-notice-bar/snippet/en-GB.json"
+    ],
     "css": [
       "assets/optiweb-theme-CMKOAHYP.css"
     ]
+  },
+  "module/optiweb-notice-bar/snippet/en-GB.json": {
+    "file": "assets/en-GB-CjVGshjj.js",
+    "name": "en-GB",
+    "src": "module/optiweb-notice-bar/snippet/en-GB.json",
+    "isDynamicEntry": true
+  },
+  "module/optiweb-notice-bar/snippet/sl-SI.json": {
+    "file": "assets/sl-SI-BCpb9lbH.js",
+    "name": "sl-SI",
+    "src": "module/optiweb-notice-bar/snippet/sl-SI.json",
+    "isDynamicEntry": true
   }
 }

@@ -44,6 +44,16 @@
         }
     }
 
+    // Horizontal touch gestures belong to sv-rail.plugin.js, which moves the rail by
+    // at most one card per swipe. Left to the browser, a long swipe dragged through
+    // several cards and its momentum carried on through the looping rail — it read as
+    // an endless spin, and `scroll-snap-stop` does not help because the finger itself
+    // travels past the first card. Vertical panning stays native, so the page still
+    // scrolls when a swipe starts on a rail.
+    &__track {
+        touch-action: pan-y;
+    }
+
     // Mouse dragging
     &__track {
         cursor: grab;

@@ -71,7 +71,10 @@
         "nlSvc2Text": "Naročilo pripravimo isti dan",
         "nlSvc3Title": "Šivanje in popravila",
         "nlSvc3Text": "Storitve v naši delavnici",
-        "searchClear": "Počisti iskanje"
+        "searchClear": "Počisti iskanje",
+        "noticeBarLabel": "Obvestilo trgovine",
+        "noticeBarMore": "Več informacij",
+        "noticeBarClose": "Zapri obvestilo"
     },
     "prems-one-page-checkout": {
         "steps": {

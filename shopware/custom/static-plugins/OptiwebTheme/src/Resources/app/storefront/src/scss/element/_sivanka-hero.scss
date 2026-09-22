@@ -79,6 +79,16 @@
         display: contents;
     }
 
+    // …and the arrows it hides that way only disappear once the plugin has run, so
+    // the 42px control row was in the first paint and the vertically centred copy
+    // jumped when it went (CLS ≈ 0.027 at desktop widths). Hidden by CSS from the
+    // start; the phone layout below turns them back on.
+    @media (min-width: #{$sv-bp-phone + 1px}) {
+        .sv-rail__controls {
+            display: none;
+        }
+    }
+
     // Above 720 the band is an overlay with one photograph pinned to each edge, so the
     // extra copies the rail plugin appends to give the phone slider its loop runway
     // (`cloneToLoop`) have no place in it — each would land exactly on top of the

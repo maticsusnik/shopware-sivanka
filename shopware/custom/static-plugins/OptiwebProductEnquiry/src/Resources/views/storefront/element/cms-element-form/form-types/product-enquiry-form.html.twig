@@ -6,7 +6,9 @@
     <form action="{{ path('frontend.form.product-enquiry.send') }}"
           method="POST"
           data-form-csrf-handler="true"
-          data-form-validation="true">
+          data-form-validation="true"
+          data-error-unexpected="{{ 'optiwebProductEnquiry.errors.unexpectedError'|trans|striptags }}"
+          data-error-captcha="{{ 'optiwebProductEnquiry.errors.captcha'|trans|striptags }}">
 
         <input type="hidden" name="slotId" value="{{ element.id }}">
 
@@ -101,6 +103,17 @@
                 {{ 'general.privacyPolicyCheckboxLabel'|trans|sw_sanitize }}
             </label>
             <div class="invalid-feedback"></div>
+        </div>
+
+        {# Whatever captchas are active in Settings → Basic information (honeypot, basic
+           captcha, Google reCAPTCHA v2 checkbox/invisible, v3). The route carries
+           `_captcha`, so the server validates them; optiweb-product-enquiry.plugin.js
+           hands the submit over to the captcha plugins when one needs a token first. #}
+        <div class="enquiry-captcha">
+            {% sw_include '@Storefront/storefront/component/captcha/base.html.twig' with {
+                additionalClass: 'col-12',
+                formId: 'product-enquiry-' ~ element.id
+            } %}
         </div>
 
         <p class="required-fields-info">

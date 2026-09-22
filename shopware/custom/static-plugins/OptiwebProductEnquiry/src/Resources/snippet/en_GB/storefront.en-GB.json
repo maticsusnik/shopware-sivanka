@@ -28,6 +28,7 @@
             "missingProductId": "No product was specified for this enquiry.",
             "missingMailTemplate": "The mail template is not configured. Please contact the administrator.",
             "unexpectedError": "An unexpected error occurred. Please try again later.",
+            "captcha": "The security check failed. Please try again.",
             "noProductsSelected": "Select at least one product."
         },
         "wishlist": {

@@ -28,6 +28,7 @@
             "missingProductId": "Za to povpraševanje ni bil določen noben izdelek.",
             "missingMailTemplate": "E-poštna predloga ni konfigurirana. Prosimo, kontaktirajte administratorja.",
             "unexpectedError": "Prišlo je do nepričakovane napake. Prosimo, poskusite znova.",
+            "captcha": "Varnostno preverjanje ni uspelo. Prosimo, poskusite znova.",
             "noProductsSelected": "Izberite vsaj en izdelek."
         },
         "wishlist": {

@@ -57,6 +57,9 @@ import './module/sw-cms/elements/sivanka-service-card';
 /** components **/
 import "./module/sw-cms/component/sw-cms-block/sw-cms-block-layout-config/index";
 
+/** modules **/
+import './module/optiweb-notice-bar';
+
 /** page **/
 import './page/sw-category-detail-base/index';
 import "./module/sw-product/sw-product-detail/general-information";
