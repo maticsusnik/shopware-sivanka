@@ -12,15 +12,15 @@ Component.register('sw-cms-el-config-sivanka-promo-card', {
     computed: {
         focusOptions() {
             return [
-                { value: 'left', label: this.$tc('sw-cms.elements.sivankaPromoCard.config.label.focusLeft') },
-                { value: 'center', label: this.$tc('sw-cms.elements.sivankaPromoCard.config.label.focusCenter') },
-                { value: 'right', label: this.$tc('sw-cms.elements.sivankaPromoCard.config.label.focusRight') },
+                { value: 'left', label: this.$t('sw-cms.elements.sivankaPromoCard.config.label.focusLeft') },
+                { value: 'center', label: this.$t('sw-cms.elements.sivankaPromoCard.config.label.focusCenter') },
+                { value: 'right', label: this.$t('sw-cms.elements.sivankaPromoCard.config.label.focusRight') },
             ];
         },
     },
 
     created() {
-        this.initElementConfig('sivanka-promo-card');
+        this.initElementConfig();
     },
 
     methods: {

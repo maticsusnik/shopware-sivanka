@@ -219,5 +219,69 @@
         }
       }
     }
+  },
+  "sw-theme": {
+    "OptiwebTheme": {
+      "default": {
+        "themeColors": {
+          "label": "Sivanka colours",
+          "default": {
+            "sw-color-brand-primary": {
+              "label": "Bordo (primary)"
+            },
+            "sw-color-brand-secondary": {
+              "label": "Ink muted"
+            },
+            "sw-border-color": {
+              "label": "Border"
+            },
+            "sw-background-color": {
+              "label": "Page background"
+            },
+            "sw-text-color": {
+              "label": "Body text (ink)"
+            },
+            "sw-headline-color": {
+              "label": "Headings"
+            },
+            "sw-color-price": {
+              "label": "Price"
+            },
+            "sw-color-buy-button": {
+              "label": "Buy button"
+            },
+            "sw-color-buy-button-text": {
+              "label": "Buy button text"
+            },
+            "sw-color-success": {
+              "label": "Success / in stock"
+            },
+            "sw-color-info": {
+              "label": "Info"
+            },
+            "sw-color-warning": {
+              "label": "Warning"
+            },
+            "sw-color-danger": {
+              "label": "Error"
+            }
+          }
+        },
+        "typography": {
+          "label": "Typography",
+          "default": {
+            "sw-font-family-base": {
+              "label": "Body font"
+            },
+            "sw-font-family-headline": {
+              "label": "Heading font"
+            }
+          }
+        },
+        "media": {
+          "label": "Media"
+        }
+      }
+    }
   }
 }

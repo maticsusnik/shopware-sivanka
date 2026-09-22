@@ -9,9 +9,9 @@ use Shopware\Core\Content\Cms\DataResolver\CriteriaCollection;
 use Shopware\Core\Content\Cms\DataResolver\Element\AbstractCmsElementResolver;
 use Shopware\Core\Content\Cms\DataResolver\Element\ElementDataCollection;
 use Shopware\Core\Content\Cms\DataResolver\ResolverContext\ResolverContext;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\Struct\ArrayStruct;
+use Shopware\Core\System\SalesChannel\Entity\SalesChannelRepository;
 
 
 class CategoryNavigationResolver extends AbstractCmsElementResolver
@@ -19,7 +19,11 @@ class CategoryNavigationResolver extends AbstractCmsElementResolver
 
     public function __construct(
         private NavigationLoaderInterface $navigationLoader,
-        private EntityRepository $categoryRepository
+        /**
+         * Sales channel repository so the parent is a SalesChannelCategoryEntity
+         * with its runtime `seoUrl` populated.
+         */
+        private SalesChannelRepository $categoryRepository
     ) {
     }
 
@@ -44,7 +48,8 @@ class CategoryNavigationResolver extends AbstractCmsElementResolver
         $rootNavigationId = $salesChannel->getNavigationCategoryId();
         $servicesNavigationId = $salesChannel->getServiceCategoryId();
         $skipParentCategories = [$servicesNavigationId, $rootNavigationId];
-        $navigationId = $resolverContext->getRequest()->get('navigationId', $rootNavigationId);
+        $request = $resolverContext->getRequest();
+        $navigationId = $request->attributes->get('navigationId') ?? $request->query->get('navigationId', $rootNavigationId);
 
         /**
          * only show child categories for the current category
@@ -60,7 +65,7 @@ class CategoryNavigationResolver extends AbstractCmsElementResolver
          * add "back" link to parent category
          */
         $parentId = $tree->getActive()->getParentId() ?? null;
-        $parentCategory = $parentId && !in_array($parentId, $skipParentCategories) ? $this->categoryRepository->search((new Criteria([$parentId])), $salesChannelContext->getContext())->first() : null;
+        $parentCategory = $parentId && !in_array($parentId, $skipParentCategories) ? $this->categoryRepository->search((new Criteria([$parentId])), $salesChannelContext)->getEntities()->first() : null;
 
         /**
          * show sibling categories for deepest levels with no child categories

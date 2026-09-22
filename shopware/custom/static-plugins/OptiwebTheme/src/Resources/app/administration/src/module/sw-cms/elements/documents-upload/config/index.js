@@ -57,7 +57,7 @@ Component.register('sw-cms-el-config-documents-upload', {
         },
 
         createdComponent() {
-            this.initElementConfig('documents-upload');
+            this.initElementConfig();
             if (!this.element.config.documents.value.length) {
                 this.createNewDocument();
             }

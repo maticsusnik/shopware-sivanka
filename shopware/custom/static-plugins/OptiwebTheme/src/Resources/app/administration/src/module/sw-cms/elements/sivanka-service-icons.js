@@ -5,7 +5,7 @@
  * `src/Resources/views/storefront/utilities/sivanka-icon.html.twig`.
  *
  * The labels are snippets, so build the select options inside a component:
- *     computed: { iconOptions() { return sivankaIconOptions(this.$tc); } }
+ *     computed: { iconOptions() { return sivankaIconOptions(this.$t); } }
  */
 export const SIVANKA_SERVICE_ICON_KEYS = [
     'ruler',
@@ -36,7 +36,7 @@ export function sivankaIconSnippet(key) {
 }
 
 /**
- * @param {(key: string) => string} translate the component's `$tc`
+ * @param {(key: string) => string} translate the component's `$t`
  */
 export function sivankaIconOptions(translate) {
     return SIVANKA_SERVICE_ICON_KEYS.map((key) => ({

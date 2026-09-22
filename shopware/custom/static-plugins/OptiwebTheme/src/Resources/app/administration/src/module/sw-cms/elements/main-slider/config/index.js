@@ -57,7 +57,7 @@ Component.register('sw-cms-el-config-main-slider', {
         },
 
         createdComponent() {
-            this.initElementConfig('main-slider');
+            this.initElementConfig();
             if (!this.element.config.slides.value.length) {
                 this.createNewSlide();
             }

@@ -1090,6 +1090,9 @@
         grid-template-areas: "thumb meta total" "thumb qty qty";
         row-gap: 10px;
     }
+
+    // container line items (6.7.x children-wrapper) take a full row under the product
+    > .line-item-children { grid-column: 1 / -1; }
 }
 
 .sv-confirm-thumb {

@@ -11,7 +11,7 @@
                             <legend class="form-label visually-hidden">
                                 {{ 'component.product.quantitySelect.legend'|trans|striptags }}
                             </legend>
-                            <div id="product-detail-quantity-group-{{ product.id }}" class="input-group product-detail-quantity-group quantity-selector-group" data-quantity-selector="true">
+                            <div id="product-detail-quantity-group-{{ product.id }}" class="input-group product-detail-quantity-group quantity-selector-group" data-quantity-selector="true"{% if product.isCloseout %} data-quantity-selector-options="{{ { purchaseLimitUrl: path('frontend.product.purchase-limit', { productId: product.id }) }|json_encode|e('html_attr') }}"{% endif %}>
                                 <button type="button" class="btn btn-outline-light btn-minus js-btn-minus" aria-label="{{ 'component.product.quantitySelect.decrease'|trans|striptags }}">
                                     {% sw_icon 'minus' style {size: 'xs'} %}
                                 </button>
@@ -28,7 +28,15 @@
                                 <button type="button" class="btn btn-outline-light btn-plus js-btn-plus" aria-label="{{ 'component.product.quantitySelect.increase'|trans|striptags }}">
                                     {% sw_icon 'plus' style {size: 'xs'} %}
                                 </button>
-                                <span class="input-group-text">
+                                {# The JS unit hooks only go on a real pack unit; the "kos" fallback stays static #}
+                                <span
+                                    class="input-group-text{% if product.translated.packUnit %} js-quantity-selector-unit{% endif %}"
+                                    {% if product.translated.packUnit %}
+                                        data-unit-singular="{{ product.translated.packUnit|e('html_attr') }}"
+                                        {% if product.translated.packUnitPlural %}
+                                            data-unit-plural="{{ product.translated.packUnitPlural|e('html_attr') }}"
+                                        {% endif %}
+                                    {% endif %}>
                                     {% if product.minPurchase > 1 and product.translated.packUnitPlural %}
                                         {{ product.translated.packUnitPlural }}
                                     {% elseif product.translated.packUnit %}
@@ -94,6 +102,19 @@
                 </div>
             {% endblock %}
         </div>
+
+        {% if product.isCloseout %}
+            {% block buy_widget_buy_quantity_stock_adjusted_template %}
+                <template class="js-quantity-stock-adjusted-template">
+                    <div class="mt-2">
+                        {% sw_include '@Storefront/storefront/utilities/alert.html.twig' with {
+                            type: 'warning',
+                            content: '',
+                        } %}
+                    </div>
+                </template>
+            {% endblock %}
+        {% endif %}
     {% else %}
         {% block buy_widget_delivery_informations_non_buyable %}
             <div class="product-detail-delivery-information">

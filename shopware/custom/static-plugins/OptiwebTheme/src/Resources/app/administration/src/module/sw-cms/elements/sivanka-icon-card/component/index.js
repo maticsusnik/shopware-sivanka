@@ -13,11 +13,11 @@ Component.register('sw-cms-el-sivanka-icon-card', {
         iconLabel() {
             const key = this.element?.config?.icon?.value;
 
-            return SIVANKA_SERVICE_ICON_KEYS.includes(key) ? this.$tc(sivankaIconSnippet(key)) : '';
+            return SIVANKA_SERVICE_ICON_KEYS.includes(key) ? this.$t(sivankaIconSnippet(key)) : '';
         },
     },
 
     created() {
-        this.initElementConfig('sivanka-icon-card');
+        this.initElementConfig();
     },
 });

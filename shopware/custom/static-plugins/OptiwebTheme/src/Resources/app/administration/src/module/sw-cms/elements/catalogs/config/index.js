@@ -13,7 +13,7 @@ Component.register('sw-cms-el-config-catalogs', {
     ],
 
     created() {
-        this.initElementConfig('catalogs');
+        this.initElementConfig();
     },
 
     methods: {

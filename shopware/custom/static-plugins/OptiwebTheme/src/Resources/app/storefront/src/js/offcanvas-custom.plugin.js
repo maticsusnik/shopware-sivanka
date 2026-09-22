@@ -1,6 +1,10 @@
 import OffCanvas from 'src/plugin/offcanvas/offcanvas.plugin';
 import OffCanvasFilter from 'src/plugin/offcanvas-filter/offcanvas-filter.plugin';
 
+// Namespaced so unsubscribing only drops this plugin's listener: since 6.7.x the emitter
+// ignores a callback argument and would remove every `onCloseOffcanvas` listener.
+const CLOSE_EVENT = 'onCloseOffcanvas.OffcanvasCustom';
+
 export default class OffcanvasCustomPlugin extends OffCanvasFilter {
 
     init() {
@@ -14,11 +18,10 @@ export default class OffcanvasCustomPlugin extends OffCanvasFilter {
 
         const filterContent = document.getElementById(this.targetElementId);
 
-
         // move filter back to original place
         filterContent.innerHTML = oldChildNode.innerHTML;
 
-        document.$emitter.unsubscribe('onCloseOffcanvas', this._onCloseOffCanvas.bind(this));
+        document.$emitter.unsubscribe(CLOSE_EVENT);
         window.PluginManager.getPluginInstances('Listing')[0].refreshRegistry();
     }
 
@@ -33,13 +36,11 @@ export default class OffcanvasCustomPlugin extends OffCanvasFilter {
 
         const filterContent = document.getElementById(this.targetElementId);
 
-        filterContent.getElementsByClassName('panel-content')[0].classList.add('filter-panel');
-
         if (!filterContent) {
             throw Error('There was no DOM element with the data attribute "data-offcanvas-custom-content".');
         }
 
-        console.log(filterContent);
+        filterContent.getElementsByClassName('panel-content')[0].classList.add('filter-panel');
 
         OffCanvas.open(
             filterContent.innerHTML,
@@ -55,7 +56,8 @@ export default class OffcanvasCustomPlugin extends OffCanvasFilter {
         filterContent.innerHTML = '';
 
         window.PluginManager.getPluginInstances('Listing')[0].refreshRegistry();
-        document.$emitter.subscribe('onCloseOffcanvas', this._onCloseOffCanvas.bind(this));
+        document.$emitter.unsubscribe(CLOSE_EVENT);
+        document.$emitter.subscribe(CLOSE_EVENT, this._onCloseOffCanvas.bind(this));
 
         this.$emitter.publish('onClickOffCanvasFilter');
     }

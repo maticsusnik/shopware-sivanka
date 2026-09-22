@@ -15,7 +15,7 @@ Shopware.Component.register('sw-cms-el-sivanka-category-navigation', {
 
     methods: {
         createdComponent() {
-            this.initElementConfig('sivanka-category-navigation');
+            this.initElementConfig();
         },
     },
 });

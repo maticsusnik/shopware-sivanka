@@ -1,21 +1,21 @@
 {% block sw_cms_el_config_product_enquiry_form %}
     <div class="sw-cms-el-config-product-enquiry-form">
-        <sw-text-field
+        <mt-text-field
             v-model="element.config.title.value"
-            :label="$tc('sw-cms.elements.productEnquiryForm.config.title')"
+            :label="$t('sw-cms.elements.productEnquiryForm.config.title')"
         />
-        <sw-text-field
+        <mt-text-field
             v-model="element.config.subtitle.value"
-            :label="$tc('sw-cms.elements.productEnquiryForm.config.subtitle')"
+            :label="$t('sw-cms.elements.productEnquiryForm.config.subtitle')"
         />
-        <sw-textarea-field
+        <mt-textarea
             v-model="element.config.confirmationText.value"
-            :label="$tc('sw-cms.elements.productEnquiryForm.config.confirmationText')"
+            :label="$t('sw-cms.elements.productEnquiryForm.config.confirmationText')"
         />
-        <sw-text-field
+        <mt-text-field
             v-model="mailReceiverText"
-            :label="$tc('sw-cms.elements.productEnquiryForm.config.mailReceiver')"
-            :help-text="$tc('sw-cms.elements.productEnquiryForm.config.mailReceiverHelp')"
+            :label="$t('sw-cms.elements.productEnquiryForm.config.mailReceiver')"
+            :help-text="$t('sw-cms.elements.productEnquiryForm.config.mailReceiverHelp')"
             @change="updateMailReceiver"
         />
     </div>

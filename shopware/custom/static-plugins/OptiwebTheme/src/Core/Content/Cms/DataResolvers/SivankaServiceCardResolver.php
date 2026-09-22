@@ -65,7 +65,7 @@ class SivankaServiceCardResolver extends AbstractCmsElementResolver
             return null;
         }
 
-        $media = $searchResult->get($mediaConfig->getValue());
+        $media = $searchResult->getEntities()->get($mediaConfig->getValue());
 
         return $media instanceof MediaEntity ? $media : null;
     }

@@ -11,6 +11,6 @@ Shopware.Component.register('sw-cms-el-product-enquiry-form', {
     ],
 
     created() {
-        this.initElementConfig('product-enquiry-form');
+        this.initElementConfig();
     },
 });

@@ -1,4 +1,5 @@
 import template from './sw-cms-el-config-title-content-button.html.twig';
+import { fillNestedConfigDefaults } from '../../../element-config';
 
 Shopware.Component.register('sw-cms-el-config-title-content-button', {
     template,
@@ -32,7 +33,8 @@ Shopware.Component.register('sw-cms-el-config-title-content-button', {
 
     methods: {
         createdComponent() {
-            this.initElementConfig('title-content-button');
+            this.initElementConfig();
+            fillNestedConfigDefaults(this);
         },
         onBlur(content) {
             this.emitChanges(content);

@@ -10,7 +10,7 @@ Component.register('sw-cms-el-config-sivanka-step-card', {
     mixins: [Mixin.getByName('cms-element')],
 
     created() {
-        this.initElementConfig('sivanka-step-card');
+        this.initElementConfig();
     },
 
     methods: {

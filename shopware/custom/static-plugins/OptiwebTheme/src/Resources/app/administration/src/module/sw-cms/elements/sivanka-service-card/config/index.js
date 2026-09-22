@@ -37,20 +37,20 @@ Component.register('sw-cms-el-config-sivanka-service-card', {
         },
 
         iconOptions() {
-            return sivankaIconOptions(this.$tc);
+            return sivankaIconOptions(this.$t);
         },
 
         variantOptions() {
             return [
-                { value: 'wide', label: this.$tc('sw-cms.elements.sivankaServiceCard.config.label.variantWide') },
-                { value: 'compact', label: this.$tc('sw-cms.elements.sivankaServiceCard.config.label.variantCompact') },
-                { value: 'tile', label: this.$tc('sw-cms.elements.sivankaServiceCard.config.label.variantTile') },
+                { value: 'wide', label: this.$t('sw-cms.elements.sivankaServiceCard.config.label.variantWide') },
+                { value: 'compact', label: this.$t('sw-cms.elements.sivankaServiceCard.config.label.variantCompact') },
+                { value: 'tile', label: this.$t('sw-cms.elements.sivankaServiceCard.config.label.variantTile') },
             ];
         },
     },
 
     created() {
-        this.initElementConfig('sivanka-service-card');
+        this.initElementConfig();
     },
 
     methods: {

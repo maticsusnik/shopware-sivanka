@@ -44,7 +44,7 @@ Component.register('sw-cms-el-main-slider', {
             return {};
         },
         createdComponent() {
-            this.initElementConfig('main-slider');
+            this.initElementConfig();
             if (this.isBoilerPlate(this.element.config.slides.value)) return;
             this.updateSlides();
         },

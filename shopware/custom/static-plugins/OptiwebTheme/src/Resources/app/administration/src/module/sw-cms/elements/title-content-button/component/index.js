@@ -2,6 +2,7 @@
 
 import template from './sw-cms-el-title-content-button.html.twig';
 import './sw-cms-el-title-content-button.scss';
+import { fillNestedConfigDefaults } from '../../../element-config';
 
 
 const {Component, Mixin} = Shopware;
@@ -16,7 +17,8 @@ Component.register('sw-cms-el-title-content-button', {
     },
     methods: {
         createdComponent() {
-            this.initElementConfig('title-content-button');
+            this.initElementConfig();
+            fillNestedConfigDefaults(this);
         },
     }
 });

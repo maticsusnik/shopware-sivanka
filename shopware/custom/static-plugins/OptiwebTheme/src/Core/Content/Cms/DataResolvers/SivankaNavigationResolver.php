@@ -42,7 +42,7 @@ class SivankaNavigationResolver extends AbstractCmsElementResolver
         }
 
         // Fallback to config or request
-        $categoryId = $config["parentCategory"]["value"] ?? $categoryId ?? $resolverContext->getRequest()->get('navigationId');
+        $categoryId = $config["parentCategory"]["value"] ?? $categoryId ?? $this->requestNavigationId($resolverContext);
         
         $criteria = new Criteria();
         if(!$categoryId){
@@ -80,15 +80,26 @@ class SivankaNavigationResolver extends AbstractCmsElementResolver
 
             // $data->set('navigation', $result->get('navigation'));
 
-            $categories = $result->get('navigation');
+            $categories = $result->get('navigation')->getEntities();
             $categories = AfterSort::sort($categories->getElements(), "afterCategoryId");
             $data->set('navigation', new ArrayStruct($categories));
 
         }
-        if ($result->get('parentCategory')) {
-            $data->set('parentCategory', $result->get('parentCategory'));
+        // Stored as the category entity itself (not the search result, which is no longer
+        // an EntityCollection as of Shopware 6.8).
+        $parentCategory = $result->get('parentCategory')?->getEntities()->first();
+        if ($parentCategory !== null) {
+            $data->set('parentCategory', $parentCategory);
         }
         $slot->setData($data);
+    }
+
+    private function requestNavigationId(ResolverContext $resolverContext): ?string
+    {
+        $request = $resolverContext->getRequest();
+        $navigationId = $request->attributes->get('navigationId') ?? $request->query->get('navigationId');
+
+        return \is_string($navigationId) && $navigationId !== '' ? $navigationId : null;
     }
 }
 

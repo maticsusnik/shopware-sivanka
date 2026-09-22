@@ -1,7 +1,7 @@
 {% sw_extends '@Storefront/storefront/component/checkout/cart-header.html.twig' %}
 
 {% block component_checkout_cart_header_element %}
-    {% if controllerAction is same as('cartPage') %}
+    {% if activeRoute is same as('frontend.checkout.cart.page') %}
         <li class="cart-table-header sv-cart-header" aria-hidden="true">
             <span class="sv-cart-header-product">{{ 'optiweb.checkout.colProduct'|trans|sw_sanitize }}</span>
             <span class="sv-cart-header-qty">{{ 'optiweb.checkout.colQuantity'|trans|sw_sanitize }}</span>

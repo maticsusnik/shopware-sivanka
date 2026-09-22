@@ -17,7 +17,7 @@ Component.register('sw-cms-el-faq', {
     },
     methods: {
         createdComponent() {
-            this.initElementConfig('faq');
+            this.initElementConfig();
         },
     }
 });

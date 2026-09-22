@@ -12,9 +12,20 @@ export default class OffcanversMenuMobilePlugin extends OffcanvasMenuPlugin {
         offcavasCurrentCategorySelector: '.is-current-category',
     };
 
+    // Mirrors core OffcanvasMenuPlugin._registerEvents() (6.7.x) plus the footer/close handling.
     _registerEvents() {
-        this.el.removeEventListener(this.options.triggerEvent, this._getLinkEventHandler.bind(this));
-        this.el.addEventListener(this.options.triggerEvent, this._getLinkEventHandler.bind(this));
+        // A fresh bind() every call never matched in removeEventListener, so the trigger
+        // piled up one more handler per offcanvas open. Cache it like core does.
+        if (!this._boundGetLinkEventHandler) {
+            this._boundGetLinkEventHandler = this._getLinkEventHandler.bind(this);
+        }
+
+        if (!this._boundClose) {
+            this._boundClose = this._close.bind(this);
+        }
+
+        this.el.removeEventListener(this.options.triggerEvent, this._boundGetLinkEventHandler);
+        this.el.addEventListener(this.options.triggerEvent, this._boundGetLinkEventHandler);
 
         if (OffCanvas.exists()) {
             const offCanvasElements = OffCanvas.getOffCanvas();
@@ -36,10 +47,14 @@ export default class OffcanversMenuMobilePlugin extends OffcanvasMenuPlugin {
 
 
                 const closeTriggers = document.querySelectorAll(this.options.offcanvasCloseSelector);
-                closeTriggers.forEach(trigger => trigger.addEventListener('click', this._close.bind(this)));
+                closeTriggers.forEach(trigger => {
+                    trigger.removeEventListener('click', this._boundClose);
+                    trigger.addEventListener('click', this._boundClose);
+                });
+
+                // only the new offcanvas content needs plugins, not the whole page again
+                window.PluginManager.initializePluginsInParentElement(offcanvas);
             });
-            // initialize the plugins again, after Off-Canvas init, otherwise you will miss the JS event listener
-            window.PluginManager.initializePlugins();
         }
         // re-open the menu if the url parameter is set
         this._openMenuViaUrlParameter();

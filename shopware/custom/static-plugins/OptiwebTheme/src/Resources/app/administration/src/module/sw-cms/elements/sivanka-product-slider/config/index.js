@@ -1,5 +1,6 @@
 import template from './sw-cms-el-config-sivanka-product-slider.html.twig';
 import './sw-cms-el-config-sivanka-product-slider.scss';
+import { fillNestedConfigDefaults } from '../../../element-config';
 
 const { Component, Mixin } = Shopware;
 const { Criteria } = Shopware.Data;
@@ -31,7 +32,8 @@ Component.register('sw-cms-el-config-sivanka-product-slider', {
         },
     },
     created() {
-        this.initElementConfig('sivanka-product-slider');
+        this.initElementConfig();
+        fillNestedConfigDefaults(this);
         const cfg = this.element?.config || {};
         const mode = cfg.selectionMode?.value;
         this.selectionModeLocal = (mode === 'manual' || mode === 'from-category') ? mode : 'manual';

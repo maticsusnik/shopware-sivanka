@@ -8,6 +8,13 @@
     .list-price {
         padding: 0;
     }
+
+    // Since 6.7.x core always renders `list-price-no-line-through` and drops the
+    // strike; the design keeps the "was" price struck next to the sale price
+    // (cards and PDP both render price-unit.html.twig).
+    .list-price.list-price-no-line-through .list-price-price {
+        text-decoration: line-through;
+    }
 }
 
 .regular-price .list-price,

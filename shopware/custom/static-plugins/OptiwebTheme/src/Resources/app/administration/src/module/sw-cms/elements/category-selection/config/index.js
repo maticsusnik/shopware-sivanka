@@ -1,4 +1,5 @@
 import template from './sw-cms-el-config-category-selection.html.twig';
+import { fillNestedConfigDefaults } from '../../../element-config';
 
 const { Component, Mixin } = Shopware;
 const { Criteria } = Shopware.Data;
@@ -40,7 +41,8 @@ Component.register('sw-cms-el-config-category-selection', {
     created() {
         // Merges the element's defaultConfig into `element.config`, so slots saved before a
         // field existed still have it. Without this the watchers below write to `undefined`.
-        this.initElementConfig('category-selection');
+        this.initElementConfig();
+        fillNestedConfigDefaults(this);
 
         const cfg = this.element?.config || {};
         const mode = cfg.selectionMode?.value;

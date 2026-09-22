@@ -4,8 +4,16 @@
    WebPage carried `copyrightYear=""`. Fall back to the current year. #}
 {% block layout_head_meta_tags_copyright_year %}{{ (metaInformation.copyrightYear|striptags|trim) ?: 'now'|date('Y') }}{% endblock %}
 
-{% block layout_head_meta_tags_schema_webpage %}
-    {{ parent() }}
-
+{#
+    Site-wide JSON-LD graph (OnlineStore + WebSite, Store on the homepage).
+    Rendered from `layout_head_json_ld_global` (a few tags further down <head> than the
+    old `layout_head_meta_tags_schema_webpage` spot — that block is gated on
+    `not feature('JSON_LD_DATA')` and removed in 6.8). With JSON_LD_DATA off the core
+    block is empty, so the output is unchanged; with it on (and in 6.8) parent() is
+    deliberately not called: core's Organization + WebSite would duplicate the
+    sivanka nodes, which use the same `<home>/#organization` / `#website` ids, so
+    core's WebPage/Product JSON-LD still resolve their references to them.
+#}
+{% block layout_head_json_ld_global %}
     {% sw_include '@Storefront/storefront/utilities/sivanka-schema.html.twig' %}
 {% endblock %}

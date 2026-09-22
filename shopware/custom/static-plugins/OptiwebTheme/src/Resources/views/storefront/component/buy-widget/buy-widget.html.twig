@@ -44,7 +44,7 @@
 
     {% block buy_widget_title_container %}
         <div class="product-detail-name-container">
-            <h1 class="product-detail-name" itemprop="name">{{ page.product.translated.name }}</h1>
+            <h1 class="product-detail-name"{% if not feature('JSON_LD_DATA') %} itemprop="name"{% endif %}>{{ page.product.translated.name }}</h1>
         </div>
     {% endblock %}
 
@@ -68,10 +68,11 @@
        the page hides. The inner blocks render unchanged, just outside the Offer scope;
        the Offer-only metas in them are guarded below. The untyped `itemscope` catches
        what is left (the availability link from the delivery info) so it does not land on
-       the Product, where `availability` is not a valid property. #}
+       the Product, where `availability` is not a valid property. With JSON_LD_DATA (6.8
+       default) core drops the microdata, so the wrapper loses its `itemscope` too. #}
     {% block buy_widget_buy_container %}
         {% if product.customFields._isHidePrice ?? false %}
-            <div itemscope>
+            <div{% if not feature('JSON_LD_DATA') %} itemscope{% endif %}>
                 {{ block('buy_widget_data') }}
                 {{ block('buy_widget_configurator_include') }}
                 {{ block('buy_widget_buy_form') }}
@@ -85,6 +86,11 @@
             {{ parent() }}
         {% endblock %}
     {% endif %}
+
+    {# EU guarantee label (6.7.x); core renders it last and only for confirmed guarantees #}
+    {% block buy_widget_garan_label %}
+        {{ parent() }}
+    {% endblock %}
     </div>
 {% endblock %}
 
@@ -114,7 +120,8 @@
    a price. Put the meta back — a single price only; tier prices are covered by the
    AggregateOffer low/high metas from `buy_widget_data_rich_snippet_price_range`. #}
 {% block buy_widget_price %}
-    {% if not (product.customFields._isHidePrice ?? false) and product.calculatedPrices|length <= 1 %}
+    {# @deprecated tag:v6.8.0 - Offer microdata replaced by JSON-LD, gated like core #}
+    {% if not feature('JSON_LD_DATA') and not (product.customFields._isHidePrice ?? false) and product.calculatedPrices|length <= 1 %}
         {% set price = product.calculatedPrices|length == 1 ? product.calculatedPrices.first : product.calculatedPrice %}
         <meta itemprop="price" content="{{ price.unitPrice }}">
         <link itemprop="itemCondition" href="https://schema.org/NewCondition">
@@ -147,4 +154,9 @@
 {% endblock %}
 
 {% block buy_widget_delivery_informations %}{% endblock %}
+
+{# Core moved the purchase/reference unit into `buy_widget_data` (6.7.x). The theme
+   already shows it via price-unit.html.twig in buy-widget-form, and a hidden-price
+   product renders `buy_widget_data` directly, which would leak the reference price. #}
+{% block buy_widget_price_unit %}{% endblock %}
 

@@ -3,7 +3,7 @@
 
     {% block optiweb_notice_bar_index_smart_bar_header %}
     <template #smart-bar-header>
-        <h2>{{ $tc('optiweb-notice-bar.general.title') }}</h2>
+        <h2>{{ $t('optiweb-notice-bar.general.title') }}</h2>
     </template>
     {% endblock %}
 
@@ -11,7 +11,7 @@
     <template #smart-bar-actions>
         <sw-button-process
             v-tooltip="{
-                message: $tc('sw-privileges.tooltip.warning'),
+                message: $t('sw-privileges.tooltip.warning'),
                 disabled: canEdit,
                 showOnDisabledElements: true
             }"
@@ -22,7 +22,7 @@
             @update:process-success="saveFinish"
             @click="onSave"
         >
-            {{ $tc('global.default.save') }}
+            {{ $t('global.default.save') }}
         </sw-button-process>
     </template>
     {% endblock %}

@@ -12,20 +12,20 @@ Component.register('sw-cms-el-config-sivanka-icon-card', {
 
     computed: {
         iconOptions() {
-            return sivankaIconOptions(this.$tc);
+            return sivankaIconOptions(this.$t);
         },
 
         variantOptions() {
             return [
-                { value: 'card', label: this.$tc('sw-cms.elements.sivankaIconCard.config.label.variantCard') },
-                { value: 'fact', label: this.$tc('sw-cms.elements.sivankaIconCard.config.label.variantFact') },
-                { value: 'medallion', label: this.$tc('sw-cms.elements.sivankaIconCard.config.label.variantMedallion') },
+                { value: 'card', label: this.$t('sw-cms.elements.sivankaIconCard.config.label.variantCard') },
+                { value: 'fact', label: this.$t('sw-cms.elements.sivankaIconCard.config.label.variantFact') },
+                { value: 'medallion', label: this.$t('sw-cms.elements.sivankaIconCard.config.label.variantMedallion') },
             ];
         },
     },
 
     created() {
-        this.initElementConfig('sivanka-icon-card');
+        this.initElementConfig();
     },
 
     methods: {

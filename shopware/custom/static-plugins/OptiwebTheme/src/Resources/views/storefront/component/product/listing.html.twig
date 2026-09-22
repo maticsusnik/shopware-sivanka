@@ -59,15 +59,14 @@
     {{ parent() }}
 {% endblock %}
 
-       {% block element_product_listing_col %}
-           {% for product in searchResult %}
-               <div class="cms-listing-col col-6 {{ listingColumns }}" role="listitem">
-                   {% block element_product_listing_box %}
-                       {% sw_include '@Storefront/storefront/component/product/card/box.html.twig' with {
-                           layout: boxLayout,
-                           displayMode: displayMode
-                       } %}
-                   {% endblock %}
-               </div>
-           {% endfor %}
-       {% endblock %}
+{# Theme only changes the column classes (2-up on mobile); the box include itself stays
+   core's, which passes referrerCategoryId behind the v6.8 / BREADCRUMB_REWORK flags. #}
+{% block element_product_listing_col %}
+    {% for product in searchResult.entities %}
+        <div class="cms-listing-col col-6 {{ listingColumns }}" role="listitem">
+            {% block element_product_listing_box %}
+                {{ parent() }}
+            {% endblock %}
+        </div>
+    {% endfor %}
+{% endblock %}

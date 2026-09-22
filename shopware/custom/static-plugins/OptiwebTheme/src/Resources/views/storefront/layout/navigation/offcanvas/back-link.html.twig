@@ -1,7 +1,10 @@
 {% sw_extends '@Storefront/storefront/layout/navigation/offcanvas/back-link.html.twig' %}
 
 {% set rootUrl = path('frontend.menu.offcanvas') %}
-{% set atFirstLevel = item.parentId == context.salesChannel.navigationCategoryId %}
+{# Like core: footer/service category roots always step back to the main menu #}
+{% set isAlternateRoot = item.id == context.salesChannel.footerCategoryId
+    or item.id == context.salesChannel.serviceCategoryId %}
+{% set atFirstLevel = isAlternateRoot or item.parentId == context.salesChannel.navigationCategoryId %}
 
 {% if atFirstLevel %}
     {% set url = rootUrl %}
@@ -13,7 +16,7 @@
     <div class="offcanvas-back-link">
         <a class="nav-item nav-link is-back-link navigation-offcanvas-link js-navigation-offcanvas-link"
            href="{{ url }}"
-           itemprop="url"
+           {% if not feature('JSON_LD_DATA') %}itemprop="url"{% endif %}
            title="{{ 'general.back'|trans|striptags }}">
             {% block layout_navigation_offcanvas_navigation_category_back_link_text %}
                 <span class="navigation-offcanvas-link-icon js-navigation-offcanvas-loading-icon">
@@ -22,7 +25,7 @@
                 {% endblock %}
                 </span>
 
-                <span itemprop="name">
+                <span {% if not feature('JSON_LD_DATA') %}itemprop="name"{% endif %}>
                 {{ item.translated.name }}
                 </span>
             {% endblock %}

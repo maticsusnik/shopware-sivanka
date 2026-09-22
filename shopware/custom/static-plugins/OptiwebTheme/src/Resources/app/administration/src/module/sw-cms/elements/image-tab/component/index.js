@@ -44,7 +44,7 @@ Component.register('sw-cms-el-image-tab', {
             return {};
         },
         createdComponent() {
-            this.initElementConfig('image-tab');
+            this.initElementConfig();
             if (this.isBoilerPlate(this.element.config.tabs.value)) return;
             this.updateTabs();
         },

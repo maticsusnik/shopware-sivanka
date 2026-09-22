@@ -2,6 +2,7 @@
 
 import template from './sw-cms-el-category-selection.html.twig';
 import './sw-cms-el-category-selection.scss';
+import { fillNestedConfigDefaults } from '../../../element-config';
 
 
 const {Component, Mixin} = Shopware;
@@ -16,7 +17,8 @@ Component.register('sw-cms-el-category-selection', {
     },
     methods: {
         createdComponent() {
-            this.initElementConfig('category-selection');
+            this.initElementConfig();
+            fillNestedConfigDefaults(this);
         },
     }
 });

@@ -12,24 +12,24 @@ Component.register('sw-cms-el-config-sivanka-service-intro', {
     computed: {
         headlineLevelOptions() {
             return [
-                { value: 'h1', label: this.$tc('sw-cms.elements.sivankaServiceIntro.config.label.headlineLevelH1') },
-                { value: 'h2', label: this.$tc('sw-cms.elements.sivankaServiceIntro.config.label.headlineLevelH2') },
-                { value: 'h3', label: this.$tc('sw-cms.elements.sivankaServiceIntro.config.label.headlineLevelH3') },
+                { value: 'h1', label: this.$t('sw-cms.elements.sivankaServiceIntro.config.label.headlineLevelH1') },
+                { value: 'h2', label: this.$t('sw-cms.elements.sivankaServiceIntro.config.label.headlineLevelH2') },
+                { value: 'h3', label: this.$t('sw-cms.elements.sivankaServiceIntro.config.label.headlineLevelH3') },
             ];
         },
 
         variantOptions() {
             return [
-                { value: 'hero', label: this.$tc('sw-cms.elements.sivankaServiceIntro.config.label.variantHero') },
-                { value: 'cta', label: this.$tc('sw-cms.elements.sivankaServiceIntro.config.label.variantCta') },
-                { value: 'plain', label: this.$tc('sw-cms.elements.sivankaServiceIntro.config.label.variantPlain') },
-                { value: 'home', label: this.$tc('sw-cms.elements.sivankaServiceIntro.config.label.variantHome') },
+                { value: 'hero', label: this.$t('sw-cms.elements.sivankaServiceIntro.config.label.variantHero') },
+                { value: 'cta', label: this.$t('sw-cms.elements.sivankaServiceIntro.config.label.variantCta') },
+                { value: 'plain', label: this.$t('sw-cms.elements.sivankaServiceIntro.config.label.variantPlain') },
+                { value: 'home', label: this.$t('sw-cms.elements.sivankaServiceIntro.config.label.variantHome') },
             ];
         },
     },
 
     created() {
-        this.initElementConfig('sivanka-service-intro');
+        this.initElementConfig();
     },
 
     methods: {

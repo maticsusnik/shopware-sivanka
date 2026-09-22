@@ -43,6 +43,8 @@ services:
     tags: ['console.command']
 
   OptiwebSync\Command\ScheduledTaskUpdateStatusCommand:
+    arguments:
+      $connection: '@Doctrine\DBAL\Connection'
     tags: ['console.command']
 
   OptiwebSync\Service\Product\ProductSync:

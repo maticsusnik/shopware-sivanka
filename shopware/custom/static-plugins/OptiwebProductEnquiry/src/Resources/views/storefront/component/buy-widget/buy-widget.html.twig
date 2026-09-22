@@ -10,14 +10,17 @@
     {% set showEnquiryButton = (not page.product.available) or isNotSellable %}
 
     {% if configEnquiryForm and showEnquiryButton %}
-        <div class="product-enquiry-form mt-negative {% if price.unitPrice > 0 %}price-with-no-stock{% endif %}">
+        <div class="product-enquiry-form mt-negative {% if product.calculatedPrice.unitPrice > 0 %}price-with-no-stock{% endif %}">
             <a class="btn btn-light btn-block btn-send-enquiry"
                data-ajax-modal="true"
                data-url="{{ path('frontend.cms.page', { id: configEnquiryForm, productId: page.product.id }) }}"
                href="{{ path('frontend.cms.page', { id: configEnquiryForm, productId: page.product.id }) }}"
                title="{{ 'optiwebProductEnquiry.send'|trans|striptags }}">
                 <span class="text">{{ 'optiwebProductEnquiry.send'|trans|striptags }}</span>
-                <meta itemprop="availability" content="https://schema.org/OutOfStock"/>
+                {# @deprecated tag:v6.8.0 - Availability microdata replaced by JSON-LD, gated like core #}
+                {% if not feature('JSON_LD_DATA') %}
+                    <meta itemprop="availability" content="https://schema.org/OutOfStock"/>
+                {% endif %}
             </a>
         </div>
     {% endif %}

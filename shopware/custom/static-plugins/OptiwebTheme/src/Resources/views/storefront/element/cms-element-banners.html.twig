@@ -113,7 +113,7 @@
                     <a class="cms-element-banners__image" href="{{ bLink }}" aria-label="{{ bTitle|striptags|default(bText|striptags) }}">
                         {% sw_thumbnails 'cms-banners' with {
                             media: banner.media,
-                            sizes: { 'xs': '600px', 'sm': '768px', 'md': '1024px', 'lg': '1400px' }
+                            sizes: { 'xs': '600px', 'sm': '768px', 'md': '1024px', 'lg': '1400px', 'xl': '1400px', 'xxl': '1400px' }
                         } %}
                         {% if banner.text %}
                         {% set posV = banner.textPositionV|default('bottom') %}

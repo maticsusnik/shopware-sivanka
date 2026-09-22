@@ -149,6 +149,9 @@
         row-gap: 14px;
         padding: 16px 4px;
     }
+
+    // container line items (6.7.x children-wrapper) take a full row under the product
+    > .line-item-children { grid-column: 1 / -1; }
 }
 
 .sv-cart-product {

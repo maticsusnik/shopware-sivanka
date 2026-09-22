@@ -48,7 +48,7 @@ class MainSliderResolver extends AbstractCmsElementResolver
 
         $assocImages = [];
         if ($images) {
-            $assocImages = $images->reduce(function ($assocMedia, $image) {
+            $assocImages = $images->getEntities()->reduce(function ($assocMedia, $image) {
                 $assocMedia[$image->getId()] = $image;
                 return $assocMedia;
             }, []);

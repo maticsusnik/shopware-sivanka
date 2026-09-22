@@ -15,6 +15,6 @@ Component.register('sw-cms-el-sivanka-service-card', {
     },
 
     created() {
-        this.initElementConfig('sivanka-service-card');
+        this.initElementConfig();
     },
 });

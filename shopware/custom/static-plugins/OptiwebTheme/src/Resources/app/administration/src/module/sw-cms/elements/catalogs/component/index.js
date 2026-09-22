@@ -11,6 +11,6 @@ Component.register('sw-cms-el-catalogs', {
     ],
 
     created() {
-        this.initElementConfig('catalogs');
+        this.initElementConfig();
     }
 });

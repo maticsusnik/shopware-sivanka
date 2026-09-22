@@ -1,6 +1,6 @@
 {% block sw_cms_element_documents_upload_config %}
     <div class="optiweb-documents-upload-config">
-        <sw-text-field label="Headline" v-model="element.config.title.value"></sw-text-field>
+        <mt-text-field label="Headline" v-model="element.config.title.value"></mt-text-field>
 
         <mt-tabs
             :key="tabItems.length"
@@ -11,14 +11,13 @@
         <div v-for="(document, index) in computedDocuments">
             <div v-if="index === activeDocument">
 
-                <sw-number-field numberType="int" :digits="0" label="Order" :copyable="false"
-                                 v-model="element.config.documents.value[index].order"
-                                 :copyableTooltip="false">
-                </sw-number-field>
+                <mt-number-field number-type="int" :digits="0" label="Order"
+                                 v-model="element.config.documents.value[index].order">
+                </mt-number-field>
 
-                <sw-text-field label="Title" :copyable="false" v-model="element.config.documents.value[index].title"
+                <mt-text-field label="Title" :copyable="false" v-model="element.config.documents.value[index].title"
                                :copyableTooltip="false">
-                </sw-text-field>
+                </mt-text-field>
 
                 {% block sw_cms_element_document_config_media_upload %}
                     <sw-cms-mapping-field

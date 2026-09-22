@@ -3,7 +3,7 @@
 
     {% set navigationTree = element.data.get('navigation').getVars %}
     {% set showParentCategory = element.config['showParentCategory'].value %}
-    {% set parentCategory = element.data.get('parentCategory').elements | first %}
+    {% set parentCategory = element.data.get('parentCategory') %}
 
     <div class="sivanka-category-navigation-box">
         {% set curentActiveCategory = page.navigationId %}
@@ -18,8 +18,8 @@
         <div class="parent-category">
             {% block layout_navigation_categories_link_parent %}
                 <a class="category-navigation-link"
-                   href="{{ category_url(parentCategory) }}"
-                   {% if category_linknewtab(parentCategory) %}target="_blank"{% endif %}>
+                   href="{{ parentCategory.seoUrl }}"
+                   {% if parentCategory.shouldOpenInNewTab %}target="_blank"{% endif %}>
                     {% block layout_navigation_categories_link_parent_name %}
                         {{ parentCategory.translated.name }}
                     {% endblock %}
@@ -43,8 +43,8 @@
                                 {% else %}
                                     {% block layout_navigation_categories_link_children %}
                                         <a class="category-navigation-link{% if item.id is same as(curentActiveCategory) %} is-active{% endif %}{% if item.category.id in activeResult.path %} in-path{% endif %}"
-                                           href="{{ category_url(item) }}"
-                                           {% if category_linknewtab(item) %}target="_blank"{% endif %}>
+                                           href="{{ item.seoUrl }}"
+                                           {% if item.shouldOpenInNewTab %}target="_blank"{% endif %}>
                                             {% block layout_navigation_categories_link_children_name %}
                                                 {{ item.translated.name }}
                                             {% endblock %}
@@ -68,8 +68,8 @@
                                 {% else %}
                                     {% block layout_navigation_categories_link %}
                                         <a class="category-navigation-link{% if item.id is same as(activeResult.id) %} is-active{% endif %}"
-                                           href="{{ category_url(item) }}"
-                                           {% if category_linknewtab(item) %}target="_blank"{% endif %}>
+                                           href="{{ item.seoUrl }}"
+                                           {% if item.shouldOpenInNewTab %}target="_blank"{% endif %}>
                                             {% block layout_navigation_categories_link_name %}
                                                 {{ item.translated.name }}
                                             {% endblock %}

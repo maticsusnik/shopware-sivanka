@@ -57,7 +57,7 @@ Component.register('sw-cms-el-config-image-tab', {
         },
 
         createdComponent() {
-            this.initElementConfig('image-tab');
+            this.initElementConfig();
 
             // Titles saved before this config used a plain string are `{ text: '...' }`,
             // which a text field would show as "[object Object]".
