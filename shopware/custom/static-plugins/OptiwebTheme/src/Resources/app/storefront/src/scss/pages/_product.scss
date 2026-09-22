@@ -874,3 +874,16 @@
         margin-bottom: 28px;
     }
 }
+
+// Core hides the thumbnail strip (`display: none`) while the gallery row carries
+// `is-loading`, i.e. until tiny-slider has initialised. Under the image — the layout on
+// every width here — the strip then appears and pushed the buy box down by its full
+// height, the page's largest layout shift on a phone (CLS ≈ 0.028). Keep its box in the
+// flow instead, invisible, at the 86px the initialised strip measures (70px thumbnail
+// row + the container's controls/spacing) at every breakpoint.
+.gallery-slider-row.is-loading .gallery-slider-thumbnails-col.is-underneath {
+    display: block;
+    visibility: hidden;
+    height: 86px;
+    overflow: hidden;
+}

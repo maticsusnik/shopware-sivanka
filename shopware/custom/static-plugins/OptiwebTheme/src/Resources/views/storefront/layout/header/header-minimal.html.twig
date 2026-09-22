@@ -1,6 +1,9 @@
 {% sw_extends '@Storefront/storefront/layout/header/header-minimal.html.twig' %}
 
 {% block layout_header %}
+    {# Checkout too: a "we are on holiday" notice matters most right before ordering. #}
+    {% sw_include '@Storefront/storefront/layout/header/notice-bar.html.twig' %}
+
     <header class="header-minimal sv-co-header">
         <div class="container">
             <div class="sv-co-header-row">

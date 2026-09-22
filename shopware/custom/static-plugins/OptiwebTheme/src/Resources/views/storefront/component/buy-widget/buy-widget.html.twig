@@ -63,8 +63,22 @@
         {% endif %}
     {% endblock %}
 
+    {# A product with a hidden price publishes no Offer at all: an Offer without a
+       `price` is an error in Google's product report, and a price there would leak what
+       the page hides. The inner blocks render unchanged, just outside the Offer scope;
+       the Offer-only metas in them are guarded below. The untyped `itemscope` catches
+       what is left (the availability link from the delivery info) so it does not land on
+       the Product, where `availability` is not a valid property. #}
     {% block buy_widget_buy_container %}
-        {{ parent() }}
+        {% if product.customFields._isHidePrice ?? false %}
+            <div itemscope>
+                {{ block('buy_widget_data') }}
+                {{ block('buy_widget_configurator_include') }}
+                {{ block('buy_widget_buy_form') }}
+            </div>
+        {% else %}
+            {{ parent() }}
+        {% endif %}
     {% endblock %}
     {% if config('core.cart.wishlistEnabled') %}
         {% block buy_widget_wishlist %}
@@ -95,14 +109,39 @@
         {% endif %}
     {% endblock %}
 
-{% block buy_widget_price %}{% endblock %}
+{# The visible price lives in buy-widget-form.html.twig; core's own price block (and
+   the `itemprop="price"` meta inside it) is dropped here, which left the Offer without
+   a price. Put the meta back — a single price only; tier prices are covered by the
+   AggregateOffer low/high metas from `buy_widget_data_rich_snippet_price_range`. #}
+{% block buy_widget_price %}
+    {% if not (product.customFields._isHidePrice ?? false) and product.calculatedPrices|length <= 1 %}
+        {% set price = product.calculatedPrices|length == 1 ? product.calculatedPrices.first : product.calculatedPrice %}
+        <meta itemprop="price" content="{{ price.unitPrice }}">
+        <link itemprop="itemCondition" href="https://schema.org/NewCondition">
+        <div itemprop="seller" itemscope itemtype="https://schema.org/OnlineStore" itemid="{{ url('frontend.home.page') }}#organization">
+            <meta itemprop="name" content="{{ config('OptiwebTheme.config.schemaBusinessName')|default(basicConfig.shopName) }}">
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block buy_widget_data_rich_snippet_url %}
+    {% if not (product.customFields._isHidePrice ?? false) %}
+        {{ parent() }}
+    {% endif %}
+{% endblock %}
+
+{% block buy_widget_data_rich_snippet_price_currency %}
+    {% if not (product.customFields._isHidePrice ?? false) %}
+        {{ parent() }}
+    {% endif %}
+{% endblock %}
 {% block buy_widget_tax %}{% endblock %}
 
 {# Core still writes lowPrice/highPrice meta for a multi-price product even though the
    visible price container is gone. Hiding a price in the markup but publishing it to
    search engines defeats the point of the flag. #}
 {% block buy_widget_data_rich_snippet_price_range %}
-    {% if not (page.product.customFields._isHidePrice ?? false) %}
+    {% if not (product.customFields._isHidePrice ?? false) %}
         {{ parent() }}
     {% endif %}
 {% endblock %}

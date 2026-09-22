@@ -25,7 +25,11 @@
             {{ sw_block('component_product_box_variant_characteristics') }}
         </div>
 
-        {{ sw_block('component_product_box_price') }}
+        {# Called directly, so it skips the `_isHidePrice` guard on
+           `component_product_box_price_info` in price-unit.html.twig. #}
+        {% if not (product.customFields._isHidePrice ?? false) %}
+            {{ sw_block('component_product_box_price') }}
+        {% endif %}
 
         {{ sw_block('component_product_box_action') }}
     </div>

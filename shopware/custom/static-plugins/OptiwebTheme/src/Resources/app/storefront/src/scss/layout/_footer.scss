@@ -307,6 +307,9 @@
     width: 36px;
     height: 36px;
     min-width: 36px;
+    // Pinned so no touch-target rule can stretch the circle into an oval again.
+    min-height: 36px;
+    flex: 0 0 36px;
     border-radius: $sv-r-round;
     border: 1px solid $sv-border;
     display: flex;
@@ -522,6 +525,12 @@
     line-height: 21px;
     color: $sv-ink-muted;
 
+    .footer-copyright-links {
+        display: flex;
+        flex-wrap: wrap;
+        column-gap: 24px;
+    }
+
     .footer-copyright-link {
         color: $sv-ink;
 
@@ -576,4 +585,11 @@
     .cms-block:last-child {
         padding-bottom: 0;
     }
+}
+
+// The footer logo reuses the header's `.header-logo-main-link`, which the <1280
+// touch-target list in _reset.scss sizes to 46px. In the footer it is not chrome and
+// that height only pushed the address block down.
+.footer-main .header-logo-main-link {
+    min-height: 0;
 }

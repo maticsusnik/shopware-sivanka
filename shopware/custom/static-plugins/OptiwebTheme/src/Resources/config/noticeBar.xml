@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Notice bar ("Obvestilo") — the dismissible message above the header.
+
+    Deliberately a separate file from config.xml: it becomes the system-config domain
+    OptiwebTheme.noticeBar, which the admin module "Vsebine > Obvestilo" renders on its
+    own. Shop staff can then be given a role that edits this bar without seeing (or
+    being able to break) the rest of the theme configuration.
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/trunk/src/Core/System/SystemConfig/Schema/config.xsd">
+
+    <card>
+        <title>Obvestilo</title>
+        <title lang="en-GB">Notice bar</title>
+
+        <input-field type="bool">
+            <name>enabled</name>
+            <label>Prikaži obvestilo</label>
+            <label lang="en-GB">Show notice</label>
+            <defaultValue>false</defaultValue>
+            <helpText>Obvestilo se prikaže nad glavo trgovine. Obiskovalec ga lahko zapre in skrito ostane do konca njegove seje.</helpText>
+            <helpText lang="en-GB">Shown above the storefront header. A visitor can close it; it then stays hidden until their browser session ends.</helpText>
+        </input-field>
+
+        <input-field type="textarea">
+            <name>message</name>
+            <label>Besedilo obvestila</label>
+            <label lang="en-GB">Message</label>
+            <placeholder>Od 1. do 15. avgusta smo na dopustu. Naročila bomo odpremili po vrnitvi.</placeholder>
+            <placeholder lang="en-GB">We are on holiday from 1 to 15 August. Orders will ship when we are back.</placeholder>
+            <helpText>Ko besedilo spremenite, se obvestilo znova prikaže tudi obiskovalcem, ki so ga že zaprli.</helpText>
+            <helpText lang="en-GB">Changing the text shows the notice again, even to visitors who already closed it.</helpText>
+        </input-field>
+
+        <input-field type="text">
+            <name>linkLabel</name>
+            <label>Besedilo povezave (neobvezno)</label>
+            <label lang="en-GB">Link text (optional)</label>
+            <placeholder>Več informacij</placeholder>
+            <placeholder lang="en-GB">More information</placeholder>
+        </input-field>
+
+        <input-field type="text">
+            <name>linkUrl</name>
+            <label>Povezava (neobvezno)</label>
+            <label lang="en-GB">Link URL (optional)</label>
+            <placeholder>https://www.sivanka.si/kontakt</placeholder>
+        </input-field>
+    </card>
+</config>

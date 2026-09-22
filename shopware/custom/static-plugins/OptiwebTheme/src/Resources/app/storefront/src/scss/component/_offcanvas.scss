@@ -288,7 +288,8 @@
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    padding: 12px 16px 0;
+    // Top trimmed, bottom added: the button used to sit flush on the panel body.
+    padding: 8px 16px;
     border: 0;
 }
 
@@ -299,24 +300,36 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
-    min-width: 40px;
+    position: relative;
+    width: 36px;
+    height: 36px;
+    min-width: 36px !important;
+    // The <1280 touch-target rule in _responsive.scss gives every .btn a 46px
+    // min-height, which stretched this into a 36×46 oval. The visible circle stays
+    // small; the ::before below keeps the 46px hit area instead.
+    min-height: 36px !important;
     padding: 0;
     border: 0;
     border-radius: $sv-r-round;
     background: $sv-cream;
     color: $sv-ink;
 
+    &::before {
+        content: "";
+        position: absolute;
+        inset: -5px;
+        border-radius: $sv-r-round;
+    }
+
     .icon {
-        width: 18px;
-        height: 18px;
+        width: 16px;
+        height: 16px;
         color: $sv-ink;
 
         svg {
             top: 0;
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
         }
 
         svg path {
@@ -328,6 +341,37 @@
     &:focus {
         background: $sv-border;
         color: $sv-ink;
+    }
+}
+
+// The filter / sorting / category panels close with Bootstrap's `.btn-close` — a bare X
+// in a 54px square hit box. Drawn as the same 36px cream circle as `.ow-offcanvas-close`
+// so every panel closes with the same control. `!important` on the box because the
+// Storefront's filter-panel rules and the <1280 touch-target rule both size it.
+.filter-panel-offcanvas-close.btn-close {
+    position: relative;
+    flex: 0 0 auto;
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    min-height: 36px !important;
+    margin: 0 0 0 auto;
+    padding: 0 !important;
+    border-radius: $sv-r-round;
+    background: $sv-cream url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%232E1A20' stroke-linecap='round' stroke-width='1.6' d='M3.5 3.5l9 9M12.5 3.5l-9 9'/%3E%3C/svg%3E") center / 14px no-repeat;
+    opacity: 1;
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset: -5px;
+        border-radius: $sv-r-round;
+    }
+
+    &:hover,
+    &:focus {
+        background-color: $sv-border;
+        opacity: 1;
     }
 }
 

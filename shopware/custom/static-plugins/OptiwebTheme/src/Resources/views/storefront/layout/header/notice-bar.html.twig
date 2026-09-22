@@ -1,0 +1,64 @@
+{# Notice bar — the shop's own dismissible message ("Na dopustu smo ..."), edited by
+   staff under Vsebine > Obvestilo (system-config domain OptiwebTheme.noticeBar).
+
+   Read through config() rather than a PHP global so the header's HTTP cache entry is
+   tagged with the sales channel's system config and is invalidated when staff save. #}
+{% set noticeEnabled = config('OptiwebTheme.noticeBar.enabled') %}
+{% set noticeMessage = config('OptiwebTheme.noticeBar.message')|default('')|trim %}
+
+{% if noticeEnabled and noticeMessage is not empty %}
+    {% set noticeLinkUrl = config('OptiwebTheme.noticeBar.linkUrl')|default('')|trim %}
+    {# Only web and site-relative links; anything else (javascript:, typos) drops the link. #}
+    {% if noticeLinkUrl is not empty and not (noticeLinkUrl matches '{^(https?://|/)}i') %}
+        {% set noticeLinkUrl = '' %}
+    {% endif %}
+    {% set noticeLinkLabel = config('OptiwebTheme.noticeBar.linkLabel')|default('')|trim %}
+
+    {# The dismissal is remembered against this key, so any edit to the text or link
+       brings the bar back for visitors who closed the previous version. #}
+    {% set noticeKey = noticeMessage ~ '|' ~ noticeLinkUrl ~ '|' ~ noticeLinkLabel %}
+
+    <div class="sivanka-notice" id="sivanka-notice" role="region" aria-label="{{ 'sivanka.noticeBarLabel'|trans|striptags }}" data-notice-key="{{ noticeKey }}">
+        <div class="container">
+            <p class="sivanka-notice__text">
+                {{ noticeMessage|nl2br }}
+                {% if noticeLinkUrl %}
+                    <a class="sivanka-notice__link" href="{{ noticeLinkUrl }}">{{ noticeLinkLabel ?: 'sivanka.noticeBarMore'|trans|striptags }}</a>
+                {% endif %}
+            </p>
+
+            <button type="button" class="sivanka-notice__close" aria-label="{{ 'sivanka.noticeBarClose'|trans|striptags }}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+                    <path d="M6 6l12 12M18 6L6 18"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    {# Inline rather than a PluginManager plugin: plugins initialise on DOMContentLoaded,
+       which would paint a dismissed bar and then collapse it, shifting the whole page.
+       Running right after the markup hides it before the first paint.
+       sessionStorage gives exactly the requested lifetime — closed until the browser
+       session ends — and the try/catch covers browsers that block storage. #}
+    <script>
+        (function () {
+            var bar = document.getElementById('sivanka-notice');
+            var storageKey = 'sivanka-notice-dismissed';
+            var key = bar.getAttribute('data-notice-key');
+
+            try {
+                if (window.sessionStorage.getItem(storageKey) === key) {
+                    bar.remove();
+                    return;
+                }
+            } catch (e) {}
+
+            bar.querySelector('.sivanka-notice__close').addEventListener('click', function () {
+                try {
+                    window.sessionStorage.setItem(storageKey, key);
+                } catch (e) {}
+                bar.remove();
+            });
+        })();
+    </script>
+{% endif %}

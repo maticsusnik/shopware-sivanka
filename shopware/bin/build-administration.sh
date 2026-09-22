@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck source-path=SCRIPTDIR
 
 unset CDPATH
 CWD="$(cd -P -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
@@ -26,6 +27,7 @@ set -euo pipefail
 export APP_URL
 export PROJECT_ROOT
 export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+export PUPPETEER_SKIP_DOWNLOAD=true
 
 if [[ -e "${PROJECT_ROOT}/vendor/shopware/platform" ]]; then
     ADMIN_ROOT="${ADMIN_ROOT:-"${PROJECT_ROOT}/vendor/shopware/platform/src/Administration"}"
@@ -52,10 +54,10 @@ fi
 if [[ $(command -v jq) ]]; then
     OLDPWD=$(pwd)
     cd "$PROJECT_ROOT" || exit
+    basePathsFile=$(mktemp)
+    trap 'rm -f "$basePathsFile"' EXIT
 
-    basePaths=()
-
-    while read -r config; do
+    jq -c '.[]' "var/plugins.json" | while read -r config; do
         srcPath=$(echo "$config" | jq -r '(.basePath + .administration.path)')
         basePath=$(echo "$config" | jq -r '.basePath')
 
@@ -69,8 +71,8 @@ if [[ $(command -v jq) ]]; then
             continue
         fi
 
-        if [[ -n $srcPath && ! " ${basePaths[@]} " =~ " ${basePath} " ]]; then
-            basePaths+=("$basePath")
+        if [[ -n $srcPath ]] && ! grep -qxF "$basePath" "$basePathsFile" 2>/dev/null; then
+            echo "$basePath" >> "$basePathsFile"
         fi
 
         if [[ -f "$path/package.json" && ! -d "$path/node_modules" && $name != "administration" ]]; then
@@ -78,9 +80,12 @@ if [[ $(command -v jq) ]]; then
 
             (cd "$path" && npm install --omit=dev --no-audit --prefer-offline)
         fi
-    done < <(jq -c '.[]' "var/plugins.json")
+    done
 
-    for basePath in "${basePaths[@]}"; do
+    while IFS= read -r basePath || [[ -n "$basePath" ]]; do
+        if [[ -z $basePath ]]; then
+            continue
+        fi
         if [[ -r "${basePath}/package.json" ]]; then
             echo "=> Installing npm dependencies for ${basePath}"
             (cd "${basePath}" && npm ci --omit=dev --no-audit --prefer-offline)
@@ -90,7 +95,7 @@ if [[ $(command -v jq) ]]; then
             echo "=> Installing npm dependencies for ${basePath}/.."
             (cd "${basePath}/.." && npm ci --omit=dev --no-audit --prefer-offline)
         fi
-    done
+    done < "$basePathsFile"
 
     cd "$OLDPWD" || exit
 else
@@ -100,11 +105,11 @@ fi
 (cd "${ADMIN_ROOT}"/Resources/app/administration && npm install --prefer-offline --omit=dev)
 
 # Dump entity schema
-if [[ -z "${SHOPWARE_SKIP_ENTITY_SCHEMA_DUMP:-""}" ]] && [[ -f "${ADMIN_ROOT}"/Resources/app/administration/scripts/entitySchemaConverter/entity-schema-converter.ts ]]; then
-  mkdir -p "${ADMIN_ROOT}"/Resources/app/administration/test/_mocks_
-  "${BIN_TOOL}" -e prod framework:schema -s 'entity-schema' "${ADMIN_ROOT}"/Resources/app/administration/test/_mocks_/entity-schema.json
-  (cd "${ADMIN_ROOT}"/Resources/app/administration && npm run convert-entity-schema)
-fi
+#if [[ -z "${SHOPWARE_SKIP_ENTITY_SCHEMA_DUMP:-""}" ]] && [[ -f "${ADMIN_ROOT}"/Resources/app/administration/scripts/entitySchemaConverter/entity-schema-converter.ts ]]; then
+#  mkdir -p "${ADMIN_ROOT}"/Resources/app/administration/test/_mocks_
+#  "${BIN_TOOL}" -e prod framework:schema -s 'entity-schema' "${ADMIN_ROOT}"/Resources/app/administration/test/_mocks_/entity-schema.json
+#  (cd "${ADMIN_ROOT}"/Resources/app/administration && npm run convert-entity-schema)
+#fi
 
 (cd "${ADMIN_ROOT}"/Resources/app/administration && npm run build)
 [[ ${SHOPWARE_SKIP_ASSET_COPY:-""} ]] || "${BIN_TOOL}" assets:install

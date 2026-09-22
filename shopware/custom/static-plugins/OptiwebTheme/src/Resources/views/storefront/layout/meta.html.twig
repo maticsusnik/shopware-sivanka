@@ -1,0 +1,11 @@
+{% sw_extends '@Storefront/storefront/layout/meta.html.twig' %}
+
+{# Core prints `copyrightYear` straight from the snippet, which is empty here, so the
+   WebPage carried `copyrightYear=""`. Fall back to the current year. #}
+{% block layout_head_meta_tags_copyright_year %}{{ (metaInformation.copyrightYear|striptags|trim) ?: 'now'|date('Y') }}{% endblock %}
+
+{% block layout_head_meta_tags_schema_webpage %}
+    {{ parent() }}
+
+    {% sw_include '@Storefront/storefront/utilities/sivanka-schema.html.twig' %}
+{% endblock %}

@@ -67,6 +67,7 @@
 @import 'pages/checkout/checkout-flow';
 @import 'pages/404';
 @import 'pages/landing-page';
+@import 'pages/content-page';
 @import 'pages/product-listing';
 @import 'pages/login';
 @import 'pages/account';
@@ -74,6 +75,7 @@
 /*
  * Layout
  * ---------------------------- */
+@import 'layout/notice-bar';
 @import 'layout/topbar';
 @import 'layout/main-navigation';
 @import 'layout/ow-mega-menu';

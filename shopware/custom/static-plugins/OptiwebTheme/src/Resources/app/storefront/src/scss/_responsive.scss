@@ -31,8 +31,8 @@
     // Standalone utility links. `.sivanka-topbar .tb-item` used to be in this list
     // at 24px, which beat the topbar's own `display:none` below 1100 on source
     // order and kept the promises on screen down to 340px. The topbar promises are
-    // non-interactive spans and are excluded now.
-    .footer-link,
+    // non-interactive spans and are excluded now. `.footer-link` is excluded too —
+    // the forced height spread the footer columns far apart.
     .footer-copyright-link,
     .breadcrumb a,
     .breadcrumb .breadcrumb-link,
@@ -380,6 +380,23 @@ legend.card-title {
         .btn-send-enquiry,
         .btn.btn-send-enquiry {
             padding: 14px;
+        }
+    }
+}
+
+// "Pošlji povpraševanje" is the longest CTA label in the shop and wrapped to two lines
+// inside the 148–250px phone cards. Same 49px-tall box, narrower side padding and a
+// slightly smaller label keep it on one line.
+@media (max-width: $sv-bp-phone) {
+    .product-box,
+    .product-box.card {
+        .btn-send-enquiry,
+        .btn.btn-send-enquiry {
+            padding: 14px 6px;
+            font-size: 12.5px;
+            line-height: 19px;
+            letter-spacing: -0.1px;
+            white-space: nowrap;
         }
     }
 }

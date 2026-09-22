@@ -43,7 +43,7 @@ class ProductEnquiryController extends StorefrontController
     #[Route(
         path: '/form/product-enquiry',
         name: 'frontend.form.product-enquiry.send',
-        defaults: ['XmlHttpRequest' => true],
+        defaults: ['XmlHttpRequest' => true, '_captcha' => true],
         options: ['seo' => false],
         methods: ['POST']
     )]

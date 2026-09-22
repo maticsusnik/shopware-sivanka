@@ -65,4 +65,77 @@
 
     </card>
 
+    <card>
+        <title>Strukturirani podatki (SEO)</title>
+        <title lang="en-GB">Structured data (SEO)</title>
+
+        <input-field type="text">
+            <name>schemaBusinessName</name>
+            <label>Ime podjetja / trgovine</label>
+            <label lang="en-GB">Business / store name</label>
+            <helpText>Uporabljeno v schema.org OnlineStore in Store (JSON-LD). Prazno = ime prodajnega kanala.</helpText>
+            <helpText lang="en-GB">Used in the schema.org OnlineStore and Store markup (JSON-LD). Empty = sales channel name.</helpText>
+            <defaultValue>Šivanka</defaultValue>
+        </input-field>
+        <input-field type="text">
+            <name>schemaStreet</name>
+            <label>Ulica in hišna številka</label>
+            <label lang="en-GB">Street address</label>
+            <helpText>Prazno = oznaka fizične trgovine (Store) se ne izpiše.</helpText>
+            <helpText lang="en-GB">Empty = the physical store (Store) markup is not printed.</helpText>
+            <defaultValue>Cesta Staneta Žagarja 32</defaultValue>
+        </input-field>
+        <input-field type="text">
+            <name>schemaPostalCode</name>
+            <label>Poštna številka</label>
+            <label lang="en-GB">Postal code</label>
+            <defaultValue>4000</defaultValue>
+        </input-field>
+        <input-field type="text">
+            <name>schemaCity</name>
+            <label>Kraj</label>
+            <label lang="en-GB">City</label>
+            <defaultValue>Kranj</defaultValue>
+        </input-field>
+        <input-field type="text">
+            <name>schemaCountry</name>
+            <label>Država (ISO koda)</label>
+            <label lang="en-GB">Country (ISO code)</label>
+            <defaultValue>SI</defaultValue>
+        </input-field>
+        <input-field type="text">
+            <name>schemaLatitude</name>
+            <label>Zemljepisna širina</label>
+            <label lang="en-GB">Latitude</label>
+            <helpText lang="en-GB">Optional, e.g. 46.2463</helpText>
+        </input-field>
+        <input-field type="text">
+            <name>schemaLongitude</name>
+            <label>Zemljepisna dolžina</label>
+            <label lang="en-GB">Longitude</label>
+            <helpText lang="en-GB">Optional, e.g. 14.3556</helpText>
+        </input-field>
+        <input-field type="text">
+            <name>schemaPhone</name>
+            <label>Telefon (mednarodni zapis)</label>
+            <label lang="en-GB">Phone (international format)</label>
+            <helpText lang="en-GB">e.g. +386 4 123 45 67</helpText>
+        </input-field>
+        <input-field type="text">
+            <name>schemaEmail</name>
+            <label>E-naslov</label>
+            <label lang="en-GB">E-mail</label>
+            <defaultValue>info@sivanka.si</defaultValue>
+        </input-field>
+        <input-field type="textarea">
+            <name>schemaOpeningHours</name>
+            <label>Delovni čas (ena vrstica na pravilo)</label>
+            <label lang="en-GB">Opening hours (one rule per line)</label>
+            <helpText>Oblika: "Mo-Th 08:00-17:00". Dnevi: Mo Tu We Th Fr Sa Su. Dni brez vrstice so zaprti.</helpText>
+            <helpText lang="en-GB">Format: "Mo-Th 08:00-17:00". Days: Mo Tu We Th Fr Sa Su. Days without a line are closed.</helpText>
+            <defaultValue>Mo-Th 08:00-17:00
+Fr 08:00-14:00</defaultValue>
+        </input-field>
+    </card>
+
 </config>
