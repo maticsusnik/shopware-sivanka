@@ -27,6 +27,6 @@ Component.register('sw-cms-el-sivanka-service-intro', {
     },
 
     created() {
-        this.initElementConfig('sivanka-service-intro');
+        this.initElementConfig();
     },
 });

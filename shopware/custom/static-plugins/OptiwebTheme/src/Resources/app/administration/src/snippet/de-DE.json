@@ -1,0 +1,17 @@
+{
+  "sw-theme": {
+    "OptiwebTheme": {
+      "default": {
+        "themeColors": {
+          "label": "Sivanka Farben"
+        },
+        "typography": {
+          "label": "Typografie"
+        },
+        "media": {
+          "label": "Medien"
+        }
+      }
+    }
+  }
+}

@@ -1,6 +1,9 @@
 {
     "checkout": {
-        "confirmTermsTextModal": "Prebral sem in sprejemam %tosModalTagOpen%splošne pogoje%tosModalTagClose% ter politiko odpovedi."
+        "confirmTermsTextModal": "Prebral sem in sprejemam %tosModalTagOpen%splošne pogoje%tosModalTagClose% ter politiko odpovedi.",
+        "confirmLegalGuaranteeNoticeLink": "Vaše pravice iz zakonske garancije",
+        "createAccountHeading": "Za hitrejše nakupe v prihodnje si ustvarite uporabniški račun.",
+        "createAccountButton": "Ustvari račun"
     },
     "optiweb": {
         "toggleMenuText": "Izdelki",
@@ -55,7 +58,9 @@
             "backToShop": "Nazaj v trgovino",
             "orderQuestions": "Vprašanja v zvezi z vašim naročilom?",
             "supportPhone": "05 90 31 676",
-            "supportHours": "Pon–pet 8:00–14:00"
+            "supportHours": "Pon–pet 8:00–14:00",
+            "confirmTermsText": "Prebral sem in sprejemam %tosModalTagOpen%splošne pogoje%tosModalTagClose% ter %revocationModalTagOpen%politiko odpovedi%revocationModalTagClose%.",
+            "confirmTermsTextWithGuarantee": "Prebral sem in sprejemam %tosModalTagOpen%splošne pogoje%tosModalTagClose%, %revocationModalTagOpen%politiko odpovedi%revocationModalTagClose% in %legalGuaranteeNoticeModalTagOpen%obvestilo o zakonski garanciji%legalGuaranteeNoticeModalTagClose%."
         },
         "navigation": {
             "allCategories": "Vse kategorije",
@@ -90,5 +95,8 @@
         "billing": {
             "change": "Uredi"
         }
+    },
+    "footer": {
+        "serviceRevocationRequestTextPage": "<a class=\"btn btn-primary\" href=\"%url%\" title=\"Odstop od pogodbe\">Odstop od pogodbe</a>"
     }
 }

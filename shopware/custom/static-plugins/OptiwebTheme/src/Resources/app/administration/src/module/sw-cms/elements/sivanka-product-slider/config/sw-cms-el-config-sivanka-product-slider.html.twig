@@ -1,14 +1,14 @@
 {% block sw_cms_el_config_sivanka_product_slider %}
     <div class="sw-cms-el-config-sivanka-product-slider">
-        <sw-text-field
+        <mt-text-field
                 v-model="element.config.title.value.text"
                 label="Title"
                 @change="$emit('element-update', element)" />
 
         <mt-text-field
                 v-model="element.config.badge.value"
-                :label="$tc('sw-cms.elements.sivankaProductSlider.config.label.badge')"
-                :help-text="$tc('sw-cms.elements.sivankaProductSlider.config.helpText.badge')"
+                :label="$t('sw-cms.elements.sivankaProductSlider.config.label.badge')"
+                :help-text="$t('sw-cms.elements.sivankaProductSlider.config.helpText.badge')"
                 @update:model-value="$emit('element-update', element)" />
 
         <sw-single-select
@@ -16,7 +16,7 @@
                 :placeholder="'Choose mode'"
                 :options="selectionModeOptions"
                 v-model:value="selectionModeLocal"
-                show-clearable-button />
+                :show-clearable-button="false" />
 
         <div v-if="selectionModeLocal === 'manual'">
             <sw-entity-multi-id-select

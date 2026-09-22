@@ -1,34 +1,34 @@
 {% block sw_order_list_grid_columns_customer_name %}
     {% parent() %}
     <template #column-customFields.optiwebOrderStatus="{ item }">
-        <sw-label v-if="getStatus(item) === 'nodata'" variant="neutral" size="medium" appearance="pill" :ghost="false" :caps="false" :dismissable="true">
+        <sw-label v-if="getStatus(item) === 'nodata'" variant="neutral" size="medium" appearance="pill" :ghost="false" :caps="false">
             Ni podatka
         </sw-label>
-        <sw-label v-if="getStatus(item) === 'waiting'" variant="primary" size="medium" appearance="pill" :ghost="false" :caps="false" :dismissable="true">
+        <sw-label v-if="getStatus(item) === 'waiting'" variant="primary" size="medium" appearance="pill" :ghost="false" :caps="false">
             Čaka na pošiljanje
         </sw-label>
-        <sw-label v-if="getStatus(item) === 'processing'" variant="warning" size="medium" appearance="pill" :ghost="false" :caps="false" :dismissable="true">
+        <sw-label v-if="getStatus(item) === 'processing'" variant="warning" size="medium" appearance="pill" :ghost="false" :caps="false">
             V pripravi
         </sw-label>
-        <sw-label v-if="getStatus(item) === 'partially_shipped'" variant="warning" size="medium" appearance="pill" :ghost="false" :caps="false" :dismissable="true">
+        <sw-label v-if="getStatus(item) === 'partially_shipped'" variant="warning" size="medium" appearance="pill" :ghost="false" :caps="false">
             Delno poslano
         </sw-label>
-        <sw-label v-if="getStatus(item) === 'partially_sent'" variant="warning" size="medium" appearance="pill" :ghost="false" :caps="false" :dismissable="true">
+        <sw-label v-if="getStatus(item) === 'partially_sent'" variant="warning" size="medium" appearance="pill" :ghost="false" :caps="false">
             Napaka pri določenih
         </sw-label>
-        <sw-label v-if="getStatus(item) === 'sent'" variant="warning" size="medium" appearance="pill" :ghost="false" :caps="false" :dismissable="true">
+        <sw-label v-if="getStatus(item) === 'sent'" variant="warning" size="medium" appearance="pill" :ghost="false" :caps="false">
             Poslano
         </sw-label>
-        <sw-label v-if="getStatus(item) === 'cancelled'" variant="neutral" size="medium" appearance="pill" :ghost="false" :caps="false" :dismissable="true">
+        <sw-label v-if="getStatus(item) === 'cancelled'" variant="neutral" size="medium" appearance="pill" :ghost="false" :caps="false">
             Stornirano
         </sw-label>
-        <sw-label v-if="getStatus(item) === 'done'" variant="success" size="medium" appearance="pill" :ghost="false" :caps="false" :dismissable="true">
+        <sw-label v-if="getStatus(item) === 'done'" variant="success" size="medium" appearance="pill" :ghost="false" :caps="false">
             Obdelano
         </sw-label>
-        <sw-label v-if="getStatus(item) === 'importedPTH'" variant="success" size="medium" appearance="pill" :ghost="false" :caps="false" :dismissable="true">
+        <sw-label v-if="getStatus(item) === 'importedPTH'" variant="success" size="medium" appearance="pill" :ghost="false" :caps="false">
             PTH naročilo
         </sw-label>
-        <sw-label v-if="getStatus(item) === 'error'" variant="danger" size="medium" appearance="pill" :ghost="false" :caps="false" :dismissable="true">
+        <sw-label v-if="getStatus(item) === 'error'" variant="danger" size="medium" appearance="pill" :ghost="false" :caps="false">
             Napaka!
             <sw-help-text :text="item.customFields.optiwebOrderError" :width="200" tooltipPosition="top" :showDelay="100" :hideDelay="100">
             </sw-help-text>

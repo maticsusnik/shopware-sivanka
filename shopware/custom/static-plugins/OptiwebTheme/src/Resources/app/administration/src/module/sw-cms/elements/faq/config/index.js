@@ -28,7 +28,7 @@ Component.register('sw-cms-el-config-faq', {
             this.element.config.faq.value.splice(index, 1);
         },
         createdComponent() {
-            this.initElementConfig('faq');
+            this.initElementConfig();
         },
     },
     computed: {

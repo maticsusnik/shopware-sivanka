@@ -17,7 +17,7 @@
         <title>Zgornja vrstica</title>
         <title lang="en-GB">Top bar</title>
 
-        <input-field type="float">
+        <input-field type="float" cache-relevant="true">
             <name>freeShippingThreshold</name>
             <label>Prag za brezplačno dostavo (€)</label>
             <label lang="en-GB">Free shipping threshold (EUR)</label>
@@ -29,27 +29,27 @@
     <card>
         <title>Footer information</title>
 
-        <component name="sw-text-editor">
+        <input-field type="text-editor" cache-relevant="true">
             <name>addressInfo</name>
             <label>Col 1 - address, contact info</label>
-        </component>
-        <component name="sw-text-editor">
+        </input-field>
+        <input-field type="text-editor" cache-relevant="true">
             <name>openingHours</name>
             <label>Col 2 - opening hours</label>
-        </component>
-        <input-field type="text">
+        </input-field>
+        <input-field type="text" cache-relevant="true">
             <name>instagramLink</name>
             <label>Instagram profile link</label>
         </input-field>
-        <input-field type="text">
+        <input-field type="text" cache-relevant="true">
             <name>xLink</name>
             <label>X profile link</label>
         </input-field>
-        <input-field type="text">
+        <input-field type="text" cache-relevant="true">
             <name>facebookLink</name>
             <label>Facebook profile link</label>
         </input-field>
-        <input-field type="text">
+        <input-field type="text" cache-relevant="true">
             <name>linkedinLink</name>
             <label>LinkedIn profile link</label>
         </input-field>
@@ -58,7 +58,7 @@
     <card>
         <title>Error pages</title>
 
-        <component name="sw-media-field">
+        <component name="sw-media-field" cache-relevant="true">
             <name>error404Image</name>
             <label>404 Error page image</label>
         </component>
@@ -69,7 +69,7 @@
         <title>Strukturirani podatki (SEO)</title>
         <title lang="en-GB">Structured data (SEO)</title>
 
-        <input-field type="text">
+        <input-field type="text" cache-relevant="true">
             <name>schemaBusinessName</name>
             <label>Ime podjetja / trgovine</label>
             <label lang="en-GB">Business / store name</label>
@@ -77,7 +77,7 @@
             <helpText lang="en-GB">Used in the schema.org OnlineStore and Store markup (JSON-LD). Empty = sales channel name.</helpText>
             <defaultValue>Šivanka</defaultValue>
         </input-field>
-        <input-field type="text">
+        <input-field type="text" cache-relevant="true">
             <name>schemaStreet</name>
             <label>Ulica in hišna številka</label>
             <label lang="en-GB">Street address</label>
@@ -85,49 +85,49 @@
             <helpText lang="en-GB">Empty = the physical store (Store) markup is not printed.</helpText>
             <defaultValue>Cesta Staneta Žagarja 32</defaultValue>
         </input-field>
-        <input-field type="text">
+        <input-field type="text" cache-relevant="true">
             <name>schemaPostalCode</name>
             <label>Poštna številka</label>
             <label lang="en-GB">Postal code</label>
             <defaultValue>4000</defaultValue>
         </input-field>
-        <input-field type="text">
+        <input-field type="text" cache-relevant="true">
             <name>schemaCity</name>
             <label>Kraj</label>
             <label lang="en-GB">City</label>
             <defaultValue>Kranj</defaultValue>
         </input-field>
-        <input-field type="text">
+        <input-field type="text" cache-relevant="true">
             <name>schemaCountry</name>
             <label>Država (ISO koda)</label>
             <label lang="en-GB">Country (ISO code)</label>
             <defaultValue>SI</defaultValue>
         </input-field>
-        <input-field type="text">
+        <input-field type="text" cache-relevant="true">
             <name>schemaLatitude</name>
             <label>Zemljepisna širina</label>
             <label lang="en-GB">Latitude</label>
             <helpText lang="en-GB">Optional, e.g. 46.2463</helpText>
         </input-field>
-        <input-field type="text">
+        <input-field type="text" cache-relevant="true">
             <name>schemaLongitude</name>
             <label>Zemljepisna dolžina</label>
             <label lang="en-GB">Longitude</label>
             <helpText lang="en-GB">Optional, e.g. 14.3556</helpText>
         </input-field>
-        <input-field type="text">
+        <input-field type="text" cache-relevant="true">
             <name>schemaPhone</name>
             <label>Telefon (mednarodni zapis)</label>
             <label lang="en-GB">Phone (international format)</label>
             <helpText lang="en-GB">e.g. +386 4 123 45 67</helpText>
         </input-field>
-        <input-field type="text">
+        <input-field type="text" cache-relevant="true">
             <name>schemaEmail</name>
             <label>E-naslov</label>
             <label lang="en-GB">E-mail</label>
             <defaultValue>info@sivanka.si</defaultValue>
         </input-field>
-        <input-field type="textarea">
+        <input-field type="textarea" cache-relevant="true">
             <name>schemaOpeningHours</name>
             <label>Delovni čas (ena vrstica na pravilo)</label>
             <label lang="en-GB">Opening hours (one rule per line)</label>

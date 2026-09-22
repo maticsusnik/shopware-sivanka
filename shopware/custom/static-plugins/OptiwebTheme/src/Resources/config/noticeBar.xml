@@ -15,7 +15,7 @@
         <title>Obvestilo</title>
         <title lang="en-GB">Notice bar</title>
 
-        <input-field type="bool">
+        <input-field type="bool" cache-relevant="true">
             <name>enabled</name>
             <label>Prikaži obvestilo</label>
             <label lang="en-GB">Show notice</label>
@@ -24,7 +24,7 @@
             <helpText lang="en-GB">Shown above the storefront header. A visitor can close it; it then stays hidden until their browser session ends.</helpText>
         </input-field>
 
-        <input-field type="textarea">
+        <input-field type="textarea" cache-relevant="true">
             <name>message</name>
             <label>Besedilo obvestila</label>
             <label lang="en-GB">Message</label>
@@ -34,7 +34,7 @@
             <helpText lang="en-GB">Changing the text shows the notice again, even to visitors who already closed it.</helpText>
         </input-field>
 
-        <input-field type="text">
+        <input-field type="text" cache-relevant="true">
             <name>linkLabel</name>
             <label>Besedilo povezave (neobvezno)</label>
             <label lang="en-GB">Link text (optional)</label>
@@ -42,7 +42,7 @@
             <placeholder lang="en-GB">More information</placeholder>
         </input-field>
 
-        <input-field type="text">
+        <input-field type="text" cache-relevant="true">
             <name>linkUrl</name>
             <label>Povezava (neobvezno)</label>
             <label lang="en-GB">Link URL (optional)</label>

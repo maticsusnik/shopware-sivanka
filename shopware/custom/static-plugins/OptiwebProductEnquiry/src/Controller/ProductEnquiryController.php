@@ -312,7 +312,7 @@ class ProductEnquiryController extends StorefrontController
 
         $slotId = $data->getString('slotId');
         if ($slotId) {
-            $slot = $this->cmsSlotRepository->search(new Criteria([$slotId]), $context->getContext())->first();
+            $slot = $this->cmsSlotRepository->search(new Criteria([$slotId]), $context->getContext())->getEntities()->first();
             if ($slot) {
                 $config = $slot->getTranslated()['config'] ?? [];
                 $text = $config['confirmationText']['value'] ?? '';
@@ -335,7 +335,7 @@ class ProductEnquiryController extends StorefrontController
         $typeCriteria->addFilter(new EqualsFilter('technicalName', 'product_enquiry_form'));
         $typeCriteria->setLimit(1);
 
-        $type = $this->mailTemplateTypeRepository->search($typeCriteria, $context->getContext())->first();
+        $type = $this->mailTemplateTypeRepository->search($typeCriteria, $context->getContext())->getEntities()->first();
         if (!$type) {
             $this->logger->warning('OptiwebProductEnquiry: mail template type "product_enquiry_form" is missing');
 
@@ -346,7 +346,7 @@ class ProductEnquiryController extends StorefrontController
         $templateCriteria->addFilter(new EqualsFilter('mailTemplateTypeId', $type->getId()));
         $templateCriteria->setLimit(1);
 
-        $template = $this->mailTemplateRepository->search($templateCriteria, $context->getContext())->first();
+        $template = $this->mailTemplateRepository->search($templateCriteria, $context->getContext())->getEntities()->first();
         if (!$template) {
             $this->logger->warning('OptiwebProductEnquiry: no mail template for type "product_enquiry_form"');
 

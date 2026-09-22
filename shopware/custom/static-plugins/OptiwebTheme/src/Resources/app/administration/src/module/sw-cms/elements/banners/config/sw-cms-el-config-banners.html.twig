@@ -117,10 +117,10 @@
 
                 {# --- plain style: free HTML overlay + its position --- #}
                 <template v-if="showsOverlay(banner, index)">
-                    <sw-text-editor
+                    <mt-text-editor
                         :label="'Overlay text (HTML)'"
-                        :value="banner.text"
-                        @update:value="(value) => { banner.text = value; onBannerChange(banner, index); }" />
+                        :model-value="banner.text"
+                        @update:model-value="(value) => { banner.text = value; onBannerChange(banner, index); }" />
 
                     <div class="sw-cms-el-config-banners__position-row">
                         <mt-select

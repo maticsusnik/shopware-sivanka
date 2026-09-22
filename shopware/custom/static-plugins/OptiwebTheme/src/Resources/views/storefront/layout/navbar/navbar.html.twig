@@ -7,10 +7,14 @@
 {% block layout_navbar_nav_element %}
     <nav class="navbar navbar-expand main-navigation-menu"
          id="main-navigation-menu"
+         {# @deprecated tag:v6.8.0 - SiteNavigationElement microdata removed in core (not a rich result) #}
+         {% if not feature('JSON_LD_DATA') %}
          itemscope="itemscope"
          itemtype="https://schema.org/SiteNavigationElement"
+         {% endif %}
          data-navbar="true"
-         data-navbar-options="{{ navbarOptions|json_encode }}"
+         {# navbarOptions.pathIdList is deprecated (core now reads window.activeNavigationPathIdList, set in layout/meta) #}
+         data-navbar-options="{{ (navbarOptions ?? {})|json_encode }}"
          aria-label="{{ 'header.navigationAriaLabel'|trans|striptags }}">
         <div class="navbar-collapse" id="main_nav">
             <ul class="navbar-nav main-navigation-menu-list">
@@ -30,6 +34,8 @@
         {% set id = category.id %}
         {% set name = category.translated.name %}
         {% set hasChildren = treeItem.children|length > 0 %}
+        {# Like core: folders without children have nothing to open, so they are not rendered #}
+        {% set itemSkipped = category.type == 'folder' and not hasChildren %}
 
         {% set isMegaMenu = false %}
         {% set megaMenuClass = "" %}
@@ -40,21 +46,23 @@
         {% endif %}
 
         {% block layout_navbar_menu_item %}
-            {% if category.type == 'folder' %}
+            {% if itemSkipped %}
+                {# empty folder — skipped #}
+            {% elseif category.type == 'folder' %}
                 <li class="nav-item nav-item-{{ id }} {% if isMegaMenu %}{{ megaMenuClass }}{% endif %}" {% if isMegaMenu %}data-{{ megaMenuClass }}="true"{% endif %}>
                     {% if isMegaMenu %}
                         <div class="nav-link nav-item-{{ id }}-link root main-navigation-link p-2 sv-nav-opener sv-nav-opener--desktop{% if hasChildren %} dropdown-toggle{% endif %}">
-                            <span itemprop="name" class="main-navigation-link-text">{{ name }} {% if hasChildren %}{% sw_icon 'expand' style { pack: 'ow', size: 'xs'} %}{% endif %}</span>
+                            <span {% if not feature('JSON_LD_DATA') %}itemprop="name" {% endif %}class="main-navigation-link-text">{{ name }} {% if hasChildren %}{% sw_icon 'expand' style { pack: 'ow', size: 'xs'} %}{% endif %}</span>
                         </div>
                         {% sw_include '@Storefront/storefront/layout/navbar/menu-trigger.html.twig' with { label: name } only %}
                     {% else %}
-                        <a class="nav-link nav-item-{{ id }}-link root main-navigation-link p-2{% if hasChildren %} dropdown-toggle{% endif %}"
+                        <a class="nav-link nav-item-{{ id }}-link root main-navigation-link p-2{% if hasChildren %} dropdown-toggle{% else %} no-dropdown{% endif %}"
                            href="#"
                            {% if hasChildren %}data-bs-toggle="dropdown"{% endif %}
                            data-flyout-menu-trigger="{{ id }}"
-                           itemprop="url"
+                           {% if not feature('JSON_LD_DATA') %}itemprop="url"{% endif %}
                            title="{{ name }}">
-                            <span itemprop="name" class="main-navigation-link-text">{{ name }} {% if hasChildren %}{% sw_icon 'expand' style { pack: 'ow', size: 'xs'} %}{% endif %}</span>
+                            <span {% if not feature('JSON_LD_DATA') %}itemprop="name" {% endif %}class="main-navigation-link-text">{{ name }} {% if hasChildren %}{% sw_icon 'expand' style { pack: 'ow', size: 'xs'} %}{% endif %}</span>
                         </a>
                     {% endif %}
 
@@ -76,17 +84,17 @@
                     {% if isMegaMenu %}
                         <div class="nav-link nav-item-{{ id }}-link root main-navigation-link p-2 mega-menu-link sv-nav-opener sv-nav-opener--desktop{% if hasChildren %} dropdown-toggle{% endif %}">
                             {% sw_icon 'nav-button' style { pack: 'ow', size: 'xs'} %}
-                            <span itemprop="name" class="main-navigation-link-text">{{ name }}</span>
+                            <span {% if not feature('JSON_LD_DATA') %}itemprop="name" {% endif %}class="main-navigation-link-text">{{ name }}</span>
                         </div>
                         {% sw_include '@Storefront/storefront/layout/navbar/menu-trigger.html.twig' with { label: name } only %}
                     {% else %}
-                        <a class="nav-link nav-item-{{ id }}-link root main-navigation-link p-2{% if hasChildren %} dropdown-toggle{% endif %}"
-                           href="{{ seoUrl('frontend.navigation.page', { navigationId: id }) }}"
+                        <a class="nav-link nav-item-{{ id }}-link root main-navigation-link p-2{% if hasChildren %} dropdown-toggle{% else %} no-dropdown{% endif %}"
+                           href="{{ category.seoUrl ?: '#' }}"
                            {% if hasChildren %}data-bs-toggle="dropdown"{% endif %}
-                                {% if category_linknewtab(category) %}target="_blank"{% endif %}
-                           itemprop="url"
+                           {% if category.shouldOpenInNewTab %}target="_blank"{% endif %}
+                           {% if not feature('JSON_LD_DATA') %}itemprop="url"{% endif %}
                            title="{{ name }}">
-                            <span itemprop="name" class="main-navigation-link-text">{{ name }} {% if hasChildren %}{% sw_icon 'expand' style { pack: 'ow', size: 'xs'} %}{% endif %}</span>
+                            <span {% if not feature('JSON_LD_DATA') %}itemprop="name" {% endif %}class="main-navigation-link-text">{{ name }} {% if hasChildren %}{% sw_icon 'expand' style { pack: 'ow', size: 'xs'} %}{% endif %}</span>
                         </a>
                     {% endif %}
 

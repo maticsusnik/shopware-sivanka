@@ -39,7 +39,7 @@ Component.register('sw-cms-el-config-banners', {
     ],
 
     created() {
-        this.initElementConfig('banners');
+        this.initElementConfig();
     },
 
     computed: {

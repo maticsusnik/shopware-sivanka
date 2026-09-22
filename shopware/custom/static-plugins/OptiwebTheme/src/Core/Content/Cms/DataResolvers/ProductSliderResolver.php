@@ -10,7 +10,6 @@ use Shopware\Core\Content\Cms\DataResolver\Element\ElementDataCollection;
 use Shopware\Core\Content\Cms\DataResolver\ResolverContext\ResolverContext;
 use Shopware\Core\Content\Product\Aggregate\ProductVisibility\ProductVisibilityDefinition;
 use Shopware\Core\Content\Product\ProductDefinition;
-use Shopware\Core\Content\Product\SalesChannel\ProductListResponse;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsAnyFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
@@ -66,10 +65,11 @@ class ProductSliderResolver extends AbstractCmsElementResolver
 
     public function enrich(CmsSlotEntity $slot, ResolverContext $resolverContext, ElementDataCollection $result): void
     {
-        /** @var ProductListResponse|mixed $products */
-        $products = $result->get('products');
+        // The slot data carries the entity collection (not the search result): an
+        // EntitySearchResult is no longer an EntityCollection as of Shopware 6.8.
+        $products = $result->get('products')?->getEntities();
         /** @var \Shopware\Core\Content\Media\MediaEntity|null $media */
-        $media = $result->get('media') ? $result->get('media')->first() : null;
+        $media = $result->get('media')?->getEntities()->first();
 
         $config = $slot->getFieldConfig();
         $title = $config->get('title')?->getValue()['text'] ?? '';

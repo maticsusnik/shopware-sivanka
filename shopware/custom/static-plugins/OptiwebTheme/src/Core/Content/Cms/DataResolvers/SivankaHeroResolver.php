@@ -55,7 +55,7 @@ class SivankaHeroResolver extends AbstractCmsElementResolver
     public function enrich(CmsSlotEntity $slot, ResolverContext $resolverContext, ElementDataCollection $result): void
     {
         $config = $slot->getFieldConfig();
-        $media = $result->get('media');
+        $media = $result->get('media')?->getEntities();
 
         $data = [
             'imageLeft' => $this->media($media, $this->mediaId($slot, 'imageLeft') ?? $this->mediaId($slot, 'backgroundImage')),

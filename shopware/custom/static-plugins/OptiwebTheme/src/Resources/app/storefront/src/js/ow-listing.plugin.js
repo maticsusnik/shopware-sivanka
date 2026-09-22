@@ -1,5 +1,4 @@
 import ListingPlugin from 'src/plugin/listing/listing.plugin';
-import DomAccess from 'src/helper/dom-access.helper';
 
 export default class OwListingPlugin extends ListingPlugin {
 
@@ -9,8 +8,13 @@ export default class OwListingPlugin extends ListingPlugin {
     }
 
     _checkFiltersOnLoad() {
-        const filtersContainerEl = DomAccess.querySelector(document, this.options.activeFilterContainerSelector, false);
-        const filtersContainerWrapperEl = DomAccess.querySelector(document, ".filter-panel-active-container-wrapper", false);
+        const filtersContainerEl = document.querySelector(this.options.activeFilterContainerSelector);
+        const filtersContainerWrapperEl = document.querySelector('.filter-panel-active-container-wrapper');
+
+        // search/other listings without the theme's listing template have no wrapper
+        if (!filtersContainerWrapperEl) {
+            return;
+        }
 
         filtersContainerWrapperEl.style.display = "none";
 

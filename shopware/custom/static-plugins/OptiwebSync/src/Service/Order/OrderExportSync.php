@@ -20,6 +20,7 @@ use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsAnyFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\MultiFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Sorting\FieldSorting;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
 
@@ -127,7 +128,15 @@ class OrderExportSync extends AbstractSyncBase
             GlobalVariables::STATUS_PARTIALLY_SENT,
         ]));
         $criteria->addFilter(new EqualsFilter('stateId', $orderExportState));
-        $criteria->addFilter(new EqualsAnyFilter('transactions.stateId', $allowedTxStates));
+        // Payment state comes from the order's primary transaction; orders written
+        // without a primary transaction reference fall back to "any transaction".
+        $criteria->addFilter(new MultiFilter(MultiFilter::CONNECTION_OR, [
+            new EqualsAnyFilter('primaryOrderTransaction.stateId', $allowedTxStates),
+            new MultiFilter(MultiFilter::CONNECTION_AND, [
+                new EqualsFilter('primaryOrderTransactionId', null),
+                new EqualsAnyFilter('transactions.stateId', $allowedTxStates),
+            ]),
+        ]));
 
         $criteria->addAssociation('currency');
         $criteria->addAssociation('orderCustomer');
@@ -136,6 +145,9 @@ class OrderExportSync extends AbstractSyncBase
         $criteria->addAssociation('deliveries.shippingOrderAddress.country');
         $criteria->addAssociation('deliveries.shippingMethod');
         $criteria->addAssociation('transactions.paymentMethod');
+        $criteria->addAssociation('primaryOrderDelivery.shippingOrderAddress.country');
+        $criteria->addAssociation('primaryOrderDelivery.shippingMethod');
+        $criteria->addAssociation('primaryOrderTransaction.paymentMethod');
 
         $criteria->addSorting(new FieldSorting('orderDateTime', FieldSorting::ASCENDING));
         $criteria->setLimit(GlobalVariables::BATCH_SIZE);
@@ -445,14 +457,20 @@ class OrderExportSync extends AbstractSyncBase
     // -------------------------------------------------------------------------
 
     /**
-     * The most recent payment transaction.
+     * The order's primary payment transaction.
      *
-     * An order can hold several (a failed attempt followed by a successful one),
-     * and the association is not ordered — so pick by creation time rather than
-     * trusting whichever happens to come first.
+     * Falls back to the most recent transaction for orders without a primary
+     * reference: an order can hold several (a failed attempt followed by a
+     * successful one), and the association is not ordered — so pick by creation
+     * time rather than trusting whichever happens to come first.
      */
     private function latestTransaction(OrderEntity $order): ?OrderTransactionEntity
     {
+        $primary = $order->getPrimaryOrderTransaction();
+        if ($primary !== null) {
+            return $primary;
+        }
+
         $transactions = $order->getTransactions()?->getElements() ?? [];
         if ($transactions === []) {
             return null;
@@ -466,8 +484,17 @@ class OrderExportSync extends AbstractSyncBase
         return end($transactions) ?: null;
     }
 
+    /**
+     * The order's primary delivery, falling back to the most recent one for orders
+     * without a primary reference.
+     */
     private function latestDelivery(OrderEntity $order): ?OrderDeliveryEntity
     {
+        $primary = $order->getPrimaryOrderDelivery();
+        if ($primary !== null) {
+            return $primary;
+        }
+
         $deliveries = $order->getDeliveries()?->getElements() ?? [];
         if ($deliveries === []) {
             return null;

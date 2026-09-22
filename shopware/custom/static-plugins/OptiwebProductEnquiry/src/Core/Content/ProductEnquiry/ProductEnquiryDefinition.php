@@ -4,7 +4,6 @@ namespace OptiwebProductEnquiry\Core\Content\ProductEnquiry;
 
 use Shopware\Core\Content\Product\ProductDefinition;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityDefinition;
-use Shopware\Core\Framework\DataAbstractionLayer\Field\CreatedAtField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\EmailField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\FkField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\IdField;
@@ -12,7 +11,6 @@ use Shopware\Core\Framework\DataAbstractionLayer\Field\IntField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\LongTextField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\OneToManyAssociationField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\StringField;
-use Shopware\Core\Framework\DataAbstractionLayer\Field\UpdatedAtField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\Flag\CascadeDelete;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\Flag\PrimaryKey;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\Flag\Required;
@@ -58,8 +56,6 @@ class ProductEnquiryDefinition extends EntityDefinition
             (new IntField('product_count', 'productCount'))->addFlags(new Required()),
             new LongTextField('message', 'message'),
             (new StringField('status', 'status'))->addFlags(new Required()),
-            new CreatedAtField(),
-            new UpdatedAtField(),
 
             (new OneToManyAssociationField('lines', ProductEnquiryLineDefinition::class, 'product_enquiry_id'))
                 ->addFlags(new CascadeDelete()),

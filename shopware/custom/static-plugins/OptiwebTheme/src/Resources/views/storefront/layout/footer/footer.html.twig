@@ -108,6 +108,45 @@
                             </div>
                         </div>
                     {% endblock %}
+
+                    {# Ported from core (6.7.3+): "Revoke a contract" button, shown only when enabled in basic information #}
+                    {% block layout_footer_navigation_revocation_button %}
+                        {% set cmsPath = 'frontend.cms.page' %}
+                        {% set revocationRequestSnippetKey = 'footer.serviceRevocationRequestTextPage' %}
+                        {% set revocationRequestCmsPageId = config('core.basicInformation.revocationRequestPage') %}
+                        {% set showRevocationButton = config('core.basicInformation.showRevocationButton') %}
+
+                        {% if revocationRequestCmsPageId and showRevocationButton %}
+                            {% set revocationRequestUrl = path(cmsPath, { id: revocationRequestCmsPageId }) %}
+
+                            {# Prefer the seoUrl of a service menu / footer category pointing at the same page #}
+                            {% for serviceMenuItem in footer.serviceMenu %}
+                                {% if serviceMenuItem.cmsPageId == revocationRequestCmsPageId and serviceMenuItem.seoUrl %}
+                                    {% set revocationRequestUrl = serviceMenuItem.seoUrl %}
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if footer.navigation and footer.navigation.tree %}
+                                {% for root in footer.navigation.tree %}
+                                    {% if root.category.cmsPageId == revocationRequestCmsPageId and root.category.seoUrl %}
+                                        {% set revocationRequestUrl = root.category.seoUrl %}
+                                    {% endif %}
+
+                                    {% for footerItem in root.children %}
+                                        {% if footerItem.category.cmsPageId == revocationRequestCmsPageId and footerItem.category.seoUrl %}
+                                            {% set revocationRequestUrl = footerItem.category.seoUrl %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endif %}
+
+                            <div class="footer-revocation-button mt-3">
+                                {{ revocationRequestSnippetKey|trans({
+                                    '%url%': revocationRequestUrl
+                                })|raw }}
+                            </div>
+                        {% endif %}
+                    {% endblock %}
                 </div>
             {% endblock %}
         {% endblock %}

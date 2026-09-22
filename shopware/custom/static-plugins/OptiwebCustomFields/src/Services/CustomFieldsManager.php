@@ -26,9 +26,9 @@ class CustomFieldsManager
         /** @var EntityRepository $customFieldRelationRepository */
         $customFieldRelationRepository = $container->get('custom_field_set_relation.repository');
 
-        $existingFieldSets = $customFieldSetRepository->search(new Criteria(), $context)->getElements();
-        $existingCustomFields = $customFieldRepository->search(new Criteria(), $context)->getElements();
-        $existingCustomRelationships = $customFieldRelationRepository->search(new Criteria(), $context)->getElements();
+        $existingFieldSets = $customFieldSetRepository->search(new Criteria(), $context)->getEntities()->getElements();
+        $existingCustomFields = $customFieldRepository->search(new Criteria(), $context)->getEntities()->getElements();
+        $existingCustomRelationships = $customFieldRelationRepository->search(new Criteria(), $context)->getEntities()->getElements();
 
         //loop trough existing fieldSets and check by name if any matches to "name" in $customFields and add id if they match
         /** @var CustomFieldSetEntity $existingFieldSet */
@@ -95,7 +95,7 @@ class CustomFieldsManager
             // Get the created/updated custom field set ID
             $criteria = new Criteria();
             $criteria->addFilter(new \Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter('name', $customFieldsGroup['name']));
-            $customFieldSet = $customFieldSetRepository->search($criteria, $context)->first();
+            $customFieldSet = $customFieldSetRepository->search($criteria, $context)->getEntities()->first();
             
             if ($customFieldSet) {
                 $customFieldSetId = $customFieldSet->getId();
@@ -149,7 +149,7 @@ class CustomFieldsManager
 
         if ($customFieldSetResult->getTotal() === 0) return;
 
-        $customFieldSetsToRemove = $customFieldSetResult->map(
+        $customFieldSetsToRemove = $customFieldSetResult->getEntities()->map(
             function (CustomFieldSetEntity $customFieldSet) {
                 return ["id" => $customFieldSet->getId()];
             }

@@ -14,7 +14,7 @@ Component.register('sw-cms-el-config-sivanka-hero', {
 
     computed: {
         iconOptions() {
-            return sivankaIconOptions(this.$tc);
+            return sivankaIconOptions(this.$t);
         },
 
         trustSlots() {
@@ -23,7 +23,7 @@ Component.register('sw-cms-el-config-sivanka-hero', {
     },
 
     created() {
-        this.initElementConfig('sivanka-hero');
+        this.initElementConfig();
 
         // Heroes saved before the buttons supported internal links hold a plain URL
         // string here; `ow-url` needs the object shape, so lift them in place.

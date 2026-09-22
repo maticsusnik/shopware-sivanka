@@ -48,6 +48,6 @@ Component.register('sw-cms-el-sivanka-promo-card', {
     },
 
     created() {
-        this.initElementConfig('sivanka-promo-card');
+        this.initElementConfig();
     },
 });

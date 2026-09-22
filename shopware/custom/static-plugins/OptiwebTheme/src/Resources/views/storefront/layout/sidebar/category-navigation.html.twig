@@ -10,7 +10,9 @@
     {% set activePath = shopware.navigation.pathIdList %}
 
     {% if parent %}
-        <a class="category-navigation-link category-navigation-title" href="{{ category_url(parent) }}" {% if category_linknewtab(parent) %}target="_blank"{% endif %}>
+        {# `parent` comes from CategoryNavigationResolver via the plain (non sales-channel) category
+           repository, so `seoUrl` is not populated — fall back to the navigation SEO URL #}
+        <a class="category-navigation-link category-navigation-title" href="{{ parent.seoUrl ?? seoUrl('frontend.navigation.page', { navigationId: parent.id }) }}" {% if parent.shouldOpenInNewTab %}target="_blank"{% endif %}>
             {{ parent.translated.name }}
         </a>
     {% endif %}

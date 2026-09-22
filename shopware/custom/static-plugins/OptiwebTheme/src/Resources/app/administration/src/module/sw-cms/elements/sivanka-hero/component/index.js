@@ -66,7 +66,7 @@ Component.register('sw-cms-el-sivanka-hero', {
     },
 
     created() {
-        this.initElementConfig('sivanka-hero');
+        this.initElementConfig();
     },
 
     methods: {

@@ -9,31 +9,29 @@
         <div v-for="(slide, index) in computedSlides">
             <div v-if="index === activeSlide">
 
-                <sw-number-field numberType="int" :digits="0" label="Order" :copyable="false"
-                                 v-model="element.config.slides.value[index].order"
-                                 :copyableTooltip="false">
-                </sw-number-field>
+                <mt-number-field number-type="int" :digits="0" label="Order"
+                                 v-model="element.config.slides.value[index].order">
+                </mt-number-field>
 
-                <sw-text-field label="Title" :copyable="false" v-model="element.config.slides.value[index].title"
+                <mt-text-field label="Title" :copyable="false" v-model="element.config.slides.value[index].title"
                                :copyableTooltip="false">
-                </sw-text-field>
+                </mt-text-field>
 
-                <sw-text-field label="Text" :copyable="false"
+                <mt-text-field label="Text" :copyable="false"
                                v-model="element.config.slides.value[index].text"
                                :copyableTooltip="false">
-                </sw-text-field>
+                </mt-text-field>
 
                 <ow-url v-model="element.config.slides.value[index].button" label="Button" @input="(newValue) => handleButtonInput(index, newValue)"></ow-url>
 
-                <sw-textarea-field label="Description" :copyable="false"
-                                   v-model="element.config.slides.value[index].description"
-                                   :copyableTooltip="false">
-                </sw-textarea-field>
+                <mt-textarea label="Description"
+                             v-model="element.config.slides.value[index].description">
+                </mt-textarea>
 
                 {% block sw_cms_element_image_config_media_upload %}
                     <sw-cms-mapping-field
                             v-model:config="element.config.slides.value[index].image"
-                            :label="$tc('sw-cms.elements.image.label')"
+                            :label="$t('sw-cms.elements.image.label')"
                             value-types="entity"
                             entity="media"
                     >
@@ -43,7 +41,7 @@
                                 :source="previewSource(index)"
                                 :allow-multi-select="false"
                                 :default-folder="cmsPageState.pageEntityName"
-                                :caption="$tc('sw-cms.elements.general.config.caption.mediaUpload')"
+                                :caption="$t('sw-cms.elements.general.config.caption.mediaUpload')"
                                 @media-upload-sidebar-open="onOpenMediaModal"
                                 @media-upload-remove-image="onImageRemove(index)"
                         />
@@ -60,7 +58,7 @@
 {#                                        class="sw-cms-el-config-image__preview-info"#}
 {#                                        variant="info"#}
 {#                                >#}
-{#                                    {{ $tc('sw-cms.detail.label.mappingEmptyPreview') }}#}
+{#                                    {{ $t('sw-cms.detail.label.mappingEmptyPreview') }}#}
 {#                                </mt-banner>#}
 {#                            </div>#}
 {#                        </template>#}
@@ -77,7 +75,7 @@
                     <sw-media-modal-v2
                             v-if="mediaModalIsOpen"
                             variant="full"
-                            :caption="$tc('sw-cms.elements.general.config.caption.mediaUpload')"
+                            :caption="$t('sw-cms.elements.general.config.caption.mediaUpload')"
                             :entity-context="cmsPageState.entityName"
                             :allow-multi-select="false"
                             :initial-folder-id="cmsPageState.defaultMediaFolderId"

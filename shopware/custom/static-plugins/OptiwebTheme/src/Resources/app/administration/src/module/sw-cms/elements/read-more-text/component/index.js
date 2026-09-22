@@ -16,7 +16,7 @@ Component.register('sw-cms-el-read-more-text', {
     },
     methods: {
         createdComponent() {
-            this.initElementConfig('read-more-text');
+            this.initElementConfig();
         },
     }
 });

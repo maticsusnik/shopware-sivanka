@@ -1,6 +1,6 @@
 {% block sw_cms_el_config_category_selection %}
     <div class="sw-cms-el-config-category-selection">
-        <sw-text-field
+        <mt-text-field
                 v-model="element.config.title.value.text"
                 label="Title"
         />
@@ -10,7 +10,7 @@
                 :placeholder="'Choose mode'"
                 :options="selectionModeOptions"
                 v-model:value="selectionModeLocal"
-                show-clearable-button
+                :show-clearable-button="false"
         />
 
         <div v-if="selectionModeLocal === 'single'">

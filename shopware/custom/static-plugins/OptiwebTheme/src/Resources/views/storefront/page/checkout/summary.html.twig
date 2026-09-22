@@ -1,38 +1,43 @@
 {% sw_extends '@Storefront/storefront/page/checkout/summary.html.twig' %}
 
 {% block page_checkout_summary_inner %}
-    {% sw_include '@Storefront/storefront/page/checkout/summary/summary-position.html.twig' with { summary: summary } %}
-    {% sw_include '@Storefront/storefront/page/checkout/summary/summary-shipping.html.twig' with { summary: summary } %}
+    {# isoCode (cart vs. order currency) is set by core's page_checkout_summary — passed on like core #}
+    {% sw_include '@Storefront/storefront/page/checkout/summary/summary-position.html.twig' with { summary: summary, isoCode: isoCode } %}
+    {% sw_include '@Storefront/storefront/page/checkout/summary/summary-shipping.html.twig' with { summary: summary, isoCode: isoCode } %}
 
     <div class="checkout-aside-summary-grand-total-wrapper">
         {% if summary.price.taxStatus == 'gross' %}
             {% sw_include '@Storefront/storefront/page/checkout/summary/summary-total.html.twig' with {
                 total: total,
-                decimals: decimals
+                decimals: decimals,
+                isoCode: isoCode
             } %}
 
             {% if displayRounded %}
                 {% sw_include '@Storefront/storefront/page/checkout/summary/summary-total-rounded.html.twig' with {
                     summary: summary,
-                    decimals: context.totalRounding.decimals
+                    decimals: context.totalRounding.decimals,
+                    isoCode: isoCode
                 } %}
             {% endif %}
 
-            {% sw_include '@Storefront/storefront/page/checkout/summary/summary-net.html.twig' with { summary: summary } %}
-            {% sw_include '@Storefront/storefront/page/checkout/summary/summary-tax.html.twig' with { summary: summary } %}
+            {% sw_include '@Storefront/storefront/page/checkout/summary/summary-net.html.twig' with { summary: summary, isoCode: isoCode } %}
+            {% sw_include '@Storefront/storefront/page/checkout/summary/summary-tax.html.twig' with { summary: summary, isoCode: isoCode } %}
         {% else %}
-            {% sw_include '@Storefront/storefront/page/checkout/summary/summary-net.html.twig' with { summary: summary } %}
-            {% sw_include '@Storefront/storefront/page/checkout/summary/summary-tax.html.twig' with { summary: summary } %}
+            {% sw_include '@Storefront/storefront/page/checkout/summary/summary-net.html.twig' with { summary: summary, isoCode: isoCode } %}
+            {% sw_include '@Storefront/storefront/page/checkout/summary/summary-tax.html.twig' with { summary: summary, isoCode: isoCode } %}
 
             {% sw_include '@Storefront/storefront/page/checkout/summary/summary-total.html.twig' with {
                 total: total,
-                decimals: decimals
+                decimals: decimals,
+                isoCode: isoCode
             } %}
 
             {% if displayRounded %}
                 {% sw_include '@Storefront/storefront/page/checkout/summary/summary-total-rounded.html.twig' with {
                     summary: summary,
-                    decimals: context.totalRounding.decimals
+                    decimals: context.totalRounding.decimals,
+                    isoCode: isoCode
                 } %}
             {% endif %}
         {% endif %}

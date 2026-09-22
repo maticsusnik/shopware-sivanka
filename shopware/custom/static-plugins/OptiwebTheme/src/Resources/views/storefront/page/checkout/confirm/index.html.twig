@@ -7,7 +7,12 @@
 {% endblock %}
 
 {# TOS is relocated into the summary aside (checkbox stays bound via form="confirmOrderForm") #}
+{# @deprecated core block (6.7 only) — removed in 6.8, the override is then simply unused #}
 {% block page_checkout_confirm_tos %}{% endblock %}
+
+{# 6.8: core renders its own TOS/revocation checkboxes here — the theme renders its own in
+   page_checkout_aside_actions, so keep this empty to avoid duplicate id="tos"/"revocation" #}
+{% block page_checkout_confirm_tos_auto_confirmed %}{% endblock %}
 
 {% block page_checkout_confirm_address %}
     <div class="confirm-section confirm-section--address">
@@ -50,9 +55,15 @@
                name="tos">
         <span class="checkout-confirm-tos-label">
             {% set cmsPath = 'frontend.cms.page' %}
-            {% set tosOpen = '<button type="button" class="checkout-confirm-terms-modal btn btn-link-inline" data-ajax-modal="true" data-url="' ~ path(cmsPath, { id: config('core.basicInformation.tosPage') }) ~ '">' %}
-            {% set revOpen = '<button type="button" class="btn btn-link-inline" data-ajax-modal="true" data-url="' ~ path(cmsPath, { id: config('core.basicInformation.revocationPage') }) ~ '">' %}
-            Prebral sem in sprejemam {{ tosOpen|raw }}splošne pogoje{{ '</button>'|raw }} ter {{ revOpen|raw }}politiko odpovedi{{ '</button>'|raw }}.
+            {% set showLegalGuaranteeNotice = config('core.cart.showLegalGuaranteeNotice') %}
+            {{ (showLegalGuaranteeNotice ? 'optiweb.checkout.confirmTermsTextWithGuarantee' : 'optiweb.checkout.confirmTermsText')|trans({
+                '%tosModalTagOpen%': '<button type="button" class="checkout-confirm-terms-modal btn btn-link-inline" aria-haspopup="dialog" data-ajax-modal="true" data-url="' ~ path(cmsPath, { id: config('core.basicInformation.tosPage') }) ~ '">',
+                '%tosModalTagClose%': '</button>',
+                '%revocationModalTagOpen%': '<button type="button" class="btn btn-link-inline" aria-haspopup="dialog" data-ajax-modal="true" data-url="' ~ path(cmsPath, { id: config('core.basicInformation.revocationPage') }) ~ '">',
+                '%revocationModalTagClose%': '</button>',
+                '%legalGuaranteeNoticeModalTagOpen%': '<button type="button" class="btn btn-link-inline" aria-haspopup="dialog" data-bs-toggle="modal" data-bs-target="#legalGuaranteeNoticeModal">',
+                '%legalGuaranteeNoticeModalTagClose%': '</button>',
+            })|raw }}
         </span>
     </label>
 
@@ -68,6 +79,7 @@
         </label>
     {% endif %}
 
+    {# parent() still renders the legal guarantee notice modal (#legalGuaranteeNoticeModal) #}
     {{ parent() }}
 
     <div class="sv-ssl-note">

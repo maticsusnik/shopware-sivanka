@@ -3,7 +3,7 @@
     {% block optiweb_product_enquiry_list_header %}
     <template #smart-bar-header>
         <h2>
-            {{ $tc('optiwebProductEnquiry.admin.list.title') }}
+            {{ $t('optiwebProductEnquiry.admin.list.title') }}
             <sw-label v-if="unreadCount > 0" variant="warning" appearance="pill" class="ml-2">
                 {{ unreadCount }}
             </sw-label>
@@ -14,7 +14,7 @@
     {% block optiweb_product_enquiry_list_search %}
     <template #smart-bar-actions>
         <sw-simple-search-field
-            v-model="searchTerm"
+            v-model:value="searchTerm"
             @search-term-change="onSearch"
         />
     </template>
@@ -25,12 +25,12 @@
         <sw-data-grid
             :data-source="enquiries"
             :columns="[
-                { property: 'createdAt', label: $tc('optiwebProductEnquiry.admin.list.columns.date'), sortable: true },
-                { property: 'firstName', label: $tc('optiwebProductEnquiry.admin.list.columns.customer'), sortable: true },
-                { property: 'email', label: $tc('optiwebProductEnquiry.admin.list.columns.email'), sortable: true },
-                { property: 'productName', label: $tc('optiwebProductEnquiry.admin.list.columns.product') },
-                { property: 'quantity', label: $tc('optiwebProductEnquiry.admin.list.columns.quantity') },
-                { property: 'status', label: $tc('optiwebProductEnquiry.admin.list.columns.status') },
+                { property: 'createdAt', label: $t('optiwebProductEnquiry.admin.list.columns.date'), sortable: true },
+                { property: 'firstName', label: $t('optiwebProductEnquiry.admin.list.columns.customer'), sortable: true },
+                { property: 'email', label: $t('optiwebProductEnquiry.admin.list.columns.email'), sortable: true },
+                { property: 'productName', label: $t('optiwebProductEnquiry.admin.list.columns.product') },
+                { property: 'quantity', label: $t('optiwebProductEnquiry.admin.list.columns.quantity') },
+                { property: 'status', label: $t('optiwebProductEnquiry.admin.list.columns.status') },
             ]"
             :is-loading="isLoading"
             :show-actions="true"
@@ -50,7 +50,7 @@
                     appearance="pill"
                     size="small"
                 >
-                    {{ $tc('optiwebProductEnquiry.admin.list.moreProducts', item.productCount - 1, { count: item.productCount - 1 }) }}
+                    {{ $t('optiwebProductEnquiry.admin.list.moreProducts', { count: item.productCount - 1 }, item.productCount - 1) }}
                 </sw-label>
             </template>
             <template #column-quantity="{ item }">
@@ -59,12 +59,12 @@
             </template>
             <template #column-status="{ item }">
                 <sw-label :variant="item.status === 'new' ? 'warning' : 'success'" appearance="pill">
-                    {{ $tc('optiwebProductEnquiry.admin.detail.status.' + item.status) }}
+                    {{ $t('optiwebProductEnquiry.admin.detail.status.' + item.status) }}
                 </sw-label>
             </template>
             <template #actions="{ item }">
                 <sw-context-menu-item @click="onRowClick(item)">
-                    {{ $tc('global.default.view') }}
+                    {{ $t('global.default.view') }}
                 </sw-context-menu-item>
             </template>
         </sw-data-grid>

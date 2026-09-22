@@ -55,8 +55,7 @@ class BannersResolver extends AbstractCmsElementResolver
         $perRow = (int) ($config->get('perRow')?->getValue() ?? 3);
         $bannersConfig = (array) ($config->get('banners')?->getValue() ?? []);
 
-        /** @var iterable<MediaEntity>|null $media */
-        $media = $result->get('media');
+        $media = $result->get('media')?->getEntities();
         $mediaById = [];
         if ($media) {
             foreach ($media as $entity) {

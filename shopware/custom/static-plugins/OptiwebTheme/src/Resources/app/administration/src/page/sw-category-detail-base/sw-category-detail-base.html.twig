@@ -2,7 +2,11 @@
 
     {% parent() %}
 
-    <sw-card class="sw-product-detail-base__labelling-card" title="Custom settings">
+    <mt-card
+        class="sw-product-detail-base__labelling-card"
+        position-identifier="optiweb-category-detail-custom-settings"
+        title="Custom settings"
+    >
         {# Slider/grid tile image. This is the category's own media (`category.mediaId`) —
            the same field as "Media" in the "Menu" card, surfaced here because the tile
            image and the badge icon are edited together. #}
@@ -66,9 +70,10 @@
             <mt-text-editor
                     label="Categories grid title (only for pages with category grid)"
                     :model-value="categoryGridTitle"
+                    :disabled="!acl.can('category.editor')"
                     @update:model-value="onCategoryGridTitleInput"
             />
         </sw-container>
-    </sw-card>
+    </mt-card>
 
 {% endblock %}

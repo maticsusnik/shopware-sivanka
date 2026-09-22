@@ -12,7 +12,7 @@
             {% set category = treeItem.category %}
             {% set id = category.id %}
             {% set name = category.translated.name %}
-            {% set link = category_url(category) %}
+            {% set link = category.seoUrl %}
 
             {% set icon = category.extensions.navigationIcon ?? null %}
 
@@ -28,7 +28,7 @@
                                         <img src="{{ icon.url }}" alt="{{ icon.alt ?? category.name ~ ' menu icon' }}">
                                     </span>
                                 {% endif %}
-                                <span itemprop="name">{{ name }}</span>
+                                <span {% if not feature('JSON_LD_DATA') %}itemprop="name"{% endif %}>{{ name }}</span>
                                 {% if treeItem.children and level < navigationMaxDepth %}
                                     <span class="link-icon">
                                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -40,7 +40,7 @@
                         {% else %}
                             <a class="nav-item nav-item-{{ id }} nav-link nav-item-{{ id }}-link navigation-flyout-link is-level-{{ level }}"
                                href="{{ link }}"
-                               itemprop="url"
+                               {% if not feature('JSON_LD_DATA') %}itemprop="url"{% endif %}
                                {% if category.shouldOpenInNewTab %}target="_blank"
                                {% if category.linkType == 'external' %}rel="noopener noreferrer"{% endif %}
                                {% endif %}
@@ -50,7 +50,7 @@
                                         <img src="{{ icon.url }}" alt="{{ icon.alt ?? category.name ~ ' menu icon' }}">
                                     </span>
                                 {% endif %}
-                                <span itemprop="name">{{ name }}</span>
+                                <span {% if not feature('JSON_LD_DATA') %}itemprop="name"{% endif %}>{{ name }}</span>
 
                                 {% if treeItem.children and level < navigationMaxDepth %}
                                     <span class="link-icon">

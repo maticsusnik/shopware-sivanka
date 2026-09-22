@@ -39,7 +39,7 @@ Component.register('sw-cms-el-documents-upload', {
     },
     methods: {
         createdComponent() {
-            this.initElementConfig('documents-upload');
+            this.initElementConfig();
             if (this.isBoilerPlate(this.element.config.documents.value)) return;
             this.updateDocuments();
         },

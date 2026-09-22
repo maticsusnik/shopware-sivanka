@@ -4,13 +4,13 @@
     <card>
         <title>Optiweb Product Enquiry</title>
 
-        <input-field type="text">
+        <input-field type="text" cache-relevant="true">
             <name>enquiryForm</name>
             <label>CMS Page ID (Enquiry Form)</label>
             <helpText>Paste the ID of the CMS page that contains the product enquiry form element. Find it in Shopping Experiences → URL of the page.</helpText>
         </input-field>
 
-        <input-field type="bool">
+        <input-field type="bool" cache-relevant="true">
             <name>wishlistEnquiry</name>
             <label>Enable bulk enquiry from the wishlist</label>
             <label lang="de-DE">Sammelanfrage vom Merkzettel aktivieren</label>

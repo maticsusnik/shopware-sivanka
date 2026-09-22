@@ -3,7 +3,7 @@
     {% block sw_cms_el_config_sivanka_service_intro_eyebrow %}
     <mt-text-field
         v-model="element.config.eyebrow.value"
-        :label="$tc('sw-cms.elements.sivankaServiceIntro.config.label.eyebrow')"
+        :label="$t('sw-cms.elements.sivankaServiceIntro.config.label.eyebrow')"
         @update:model-value="onChange"
     />
     {% endblock %}
@@ -11,7 +11,7 @@
     {% block sw_cms_el_config_sivanka_service_intro_headline %}
     <mt-text-field
         v-model="element.config.headline.value"
-        :label="$tc('sw-cms.elements.sivankaServiceIntro.config.label.headline')"
+        :label="$t('sw-cms.elements.sivankaServiceIntro.config.label.headline')"
         @update:model-value="onChange"
     />
     {% endblock %}
@@ -19,7 +19,7 @@
     {% block sw_cms_el_config_sivanka_service_intro_lead %}
     <mt-textarea
         v-model="element.config.lead.value"
-        :label="$tc('sw-cms.elements.sivankaServiceIntro.config.label.lead')"
+        :label="$t('sw-cms.elements.sivankaServiceIntro.config.label.lead')"
         @update:model-value="onChange"
     />
     {% endblock %}
@@ -27,8 +27,8 @@
     {% block sw_cms_el_config_sivanka_service_intro_headline_level %}
     <mt-select
         v-model="element.config.headlineLevel.value"
-        :label="$tc('sw-cms.elements.sivankaServiceIntro.config.label.headlineLevel')"
-        :help-text="$tc('sw-cms.elements.sivankaServiceIntro.config.helpText.headlineLevel')"
+        :label="$t('sw-cms.elements.sivankaServiceIntro.config.label.headlineLevel')"
+        :help-text="$t('sw-cms.elements.sivankaServiceIntro.config.helpText.headlineLevel')"
         :options="headlineLevelOptions"
         @update:model-value="onChange"
     />
@@ -37,7 +37,7 @@
     {% block sw_cms_el_config_sivanka_service_intro_variant %}
     <mt-select
         v-model="element.config.variant.value"
-        :label="$tc('sw-cms.elements.sivankaServiceIntro.config.label.variant')"
+        :label="$t('sw-cms.elements.sivankaServiceIntro.config.label.variant')"
         :options="variantOptions"
         @update:model-value="onChange"
     />

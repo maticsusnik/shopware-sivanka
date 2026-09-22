@@ -6,7 +6,7 @@
     inner-block overrides further down).
 #}
 {% block component_line_item_type_product %}
-    {% if controllerAction is same as('cartPage') and displayMode == 'default' %}
+    {% if activeRoute is same as('frontend.checkout.cart.page') and displayMode == 'default' %}
         {% set productLink = seoUrl('frontend.detail.page', { productId: lineItem.referencedId }) %}
         <li class="{{ lineItemClasses }} sv-cart-line">
             <div class="sv-cart-product">
@@ -32,6 +32,10 @@
                     <div class="sv-cart-unit">
                         {{ lineItem.price.unitPrice|currency }} / {{ 'checkout.lineItemUnitPriceDescriptor'|trans|sw_sanitize }}
                     </div>
+
+                    {% if lineItem.referencedId %}
+                        {{ block('component_line_item_type_product_garan_label') }}
+                    {% endif %}
                 </div>
             </div>
 
@@ -50,8 +54,12 @@
                     {% sw_include '@Storefront/storefront/component/line-item/element/remove.html.twig' %}
                 {% endif %}
             </div>
+
+            {% if lineItem.children.count > 0 %}
+                {{ block('component_line_item_type_product_children') }}
+            {% endif %}
         </li>
-    {% elseif controllerAction is same as('confirmPage') and displayMode == 'default' %}
+    {% elseif activeRoute is same as('frontend.checkout.confirm.page') and displayMode == 'default' %}
         {% set productLink = seoUrl('frontend.detail.page', { productId: lineItem.referencedId }) %}
         <li class="{{ lineItemClasses }} sv-confirm-line">
             <div class="sv-confirm-thumb">
@@ -68,6 +76,10 @@
                 <div class="sv-confirm-unit">
                     {{ lineItem.price.unitPrice|currency }} / {{ 'checkout.lineItemUnitPriceDescriptor'|trans|sw_sanitize }}
                 </div>
+
+                {% if lineItem.referencedId %}
+                    {{ block('component_line_item_type_product_garan_label') }}
+                {% endif %}
             </div>
             <div class="sv-confirm-qty">
                 {% sw_include '@Storefront/storefront/component/line-item/element/quantity.html.twig' %}
@@ -77,8 +89,12 @@
                     currency: lineItem.order.currency.isoCode
                 } %}
             </div>
+
+            {% if lineItem.children.count > 0 %}
+                {{ block('component_line_item_type_product_children') }}
+            {% endif %}
         </li>
-    {% elseif displayMode == 'order' or controllerAction is same as('finishPage') %}
+    {% elseif displayMode == 'order' or activeRoute is same as('frontend.checkout.finish.page') %}
         {#
             Finish page + account order history. These used to fall through to parent(),
             where the offcanvas-shaped inner blocks below squeezed the quantity and the
@@ -105,6 +121,10 @@
                 <div class="sv-confirm-unit">
                     {{ lineItem.price.unitPrice|currency }} / {{ 'checkout.lineItemUnitPriceDescriptor'|trans|sw_sanitize }}
                 </div>
+
+                {% if lineItem.referencedId %}
+                    {{ block('component_line_item_type_product_garan_label') }}
+                {% endif %}
             </div>
             <div class="sv-confirm-qty">
                 {% sw_include '@Storefront/storefront/component/line-item/element/quantity.html.twig' %}
@@ -112,6 +132,10 @@
             <div class="sv-confirm-total">
                 {% sw_include '@Storefront/storefront/component/line-item/element/total-price.html.twig' %}
             </div>
+
+            {% if lineItem.children.count > 0 %}
+                {{ block('component_line_item_type_product_children') }}
+            {% endif %}
         </li>
     {% else %}
         {{ parent() }}
@@ -153,6 +177,10 @@
             {% block component_line_item_type_product_features %}
                 {{ parent() }}
             {% endblock %}
+        {% endif %}
+
+        {% if lineItem.referencedId %}
+            {{ block('component_line_item_type_product_garan_label') }}
         {% endif %}
 
         {% block component_line_item_type_qty %}

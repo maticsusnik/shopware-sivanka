@@ -5,7 +5,6 @@ namespace OptiwebProductEnquiry\Core\Content\ProductEnquiryLine;
 use OptiwebProductEnquiry\Core\Content\ProductEnquiry\ProductEnquiryDefinition;
 use Shopware\Core\Content\Product\ProductDefinition;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityDefinition;
-use Shopware\Core\Framework\DataAbstractionLayer\Field\CreatedAtField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\FkField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\Flag\PrimaryKey;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\Flag\Required;
@@ -13,7 +12,6 @@ use Shopware\Core\Framework\DataAbstractionLayer\Field\IdField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\IntField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\ManyToOneAssociationField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\StringField;
-use Shopware\Core\Framework\DataAbstractionLayer\Field\UpdatedAtField;
 use Shopware\Core\Framework\DataAbstractionLayer\FieldCollection;
 
 class ProductEnquiryLineDefinition extends EntityDefinition
@@ -53,8 +51,6 @@ class ProductEnquiryLineDefinition extends EntityDefinition
             new StringField('product_option', 'productOption'),
             (new IntField('quantity', 'quantity'))->addFlags(new Required()),
             (new IntField('position', 'position'))->addFlags(new Required()),
-            new CreatedAtField(),
-            new UpdatedAtField(),
 
             new ManyToOneAssociationField('productEnquiry', 'product_enquiry_id', ProductEnquiryDefinition::class, 'id', false),
             new ManyToOneAssociationField('product', 'product_id', ProductDefinition::class, 'id', false),

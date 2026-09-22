@@ -43,7 +43,7 @@ Component.register('sw-cms-el-config-sivanka-category-navigation', {
 
     methods: {
         createdComponent() {
-            this.initElementConfig('sivanka-category-navigation');
+            this.initElementConfig();
             
             // Initialize local values from element config
             const cfg = this.element?.config || {};

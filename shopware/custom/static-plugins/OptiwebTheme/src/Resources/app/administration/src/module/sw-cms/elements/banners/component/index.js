@@ -20,7 +20,7 @@ Component.register('sw-cms-el-banners', {
     },
 
     created() {
-        this.initElementConfig('banners');
+        this.initElementConfig();
     },
 
     methods: {

@@ -56,12 +56,21 @@ Shopware.Component.register('optiweb-product-enquiry-detail', {
             }];
         },
 
+        // Replaces the Vue 2 `| date(...)` template filter, which Vue 3 no longer parses.
+        formattedCreatedAt() {
+            if (!this.enquiry) {
+                return '';
+            }
+
+            return Shopware.Filter.getByName('date')(this.enquiry.createdAt, { hour: '2-digit', minute: '2-digit' });
+        },
+
         productColumns() {
             return [
-                { property: 'productName', label: this.$tc('optiwebProductEnquiry.admin.detail.columnProduct'), rawData: true },
-                { property: 'productNumber', label: this.$tc('optiwebProductEnquiry.admin.detail.columnNumber'), rawData: true },
-                { property: 'productOption', label: this.$tc('optiwebProductEnquiry.admin.detail.columnVariant'), rawData: true },
-                { property: 'quantity', label: this.$tc('optiwebProductEnquiry.admin.detail.columnQuantity'), rawData: true, align: 'right' },
+                { property: 'productName', label: this.$t('optiwebProductEnquiry.admin.detail.columnProduct'), rawData: true },
+                { property: 'productNumber', label: this.$t('optiwebProductEnquiry.admin.detail.columnNumber'), rawData: true },
+                { property: 'productOption', label: this.$t('optiwebProductEnquiry.admin.detail.columnVariant'), rawData: true },
+                { property: 'quantity', label: this.$t('optiwebProductEnquiry.admin.detail.columnQuantity'), rawData: true, align: 'right' },
             ];
         },
     },

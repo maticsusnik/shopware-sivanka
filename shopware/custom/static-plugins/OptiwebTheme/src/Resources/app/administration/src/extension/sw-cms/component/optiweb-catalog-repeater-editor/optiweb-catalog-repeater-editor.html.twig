@@ -95,15 +95,13 @@
                                 @modal-close="onCloseAnyMediaModal('document')"></sw-media-modal-v2>
                     {% endblock %}
 
-                    <sw-number-field
-                            numberType="int"
+                    <mt-number-field
+                            number-type="int"
                             :digits="0"
                             label="Priority"
-                            :copyable="false"
                             v-model="catalog.priority"
-                            :copyableTooltip="false"
                             @blur="sortCatalogs">
-                    </sw-number-field>
+                    </mt-number-field>
 
                 </div>
                 <div class="optiweb-catalog-repeater-editor__item-footer">

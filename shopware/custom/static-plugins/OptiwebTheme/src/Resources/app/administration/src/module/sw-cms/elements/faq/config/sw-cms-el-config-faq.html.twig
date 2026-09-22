@@ -2,14 +2,13 @@
     <div class="optiweb-faq-config">
         <div v-if="element.config.faq.value.length > 0">
             <div class="faq-single" v-for="(faq, index) in faqs">
-                <sw-text-field label="Question" :copyable="false" v-model="element.config.faq.value[index].question"
+                <mt-text-field label="Question" :copyable="false" v-model="element.config.faq.value[index].question"
                                :copyableTooltip="false">
-                </sw-text-field>
+                </mt-text-field>
 
-                <sw-textarea-field label="Answer" :copyable="false"
-                                   v-model="element.config.faq.value[index].answer"
-                                   :copyableTooltip="false">
-                </sw-textarea-field>
+                <mt-textarea label="Answer"
+                             v-model="element.config.faq.value[index].answer">
+                </mt-textarea>
                 <div>
                     <mt-button variant="critical" size="small" @click="removeFaq(index)">
                         Remove
@@ -18,7 +17,7 @@
             </div>
         </div>
         <div v-else>
-            <sw-alert variant="info">Insert faq questions.</sw-alert>
+            <mt-banner variant="info">Insert faq questions.</mt-banner>
         </div>
         <mt-button variant="secondary" ghost @click="createNewFaq()">
             Add new faq

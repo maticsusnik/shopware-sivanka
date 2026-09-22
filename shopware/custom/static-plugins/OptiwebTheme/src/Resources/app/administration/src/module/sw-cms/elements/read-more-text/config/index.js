@@ -15,7 +15,7 @@ Shopware.Component.register('sw-cms-el-config-read-more-text', {
 
     methods: {
         createdComponent() {
-            this.initElementConfig('read-more-text');
+            this.initElementConfig();
         },
 
         onBlur(content) {

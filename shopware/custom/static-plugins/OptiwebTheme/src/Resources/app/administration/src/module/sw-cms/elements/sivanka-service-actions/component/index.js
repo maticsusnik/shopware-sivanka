@@ -9,6 +9,6 @@ Component.register('sw-cms-el-sivanka-service-actions', {
     mixins: [Mixin.getByName('cms-element')],
 
     created() {
-        this.initElementConfig('sivanka-service-actions');
+        this.initElementConfig();
     },
 });

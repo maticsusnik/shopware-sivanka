@@ -24,31 +24,8 @@
         "ow": "public/assets/images"
     },
     "config": {
-        "blocks": {
-            "themeColors": {
-                "label": {
-                    "en-GB": "Sivanka colours",
-                    "de-DE": "Sivanka Farben"
-                }
-            },
-            "typography": {
-                "label": {
-                    "en-GB": "Typography",
-                    "de-DE": "Typografie"
-                }
-            },
-            "media": {
-                "label": {
-                    "en-GB": "Media",
-                    "de-DE": "Medien"
-                }
-            }
-        },
         "fields": {
             "sw-color-brand-primary": {
-                "label": {
-                    "en-GB": "Bordo (primary)"
-                },
                 "type": "color",
                 "value": "#8E2247",
                 "editable": true,
@@ -56,9 +33,6 @@
                 "order": 100
             },
             "sw-color-brand-secondary": {
-                "label": {
-                    "en-GB": "Ink muted"
-                },
                 "type": "color",
                 "value": "#6B5A55",
                 "editable": true,
@@ -66,9 +40,6 @@
                 "order": 200
             },
             "sw-border-color": {
-                "label": {
-                    "en-GB": "Border"
-                },
                 "type": "color",
                 "value": "#EADFD1",
                 "editable": true,
@@ -76,9 +47,6 @@
                 "order": 300
             },
             "sw-background-color": {
-                "label": {
-                    "en-GB": "Page background"
-                },
                 "type": "color",
                 "value": "#FDF8F2",
                 "editable": true,
@@ -86,9 +54,6 @@
                 "order": 400
             },
             "sw-text-color": {
-                "label": {
-                    "en-GB": "Body text (ink)"
-                },
                 "type": "color",
                 "value": "#2E1A20",
                 "editable": true,
@@ -96,9 +61,6 @@
                 "order": 500
             },
             "sw-headline-color": {
-                "label": {
-                    "en-GB": "Headings"
-                },
                 "type": "color",
                 "value": "#5C1229",
                 "editable": true,
@@ -106,9 +68,6 @@
                 "order": 600
             },
             "sw-color-price": {
-                "label": {
-                    "en-GB": "Price"
-                },
                 "type": "color",
                 "value": "#2E1A20",
                 "editable": true,
@@ -116,9 +75,6 @@
                 "order": 700
             },
             "sw-color-buy-button": {
-                "label": {
-                    "en-GB": "Buy button"
-                },
                 "type": "color",
                 "value": "#8E2247",
                 "editable": true,
@@ -126,9 +82,6 @@
                 "order": 800
             },
             "sw-color-buy-button-text": {
-                "label": {
-                    "en-GB": "Buy button text"
-                },
                 "type": "color",
                 "value": "#FFFFFF",
                 "editable": true,
@@ -136,9 +89,6 @@
                 "order": 900
             },
             "sw-color-success": {
-                "label": {
-                    "en-GB": "Success / in stock"
-                },
                 "type": "color",
                 "value": "#2E7D53",
                 "editable": true,
@@ -146,9 +96,6 @@
                 "order": 1000
             },
             "sw-color-info": {
-                "label": {
-                    "en-GB": "Info"
-                },
                 "type": "color",
                 "value": "#6B5A55",
                 "editable": true,
@@ -156,9 +103,6 @@
                 "order": 1100
             },
             "sw-color-warning": {
-                "label": {
-                    "en-GB": "Warning"
-                },
                 "type": "color",
                 "value": "#8E2247",
                 "editable": true,
@@ -166,9 +110,6 @@
                 "order": 1200
             },
             "sw-color-danger": {
-                "label": {
-                    "en-GB": "Error"
-                },
                 "type": "color",
                 "value": "#8E2247",
                 "editable": true,
@@ -176,9 +117,6 @@
                 "order": 1300
             },
             "sw-font-family-base": {
-                "label": {
-                    "en-GB": "Body font"
-                },
                 "type": "fontFamily",
                 "value": "'Inter', sans-serif",
                 "editable": true,
@@ -186,9 +124,6 @@
                 "order": 100
             },
             "sw-font-family-headline": {
-                "label": {
-                    "en-GB": "Heading font"
-                },
                 "type": "fontFamily",
                 "value": "'Playfair Display', Georgia, serif",
                 "editable": true,
