@@ -525,6 +525,12 @@
     line-height: 21px;
     color: $sv-ink-muted;
 
+    .footer-copyright-links {
+        display: flex;
+        flex-wrap: wrap;
+        column-gap: 24px;
+    }
+
     .footer-copyright-link {
         color: $sv-ink;
 
