@@ -12,7 +12,8 @@
         "shopware/core": "v6.7.14.1",
         "shopware/elasticsearch": "*",
         "shopware/storefront": "*",
-        "symfony/flex": "~2"
+        "symfony/flex": "~2",
+        "twig/twig": "~3.28.0"
     },
     "repositories": [
         {
