@@ -105,6 +105,14 @@
         overflow: hidden;
         text-decoration: none;
 
+        // Below 1280 the touch-target rule in `_reset.scss` gives the name a 46px
+        // min-height — taller than two lines, so the top of the third line peeked
+        // out under the clamp. Three lines (~61px) clear that minimum cleanly, and on
+        // the narrow two-up cards they keep the variant suffix ("… 1L" / "… 250mL").
+        @media (max-width: $sv-bp-touch) {
+            -webkit-line-clamp: 3;
+        }
+
         &:hover {
             color: $sv-bordo;
             text-decoration: none;
