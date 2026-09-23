@@ -289,12 +289,12 @@
 .sivanka-faq-block {
     &__grid {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
         gap: 32px;
         align-items: start;
 
         @media (max-width: $sv-bp-portrait) {
-            grid-template-columns: 1fr;
+            grid-template-columns: minmax(0, 1fr);
             gap: 26px;
         }
     }
@@ -315,6 +315,9 @@
             width: 100%;
             height: auto;
             aspect-ratio: 660 / 420;
+            // The CMS slot's inline `min-height: 340px` would turn the aspect-ratio into a
+            // 534px minimum width and push the page sideways on phones.
+            min-height: 0 !important;
             border-radius: $sv-r-card;
             overflow: hidden;
         }

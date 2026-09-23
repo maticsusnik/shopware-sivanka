@@ -156,8 +156,16 @@ $sv-navbar-pad-block: 16px;
             }
         }
 
+        // No "you are here" state on the nav: core underlines the active root's label
+        // (`.main-navigation-link.root.active .main-navigation-link-text`), which left
+        // e.g. "Storitve" underlined on every page below it. Hover keeps its own
+        // `::after` underline.
         &.active {
             color: $sv-ink;
+
+            .main-navigation-link-text {
+                border-color: transparent;
+            }
         }
 
         &.mega-menu-link {
@@ -345,16 +353,19 @@ $sv-navbar-pad-block: 16px;
                 box-shadow: none;
             }
 
+            // No bold "you are here" weight — core's `is-current-category` rule is
+            // (0,2,0), this one outranks it.
             &.is-current-category {
                 justify-content: start;
                 gap: 0.25rem;
+                font-weight: 400;
 
                 &:hover {
                     letter-spacing: unset;
                 }
             }
 
-            &.is-active, &.is-current-category, &:hover {
+            &.is-active, &:hover {
                 font-weight: 700;
                 color: inherit;
 

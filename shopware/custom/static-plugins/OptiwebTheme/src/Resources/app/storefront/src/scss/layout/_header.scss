@@ -937,10 +937,15 @@ $sv-action-bar-height: 52px;
     // AND its scroll-up plugin writes an inline `bottom` of its own. The `!important`
     // already beat the inline value, so matching it here changes nothing except which
     // offset wins — and ours is the one that clears the action bar.
-    .scroll-up-button.scroll-up-button,
+    .scroll-up-button.scroll-up-button {
+        bottom: calc(env(safe-area-inset-bottom, 0px) + #{$sv-action-bar-height} + 12px) !important;
+    }
+
+    // The banner is full width, so it docks flush on the bar — a gap would show a strip
+    // of page between the two.
     .cookie-permission-container.cookie-permission-container,
     .js-cookie-permission-container.js-cookie-permission-container {
-        bottom: calc(env(safe-area-inset-bottom, 0px) + #{$sv-action-bar-height} + 12px) !important;
+        bottom: calc(env(safe-area-inset-bottom, 0px) + #{$sv-action-bar-height}) !important;
     }
 }
 

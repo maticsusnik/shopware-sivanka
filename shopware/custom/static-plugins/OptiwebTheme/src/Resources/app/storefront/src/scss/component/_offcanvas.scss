@@ -220,19 +220,12 @@
         color: $sv-ink !important;
         text-decoration: none;
 
-        // hairline that fills in magenta on the active row
-        box-shadow: inset 3px 0 0 transparent;
-        transition: background 0.14s, box-shadow 0.14s;
+        transition: background 0.14s;
 
+        // Tap feedback only. The row for the page the shopper is on (`.active`, set
+        // by item-link.html.twig) deliberately gets no highlight.
         &:active {
             background: $sv-bordo-tint;
-        }
-
-        &.active {
-            color: $sv-bordo !important;
-            font-weight: 600;
-            background: $sv-bordo-tint;
-            box-shadow: inset 3px 0 0 $sv-bordo;
         }
     }
 
@@ -272,10 +265,11 @@
         }
     }
 
-    // "Show all products in this category" row reads as the primary action
+    // "Show all products in this category" row. It is the link to the page the shopper
+    // is usually already on (the panel opens at the current category), so it reads like
+    // its siblings instead of carrying a highlighted "active" state.
     .navigation-offcanvas-list .is-current-category {
-        font-weight: 600;
-        color: $sv-bordo !important;
+        font-weight: 500; // core bolds `.navigation-offcanvas-link.is-current-category`
         background: $sv-white;
     }
 }
