@@ -109,7 +109,18 @@
                     {{ parent() }}
                 {% endif %}
                 {% if showEnquiryButton %}
-                    {% block page_product_detail_enquiry_form_container %}{{ parent() }}{% endblock %}
+                    {% block page_product_detail_enquiry_form_container %}
+                        {# The visible price normally lives in buy-widget-form, which is not
+                           rendered for an enquiry-only product. "Not Sellable" only swaps the
+                           cart button for the enquiry button, so the price still shows here;
+                           only "Hide Price(s)" hides it. #}
+                        {% if not (page.product.customFields._isHidePrice ?? false) %}
+                            <div class="product-detail-price-container product-detail-price-container--enquiry">
+                                {% sw_include '@Storefront/storefront/component/product/card/price-unit.html.twig' with { product: page.product } %}
+                            </div>
+                        {% endif %}
+                        {{ parent() }}
+                    {% endblock %}
                 {% endif %}
             </div>
         {% endif %}
