@@ -66,24 +66,28 @@
     }
 }
 
-// The shipping price is a child of the method's <label>, so without an explicit
-// layout it landed on top of the method name and broke mid-word ("Brezplačn/o").
-// The method name is a bare text node — an anonymous flex item, which ignores
-// `order` — so a float is what actually keeps the price on the name's line.
+// Shipping method name and price on one row, the price on the right
+// (component/shipping/shipping-method.html.twig).
 .shipping-method-label,
 .payment-method-label {
     display: block;
     width: 100%;
+}
+
+// Core caps the description at 66% (page/checkout/_confirm.scss), which stopped the
+// price short of the right edge.
+.shipping-method-label .shipping-method-description {
+    width: 100%;
+}
+
+.shipping-method-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
 
     .shipping-price {
-        float: right;
-        margin-left: 10px;
         white-space: nowrap;
-    }
-
-    .shipping-method-description,
-    .payment-method-description {
-        clear: both;
     }
 }
 
@@ -278,6 +282,18 @@
 
     .icon > svg {
         top: 0;
+    }
+
+    // Smaller on phones so it covers less of the content.
+    @include media-breakpoint-down(md) {
+        width: 36px;
+        height: 36px;
+        min-height: 36px; // beats the global 46px touch minimum on .btn (_reset.scss)
+
+        .icon {
+            width: 15px;
+            height: 15px;
+        }
     }
 }
 

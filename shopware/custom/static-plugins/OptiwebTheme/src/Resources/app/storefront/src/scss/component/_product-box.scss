@@ -164,16 +164,15 @@
         }
     }
 
-    // Reference: "Dodaj v košarico" on a product CARD is the small GHOST button —
-    // white fill, 1px bordo, 4px radius, 13.5/600/19. The filled primary is
-    // reserved for the product-detail CTA (and that one is 12px, not 4px).
-    // Both variants carry the 1px border: a borderless fill measures 2px shorter
-    // than the ghost beside it and the pair misaligns in a centred row.
+    // "Dodaj v košarico" on a product CARD: the reference drew it as a white ghost,
+    // but Matic asked for the product-detail CTA's filled bordo primary. The card keeps
+    // its own smaller metrics (13.5/600/19, 4px radius). The 1px border stays so it
+    // measures the same as the ghost enquiry button that stands in on unbuyable cards.
     .btn-buy,
     .btn.btn-primary {
         width: 100%;
-        background: $sv-white;
-        color: $sv-bordo;
+        background: $sv-bordo;
+        color: $sv-white;
         font-family: $sv-sans;
         font-size: 13.5px;
         font-weight: 600;
@@ -181,14 +180,15 @@
         padding: 11px 14px;
         border-radius: $sv-r-btn-sm;
         border: 1px solid $sv-bordo;
-        transition: color 0.18s, border-color 0.18s;
+        transition: background-color 0.18s, border-color 0.18s;
         text-align: center;
 
         &:hover,
-        &:focus {
-            background: $sv-white;
+        &:focus,
+        &:active {
+            background: $sv-bordo-hover;
             border-color: $sv-bordo-hover;
-            color: $sv-bordo-hover;
+            color: $sv-white;
         }
     }
 

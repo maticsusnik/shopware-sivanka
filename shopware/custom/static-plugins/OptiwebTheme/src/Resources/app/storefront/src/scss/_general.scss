@@ -111,7 +111,11 @@ header, footer, .nav-main {
 }
 
 .form-check-input {
+    // The dot is centred by the grid, not a fixed margin: the radio is 18px on desktop
+    // but 1.5rem below lg (_responsive.scss), and a 2px margin only centres it at 18px.
     &[type=radio] {
+        display: inline-grid;
+        place-content: center;
         border: 1px solid $sv-ink-muted;
         background: $sv-white;
         cursor: pointer;
@@ -121,7 +125,7 @@ header, footer, .nav-main {
             display: block;
             width: 10px;
             height: 10px;
-            margin: 2px;
+            margin: 0;
             background: $sv-white;
             border: 1px solid $sv-ink-muted;
             border-radius: $sv-r-round;

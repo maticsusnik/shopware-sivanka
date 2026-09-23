@@ -72,3 +72,29 @@ $sivanka-cms-surface: #f6ede2;
         opacity: .45;
     }
 }
+
+// Copy written in the rich-text editor: keep paragraph/list spacing tight in the preview.
+@mixin sivanka-cms-rich-text {
+    p,
+    ul,
+    ol {
+        margin: 0 0 0.5em;
+    }
+
+    ul,
+    ol {
+        padding-left: 1.2em;
+    }
+
+    ul {
+        list-style: disc;
+    }
+
+    ol {
+        list-style: decimal;
+    }
+
+    > :last-child {
+        margin-bottom: 0;
+    }
+}

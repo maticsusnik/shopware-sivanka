@@ -34,3 +34,7 @@
         color: $sivanka-cms-muted;
     }
 }
+
+.sw-cms-el-sivanka-step-card__text {
+    @include sivanka-cms-rich-text;
+}

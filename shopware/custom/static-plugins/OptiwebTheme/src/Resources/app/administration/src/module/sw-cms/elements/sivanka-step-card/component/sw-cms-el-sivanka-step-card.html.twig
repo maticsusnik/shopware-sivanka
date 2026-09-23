@@ -2,8 +2,6 @@
 <div class="sw-cms-el-sivanka-step-card">
     <span class="sw-cms-el-sivanka-step-card__number">{{ element.config.number.value }}</span>
     <p class="sw-cms-el-sivanka-step-card__title">{{ element.config.title.value }}</p>
-    <p v-if="element.config.text.value" class="sw-cms-el-sivanka-step-card__text">
-        {{ element.config.text.value }}
-    </p>
+    <div v-if="element.config.text.value" class="sw-cms-el-sivanka-step-card__text" v-html="element.config.text.value"></div>
 </div>
 {% endblock %}

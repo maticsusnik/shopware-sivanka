@@ -44,3 +44,7 @@
         }
     }
 }
+
+.sw-cms-el-sivanka-icon-card__text {
+    @include sivanka-cms-rich-text;
+}

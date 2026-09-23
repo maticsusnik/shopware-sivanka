@@ -20,12 +20,13 @@
                     <h3 class="sivanka-icon-card__title">{{ config.title.value }}</h3>
                 {% endif %}
                 {# The medallion card separates title from copy with a short bordo rule. #}
-                {% if variant == 'medallion' and config.title.value and config.text.value %}
+                {% if variant == 'medallion' and config.title.value and config.text.value|striptags|trim is not empty %}
                     <span class="sivanka-icon-card__rule" aria-hidden="true"></span>
                 {% endif %}
-                {% if config.text.value %}
-                    <p class="sivanka-icon-card__text">{{ config.text.value|nl2br }}</p>
-                {% endif %}
+                {% sw_include '@Storefront/storefront/utilities/sivanka-rich-text.html.twig' with {
+                    sivankaText: config.text.value,
+                    sivankaClass: 'sivanka-icon-card__text'
+                } only %}
             </div>
         {% endblock %}
     </div>

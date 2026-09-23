@@ -1,4 +1,5 @@
 import template from './sw-cms-el-config-sivanka-service-intro.html.twig';
+import { upgradePlainTextToHtml } from '../../../element-config';
 
 const { Component, Mixin } = Shopware;
 
@@ -30,6 +31,7 @@ Component.register('sw-cms-el-config-sivanka-service-intro', {
 
     created() {
         this.initElementConfig();
+        upgradePlainTextToHtml(this.element.config.lead);
     },
 
     methods: {

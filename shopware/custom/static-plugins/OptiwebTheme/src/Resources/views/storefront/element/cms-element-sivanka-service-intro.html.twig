@@ -26,9 +26,10 @@
         {% endblock %}
 
         {% block element_sivanka_service_intro_lead %}
-            {% if config.lead.value %}
-                <p class="sivanka-intro__lead">{{ config.lead.value|nl2br }}</p>
-            {% endif %}
+            {% sw_include '@Storefront/storefront/utilities/sivanka-rich-text.html.twig' with {
+                sivankaText: config.lead.value,
+                sivankaClass: 'sivanka-intro__lead'
+            } only %}
         {% endblock %}
     </div>
 {% endblock %}

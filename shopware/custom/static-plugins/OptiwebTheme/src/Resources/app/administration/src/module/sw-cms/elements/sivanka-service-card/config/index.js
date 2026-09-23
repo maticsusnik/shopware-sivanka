@@ -1,6 +1,7 @@
 import template from './sw-cms-el-config-sivanka-service-card.html.twig';
 import './sw-cms-el-config-sivanka-service-card.scss';
 import { sivankaIconOptions } from '../../sivanka-service-icons';
+import { upgradePlainTextToHtml } from '../../../element-config';
 
 const { Component, Mixin } = Shopware;
 
@@ -51,6 +52,7 @@ Component.register('sw-cms-el-config-sivanka-service-card', {
 
     created() {
         this.initElementConfig();
+        upgradePlainTextToHtml(this.element.config.text);
     },
 
     methods: {

@@ -573,10 +573,10 @@
         font-size: 14px;
     }
 
-    // Price — Playfair, large, deep plum
+    // Price — Inter (same face as the product-box price), large, deep plum
     .product-detail-price-container .product-price,
     .product-detail-price-container .product-price-wrapper .product-price {
-        font-family: $sv-serif;
+        font-family: $sv-sans;
         font-size: 30px;
         font-weight: 600;
         color: $sv-bordo-head;
