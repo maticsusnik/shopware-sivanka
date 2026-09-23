@@ -806,7 +806,15 @@ $sv-action-bar-height: 52px;
         z-index: 1030;
         width: auto;
         height: $sv-action-bar-height;
+        min-height: $sv-action-bar-height;
+        max-height: $sv-action-bar-height;
         padding-inline: $sv-gutter-sm !important;
+        // Own compositor layer: Chrome on Android re-anchors bottom-fixed boxes while its
+        // toolbar slides in and out, and without a layer the bar visibly stretched and
+        // shrank mid-scroll. Nothing inside the bar is position: fixed, so the new
+        // containing block changes no layout.
+        transform: translate3d(0, 0, 0);
+        backface-visibility: hidden;
         justify-content: stretch;
         background: $sv-white;
         border-top: 1px solid $sv-border;
@@ -929,7 +937,10 @@ $sv-action-bar-height: 52px;
     }
 
     // Page content, and anything else docked to the bottom edge, has to clear the bar.
-    body {
+    // On <html>, not <body>: core's cookie-permission plugin writes `body.style.paddingBottom`
+    // inline — the banner height while it shows, `0` once accepted — which wiped this
+    // clearance and left the last footer links under the bar. The two now add up.
+    html {
         padding-bottom: $sv-action-bar-height;
     }
 

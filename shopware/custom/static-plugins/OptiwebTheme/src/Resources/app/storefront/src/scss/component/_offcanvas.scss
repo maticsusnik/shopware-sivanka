@@ -178,9 +178,14 @@
 
     .offcanvas-back-link .offcanvas-close {
         flex: 0 0 auto;
+        position: relative;
         width: 40px;
         height: 40px;
-        min-width: 40px;
+        min-width: 40px !important;
+        // Same trap as `.ow-offcanvas-close` below: the <1280 touch-target rule gives
+        // every .btn a 46px min-height, which stretched this into a 40×46 oval. The
+        // ::before keeps the 46px hit area.
+        min-height: 40px !important;
         padding: 0;
         border: 0;
         border-radius: $sv-r-round;
@@ -189,6 +194,13 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
+
+        &::before {
+            content: "";
+            position: absolute;
+            inset: -3px;
+            border-radius: $sv-r-round;
+        }
 
         .icon {
             width: 18px;
