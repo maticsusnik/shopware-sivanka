@@ -679,7 +679,7 @@
 
         p { font-size: 13px; color: $sv-ink-muted; margin: 2px 0 0; }
     }
-    .shipping-method .shipping-price { color: $sv-success; font-weight: 600; font-size: 13px; }
+    .shipping-method .shipping-method-description .shipping-price { color: $sv-success; font-weight: 600; font-size: 13px; }
 
     // Order review list
     .confirm-product {
@@ -903,6 +903,26 @@
     // Core ships `.finish-content { margin: 0 auto 6rem }`, which left ~96px of dead
     // space between the last line of the hero and its bottom edge.
     .finish-content { margin: 0; }
+
+    // Guest → account prompt: room between the copy and the button, and a compact
+    // button so it does not compete with the order number above.
+    .finish-create-account-container {
+        margin-top: 22px;
+
+        h5 {
+            margin: 0 0 14px;
+            font-size: 15px;
+            line-height: 1.4;
+            color: $sv-ink;
+        }
+
+        .btn {
+            min-height: 0;
+            padding: 8px 18px;
+            font-size: 13.5px;
+            line-height: 1.4;
+        }
+    }
 
     .finish-teaser,
     .finish-order-subtitle {

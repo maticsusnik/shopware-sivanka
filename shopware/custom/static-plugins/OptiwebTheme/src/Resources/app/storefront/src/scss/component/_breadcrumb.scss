@@ -78,11 +78,14 @@
         color: $sv-ink;
     }
 
+    .breadcrumb-placeholder {
+        margin: 0 0 4px;
+    }
+
     // Separators. The reference draws a 6x10 chevron at stroke 1.4 in the inherited
-    // ink-muted, with 8px of margin on top of the list's 8px gap.
+    // ink-muted; the list's 8px gap alone spaces it from the crumbs.
     .icon {
         color: $sv-ink-muted;
-        margin-inline: 8px;
         display: inline-flex;
         align-items: center;
         justify-content: center;

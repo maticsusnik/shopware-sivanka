@@ -1,0 +1,22 @@
+{#
+    Renders Storitve copy written in the admin rich-text editor.
+
+    sivankaText  — the config value (HTML, or legacy plain text from the old textarea)
+    sivankaClass — class for the wrapper
+    sivankaAllowLinks — false strips <a> when the element is itself a link
+#}
+{% set sivankaText = sivankaText|default('') %}
+
+{% if sivankaText|striptags|trim is not empty %}
+    <div class="{{ sivankaClass }} sivanka-richtext">
+        {% if sivankaText matches '/<[a-z][^>]*>/i' %}
+            {% if sivankaAllowLinks is defined and not sivankaAllowLinks %}
+                {{ sivankaText|striptags('<p><br><strong><b><em><i><u><s><ul><ol><li><span>')|sw_sanitize }}
+            {% else %}
+                {{ sivankaText|sw_sanitize }}
+            {% endif %}
+        {% else %}
+            <p>{{ sivankaText|nl2br }}</p>
+        {% endif %}
+    </div>
+{% endif %}

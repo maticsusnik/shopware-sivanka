@@ -12,9 +12,10 @@
             {% if config.title.value %}
                 <h3 class="sivanka-step-card__title">{{ config.title.value }}</h3>
             {% endif %}
-            {% if config.text.value %}
-                <p class="sivanka-step-card__text">{{ config.text.value|nl2br }}</p>
-            {% endif %}
+            {% sw_include '@Storefront/storefront/utilities/sivanka-rich-text.html.twig' with {
+                sivankaText: config.text.value,
+                sivankaClass: 'sivanka-step-card__text'
+            } only %}
         {% endblock %}
     </div>
 {% endblock %}

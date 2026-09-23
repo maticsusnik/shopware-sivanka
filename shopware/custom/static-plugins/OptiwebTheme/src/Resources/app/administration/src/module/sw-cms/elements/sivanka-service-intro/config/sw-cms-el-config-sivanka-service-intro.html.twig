@@ -17,7 +17,7 @@
     {% endblock %}
 
     {% block sw_cms_el_config_sivanka_service_intro_lead %}
-    <mt-textarea
+    <mt-text-editor
         v-model="element.config.lead.value"
         :label="$t('sw-cms.elements.sivankaServiceIntro.config.label.lead')"
         @update:model-value="onChange"

@@ -1,4 +1,5 @@
 import template from './sw-cms-el-config-sivanka-step-card.html.twig';
+import { upgradePlainTextToHtml } from '../../../element-config';
 
 const { Component, Mixin } = Shopware;
 
@@ -11,6 +12,7 @@ Component.register('sw-cms-el-config-sivanka-step-card', {
 
     created() {
         this.initElementConfig();
+        upgradePlainTextToHtml(this.element.config.text);
     },
 
     methods: {

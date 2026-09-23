@@ -208,12 +208,6 @@
         @include fontSpecs(16, 24, 700, false, false);
     }
 
-    .shipping-price {
-        width: 33%;
-        float: right;
-        text-align: right;
-        @include fontSpecs(14, 20, 400, false, false);
-    }
 
     .shipping-method-description,
     .payment-method-description {

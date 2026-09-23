@@ -16,12 +16,11 @@
 
     <div class="sw-cms-el-sivanka-service-card__body">
         <p class="sw-cms-el-sivanka-service-card__title">{{ element.config.title.value }}</p>
-        <p
+        <div
             v-if="element.config.text.value && element.config.variant.value === 'wide'"
             class="sw-cms-el-sivanka-service-card__text"
-        >
-            {{ element.config.text.value }}
-        </p>
+            v-html="element.config.text.value"
+        ></div>
         <span class="sw-cms-el-sivanka-service-card__link">{{ element.config.linkLabel.value }}</span>
     </div>
 </div>

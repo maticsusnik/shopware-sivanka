@@ -617,3 +617,45 @@
 .is-ctl-navigation.is-act-home .sivanka-service-card__meta {
     display: none;
 }
+
+/* ---------- rich-text copy (lead / card text from the admin text editor) ---------- */
+// The wrappers inherit their font size, colour and line height from the element
+// rules above; this only spaces the paragraphs and lists the editor produces.
+.sivanka-richtext {
+    p,
+    ul,
+    ol {
+        margin: 0 0 .6em;
+    }
+
+    ul,
+    ol {
+        padding-left: 1.25em;
+    }
+
+    ul {
+        list-style: disc;
+    }
+
+    ol {
+        list-style: decimal;
+    }
+
+    li + li {
+        margin-top: .2em;
+    }
+
+    strong,
+    b {
+        font-weight: 600;
+    }
+
+    a {
+        color: $sv-bordo;
+        text-decoration: underline;
+    }
+
+    > :last-child {
+        margin-bottom: 0;
+    }
+}

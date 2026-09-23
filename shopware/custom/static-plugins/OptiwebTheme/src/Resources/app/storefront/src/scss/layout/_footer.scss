@@ -528,7 +528,8 @@
     .footer-copyright-links {
         display: flex;
         flex-wrap: wrap;
-        column-gap: 24px;
+        column-gap: 36px;
+        row-gap: 8px;
     }
 
     .footer-copyright-link {

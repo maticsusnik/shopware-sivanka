@@ -51,3 +51,25 @@ export function fillNestedConfigDefaults(vm) {
         });
     });
 }
+
+/**
+ * Upgrades a legacy plain-text config value to HTML for `mt-text-editor`.
+ *
+ * Storitve copy fields used to be textareas rendered with `nl2br`; the rich-text editor
+ * would collapse their line breaks. Values that already contain markup are left alone.
+ *
+ * @param {object} config an element config entry (`{ source, value }`)
+ */
+export function upgradePlainTextToHtml(config) {
+    const value = config?.value;
+    if (typeof value !== 'string' || value === '' || /<[a-z][^>]*>/i.test(value)) {
+        return;
+    }
+
+    const escaped = value
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+
+    config.value = `<p>${escaped.replace(/\r?\n/g, '<br>')}</p>`;
+}

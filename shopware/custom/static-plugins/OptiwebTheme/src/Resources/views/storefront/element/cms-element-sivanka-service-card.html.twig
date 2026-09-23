@@ -51,8 +51,13 @@
                     {% endif %}
                 </div>
 
-                {% if config.text.value and variant != 'compact' %}
-                    <p class="sivanka-service-card__text">{{ config.text.value|nl2br }}</p>
+                {% if variant != 'compact' %}
+                    {# The card is an <a> when it has a URL, so links inside the copy are dropped. #}
+                    {% sw_include '@Storefront/storefront/utilities/sivanka-rich-text.html.twig' with {
+                        sivankaText: config.text.value,
+                        sivankaClass: 'sivanka-service-card__text',
+                        sivankaAllowLinks: not url
+                    } only %}
                 {% endif %}
 
                 {% if config.meta.value and variant == 'tile' %}

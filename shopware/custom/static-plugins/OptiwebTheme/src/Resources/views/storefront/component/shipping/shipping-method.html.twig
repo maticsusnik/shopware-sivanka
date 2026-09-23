@@ -1,11 +1,26 @@
 {% sw_extends '@Storefront/storefront/component/shipping/shipping-method.html.twig' %}
 
-{% block component_shipping_method_image %}
-    {# Calculated by OptiwebTheme\Services\ShippingMethodRouteDecorator. #}
-    {% set shippingPrice = shipping.extensions.optiwebShippingPrice.price|default(0) %}
-    {% if (shippingPrice > 0) %}
-        <div class="shipping-price">{{ shippingPrice|currency }}</div>
-    {% else %}
-        <div class="shipping-price">{{ 'optiweb.checkout.freeShipping'|trans }}</div>
-    {% endif %}
+{# The shipping method image is not used; the price moves under the name instead. #}
+{% block component_shipping_method_image %}{% endblock %}
+
+{% block component_shipping_method_description %}
+    <div class="shipping-method-description">
+        {# Name and price share one row, the price on the right. #}
+        <div class="shipping-method-head">
+            <strong>{{ shipping.translated.name }}</strong>
+
+            {# Calculated by OptiwebTheme\Services\ShippingMethodRouteDecorator. #}
+            {% set shippingPrice = shipping.extensions.optiwebShippingPrice.price|default(0) %}
+            <span class="shipping-price">
+                {{ shippingPrice > 0 ? shippingPrice|currency : 'optiweb.checkout.freeShipping'|trans }}
+            </span>
+        </div>
+
+        {% if shipping.translated.description and shipping.id is same as(selectedShippingMethodId) %}
+            {% set shippingDescription = shipping.translated.description|raw %}
+            {% set shippingDescription = (shippingDescription|length > 75 ? shippingDescription[:75] ~ ' ...' : shippingDescription) %}
+
+            <p class="mb-0" title="{{ shipping.translated.description|raw }}">{{ shippingDescription }}</p>
+        {% endif %}
+    </div>
 {% endblock %}

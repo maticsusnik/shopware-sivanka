@@ -65,3 +65,7 @@
         color: #5c1229;
     }
 }
+
+.sw-cms-el-sivanka-service-intro__lead {
+    @include sivanka-cms-rich-text;
+}

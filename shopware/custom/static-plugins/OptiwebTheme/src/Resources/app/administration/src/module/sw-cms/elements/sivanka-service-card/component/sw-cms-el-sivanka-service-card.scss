@@ -61,3 +61,7 @@
         }
     }
 }
+
+.sw-cms-el-sivanka-service-card__text {
+    @include sivanka-cms-rich-text;
+}

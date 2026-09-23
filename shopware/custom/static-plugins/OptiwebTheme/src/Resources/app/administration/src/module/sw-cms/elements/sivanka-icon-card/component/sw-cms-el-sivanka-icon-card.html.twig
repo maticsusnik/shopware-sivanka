@@ -6,9 +6,7 @@
     >{{ iconLabel }}</span>
     <div class="sw-cms-el-sivanka-icon-card__body">
         <p class="sw-cms-el-sivanka-icon-card__title">{{ element.config.title.value }}</p>
-        <p v-if="element.config.text.value" class="sw-cms-el-sivanka-icon-card__text">
-            {{ element.config.text.value }}
-        </p>
+        <div v-if="element.config.text.value" class="sw-cms-el-sivanka-icon-card__text" v-html="element.config.text.value"></div>
     </div>
 </div>
 {% endblock %}
