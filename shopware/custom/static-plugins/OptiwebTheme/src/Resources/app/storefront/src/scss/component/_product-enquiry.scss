@@ -570,6 +570,12 @@ $enquiry-field-height: 48px;
     border: 1px solid $sv-border;
     border-radius: $sv-r-chrome;
     background-color: $sv-cream;
+    // In a 117px phone card "povpraševanje" does not fit beside the checkbox and was
+    // clipped (or split mid-word). Let the label drop under the checkbox instead.
+    min-width: 0;
+    flex-wrap: wrap;
+    column-gap: 8px;
+    row-gap: 6px;
 
     .form-check-input[type="checkbox"] {
         width: 18px;
@@ -592,7 +598,14 @@ $enquiry-field-height: 48px;
     }
 
     .form-check-label {
+        min-width: 0;
+        font-size: 13px;
+        line-height: 18px;
         color: $sv-ink;
+    }
+
+    @media (max-width: $sv-bp-phone) {
+        padding: 8px 10px;
     }
 }
 
@@ -624,7 +637,9 @@ $enquiry-field-height: 48px;
     .btn-link {
         padding: 0 12px;
         color: $sv-ink-muted;
-        font-size: 0.875rem;
+        font-size: 14px;
+        line-height: 21px;
+        white-space: nowrap;
         text-decoration: underline;
         text-underline-offset: 2px;
 
@@ -633,22 +648,30 @@ $enquiry-field-height: 48px;
         }
     }
 
+    // Same size as the shop's section CTAs (component/_buttons.scss): 14/21, 6px radius.
+    // It rendered at the core .btn size — 20px text, 48–56px tall, 12px radius.
     .btn-primary {
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        min-height: 48px;
-        padding: 0 24px;
+        padding: 12px 22px;
         border: 0;
-        border-radius: $sv-r-card;
+        border-radius: $sv-r-btn;
         background-color: $sv-bordo;
+        font-size: 14px;
+        line-height: 21px;
         font-weight: 600;
-        transition: background-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+        white-space: nowrap;
+        transition: background-color 0.18s ease;
 
         &:hover:not(:disabled) {
             background-color: $sv-bordo-hover;
-            transform: translateY(-1px);
-            box-shadow: $sv-shadow-deep;
+        }
+
+        .icon,
+        svg {
+            width: 16px;
+            height: 16px;
         }
 
         &:disabled {
@@ -671,13 +694,21 @@ $enquiry-field-height: 48px;
             align-items: stretch;
         }
 
+        // Button full width on top, "Odstrani izbiro" centred under it — side by side
+        // both labels wrapped onto two lines.
         .wishlist-enquiry-bar-actions {
-            justify-content: space-between;
+            flex-direction: column-reverse;
+            align-items: stretch;
+            gap: 4px;
         }
 
         .btn-primary {
-            flex: 1 1 auto;
+            width: 100%;
             justify-content: center;
+        }
+
+        .btn-link {
+            align-self: center;
         }
     }
 

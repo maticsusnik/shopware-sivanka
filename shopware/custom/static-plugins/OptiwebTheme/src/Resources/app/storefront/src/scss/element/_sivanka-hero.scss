@@ -125,46 +125,50 @@
             width: 28%;
         }
 
+        // The inner edge of each photo fades into the band under a cream ellipse, sized
+        // off the viewport rather than a fixed 350px at a % offset (that one covered
+        // 160px at 992, 27px at 1680 and missed the photo from ~1700 up, hard edge).
+        // --sv-hero-fade is the strip of photo it covers: wide enough on a small desktop
+        // to keep the photo out from under the centred copy (photo edge − text start +
+        // ~30px: 154px at 992, 103 at 1280, 74 at 1440), settling at 50px on big screens
+        // so they keep the image, and never more than 45% of the photo. The ellipse
+        // always sticks out 120px past it, and at 190% tall its curve stays flat enough
+        // at the band's top and bottom that the photo's corner never shows.
+        &--left::after,
+        &--right::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            z-index: 1;
+            --sv-hero-fade: clamp(50px, calc(333px - 18vw), 45%);
+            width: calc(var(--sv-hero-fade) + 120px);
+            height: 190%;
+            transform: translateY(-50%);
+            border-radius: 50%;
+            background: $sv-cream;
+        }
+
         &--left {
             left: 0;
-            // Full strength at the outer edge, gone by the centre.
-            //-webkit-mask-image: linear-gradient(90deg, #000 0%, #000 52%, transparent 100%);
-            //mask-image: linear-gradient(90deg, #000 0%, #000 52%, transparent 100%);
+
             &::after {
-                content: "";
-                position: absolute;
-                top: 50%;
-                right: -60%;
-                width: 350px;
-                height: 150%;
-                transform: translateY(-50%);
-                border-radius: 45%;
-                background: #f5ecdf;
-                box-shadow: -50px 0 30px 0px #f5ecdf;
+                right: -120px;
+                box-shadow: -40px 0 36px 4px $sv-cream;
             }
+
             img {
                 object-position: 72% 50%;
             }
-
         }
 
         &--right {
             right: 0;
-            //-webkit-mask-image: linear-gradient(270deg, #000 0%, #000 52%, transparent 100%);
-            //mask-image: linear-gradient(270deg, #000 0%, #000 52%, transparent 100%);
-            &:after {
-                content: "";
-                position: absolute;
-                z-index: 2;
-                width: 350px;
-                height: 150%;
-                left: -60%;
-                top: 50%;
-                transform: translateY(-50%);
-                border-radius: 45%;
-                background: #f5ecdf;
-                box-shadow: 50px 0 30px 0px #f5ecdf;
+
+            &::after {
+                left: -120px;
+                box-shadow: 40px 0 36px 4px $sv-cream;
             }
+
             img {
                 object-position: 38% 50%;
             }

@@ -29,6 +29,24 @@
     @include margin('bottom', 60, true);
 }
 
+// Below lg the description and "Sorodni izdelki" stack, and four spacings piled up
+// between them — table 16 + tabs 24 + block 30 + the related group's 56px top pad —
+// 126px of cream. Keep only 40px, from the related group. Scoped with :has so a
+// product without cross-selling keeps its bottom margin above the footer.
+@include media-breakpoint-down(lg) {
+    .product-page-top-section:has(+ .cross-selling-section) {
+        .cms-block-product-description-reviews,
+        .cms-block-product-description-reviews .product-detail-tabs,
+        .cms-block-product-description-reviews .product-detail-properties-table {
+            margin-bottom: 0;
+        }
+    }
+
+    .product-page-top-section + .cross-selling-section .sivanka-related__group:first-child {
+        padding-top: 40px;
+    }
+}
+
 .cms-block-other-buy-products-slider, .cms-block-related-products-slider{
     .cms-element-other-buy-products-slider,
     .cms-element-related-products-slider {

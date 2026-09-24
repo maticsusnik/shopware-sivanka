@@ -9,14 +9,6 @@
     {% block optiweb_product_enquiry_detail_actions %}
     <template #smart-bar-actions>
         <mt-button variant="secondary" @click="goBack">{{ $t('global.default.cancel') }}</mt-button>
-        <mt-button
-            v-if="enquiry && enquiry.status === 'new'"
-            variant="primary"
-            :is-loading="isSaving"
-            @click="markAsRead"
-        >
-            {{ $t('optiwebProductEnquiry.admin.detail.markAsRead') }}
-        </mt-button>
     </template>
     {% endblock %}
 
@@ -62,19 +54,11 @@
                 position-identifier="optiweb-product-enquiry-detail-meta"
                 title="Meta"
             >
-                <sw-container columns="1fr 1fr" gap="16px">
-                    <mt-text-field
-                        :model-value="formattedCreatedAt"
-                        label="Submitted"
-                        disabled
-                    />
-                    <div>
-                        <label>Status</label>
-                        <sw-label :variant="enquiry.status === 'new' ? 'warning' : 'success'" appearance="pill">
-                            {{ $t('optiwebProductEnquiry.admin.detail.status.' + enquiry.status) }}
-                        </sw-label>
-                    </div>
-                </sw-container>
+                <mt-text-field
+                    :model-value="formattedCreatedAt"
+                    label="Submitted"
+                    disabled
+                />
             </mt-card>
         </template>
     </template>
