@@ -384,35 +384,27 @@ legend.card-title {
 }
 
 
-// Below 1280 the reference grows the product-card CTA by padding — 14px all round,
-// a 49px box — rather than letting the generic 46px touch floor clamp it there.
-// `.product-box.card` (0,3,0) sets the desktop padding, so matching `.product-box`
-// alone here would lose on specificity however late the rule sits.
+// Below 1280 every product-card CTA — "V košarico", "Pošlji povpraševanje", "Podrobnosti" —
+// uses exactly the same type and padding: 14/18, 8px, no letter-spacing. The generic 46px
+// touch floor (_reset.scss) is the minimum height. Labels may wrap: "Pošlji povpraševanje"
+// is too long for one line in a 117–150px phone card and ran past the border when forced.
+// `.product-box.card` (0,3,0) sets the desktop values, so matching `.product-box` alone here
+// would lose on specificity however late the rule sits.
 @media (max-width: $sv-bp-touch) {
     .product-box,
     .product-box.card {
         .btn-buy,
         .btn.btn-primary,
         .btn-send-enquiry,
-        .btn.btn-send-enquiry {
-            padding: 14px;
-        }
-    }
-}
-
-// "Pošlji povpraševanje" is the longest CTA label in the shop and wrapped to two lines
-// inside the 148–250px phone cards. Same 49px-tall box, narrower side padding and a
-// slightly smaller label keep it on one line.
-@media (max-width: $sv-bp-phone) {
-    .product-box,
-    .product-box.card {
-        .btn-send-enquiry,
-        .btn.btn-send-enquiry {
-            padding: 14px 6px;
-            font-size: 12.5px;
-            line-height: 19px;
-            letter-spacing: -0.1px;
-            white-space: nowrap;
+        .btn.btn-send-enquiry,
+        .btn.btn-detail {
+            min-height: $sv-touch;
+            padding: 8px;
+            font-size: 14px;
+            line-height: 18px;
+            letter-spacing: normal;
+            white-space: normal;
+            text-wrap: balance;
         }
     }
 }

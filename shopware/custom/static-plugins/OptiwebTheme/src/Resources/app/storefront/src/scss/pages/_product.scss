@@ -559,6 +559,10 @@
             max-width: 3.25rem;
             flex: 0 0 auto;
             text-align: center;
+            // The global cream .form-control fill drew a shorter rounded box inside
+            // the white stepper frame.
+            background: transparent;
+            border-radius: 0;
         }
 
         .input-group-text {
