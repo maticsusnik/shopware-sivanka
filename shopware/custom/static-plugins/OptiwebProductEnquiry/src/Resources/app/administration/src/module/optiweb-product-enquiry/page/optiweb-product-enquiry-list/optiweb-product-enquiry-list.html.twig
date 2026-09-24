@@ -2,12 +2,7 @@
 <sw-page class="optiweb-product-enquiry-list">
     {% block optiweb_product_enquiry_list_header %}
     <template #smart-bar-header>
-        <h2>
-            {{ $t('optiwebProductEnquiry.admin.list.title') }}
-            <sw-label v-if="unreadCount > 0" variant="warning" appearance="pill" class="ml-2">
-                {{ unreadCount }}
-            </sw-label>
-        </h2>
+        <h2>{{ $t('optiwebProductEnquiry.admin.list.title') }}</h2>
     </template>
     {% endblock %}
 
@@ -30,7 +25,6 @@
                 { property: 'email', label: $t('optiwebProductEnquiry.admin.list.columns.email'), sortable: true },
                 { property: 'productName', label: $t('optiwebProductEnquiry.admin.list.columns.product') },
                 { property: 'quantity', label: $t('optiwebProductEnquiry.admin.list.columns.quantity') },
-                { property: 'status', label: $t('optiwebProductEnquiry.admin.list.columns.status') },
             ]"
             :is-loading="isLoading"
             :show-actions="true"
@@ -56,11 +50,6 @@
             <template #column-quantity="{ item }">
                 <template v-if="item.productCount > 1">&mdash;</template>
                 <template v-else>{{ item.quantity }}</template>
-            </template>
-            <template #column-status="{ item }">
-                <sw-label :variant="item.status === 'new' ? 'warning' : 'success'" appearance="pill">
-                    {{ $t('optiwebProductEnquiry.admin.detail.status.' + item.status) }}
-                </sw-label>
             </template>
             <template #actions="{ item }">
                 <sw-context-menu-item @click="onRowClick(item)">

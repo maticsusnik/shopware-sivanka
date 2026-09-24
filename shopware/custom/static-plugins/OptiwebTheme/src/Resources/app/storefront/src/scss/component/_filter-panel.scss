@@ -13,6 +13,14 @@
     gap: 16px;
 }
 
+// A filter that has no results left for the current selection gets a disabled
+// toggle, which is hidden below — but its card kept its border and padding, so an
+// empty 24px strip stayed behind for every one. Hide the whole card instead.
+.filter-panel-item:has(> .filter-panel-item-toggle.disabled),
+.filter-panel-item:has(> .filter-panel-item-toggle:disabled) {
+    display: none !important;
+}
+
 .is--sidebar .filter-panel-item {
     // Each filter becomes its own rounded, bordered card (design mock)
     margin: 0;

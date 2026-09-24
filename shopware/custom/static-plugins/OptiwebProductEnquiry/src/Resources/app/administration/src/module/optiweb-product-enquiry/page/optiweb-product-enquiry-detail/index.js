@@ -19,9 +19,8 @@ Shopware.Component.register('optiweb-product-enquiry-detail', {
     setup() {
         const enquiry = ref(null);
         const isLoading = ref(true);
-        const isSaving = ref(false);
 
-        return { enquiry, isLoading, isSaving };
+        return { enquiry, isLoading };
     },
 
     computed: {
@@ -88,14 +87,6 @@ Shopware.Component.register('optiweb-product-enquiry-detail', {
 
             this.enquiry = await this.repository.get(this.enquiryId, Shopware.Context.api, criteria);
             this.isLoading = false;
-        },
-
-        async markAsRead() {
-            if (!this.enquiry) return;
-            this.isSaving = true;
-            this.enquiry.status = 'read';
-            await this.repository.save(this.enquiry, Shopware.Context.api);
-            this.isSaving = false;
         },
 
         goBack() {

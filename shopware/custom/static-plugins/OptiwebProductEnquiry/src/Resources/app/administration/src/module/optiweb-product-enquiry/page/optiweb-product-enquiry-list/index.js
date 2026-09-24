@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import template from './optiweb-product-enquiry-list.html.twig';
 import './optiweb-product-enquiry-list.scss';
 
@@ -18,9 +18,8 @@ Shopware.Component.register('optiweb-product-enquiry-list', {
         const sortBy = ref('createdAt');
         const sortDirection = ref('DESC');
         const searchTerm = ref('');
-        const unreadCount = computed(() => enquiries.value.filter((e) => e.status === 'new').length);
 
-        return { enquiries, isLoading, total, page, limit, sortBy, sortDirection, searchTerm, unreadCount };
+        return { enquiries, isLoading, total, page, limit, sortBy, sortDirection, searchTerm };
     },
 
     computed: {
