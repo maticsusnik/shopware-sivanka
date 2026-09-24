@@ -200,8 +200,11 @@
 
     // The enquiry button stands in for "Dodaj v košarico" on an unbuyable product,
     // so it carries the same metrics — otherwise the two cards differ by 2px.
+    // "Podrobnosti" (products with variants, core `.btn-light.btn-detail`) gets the
+    // same outline; it rendered as a cream core button with black 16px text.
     .btn-send-enquiry,
-    .btn.btn-send-enquiry {
+    .btn.btn-send-enquiry,
+    .btn.btn-detail {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -313,6 +316,8 @@
         width: 32px;
         height: 32px;
         min-width: 32px;
+        // The global 46px touch floor (_reset.scss) stretched the circle into an oval.
+        min-height: 32px;
         padding: 0;
         border-radius: $sv-r-round;
         background: $sv-white;
