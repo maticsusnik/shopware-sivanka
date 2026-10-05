@@ -1,0 +1,168 @@
+name: Build & Deploy (production)
+
+# Production is a NEOSERV cPanel account: no Docker, no Python, no Composer, no
+# Node. CI builds a ready-to-run shopware/ tree with PHP 8.4 (same as the host),
+# ships it as a tarball over SSH and runs deploy/remote-deploy.sh there.
+# Storefront/admin JS of the custom plugins is built locally and committed, the
+# same as for the dev image, so there is no npm build here.
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "deploy = build and ship this ref, rollback = re-activate the previous release"
+        type: choice
+        options: [deploy, rollback]
+        default: deploy
+
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  PHP_VERSION: "8.4"
+  # Required by composer.lock / Shopware, mirrors what is enabled in cPanel's PHP Selector.
+  PHP_EXTENSIONS: bcmath, ctype, curl, dom, fileinfo, gd, iconv, intl, mbstring, openssl, pdo_mysql, simplexml, sodium, xml, xmlreader, zip, zlib, redis
+  RELEASE_ID: ${{ github.sha }}
+
+jobs:
+  build:
+    name: Build release
+    if: github.event_name == 'push' || inputs.action == 'deploy'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: ${{ env.PHP_EXTENSIONS }}
+          tools: composer:v2
+          coverage: none
+
+      - name: Cache Composer downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/composer/files
+          key: composer-${{ hashFiles('shopware/composer.lock') }}
+          restore-keys: composer-
+
+      # --no-scripts: the auto-scripts (assets:install) boot the kernel, which
+      # needs the database - remote-deploy.sh runs them on the host instead.
+      - name: Composer install (no dev)
+        working-directory: shopware
+        run: composer install --no-dev --no-scripts --no-interaction --no-progress --prefer-dist --optimize-autoloader
+
+      - name: Package
+        working-directory: shopware
+        run: |
+          set -euo pipefail
+          tar -czf "$RUNNER_TEMP/$RELEASE_ID.tgz" \
+            --exclude='./.env.local' \
+            --exclude='./.idea' \
+            --exclude='./var/cache/*' \
+            --exclude='./var/log/*' \
+            --exclude='./files/*' \
+            --exclude='./public/media' \
+            --exclude='./public/thumbnail' \
+            --exclude='./public/sitemap' \
+            --exclude='./public/theme' \
+            --exclude='./public/bundles' \
+            --exclude='node_modules' \
+            .
+          ls -lh "$RUNNER_TEMP/$RELEASE_ID.tgz"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release
+          path: ${{ runner.temp }}/${{ env.RELEASE_ID }}.tgz
+          retention-days: 7
+
+  deploy:
+    name: Deploy to production
+    needs: build
+    if: always() && (needs.build.result == 'success' || (needs.build.result == 'skipped' && inputs.action == 'rollback'))
+    runs-on: ubuntu-latest
+    # Add yourself as a required reviewer on this environment (Settings → Environments)
+    # so nothing reaches production without a click.
+    environment:
+      name: production
+      url: ${{ vars.PROD_URL }}
+    env:
+      SSH_TARGET: ${{ vars.PROD_SSH_USER }}@${{ vars.PROD_HOST }}
+      SSH_PORT: ${{ vars.PROD_SSH_PORT }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download artifact
+        if: needs.build.result == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          name: release
+          path: ${{ runner.temp }}/release
+
+      - name: Prepare SSH
+        shell: bash
+        run: |
+          set -euo pipefail
+          : "${{ vars.PROD_HOST }}" "${{ vars.PROD_SSH_PORT }}" "${{ vars.PROD_SSH_USER }}"
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s' "${{ secrets.PROD_SSH_PRIVATE_KEY_B64 }}" | base64 -d > ~/.ssh/id_deploy || {
+            echo "::error::PROD_SSH_PRIVATE_KEY_B64 is missing or not valid base64"; exit 1; }
+          chmod 600 ~/.ssh/id_deploy
+          # Pinned host key, no trust-on-first-use.
+          printf '%s\n' "${{ secrets.PROD_SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          [ -s ~/.ssh/known_hosts ] || { echo "::error::PROD_SSH_KNOWN_HOSTS is empty"; exit 1; }
+          chmod 644 ~/.ssh/known_hosts
+          cat > ~/.ssh/config <<EOF
+          Host prod
+            HostName ${{ vars.PROD_HOST }}
+            Port ${{ vars.PROD_SSH_PORT }}
+            User ${{ vars.PROD_SSH_USER }}
+            IdentityFile ~/.ssh/id_deploy
+            IdentitiesOnly yes
+            BatchMode yes
+            StrictHostKeyChecking yes
+            ServerAliveInterval 15
+            ServerAliveCountMax 4
+            ConnectTimeout 15
+          EOF
+          ssh prod 'echo SSH_OK'
+
+      - name: Upload release and deploy script
+        if: needs.build.result == 'success'
+        run: |
+          set -euo pipefail
+          ssh prod 'mkdir -p ~/sivanka/uploads ~/sivanka/bin'
+          rsync -e ssh --chmod=F755 deploy/remote-deploy.sh prod:sivanka/bin/remote-deploy.sh
+          rsync -e ssh --partial "$RUNNER_TEMP/release/$RELEASE_ID.tgz" "prod:sivanka/uploads/$RELEASE_ID.tgz"
+
+      - name: Activate release
+        if: needs.build.result == 'success'
+        run: ssh prod "~/sivanka/bin/remote-deploy.sh deploy $RELEASE_ID"
+
+      - name: Roll back
+        if: needs.build.result == 'skipped' && inputs.action == 'rollback'
+        run: ssh prod '~/sivanka/bin/remote-deploy.sh rollback'
+
+      - name: Smoke test
+        if: vars.PROD_URL != ''
+        run: |
+          set -euo pipefail
+          for i in 1 2 3 4 5; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 "${{ vars.PROD_URL }}") || true
+            echo "Attempt $i: HTTP $code"
+            [ "$code" = "200" ] && exit 0
+            sleep 10
+          done
+          echo "::error::${{ vars.PROD_URL }} did not answer 200 - consider running this workflow with action=rollback"
+          exit 1

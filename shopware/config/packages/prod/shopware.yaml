@@ -1,0 +1,6 @@
+shopware:
+    # Production (shared hosting) has no long-running worker: the queue and the
+    # scheduled tasks are consumed by cron (deploy/README.md), so the admin must
+    # not poll the queue from the browser.
+    admin_worker:
+        enable_admin_worker: false
