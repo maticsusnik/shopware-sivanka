@@ -28,8 +28,10 @@ HISTORY="$APP_BASE/history"
 # Directories that must outlive a release. public/theme is shared so the old
 # release keeps serving its CSS/JS while the new one compiles a new theme seed;
 # Shopware deletes stale theme folders itself, delayed, through the queue.
+# public/.well-known holds cPanel AutoSSL validation files, which must survive deploys.
 SHARED_DIRS=(
     files
+    public/.well-known
     public/media
     public/thumbnail
     public/sitemap

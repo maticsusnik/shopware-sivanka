@@ -47,7 +47,7 @@ problem.
 ```
 ~/sivanka/
   releases/<sha>/      one shopware/ tree per deploy
-  shared/              .env.local, files/, public/{media,thumbnail,sitemap,theme},
+  shared/              .env.local, files/, public/{.well-known,media,thumbnail,sitemap,theme},
                        var/{log,optiweb-logs,optiweb-sync-locks}, config/jwt
   current -> releases/<sha>
   history              ids that went live (used by rollback)
@@ -82,6 +82,7 @@ one explicitly.
 6. **First deploy.** Push to `main` (or *Run workflow*) and approve.
 7. **Point the web root at the release.** This is done once and is reversible:
    ```bash
+   cp -a ~/public_html/.well-known/. ~/sivanka/shared/public/.well-known/
    mv ~/public_html ~/public_html.orig
    ln -s ~/sivanka/current/public ~/public_html
    ```
