@@ -1,0 +1,13 @@
+{% block sw_cms_block_sivanka_service_hero %}
+<div class="sw-cms-block-sivanka-service-hero">
+    <div class="sw-cms-block-sivanka-service-hero__slot sw-cms-block-sivanka-service-hero__slot--intro">
+        <slot name="intro">{% block sw_cms_block_sivanka_service_hero_slot_intro %}{% endblock %}</slot>
+    </div>
+    <div class="sw-cms-block-sivanka-service-hero__slot sw-cms-block-sivanka-service-hero__slot--actions">
+        <slot name="actions">{% block sw_cms_block_sivanka_service_hero_slot_actions %}{% endblock %}</slot>
+    </div>
+    <div class="sw-cms-block-sivanka-service-hero__slot sw-cms-block-sivanka-service-hero__slot--image">
+        <slot name="image">{% block sw_cms_block_sivanka_service_hero_slot_image %}{% endblock %}</slot>
+    </div>
+</div>
+{% endblock %}

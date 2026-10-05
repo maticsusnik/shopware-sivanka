@@ -1,0 +1,135 @@
+{
+    "name": "OptiwebTheme",
+    "author": "Optiweb",
+    "previewMedia": "app/storefront/dist/assets/Optiweb.jpg",
+    "views": [
+        "@Storefront",
+        "@Plugins",
+        "@OptiwebTheme"
+    ],
+    "style": [
+        "app/storefront/src/scss/overrides.scss",
+        "@Storefront",
+        "app/storefront/src/scss/base.scss"
+    ],
+    "script": [
+        "@Storefront",
+        "app/storefront/dist/storefront/js/optiweb-theme/optiweb-theme.js"
+    ],
+    "asset": [
+        "@Storefront",
+        "app/storefront/src/assets"
+    ],
+    "iconSets": {
+        "ow": "public/assets/images"
+    },
+    "config": {
+        "fields": {
+            "sw-color-brand-primary": {
+                "type": "color",
+                "value": "#8E2247",
+                "editable": true,
+                "block": "themeColors",
+                "order": 100
+            },
+            "sw-color-brand-secondary": {
+                "type": "color",
+                "value": "#6B5A55",
+                "editable": true,
+                "block": "themeColors",
+                "order": 200
+            },
+            "sw-border-color": {
+                "type": "color",
+                "value": "#EADFD1",
+                "editable": true,
+                "block": "themeColors",
+                "order": 300
+            },
+            "sw-background-color": {
+                "type": "color",
+                "value": "#FDF8F2",
+                "editable": true,
+                "block": "themeColors",
+                "order": 400
+            },
+            "sw-text-color": {
+                "type": "color",
+                "value": "#2E1A20",
+                "editable": true,
+                "block": "themeColors",
+                "order": 500
+            },
+            "sw-headline-color": {
+                "type": "color",
+                "value": "#5C1229",
+                "editable": true,
+                "block": "themeColors",
+                "order": 600
+            },
+            "sw-color-price": {
+                "type": "color",
+                "value": "#2E1A20",
+                "editable": true,
+                "block": "themeColors",
+                "order": 700
+            },
+            "sw-color-buy-button": {
+                "type": "color",
+                "value": "#8E2247",
+                "editable": true,
+                "block": "themeColors",
+                "order": 800
+            },
+            "sw-color-buy-button-text": {
+                "type": "color",
+                "value": "#FFFFFF",
+                "editable": true,
+                "block": "themeColors",
+                "order": 900
+            },
+            "sw-color-success": {
+                "type": "color",
+                "value": "#2E7D53",
+                "editable": true,
+                "block": "themeColors",
+                "order": 1000
+            },
+            "sw-color-info": {
+                "type": "color",
+                "value": "#6B5A55",
+                "editable": true,
+                "block": "themeColors",
+                "order": 1100
+            },
+            "sw-color-warning": {
+                "type": "color",
+                "value": "#8E2247",
+                "editable": true,
+                "block": "themeColors",
+                "order": 1200
+            },
+            "sw-color-danger": {
+                "type": "color",
+                "value": "#8E2247",
+                "editable": true,
+                "block": "themeColors",
+                "order": 1300
+            },
+            "sw-font-family-base": {
+                "type": "fontFamily",
+                "value": "'Inter', sans-serif",
+                "editable": true,
+                "block": "typography",
+                "order": 100
+            },
+            "sw-font-family-headline": {
+                "type": "fontFamily",
+                "value": "'Playfair Display', Georgia, serif",
+                "editable": true,
+                "block": "typography",
+                "order": 200
+            }
+        }
+    }
+}

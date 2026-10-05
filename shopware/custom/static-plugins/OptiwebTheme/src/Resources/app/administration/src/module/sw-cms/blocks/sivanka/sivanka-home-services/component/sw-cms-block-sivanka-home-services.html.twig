@@ -1,0 +1,16 @@
+{% block sw_cms_block_sivanka_home_services %}
+<div class="sw-cms-block-sivanka-home-services">
+    <div class="sw-cms-block-sivanka-home-services__heading">
+        <slot name="heading">{% block sw_cms_block_sivanka_home_services_slot_heading %}{% endblock %}</slot>
+    </div>
+    <div class="sw-cms-block-sivanka-home-services__grid">
+        <div><slot name="cardOne">{% block sw_cms_block_sivanka_home_services_slot_cardone %}{% endblock %}</slot></div>
+        <div><slot name="cardTwo">{% block sw_cms_block_sivanka_home_services_slot_cardtwo %}{% endblock %}</slot></div>
+        <div><slot name="cardThree">{% block sw_cms_block_sivanka_home_services_slot_cardthree %}{% endblock %}</slot></div>
+        <div><slot name="cardFour">{% block sw_cms_block_sivanka_home_services_slot_cardfour %}{% endblock %}</slot></div>
+    </div>
+    <div class="sw-cms-block-sivanka-home-services__actions">
+        <slot name="actions">{% block sw_cms_block_sivanka_home_services_slot_actions %}{% endblock %}</slot>
+    </div>
+</div>
+{% endblock %}

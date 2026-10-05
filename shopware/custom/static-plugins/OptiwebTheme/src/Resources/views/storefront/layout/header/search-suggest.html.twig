@@ -1,0 +1,10 @@
+{% sw_extends '@Storefront/storefront/layout/header/search-suggest.html.twig' %}
+
+{# The suggest dropdown prints the price straight from `calculatedPrice` and never goes
+   through the product-card price blocks, so the "Hide Price" flag (`_isHidePrice`, set
+   by ProductAvailabilitySubscriber) has to be checked here as well. #}
+{% block layout_search_suggest_result_price %}
+    {% if not (product.customFields._isHidePrice ?? false) %}
+        {{ parent() }}
+    {% endif %}
+{% endblock %}

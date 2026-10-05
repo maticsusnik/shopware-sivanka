@@ -1,0 +1,13 @@
+<div class="view d-none d-lg-flex align-items-center" data-category-view="true" data-view-current='{{ categoryView |json_encode }}'>
+    <div class="change-view view-list" data-view="list">
+        {% sw_icon 'list-view' style {
+            'pack': 'ow', 'size': 'md'
+        } %}
+    </div>
+    <div class="change-view view-grid active" data-view="grid">
+        {% sw_icon 'grid-view' style {
+            'pack': 'ow', 'size': 'md'
+        } %}
+    </div>
+
+</div>

@@ -1,0 +1,36 @@
+{% block ow_url %}
+<div class="sw-field sw-block-field sw-field--textarea sw-field--default">
+    <div v-if="label" class="sw-field__label">
+        {{ label }}
+    </div>
+    <div class="sw-block-field__block-multifield">
+        <div class="ow-layout">
+            <div class="ow-layout__two">
+                <mt-select label="Link type" v-model="linkType" :options="linkSelector"/>
+            </div>
+            <div class="ow-layout__four" v-if="linkType === LINK_TYPE_EXTERNAL">
+                <mt-text-field label="Button URL" v-model="linkExternal"></mt-text-field>
+            </div>
+        </div>
+        <div v-if="linkType === LINK_TYPE_INTERNAL" class="sw-block-field__block-multifield">
+            <mt-select label="Select link type"
+                       :model-value="linkInternal.entity"
+                       :options="internalLinkSelector"
+                       @update:model-value="selectLinkTypeEvent"/>
+
+            <sw-entity-single-select v-if="linkInternal.entity === ENTITY_TYPE_CATEGORY"
+                                     entity="category"
+                                     label="Select Category"
+                                     show-clearable-button
+                                     v-model:value="linkInternal.value"/>
+
+            <sw-entity-single-select v-if="linkInternal.entity === ENTITY_TYPE_PRODUCT"
+                                     entity="product"
+                                     label="Select Product"
+                                     show-clearable-button
+                                     v-model:value="linkInternal.value"/>
+        </div>
+        <mt-text-field v-if="!hideText" label="Button text" v-model="text"></mt-text-field>
+    </div>
+</div>
+{% endblock %}

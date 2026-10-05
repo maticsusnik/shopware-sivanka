@@ -1,0 +1,121 @@
+
+$overlapping-cols: 2; //layout 'text-right-over-image' - for how many cols text overlaps image
+
+.yellow-container {
+    background: $sv-bordo;
+    box-shadow: $sv-shadow-deep;
+    border-radius: $sv-r-panel;
+    padding: 38px 40px;
+
+    .title,
+    h1, h2, h3, h4 {
+        font-family: $sv-serif;
+        font-size: 27px;
+        font-weight: 600;
+        line-height: 1.2;
+        color: $sv-white;
+        margin-bottom: 14px;
+    }
+
+    .content,
+    p {
+        font-family: $sv-sans;
+        font-size: 15px;
+        line-height: 1.6;
+        color: rgba(255, 255, 255, 0.9);
+        margin-bottom: 22px;
+    }
+
+    .btn {
+        display: inline-block;
+        border-radius: $sv-r-btn;
+        background: $sv-white;
+        color: $sv-bordo;
+        font-family: $sv-sans;
+        font-weight: 600;
+        font-size: 15px;
+        padding: 12px 28px;
+        border: none;
+
+        &:hover,
+        &:focus {
+            background: $sv-white;
+            color: $sv-bordo-hover;
+        }
+    }
+}
+
+// Round the lifestyle image behind the overlapping card
+.cms-block-img-text .image-container {
+    img,
+    .cms-image {
+        border-radius: $sv-r-panel !important;
+        overflow: hidden;
+    }
+}
+
+.content-container {
+    @include padding('top', 40, false);
+    @include padding('bottom', 40, false);
+
+    @include media-breakpoint-down(md) {
+        padding-inline: 1rem;
+    }
+}
+
+.image-container {
+    .justify-content-start, .align-self-center, .is-stretch {
+        width: 100%;
+    }
+}
+
+.cms-block-text-button__inner,
+.cms-block-button__inner,
+.cms-block-img-text__inner {
+    @include media-breakpoint-down(md) {
+        &, & > .container {
+            padding: 0;
+        }
+    }
+}
+
+.cms-block-img-text {
+    @include margin('bottom', $general-element-margin, true);
+    @include margin('top', $general-element-margin, true);
+
+    .overlap-right {
+        @include media-breakpoint-up(md) {
+            flex-wrap: nowrap;
+        }
+
+        .img-col {
+            margin-right: calc(-#{$overlapping-cols} / 12 * 100%);
+
+            img {
+                box-shadow: $sv-shadow-deep;
+            }
+        }
+
+        .content-col {
+            z-index: 1;
+        }
+    }
+
+    @include media-breakpoint-down(md) {
+        margin-block: 0;
+
+        .img-col {
+            order: 1;
+            margin-right: 0 !important;
+        }
+        .content-col {
+            order: 2;
+        }
+    }
+}
+
+.cms-element-title-content-button__inner {
+    p {
+        @include fontSpecs(20, 32, false, 0.3, true);
+    }
+}

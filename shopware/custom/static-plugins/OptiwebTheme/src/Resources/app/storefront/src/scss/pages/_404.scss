@@ -1,0 +1,41 @@
+// 404 page — the shop's own type roles instead of the old theme's 64/700 headline.
+// The template renders `<main class="error_404">` directly (no .content-main
+// wrapper), so the old `.is-ctl-error .content-main .error_404` selectors never
+// matched and the page fell back to bare Bootstrap: heading flush against the
+// header, full-width ink paragraph, an underlined link for the only action.
+.error_404 {
+    padding-block: 72px 96px;
+    text-align: center;
+
+    @media (max-width: $sv-bp-phone) {
+        padding-block: 44px 64px;
+    }
+
+    h1 {
+        @include sv-h1-page;
+        margin: 0 0 16px;
+    }
+
+    p {
+        @include sv-lead;
+        max-width: 560px;
+        margin: 0 auto 28px;
+        text-wrap: pretty;
+    }
+
+    // Same primary CTA as the rest of the shop (component/_buttons.scss).
+    .sv-btn .icon {
+        width: 16px;
+        height: 16px;
+        color: currentColor;
+
+        svg {
+            top: 0;
+        }
+    }
+
+    img {
+        margin-top: 16px;
+        border-radius: $sv-r-panel;
+    }
+}

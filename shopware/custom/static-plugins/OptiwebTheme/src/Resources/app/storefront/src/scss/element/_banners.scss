@@ -1,0 +1,249 @@
+// ---- Sivanka Banners Element ----
+
+.cms-block-banners {
+    margin-bottom: 50px;
+}
+
+.cms-element-banners {
+    &__title {
+        font-family: $sv-serif;
+        font-size: 32px;
+        font-weight: 600;
+        margin-bottom: 32px;
+        color: $sv-ink;
+    }
+
+    &__grid {
+        display: grid;
+        gap: 22px;
+
+        &.per-row-1 { grid-template-columns: 1fr; }
+        &.per-row-2 { grid-template-columns: 1fr 1fr; }
+        &.per-row-3 { grid-template-columns: 1.35fr 1fr 1.35fr; }
+
+        @include media-breakpoint-down(lg) {
+            &.per-row-3 { grid-template-columns: 1fr 1fr; }
+        }
+
+        @include media-breakpoint-down(md) {
+            &.per-row-2,
+            &.per-row-3 { grid-template-columns: 1fr; }
+        }
+    }
+
+    // Legacy plain banner item
+    &__item {
+        border-radius: $sv-r-panel;
+        overflow: hidden;
+    }
+
+    &__image {
+        position: relative;
+        display: block;
+        aspect-ratio: 16 / 9;
+        overflow: hidden;
+        border-radius: $sv-r-panel;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+
+    // Legacy text overlay
+    &__text {
+        position: absolute;
+        padding: 24px;
+        max-width: 60%;
+        color: $sv-white;
+
+        &.pos-v-top    { top: 0; }
+        &.pos-v-middle { top: 50%; transform: translateY(-50%); }
+        &.pos-v-bottom { bottom: 0; }
+        &.pos-h-left   { left: 0; text-align: left; }
+        &.pos-h-center { left: 50%; transform: translateX(-50%); text-align: center; }
+        &.pos-h-right  { right: 0; text-align: right; }
+        &.pos-v-middle.pos-h-center { transform: translate(-50%, -50%); }
+    }
+}
+
+// ---- Shared Sivanka Banner Base ----
+.sivanka-banner {
+    border-radius: $sv-r-panel;
+    overflow: hidden;
+    position: relative;
+    min-height: 268px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 34px;
+    text-decoration: none;
+    color: $sv-ink;
+
+    h3 {
+        font-family: $sv-serif;
+        font-size: 25px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        line-height: 1.15;
+    }
+
+    p {
+        font-family: $sv-sans;
+        font-size: 13.5px;
+        color: $sv-ink;
+        margin-bottom: 18px;
+        max-width: 30ch;
+    }
+
+    // Image background fills behind content
+    &__art {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        overflow: hidden;
+
+        picture { display: block; width: 100%; height: 100%; }
+        img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    }
+
+    &__inner,
+    &__card {
+        position: relative;
+        z-index: 1;
+    }
+
+    // ---- image-cta (b1) ----
+    &--image-cta {
+        color: $sv-ink;
+
+        &:hover {
+            text-decoration: none;
+        }
+
+        &::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            background: linear-gradient(90deg, rgba(255, 241, 247, 0.96) 0%, rgba(255, 241, 247, 0.7) 42%, rgba(255, 241, 247, 0) 78%);
+        }
+
+        .sivanka-banner__inner { z-index: 1; max-width: 66%; }
+
+        // Text sits left, so the artwork is anchored right (the handoff's `xMaxYMid slice`)
+        // and the motif survives the crop instead of being centred under the copy.
+        .sivanka-banner__art img { object-position: right center; }
+
+        h3 { font-size: 26px; color: $sv-bordo-head; }
+        p  { color: $sv-ink-muted; }
+    }
+
+    // ---- accent-icon (b2) ----
+    &--accent-icon {
+        align-items: flex-start;
+        text-align: left;
+        padding: 34px;
+        // design gradient (beats the inline bgColor fallback)
+        background: linear-gradient(160deg, $sv-bordo-tint, $sv-cream) !important;
+
+        h3 { font-family: $sv-serif; font-size: 23px; color: $sv-bordo-head; }
+        p  { color: $sv-ink-muted; }
+    }
+
+    &__icon-box {
+        width: 46px;
+        height: 46px;
+        border-radius: $sv-r-card;
+        background: $sv-white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: $sv-bordo;
+        margin-bottom: 16px;
+        flex-shrink: 0;
+        line-height: 0;
+
+        .icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            color: $sv-bordo;
+            line-height: 0;
+        }
+
+        svg {
+            display: block;
+            width: 22px;
+            height: 22px;
+        }
+    }
+
+    &__text-link {
+        font-family: $sv-sans;
+        font-size: 13.5px;
+        font-weight: 600;
+        color: $sv-bordo;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        margin-top: 14px;
+
+        &:hover {
+            gap: 11px;
+            color: $sv-bordo;
+        }
+    }
+
+    // ---- image-card (b3) ----
+    &--image-card {
+        padding: 0;
+
+        // The caption card floats top-right, so the artwork is anchored left
+        // (the handoff's `xMinYMid slice`).
+        .sivanka-banner__art img { object-position: left center; }
+
+        &::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            background: repeating-linear-gradient(115deg, rgba(255,255,255,.12) 0 2px, transparent 2px 15px);
+        }
+    }
+
+    &__card {
+        position: absolute;
+        right: 24px;
+        top: 24px;
+        background: $sv-white;
+        border-radius: $sv-r-panel;
+        padding: 20px 22px;
+        max-width: 210px;
+        box-shadow: $sv-shadow-deep;
+        z-index: 1;
+
+        h3 { font-family: $sv-serif; font-size: 19px; margin-bottom: 8px; color: $sv-bordo-head; }
+        p  { font-size: 13px; line-height: 1.5; color: $sv-ink-muted; margin-bottom: 14px; max-width: none; }
+    }
+
+    // Banner CTA buttons follow the link-CTA radius. The v2 references contain no
+    // pills at all — the old 999px was a v1 treatment.
+    .sivanka-btn-primary {
+        border-radius: $sv-r-btn;
+        padding: 11px 24px;
+        font-size: 14px;
+    }
+}
+
+// Eyebrow label — Inter 700 uppercase, above the title
+.sivanka-eyebrow {
+    @include sv-eyebrow;
+    color: $sv-bordo;
+    display: block;
+    margin-bottom: 10px;
+}

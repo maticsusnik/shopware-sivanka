@@ -1,0 +1,64 @@
+.product-price {
+    margin: 0;
+
+    &-info {
+        margin-top: 0;
+    }
+
+    .list-price {
+        padding: 0;
+    }
+
+    // Since 6.7.x core always renders `list-price-no-line-through` and drops the
+    // strike; the design keeps the "was" price struck next to the sale price
+    // (cards and PDP both render price-unit.html.twig).
+    .list-price.list-price-no-line-through .list-price-price {
+        text-decoration: line-through;
+    }
+}
+
+.regular-price .list-price,
+.pmc-price .list-price {
+    @include fontSpecs(14, 20, 400, false, false);
+}
+
+.final-price .list-price {
+    @include fontSpecs(16, 24, 700, false, false);
+}
+
+.product-price-info {
+    //@include margin('bottom', $spacer, false);
+    //@include margin('bottom', $spacer-big, true);
+}
+
+.product-price-wrapper {
+    @include margin('top', $spacer, false);
+
+}
+
+.product-price-unit,
+.product-cheapest-price {
+    min-height: unset;
+    height: auto;
+    margin: 0;
+}
+
+.product-price.with-regulation-price,
+.list-price-percentage {
+    display: none;
+}
+
+.ow-has-element-loader {
+    //.product-price-wrapper {
+    .final-price {
+        color: transparent;
+        animation: skeletonShimmer 1.5s linear 0s infinite normal forwards running;
+        background: linear-gradient(to right, $sv-border 8%, $sv-cream 18%, $sv-border 28%);
+        background-size: 800px 100px;
+        * {
+            color: transparent !important;
+        }
+    }
+}
+
+

@@ -1,0 +1,156 @@
+.cms-block-sivanka-product-slider {
+    max-width: $wide-content-width;
+    margin-inline: auto;
+    padding-inline: 0;
+    // The section rhythm lives on the block wrapper, same as the other home
+    // sections in block/_sivanka-home.scss. The 2rem bottom margin this used to
+    // carry put 32px of dead space under the rail and left the gap *above* the
+    // slider at zero, so each slider sat welded to the section before it.
+    padding-top: 57px;
+    margin-bottom: 0;
+
+    .icon > svg,
+    .icon > svg path {
+        fill: $sv-ink;
+    }
+
+    .content {
+        @include fontSpecs(14, 20, 400, false, false);
+
+        p, h5 {
+            margin: 0;
+        }
+    }
+
+    // Section H2 — the shared role. Margins move to .sivanka-sec-head so the
+    // flourish sits 12px under the heading and the 28px gap is below both.
+    .cms-element-title-paragraph {
+        @include sv-h2;
+        margin: 0;
+    }
+    .sivanka-product-slider-wrapper {
+        position: relative;
+
+        .row {
+            align-items: stretch !important;
+        }
+
+        .col-md-3 {
+            display: flex;
+        }
+    }
+
+    // Reference: the prev/next pair sits centred 26px BELOW the rail, never pinned
+    // to the top-right of the section. Size, shape and the colour split come from
+    // component/_slider-controls.scss; only the positioning reset is local.
+    .product-slider-controls-container {
+        position: static;
+        z-index: 2;
+    }
+
+    // Size, shape and the prev/next colour split live in
+    // component/_slider-controls.scss; only the positioning reset is local.
+    .product-slider-controls-prev,
+    .product-slider-controls-next {
+        position: relative;
+        inset: auto;
+        transform: none;
+
+        .icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: inherit;
+
+            svg {
+                top: 0;
+                width: 16px;
+                height: 16px;
+
+                path {
+                    fill: currentColor;
+                }
+            }
+        }
+
+        @include media-breakpoint-down(sm) {
+            width: 32px;
+            height: 32px;
+        }
+    }
+    
+    .sivanka-product-slider-left-image {
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+    }
+}
+
+.product-slider {
+    &-wrapper {
+        max-width: $content-width;
+        margin-inline: auto;
+    }
+
+    &-item {
+        img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+    }
+
+    &-image-wrapper {
+        position: relative;
+        height: 150px;
+
+    }
+
+    &-arrow {
+        position: absolute;
+        bottom: 1rem;
+        right: 1rem;
+        background: $sv-white;
+        font-size: 0;
+        padding: 0.5rem;
+
+        svg {
+            top: 0;
+        }
+    }
+
+    &-icon {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        height: 1.5rem;
+        width: 1.5rem;
+        z-index: 1;
+
+        img {
+            width: 100%;
+        }
+    }
+
+    .content {
+        margin-top: 0.75rem;
+    }
+}
+
+

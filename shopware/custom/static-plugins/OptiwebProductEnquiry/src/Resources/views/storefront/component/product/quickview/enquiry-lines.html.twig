@@ -1,0 +1,68 @@
+{#
+ # The product list inside a multi-product (wishlist) enquiry.
+ #
+ # Each row submits `products[<id>][qty]`, which is what the controller reads —
+ # the single-product modal keeps posting product_id/productQty instead.
+ #}
+{% block component_product_enquiry_lines %}
+    <div class="enquiry-lines">
+        {% block component_product_enquiry_lines_header %}
+            <div class="enquiry-lines-header">
+                {{ 'optiwebProductEnquiry.form.productsLabel'|trans }}
+                <span class="enquiry-lines-count">{{ products|length }}</span>
+            </div>
+        {% endblock %}
+
+        {% for product in products %}
+            {% block component_product_enquiry_line %}
+                <div class="enquiry-line">
+                    <div class="enquiry-line-image">
+                        {% if product.cover and product.cover.media %}
+                            {% sw_thumbnails 'enquiry-line-thumbnails' with {
+                                media: product.cover.media,
+                                sizes: { 'default': '150px' },
+                                attributes: {
+                                    class: 'img-fluid enquiry-line-img',
+                                    alt: (product.cover.translated.alt ?: ''),
+                                    title: (product.cover.translated.title ?: '')
+                                }
+                            } %}
+                        {% else %}
+                            {% sw_icon 'placeholder' style { 'size': 'fluid' } %}
+                        {% endif %}
+                    </div>
+
+                    <div class="enquiry-line-info">
+                        <div class="enquiry-line-name">{{ product.translated.name }}</div>
+                        {% if product.productNumber %}
+                            <div class="enquiry-line-number">
+                                <span class="product-number-label">{{ 'detail.ordernumberLabel'|trans }}</span>
+                                <span class="product-number-value">{{ product.productNumber }}</span>
+                            </div>
+                        {% endif %}
+                        {% if product.options %}
+                            {% set productOption = product.options|first %}
+                            {% if productOption %}
+                                <input type="hidden" name="products[{{ product.id }}][option]" value="{{ productOption.translated.name }}"/>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+
+                    <div class="enquiry-line-qty">
+                        <label class="form-label" for="qty-{{ product.id }}">
+                            {{ 'optiwebProductEnquiry.form.qtyLabel'|trans }}
+                        </label>
+                        <input type="number"
+                               id="qty-{{ product.id }}"
+                               name="products[{{ product.id }}][qty]"
+                               class="form-control"
+                               value="1"
+                               min="1"
+                               step="1"
+                               required>
+                    </div>
+                </div>
+            {% endblock %}
+        {% endfor %}
+    </div>
+{% endblock %}

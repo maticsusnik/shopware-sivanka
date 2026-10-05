@@ -1,0 +1,134 @@
+{% block element_banners %}
+{% set data = element.data %}
+{% if data is not empty %}
+<section class="cms-element-banners">
+    {% if data.sectionTitle %}
+        <h2 class="cms-element-title-paragraph cms-element-banners__title">{{ data.sectionTitle }}</h2>
+    {% endif %}
+
+    {% set banners = data.banners %}
+    {% set perRow = data.perRow|default(3) %}
+
+    {# Every value rendered below comes from the block configuration — there is no
+       hardcoded fallback copy. The only default is the *layout* of a banner that has
+       never had a style picked (legacy content): it falls back to the design order
+       image-cta / accent-icon / image-card by position, so old banners keep their look
+       while the text stays whatever the administration holds. #}
+    {% set defaultStyles = ['image-cta', 'accent-icon', 'image-card'] %}
+
+    <div class="cms-element-banners__grid per-row-{{ perRow }}">
+        {% for banner in banners %}
+        {% set idx = loop.index0 %}
+        {# No style picked yet: a banner that already carries overlay text was authored
+           as the legacy "plain" banner, so keep it plain and do not drop its text.
+           An empty one takes the design layout for its position. #}
+        {% set style = banner.style ?: (banner.text ? 'plain' : (defaultStyles[idx]|default('image-cta'))) %}
+
+        {% set bEyebrow = banner.eyebrow|default('') %}
+        {% set bTitle   = banner.title|default('') %}
+        {% set bDesc    = banner.description|default('') %}
+        {% set bBtn     = banner.btnLabel|default('') %}
+        {% set bText    = banner.text|default('') %}
+        {% set bIcon    = banner.iconType ?: 'gift' %}
+        {% set bLink    = banner.link ?: '#' %}
+        {% set bBg      = banner.bgColor ?: '#F7DCE7' %}
+
+        {% if style == 'image-cta' %}
+            {# ---- b1: Image background + gradient + eyebrow + title + desc + button ---- #}
+            <a class="sivanka-banner sivanka-banner--image-cta" href="{{ bLink }}">
+                {% if banner.media %}
+                <div class="sivanka-banner__art">
+                    {% sw_thumbnails 'sivanka-banners' with {
+                        media: banner.media,
+                        sizes: { default: '900px' },
+                        attributes: { alt: bTitle|striptags }
+                    } %}
+                </div>
+                {% endif %}
+                {# Skip the copy panel entirely while nothing is filled in, so the banner
+                   reads as a clean image tile instead of an empty overlay. #}
+                {% if bEyebrow or bTitle or bDesc or bBtn %}
+                <div class="sivanka-banner__inner">
+                    {% if bEyebrow %}<span class="sivanka-eyebrow">{{ bEyebrow }}</span>{% endif %}
+                    {% if bTitle %}<h3>{{ bTitle }}</h3>{% endif %}
+                    {% if bDesc %}<p>{{ bDesc }}</p>{% endif %}
+                    {% if bBtn %}<span class="sivanka-btn-primary">{{ bBtn }}</span>{% endif %}
+                </div>
+                {% endif %}
+            </a>
+
+        {% elseif style == 'accent-icon' %}
+            {# ---- b2: Accent color background + icon + title + desc + text-link ---- #}
+            <div class="sivanka-banner sivanka-banner--accent-icon" style="background: {{ bBg }}">
+                <span class="sivanka-banner__icon-box">
+                    {% if bIcon == 'truck' %}
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h11v8H3zM14 9h4l3 3v3h-7z"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+                    {% elseif bIcon == 'shield' %}
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+                    {% elseif bIcon == 'star' %}
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    {% elseif bIcon == 'headphones' %}
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 13v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="13" width="4" height="6" rx="1.5"/><rect x="17" y="13" width="4" height="6" rx="1.5"/></svg>
+                    {% elseif bIcon == 'heart' %}
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-4.5-9.5-9C1 9 2.5 5.5 6 5.5c2 0 3.2 1.2 4 2.3.8-1.1 2-2.3 4-2.3 3.5 0 5 3.5 3.5 6.5C19 16.5 12 21 12 21Z"/></svg>
+                    {% else %}
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11h16v9H4zM4 7h16v4H4zM12 7V4M12 7c-2 0-4-1-4-2.5S10 3 12 7zM12 7c2 0 4-1 4-2.5S14 3 12 7zM12 11v9"/></svg>
+                    {% endif %}
+                </span>
+                {% if bTitle %}<h3>{{ bTitle }}</h3>{% endif %}
+                {% if bDesc %}<p>{{ bDesc }}</p>{% endif %}
+                {% if bText %}
+                <a class="sivanka-banner__text-link" href="{{ bLink }}">
+                    {{ bText }}
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="sivanka-banner__link-icon"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                </a>
+                {% endif %}
+            </div>
+
+        {% elseif style == 'image-card' %}
+            {# ---- b3: Image background + floating card overlay ---- #}
+            <a class="sivanka-banner sivanka-banner--image-card" href="{{ bLink }}">
+                {% if banner.media %}
+                <div class="sivanka-banner__art">
+                    {% sw_thumbnails 'sivanka-banners' with {
+                        media: banner.media,
+                        sizes: { default: '700px' },
+                        attributes: { alt: bTitle|striptags }
+                    } %}
+                </div>
+                {% endif %}
+                {% if bTitle or bDesc or bBtn %}
+                <div class="sivanka-banner__card">
+                    {% if bTitle %}<h3>{{ bTitle }}</h3>{% endif %}
+                    {% if bDesc %}<p>{{ bDesc }}</p>{% endif %}
+                    {% if bBtn %}<span class="sivanka-btn-primary sivanka-btn-primary--sm">{{ bBtn }}</span>{% endif %}
+                </div>
+                {% endif %}
+            </a>
+
+        {% else %}
+            {# ---- plain: image + text overlay (legacy/default) ---- #}
+            <div class="cms-element-banners__item">
+                {% if banner.media %}
+                    <a class="cms-element-banners__image" href="{{ bLink }}" aria-label="{{ bTitle|striptags|default(bText|striptags) }}">
+                        {% sw_thumbnails 'cms-banners' with {
+                            media: banner.media,
+                            sizes: { 'xs': '600px', 'sm': '768px', 'md': '1024px', 'lg': '1400px', 'xl': '1400px', 'xxl': '1400px' }
+                        } %}
+                        {% if banner.text %}
+                        {% set posV = banner.textPositionV|default('bottom') %}
+                        {% set posH = banner.textPositionH|default('left') %}
+                        <div class="cms-element-banners__text pos-v-{{ posV }} pos-h-{{ posH }}">
+                            {{ banner.text|raw }}
+                        </div>
+                        {% endif %}
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+{% endblock %}

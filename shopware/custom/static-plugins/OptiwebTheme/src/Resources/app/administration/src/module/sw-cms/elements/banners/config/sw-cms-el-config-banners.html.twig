@@ -1,0 +1,142 @@
+{% block sw_cms_el_config_banners %}
+    <div class="sw-cms-el-config-banners">
+
+        {% block sw_cms_el_config_banners_section %}
+        <mt-text-field
+            :label="'Section title'"
+            v-model="element.config.sectionTitle.value"
+            @update:model-value="onElementUpdate" />
+
+        <mt-select
+            :label="'Items per row'"
+            :options="perRowOptions"
+            v-model="element.config.perRow.value"
+            @update:model-value="onPerRowChange" />
+        {% endblock %}
+
+        {% block sw_cms_el_config_banners_header %}
+        <div class="sw-cms-el-config-banners__header">
+            <h3>Banners (max 3)</h3>
+            <mt-button
+                variant="secondary"
+                size="small"
+                :disabled="banners.length >= 3"
+                @click="addBanner">Add banner</mt-button>
+        </div>
+        {% endblock %}
+
+        {% block sw_cms_el_config_banners_items %}
+        <div class="sw-cms-el-config-banners__items">
+            <div
+                class="sw-cms-el-config-banners__item"
+                v-for="(banner, index) in banners"
+                :key="banner.id || index">
+
+                <div class="sw-cms-el-config-banners__item-head">
+                    <strong>Banner {{ index + 1 }}</strong>
+                    <mt-button
+                        variant="critical"
+                        size="small"
+                        @click="removeBanner(index)">Remove</mt-button>
+                </div>
+
+                {# --- layout --- #}
+                <mt-select
+                    :label="'Banner style'"
+                    :options="styleOptions"
+                    :model-value="effectiveStyle(banner, index)"
+                    @update:model-value="(value) => onStyleChange(banner, index, value)" />
+
+                {# --- image (all styles except accent-icon) --- #}
+                <sw-media-field
+                    v-if="showsImage(banner, index)"
+                    :label="'Background image'"
+                    :allowEmpty="true"
+                    v-model:value="banner.mediaId"
+                    @update:value="() => onBannerMediaChange(banner, index)" />
+
+                {# --- accent background + icon --- #}
+                <template v-if="showsAccent(banner, index)">
+                    <mt-text-field
+                        :label="'Background colour'"
+                        :help-text="'Any CSS colour or gradient, e.g. #F7DCE7'"
+                        v-model="banner.bgColor"
+                        @update:model-value="() => onBannerChange(banner, index)" />
+
+                    <mt-select
+                        :label="'Icon'"
+                        :options="iconOptions"
+                        v-model="banner.iconType"
+                        @update:model-value="() => onBannerChange(banner, index)" />
+                </template>
+
+                {# --- eyebrow (image-cta only) --- #}
+                <mt-text-field
+                    v-if="showsEyebrow(banner, index)"
+                    :label="'Eyebrow'"
+                    :help-text="'Small uppercase label above the title.'"
+                    v-model="banner.eyebrow"
+                    @update:model-value="() => onBannerChange(banner, index)" />
+
+                {# --- title + description --- #}
+                <template v-if="showsCopy(banner, index)">
+                    <mt-text-field
+                        :label="'Title'"
+                        v-model="banner.title"
+                        @update:model-value="() => onBannerChange(banner, index)" />
+
+                    <mt-textarea
+                        :label="'Description'"
+                        v-model="banner.description"
+                        @update:model-value="() => onBannerChange(banner, index)" />
+                </template>
+
+                {# --- button label (image-cta, image-card) --- #}
+                <mt-text-field
+                    v-if="showsButton(banner, index)"
+                    :label="'Button label'"
+                    :help-text="'Leave empty to hide the button.'"
+                    v-model="banner.btnLabel"
+                    @update:model-value="() => onBannerChange(banner, index)" />
+
+                {# --- text link label (accent-icon) --- #}
+                <mt-text-field
+                    v-if="showsAccent(banner, index)"
+                    :label="'Link label'"
+                    :help-text="'Leave empty to hide the text link.'"
+                    v-model="banner.text"
+                    @update:model-value="() => onBannerChange(banner, index)" />
+
+                {# --- link target (all styles) --- #}
+                <div class="sw-cms-el-config-banners__url">
+                    <div class="sw-field__label">Link</div>
+                    <sw-dynamic-url-field
+                        v-model:value="banner.link"
+                        @update:value="() => onBannerChange(banner, index)" />
+                </div>
+
+                {# --- plain style: free HTML overlay + its position --- #}
+                <template v-if="showsOverlay(banner, index)">
+                    <mt-text-editor
+                        :label="'Overlay text (HTML)'"
+                        :model-value="banner.text"
+                        @update:model-value="(value) => { banner.text = value; onBannerChange(banner, index); }" />
+
+                    <div class="sw-cms-el-config-banners__position-row">
+                        <mt-select
+                            :label="'Overlay vertical position'"
+                            :options="positionVOptions"
+                            v-model="banner.textPositionV"
+                            @update:model-value="() => onBannerChange(banner, index)" />
+                        <mt-select
+                            :label="'Overlay horizontal position'"
+                            :options="positionHOptions"
+                            v-model="banner.textPositionH"
+                            @update:model-value="() => onBannerChange(banner, index)" />
+                    </div>
+                </template>
+            </div>
+        </div>
+        {% endblock %}
+    </div>
+{% endblock %}

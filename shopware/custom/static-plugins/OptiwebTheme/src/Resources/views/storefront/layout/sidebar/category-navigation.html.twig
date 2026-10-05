@@ -1,0 +1,38 @@
+{% sw_extends '@Storefront/storefront/layout/sidebar/category-navigation.html.twig' %}
+{% block layout_navigation_categories %}
+    {% set navigationMaxDepth = context.salesChannel.navigationCategoryDepth %}
+
+    {% if not level %}
+        {% set level = 0 %}
+    {% endif %}
+
+    {% set activeId = shopware.navigation.id %}
+    {% set activePath = shopware.navigation.pathIdList %}
+
+    {% if parent %}
+        {# `parent` comes from CategoryNavigationResolver via the plain (non sales-channel) category
+           repository, so `seoUrl` is not populated — fall back to the navigation SEO URL #}
+        <a class="category-navigation-link category-navigation-title" href="{{ parent.seoUrl ?? seoUrl('frontend.navigation.page', { navigationId: parent.id }) }}" {% if parent.shouldOpenInNewTab %}target="_blank"{% endif %}>
+            {{ parent.translated.name }}
+        </a>
+    {% endif %}
+
+    {% block layout_navigation_categories_list %}
+        <ul class="category-navigation level-{{ level }}{% if navigationTitle %} category-navigation-grid{% endif %}">
+            {% if navigationTitle %}
+                <div class="category-navigation-grid-title category-navigation-entry">{{ navigationTitle|raw }}</div>
+            {% endif %}
+            {% for item in navigationTree %}
+                {% set categoryId = item.category.id %}
+                {% set categoryName = item.category.translated.name %}
+                {% set categoryType = item.category.type %}
+                {% set categoryUrl = item.category.seoUrl %}
+                {% set categoryLinkNewTab = item.category.shouldOpenInNewTab %}
+
+                {% block layout_navigation_categories_list_entry %}
+                    {{ parent() }}
+                {% endblock %}
+            {% endfor %}
+        </ul>
+    {% endblock %}
+{% endblock %}

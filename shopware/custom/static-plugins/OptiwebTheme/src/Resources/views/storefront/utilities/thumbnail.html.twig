@@ -1,0 +1,17 @@
+{% sw_extends '@Storefront/storefront/utilities/thumbnail.html.twig' %}
+
+{# Core never writes `width`/`height` on the <img>, so the browser cannot reserve the
+   box before the file arrives and every image causes a layout shift. The intrinsic size
+   comes from the media's stored metadata; only the ratio matters, CSS still decides the
+   rendered size (see the `:where(img[width][height])` rule in _reset.scss). A caller that
+   passes its own width/height keeps them. #}
+{% block thumbnail_utility_img %}
+    {% set metaWidth = media.metaData.width ?? null %}
+    {% set metaHeight = media.metaData.height ?? null %}
+
+    {% if metaWidth and metaHeight and attributes.width is not defined and attributes.height is not defined %}
+        {% set attributes = attributes|merge({ width: metaWidth, height: metaHeight }) %}
+    {% endif %}
+
+    {{ parent() }}
+{% endblock %}

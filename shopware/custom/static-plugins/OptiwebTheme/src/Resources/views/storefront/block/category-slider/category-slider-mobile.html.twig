@@ -1,0 +1,28 @@
+{# storefront/block/category-slider/category-slider-mobile.html.twig #}
+{% set categories = block.slots.getSlot('category').data.get('childCategories') %}
+
+{% block category_slider_mobile %}
+    <div class="category-grid d-md-none">
+        {% for category in categories %}
+            <a href="{{ category.link }}" class="category-grid__item">
+                <div class="category-grid__img">
+                    {% if category.media %}
+                        <img src="{{ category.media.url }}"
+                             alt="{{ category.name }}"
+                             loading="lazy">
+                    {% endif %}
+                    {% if category.category_icon.url %}
+                        <span class="category-grid__badge">
+                            <img src="{{ category.category_icon.url }}"
+                                 alt="{{ category.category_icon.alt ?? (category.name ~ ' icon') }}">
+                        </span>
+                    {% endif %}
+                </div>
+                <div class="category-grid__name">{{ category.name }}</div>
+                {% if category.short_description %}
+                    <div class="category-grid__desc">{{ category.short_description|raw }}</div>
+                {% endif %}
+            </a>
+        {% endfor %}
+    </div>
+{% endblock %}

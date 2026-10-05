@@ -1,0 +1,8 @@
+{% block sw_cms_el_title_content_button %}
+    <div class="sw-cms-el-title-content-button">
+        <h2 class="title-preview" v-html="element.config.title.value.text"></h2>
+        <div class="description-preview" v-html="element.config.content.value"></div>
+        <button v-html="element.config.button.value.text"></button>
+    </div>
+{% endblock %}
+

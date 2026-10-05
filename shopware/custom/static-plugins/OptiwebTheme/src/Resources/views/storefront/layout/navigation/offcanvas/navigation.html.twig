@@ -1,0 +1,7 @@
+{% sw_extends '@Storefront/storefront/layout/navigation/offcanvas/navigation.html.twig' %}
+
+{# The category menu carries its own close button — next to the level title in
+   `offcanvas-root-head`, and in the back-link row once nested — so the shared header
+   restored in utilities/offcanvas.html.twig would render a second one here. #}
+{% block utilities_offcanvas_header %}
+{% endblock %}

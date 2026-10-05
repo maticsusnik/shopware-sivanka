@@ -1,0 +1,63 @@
+{% block optiweb_product_enquiry_list %}
+<sw-page class="optiweb-product-enquiry-list">
+    {% block optiweb_product_enquiry_list_header %}
+    <template #smart-bar-header>
+        <h2>{{ $t('optiwebProductEnquiry.admin.list.title') }}</h2>
+    </template>
+    {% endblock %}
+
+    {% block optiweb_product_enquiry_list_search %}
+    <template #smart-bar-actions>
+        <sw-simple-search-field
+            v-model:value="searchTerm"
+            @search-term-change="onSearch"
+        />
+    </template>
+    {% endblock %}
+
+    {% block optiweb_product_enquiry_list_content %}
+    <template #content>
+        <sw-data-grid
+            :data-source="enquiries"
+            :columns="[
+                { property: 'createdAt', label: $t('optiwebProductEnquiry.admin.list.columns.date'), sortable: true },
+                { property: 'firstName', label: $t('optiwebProductEnquiry.admin.list.columns.customer'), sortable: true },
+                { property: 'email', label: $t('optiwebProductEnquiry.admin.list.columns.email'), sortable: true },
+                { property: 'productName', label: $t('optiwebProductEnquiry.admin.list.columns.product') },
+                { property: 'quantity', label: $t('optiwebProductEnquiry.admin.list.columns.quantity') },
+            ]"
+            :is-loading="isLoading"
+            :show-actions="true"
+            identifier="optiweb-product-enquiry-list"
+            @row-click="onRowClick"
+        >
+            <template #column-createdAt="{ item }">
+                {{ formatDate(item.createdAt) }}
+            </template>
+            <template #column-firstName="{ item }">
+                {{ item.firstName }} {{ item.lastName }}
+            </template>
+            <template #column-productName="{ item }">
+                {{ item.productName }}
+                <sw-label
+                    v-if="item.productCount > 1"
+                    appearance="pill"
+                    size="small"
+                >
+                    {{ $t('optiwebProductEnquiry.admin.list.moreProducts', { count: item.productCount - 1 }, item.productCount - 1) }}
+                </sw-label>
+            </template>
+            <template #column-quantity="{ item }">
+                <template v-if="item.productCount > 1">&mdash;</template>
+                <template v-else>{{ item.quantity }}</template>
+            </template>
+            <template #actions="{ item }">
+                <sw-context-menu-item @click="onRowClick(item)">
+                    {{ $t('global.default.view') }}
+                </sw-context-menu-item>
+            </template>
+        </sw-data-grid>
+    </template>
+    {% endblock %}
+</sw-page>
+{% endblock %}

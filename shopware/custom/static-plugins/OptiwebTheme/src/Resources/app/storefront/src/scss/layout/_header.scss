@@ -1,0 +1,987 @@
+// ---- Sivanka Header ----
+
+.header-main {
+    background: $sv-white;
+    // The reference uses the STRONG border on the header, topbar and nav bar —
+    // #E3D6C6, one step darker than the card border.
+    border-bottom: 1px solid $sv-border-strong;
+
+    .container {
+        // Reference: 14px top and bottom at every width. The old 10px below lg made
+        // the wrapped header 125px instead of 133px.
+        padding-block: 14px;
+    }
+
+    // Remove Bootstrap row's extra padding classes (pt-3 pb-sm-3)
+    .row {
+        align-items: center;
+        flex-wrap: nowrap;
+        gap: 0;
+        padding: 0 !important;
+        margin-bottom: 0 !important;
+
+        // Below 1280 the reference's header grid gains a 20px gap; above it the
+        // columns are 1fr / 520px / 1fr and butt together.
+        @media (max-width: $sv-bp-touch) {
+            gap: 20px;
+        }
+
+        // The reference wraps the header at 900: logo and icons share the first
+        // row, the search field takes the second. Bootstrap's md (768) is too late
+        // — between 900 and 768 the three columns are already crushed.
+        @media (max-width: $sv-bp-portrait) {
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+    }
+}
+
+// Logo column — flex:1 1 0 so it takes equal share of remaining space,
+// centering the fixed-width search between logo and actions
+// Logo ladder, from the reference: 224 -> 200 (<=1280) -> 176 (<=480) -> 150 (<=380).
+// The height stays 46 with object-fit:contain, so any logo the shop owner uploads
+// lands in the same box.
+$sv-logo-widths: (
+    null:            224px,
+    $sv-bp-touch:    200px,
+    $sv-bp-small:    176px,
+    $sv-bp-tiny:     150px,
+);
+
+.header-logo {
+    &-col {
+        flex: 1 1 0 !important;
+        width: auto !important;
+        max-width: none !important;
+        min-width: 0;
+        padding: 0 !important;
+        margin: 0 !important;
+
+        // From 1280 down the search column is `flex: 1 1 auto`; leaving the logo at
+        // `flex-basis: 0` with shrink 1 lets the field eat it entirely.
+        @media (max-width: $sv-bp-touch) {
+            flex: 0 0 auto !important;
+        }
+    }
+
+    // The link is inline-flex, so inside a block wrapper it sits on the text
+    // baseline and leaves a 7px descender gap below — which made the whole header
+    // 82px instead of the reference's 75px. Flex the wrapper so no line box forms.
+    &-main {
+        display: flex;
+        align-items: center;
+    }
+
+    &-main-link {
+        display: inline-flex;
+        align-items: center;
+        text-align: left;
+        max-width: 100%;
+    }
+
+    &-picture {
+        display: block;
+        max-width: 100%;
+        height: 46px;
+    }
+
+    // Constrain the actual image so it never overflows the logo column
+    &-main-img {
+        display: block;
+        height: 46px;
+        max-width: 100%;
+        object-fit: contain;
+        object-position: left center;
+    }
+
+    @each $bp, $w in $sv-logo-widths {
+        @if $bp == null {
+            &-main-link,
+            &-picture,
+            &-main-img { width: $w; }
+        } @else {
+            @media (max-width: $bp) {
+                &-main-link,
+                &-picture,
+                &-main-img { width: $w; }
+            }
+        }
+    }
+}
+
+// Search bar column
+.header-search {
+    &-col {
+        // Reference: a fixed 520px field centred between two 1fr columns.
+        flex: 0 0 520px;
+        max-width: 520px;
+        padding-inline: 0;
+
+        // <=1280 the reference grid becomes `auto minmax(0,1fr) auto`: the field
+        // stops being fixed and takes whatever the logo and icons leave.
+        @media (max-width: $sv-bp-touch) {
+            flex: 1 1 auto;
+            max-width: none;
+            min-width: 0;
+        }
+
+        // <=900 the header wraps and the field owns the second row outright.
+        @media (max-width: $sv-bp-portrait) {
+            order: 3;
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+
+        .row {
+            display: block;
+        }
+    }
+
+    max-width: 100%;
+
+    // The reference keeps the search field visible at every width down to 340px —
+    // there is no collapse and no magnifier toggle in the header. The wrap at 900
+    // gives it a full row, so it never needs to be hidden.
+    @media (max-width: $sv-bp-portrait) {
+        #searchCollapse {
+            padding-top: 0;
+        }
+    }
+
+    &-form {
+        position: relative;
+
+        .header-search-input {
+            width: 100%;
+            height: 46px;
+            // Reference: 1px #E3D6C6 (border-strong), not the 1.5px card border.
+            border: 1px solid $sv-border-strong !important;
+            border-radius: $sv-r-chrome !important;
+            padding: 0 52px 0 18px !important;
+            font-family: $sv-sans;
+            font-size: 14.5px;
+            color: $sv-ink;
+            background: $sv-white !important;
+            transition: border-color 0.18s;
+
+            &::placeholder {
+                color: $sv-ink-muted !important;
+            }
+
+            &:hover:not(:focus) {
+                // Hover deepens the rule one step — the reference draws no hover
+                // state for the field, so this is derived from the link hover rule.
+                border-color: $sv-bordo !important;
+                cursor: text;
+            }
+
+            // Keep a subtle focus ring for a11y instead of the browser outline
+            &:focus {
+                outline: none;
+                border-color: $sv-bordo !important;
+                box-shadow: $sv-focus-ring;
+            }
+        }
+
+        // Search submit — bordo, inset 5px from the top-right of the 46px field.
+        // Below 1280 it grows to the full 46px touch target and sits flush in the
+        // corner, exactly as the reference does it.
+        .header-search-btn {
+            position: absolute;
+            right: 5px !important;
+            top: 5px !important;
+            left: auto !important;
+            width: 36px;
+            height: 36px;
+            border-radius: $sv-r-chrome !important;
+            background: $sv-bordo !important;
+            color: $sv-white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            padding: 0;
+            // The icon is the whole control; inheriting .btn's type metrics only
+            // changes the box.
+            font-size: 0;
+            line-height: 0;
+            font-weight: 400;
+            z-index: 6;
+            cursor: pointer;
+
+            @media (max-width: $sv-bp-touch) {
+                right: 0 !important;
+                top: 0 !important;
+                width: $sv-touch;
+                height: $sv-touch;
+            }
+
+            &:hover {
+                background: $sv-bordo-hover !important;
+            }
+
+            // Inline magnifier SVG — stroke-based, perfectly centered
+            .header-search-svg {
+                width: 18px;
+                height: 18px;
+                display: block;
+                color: $sv-white;
+                stroke: currentColor;
+                fill: none;
+            }
+
+            // Loading — the spinner takes the glyph's place, the field stays editable
+            &.is-loading-indicator-before {
+                background: $sv-bordo !important;
+                opacity: 1;
+
+                .header-search-svg {
+                    display: none;
+                }
+
+                .loader {
+                    margin: 0;
+                    border-color: rgba(255, 255, 255, 0.4);
+                    border-top-color: $sv-white;
+                }
+            }
+        }
+
+        // Hovering anywhere over the field darkens the submit button, matching the
+        // magenta hover used across the theme.
+        &:hover .header-search-btn:not(:disabled) {
+            background: $sv-bordo-hover !important;
+        }
+
+        // Close button — hidden by default, shown by JS when input has text
+        .header-close-btn {
+            position: absolute;
+            right: 5px !important;
+            top: 5px !important;
+            left: auto !important;
+            width: 36px;
+            height: 36px;
+            border-radius: $sv-r-chrome !important;
+            background: $sv-bordo !important;
+            color: $sv-white;
+            display: none; // default hidden
+            align-items: center;
+            justify-content: center;
+            border: none;
+            padding: 0;
+            z-index: 7; // sit above the submit button
+            cursor: pointer;
+
+            &:not(.d-none) {
+                display: flex !important; // shown when JS removes d-none
+            }
+
+            &:hover {
+                background: $sv-bordo-hover !important;
+            }
+
+            // Center the X glyph inside the button, sized to match the magnifier
+            .header-close-icon {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 18px;
+                height: 18px;
+                line-height: 0;
+                svg {
+                    top:0;
+                }
+            }
+
+            .icon, svg {
+                display: block;
+                width: 18px;
+                height: 18px;
+
+                path {
+                    stroke: $sv-white !important;
+                }
+            }
+        }
+
+        // Filled — the close button is active (input has text), so hide the magnifier
+        // submit button and never show two magenta boxes in the same slot.
+        &:has(.header-close-btn:not(.d-none)) .header-search-btn {
+            display: none !important;
+        }
+
+        // Loading wins over filled: the spinner needs the slot back.
+        &:has(.header-search-btn.is-loading-indicator-before) {
+            .header-search-btn {
+                display: flex !important;
+            }
+
+            .header-close-btn {
+                display: none !important;
+            }
+        }
+    }
+}
+
+// Search-suggest dropdown — keep each result on ONE line (product image /
+// name / price) and the "show all results" row (link + total count) inline.
+// The `.header-search-col .row { display:block }` rule above cascades into the
+// suggest markup (which uses Bootstrap `.row`) and would otherwise stack them.
+.header-search-col .search-suggest {
+    background: $sv-white;
+    border: 1px solid $sv-border;
+    border-radius: $sv-r-chrome;
+    box-shadow: $sv-shadow-deep;
+    overflow: hidden;
+
+    // "No results" — a single, non-clickable meta row
+    .search-suggest-no-result {
+        font-family: $sv-sans;
+        font-size: 14px;
+        color: $sv-ink-muted;
+        pointer-events: none;
+    }
+
+    .row {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+    }
+
+    .search-suggest-product-name {
+        min-width: 0; // allow the name column to shrink/ellipsize instead of wrapping the price away
+
+        a,
+        .search-suggest-product-name-link {
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+
+    .search-suggest-product-price {
+        white-space: nowrap;
+        text-align: right;
+    }
+
+    .search-suggest-total .row {
+        justify-content: space-between;
+    }
+}
+
+// Actions column — flex:1 1 0 with right alignment mirrors the logo column,
+// keeping the search bar perfectly centered
+.header-actions {
+    &-col {
+        flex: 1 1 0 !important;
+        width: auto !important;
+        max-width: none !important;
+        display: flex !important;
+        justify-content: flex-end;
+        align-items: center;
+        padding: 0 !important;
+
+        .row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: nowrap;
+        }
+    }
+
+    &-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        width: 74px;
+        color: $sv-ink;
+        font-size: 11.5px;
+        font-weight: 500;
+        font-family: $sv-sans;
+        position: relative;
+        padding: 4px 6px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        line-height: 1.2;
+        border-radius: $sv-r-chrome;
+        transition: color 0.18s;
+
+        &:hover {
+            color: $sv-bordo;
+            background: none;
+
+            .icon {
+                color: $sv-bordo;
+            }
+        }
+
+        &:focus {
+            box-shadow: none;
+        }
+
+        .icon {
+            width: 26px;
+            height: 26px;
+            color: $sv-ink;
+            transition: color 0.18s;
+        }
+    }
+}
+
+// Ensure all action column children (col-auto wrappers) are vertically centered.
+// Exclude d-lg-none elements — in this build Bootstrap display utilities have no !important,
+// so a higher-specificity selector would unhide the mobile hamburger on desktop.
+.header-actions-col > .row > .col-auto:not(.d-lg-none):not(.d-none),
+.header-actions-col > .row > [class*="col-"]:not(.d-lg-none):not(.d-none) {
+    display: flex;
+    align-items: center;
+}
+
+// Icon-only actions: even 12px gap between account / wishlist / cart
+.header-actions-col > .row {
+    align-items: center;
+    gap: 12px;
+}
+
+// Reinforce Bootstrap responsive visibility for d-lg-none inside actions col
+@include media-breakpoint-up(lg) {
+    .header-actions-col .d-lg-none {
+        display: none !important;
+    }
+}
+
+// Hide wishlist badge when empty (no items in wishlist yet)
+.header-wishlist-badge:empty {
+    display: none !important;
+}
+
+// Cart widget
+.header-cart {
+    position: relative;
+
+    &.header-actions-btn,
+    .header-cart-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: auto;
+        padding: 4px 6px;
+
+        &:hover {
+            color: $sv-bordo;
+        }
+    }
+
+    &-icon {
+        .icon {
+            width: 26px;
+            height: 26px;
+        }
+    }
+
+    // Count badge. Written as a descendant selector (`.header-cart .header-cart-badge`)
+    // so it outranks Bootstrap's `.badge.bg-primary.rounded-pill` utilities, which
+    // are all `!important` at (0,1,0) and were fighting the pink counter styling.
+    .header-cart-badge {
+        position: absolute !important;
+        top: 6px !important;
+        right: -2px !important;
+        left: auto !important;
+        box-sizing: border-box !important;
+        min-width: 16px !important;
+        width: auto !important;
+        height: 16px !important;
+        padding: 0 4px !important;
+        background-color: $sv-bordo !important;
+        color: $sv-white !important;
+        font-size: 10px !important;
+        font-weight: 700 !important;
+        line-height: 1 !important;
+        border-radius: $sv-r-chrome !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+
+        &:empty {
+            display: none !important;
+        }
+    }
+
+    &-total {
+        display: none;
+    }
+}
+
+// Wishlist widget
+.header-wishlist {
+    position: relative;
+
+    &.header-actions-btn,
+    .header-wishlist-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: auto;
+        padding: 4px 6px;
+
+        &:hover {
+            color: $sv-bordo;
+        }
+    }
+
+    &-icon {
+        .icon {
+            width: 26px;
+            height: 26px;
+        }
+    }
+
+    &-badge {
+        position: absolute !important;
+        top: 6px !important;
+        right: -2px !important;
+        left: auto !important;
+        box-sizing: border-box !important;
+        min-width: 16px !important;
+        width: auto !important;
+        height: 16px !important;
+        padding: 0 4px !important;
+        background-color: $sv-bordo !important;
+        color: $sv-white !important;
+        font-size: 10px !important;
+        font-weight: 700 !important;
+        line-height: 1 !important;
+        border-radius: $sv-r-chrome !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+}
+
+// ============================================================
+//  Header icon controls — account, wishlist, cart, menu toggle
+//  Reference: 40x38 each, 8px radius, 12px gap, the row ending flush with the
+//  container's right edge. Below 1280 they grow to the 46px touch floor.
+//  Declared at top level: the per-component rules below set `width:auto`, and a
+//  sizing rule buried in a breakpoint block would not reach the desktop header.
+// ============================================================
+.header-actions-btn,
+.account-menu-btn,
+.header-cart-btn,
+.header-wishlist-btn,
+.nav-main-toggle-btn {
+    width: 40px;
+    height: 38px;
+    min-width: 40px;
+    padding: 0;
+    border-radius: $sv-r-chrome;
+
+    @media (max-width: $sv-bp-touch) {
+        width: $sv-touch;
+        height: $sv-touch;
+        min-width: $sv-touch;
+    }
+}
+
+// Account menu button
+.account-menu {
+    &-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: $sv-ink;
+        font-size: 11.5px;
+        font-weight: 500;
+        font-family: $sv-sans;
+        position: relative;
+        width: auto;
+        padding: 4px 6px;
+        background: none;
+        border: none;
+        line-height: 1.2;
+        border-radius: $sv-r-chrome;
+        transition: color 0.18s;
+        cursor: pointer;
+
+        &:hover {
+            color: $sv-bordo;
+            background: none;
+
+            .icon {
+                color: $sv-bordo;
+            }
+        }
+
+        .icon {
+            width: 26px;
+            height: 26px;
+            color: $sv-ink;
+            transition: color 0.18s;
+        }
+
+        &:focus, &:focus-visible {
+            box-shadow: none;
+            outline: none;
+        }
+    }
+
+    &-login {
+        border: 0;
+        padding-bottom: 0;
+    }
+
+    // "Prijavite se" in the account dropdown. `_general.scss` hands every
+    // `.btn-primary` 20px/700 with 12/24 padding — a v1 metric that in a 200px
+    // dropdown wrapped the two words onto two lines and made the button 90px tall.
+    // Restated at the system's section-CTA size instead.
+    &-login-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        font-family: $sv-sans;
+        font-size: 14px;
+        line-height: 21px;
+        font-weight: 600;
+        padding: 11px 16px;
+        border-radius: $sv-r-btn;
+        white-space: nowrap;
+    }
+
+    &-header {
+        border: none;
+    }
+
+    &-links {
+        // Bootstrap paints `.list-group-item` white, which showed as white rows on the
+        // beige dropdown panel. Let the panel's own background come through.
+        .list-group-item {
+            background: transparent;
+            border-color: transparent;
+        }
+
+        .list-group-item,
+        .btn-link {
+            @include fontSpecs(14, 20, 400);
+            color: $sv-ink;
+            text-decoration: none;
+
+            &:hover {
+                color: $sv-bordo;
+                background: none;
+
+                .icon {
+                    color: $sv-bordo;
+                }
+            }
+        }
+
+        .icon {
+            width: 1rem;
+            height: 1rem;
+        }
+    }
+
+    &-offcanvas {
+        .offcanvas-footer {
+            display: none;
+        }
+    }
+
+    .dropdown-menu {
+        padding: 1rem 1.5rem;
+    }
+}
+
+// Unify the icon row across account / wishlist / cart so the labels below
+// all sit on the same baseline (account previously had no icon wrapper).
+.header-account-icon,
+.header-cart-icon,
+.header-wishlist-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 27px;
+    line-height: 0;
+
+    .icon {
+        width: 26px;
+        height: 26px;
+    }
+
+    svg {
+        display: block;
+    }
+}
+
+// Action labels removed — icons only across the header actions
+.header-action-label {
+    display: none;
+}
+
+.modal-open .header-search-form .btn {
+    z-index: 1;
+}
+
+@include media-breakpoint-up(sm) {
+    .header-cart-badge {
+        display: flex;
+    }
+}
+
+// ---- Mobile / tablet header: compact logo + icon-only actions so nothing overlaps ----
+@include media-breakpoint-down(lg) {
+    .header-logo-picture,
+    .header-logo-main-img {
+        max-height: 34px;
+    }
+
+    // Icon-only action buttons on small screens (labels would overflow next to a wide logo)
+    .header-action-label {
+        display: none;
+    }
+
+    .header-actions-btn,
+    .account-menu-btn,
+    .header-cart.header-actions-btn,
+    .header-cart .header-cart-btn,
+    .header-wishlist.header-actions-btn,
+    .header-wishlist .header-wishlist-btn {
+        min-width: 0;
+        padding: 0;
+    }
+
+    .header-actions-col > .row {
+        gap: 12px;
+    }
+
+    .header-account-icon,
+    .header-cart-icon,
+    .header-wishlist-icon {
+        height: auto;
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    .header-logo-picture,
+    .header-logo-main-img {
+        max-height: 30px;
+    }
+}
+
+
+// =============================================================================
+//  Mobile action bar
+//  -----------------------------------------------------------------------
+//  Below $sv-bp-portrait the header keeps only the logo and the search field; the
+//  account / wishlist / cart / menu icons detach into a bar fixed to the bottom of
+//  the viewport, the way sivanka.dev.matic-susnik.com handles it.
+//
+//  This deliberately reverses the Phase 1 decision to keep four icons in the header
+//  at every width (the v2 reference draws them there) — Matic asked for the bottom
+//  bar on 2026-09-03. Everything else docked to the bottom edge has to clear it, so
+//  `--sv-action-bar` is published for the sort pill, the filter pill and the cookie
+//  banner to offset against.
+// =============================================================================
+$sv-action-bar-height: 52px;
+
+@media (max-width: $sv-bp-portrait) {
+    :root {
+        --sv-action-bar: #{$sv-action-bar-height};
+    }
+
+    // `.header-actions { &-col { … } }` above sets `padding: 0` and `flex` with
+    // `!important` to keep the desktop search field centred; the bar has to answer in
+    // kind or it renders 220px wide, hard against the right edge.
+    .header-actions-col {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1030;
+        width: auto;
+        height: $sv-action-bar-height;
+        min-height: $sv-action-bar-height;
+        max-height: $sv-action-bar-height;
+        padding-inline: $sv-gutter-sm !important;
+        // Own compositor layer: Chrome on Android re-anchors bottom-fixed boxes while its
+        // toolbar slides in and out, and without a layer the bar visibly stretched and
+        // shrank mid-scroll. Nothing inside the bar is position: fixed, so the new
+        // containing block changes no layout.
+        transform: translate3d(0, 0, 0);
+        backface-visibility: hidden;
+        justify-content: stretch;
+        background: $sv-white;
+        border-top: 1px solid $sv-border;
+        box-shadow: $sv-shadow-soft-up;
+
+        > .row {
+            flex: 1 1 auto;
+            width: 100%;
+            height: 100%;
+            flex-wrap: nowrap;
+            gap: 0;
+            // `space-around` spreads the four icons with a half-gap at each end, so the
+            // bar reads much taller and looser than it is. `space-between` plus a small
+            // inline pad keeps them evenly spread without the dead margin.
+            justify-content: space-between;
+            --bs-gutter-x: 0;
+            margin-inline: 0;
+            padding-inline: 0.25rem;
+        }
+    }
+
+    // The header row is logo + magnifier. The field itself is a collapsing panel on
+    // its own full-width row underneath, so the row has to be allowed to wrap again.
+    .header-main .row {
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .header-logo-col {
+        flex: 0 0 auto;
+        width: auto;
+        order: 1;
+        padding-right: $sv-gutter-sm;
+    }
+
+    .header-search-toggle-col {
+        display: block;
+        order: 2;
+        margin-left: auto;
+    }
+
+    .header-search-toggle-btn {
+        width: $sv-touch;
+        height: $sv-touch;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        border: 0;
+        background: none;
+        color: $sv-ink;
+
+        .header-search-svg {
+            width: 22px;
+            height: 22px;
+        }
+    }
+
+    // The collapsed search panel is still a flex item on a second line, so the row's
+    // 12px `gap` was charged even while the panel measured 0 tall — 14px above the
+    // logo, 26px below it. The gap has to go; the panel's own `margin-top` below
+    // supplies the separation once it is actually open.
+    .header-main .row {
+        row-gap: 0;
+    }
+
+    // The panel: full width, its own row, and only laid out once Bootstrap adds
+    // `.show`. Bootstrap animates the height, so the margin lives on the inner
+    // wrapper — a margin here would jump the moment the transition starts.
+    .header-search-col {
+        flex: 0 0 100%;
+        width: 100%;
+        max-width: none;
+        min-width: 0;
+        order: 3;
+        padding: 0;
+    }
+
+    // 50px header (2px + the 46px icon row + 1px + the 1px border). The 14px the
+    // desktop header uses on both sides made the phone header 75px tall.
+    .header-main .container {
+        padding-block: 2px 1px;
+    }
+
+    // Open search: 6px under the icon row, and its own 10px below — with the header
+    // padding down to 1px the field would otherwise sit on the bottom border. Padding,
+    // not margin, so Bootstrap's collapse animation measures it with the field.
+    .header-search-col .header-search {
+        margin-top: 0;
+        margin-bottom: 0;
+        padding-top: 6px;
+        padding-bottom: 10px;
+    }
+
+    // Core keeps the panel open from `sm` (576) up, so between 576 and 900 the field
+    // was always showing and the magnifier toggled nothing. Collapsed until tapped at
+    // every width that has the toggle. Same specificity as core's rule, later source.
+    .header-search-col .collapse:not(.show) {
+        display: none;
+    }
+
+    // The bar owns navigation at this width, so the category bar goes with it —
+    // the hamburger opens the same offcanvas the bar's links live in.
+    .nav-main {
+        display: none;
+    }
+
+    // Every icon in the bar is a 46px touch target.
+    .header-actions-btn,
+    .header-menu-btn,
+    .account-menu-btn,
+    .header-cart .header-cart-btn,
+    .header-wishlist .header-wishlist-btn {
+        width: $sv-touch;
+        height: $sv-touch;
+        min-width: $sv-touch;
+        justify-content: center;
+        padding: 0;
+        margin: 0;
+    }
+
+    // Page content, and anything else docked to the bottom edge, has to clear the bar.
+    // On <html>, not <body>: core's cookie-permission plugin writes `body.style.paddingBottom`
+    // inline — the banner height while it shows, `0` once accepted — which wiped this
+    // clearance and left the last footer links under the bar. The two now add up.
+    html {
+        padding-bottom: $sv-action-bar-height;
+    }
+
+    // Core ships `@media (max-width: 991.98px) { .scroll-up-button { bottom: … !important } }`
+    // AND its scroll-up plugin writes an inline `bottom` of its own. The `!important`
+    // already beat the inline value, so matching it here changes nothing except which
+    // offset wins — and ours is the one that clears the action bar.
+    .scroll-up-button.scroll-up-button {
+        bottom: calc(env(safe-area-inset-bottom, 0px) + #{$sv-action-bar-height} + 12px) !important;
+    }
+
+    // The banner is full width, so it docks flush on the bar — a gap would show a strip
+    // of page between the two.
+    .cookie-permission-container.cookie-permission-container,
+    .js-cookie-permission-container.js-cookie-permission-container {
+        bottom: calc(env(safe-area-inset-bottom, 0px) + #{$sv-action-bar-height}) !important;
+    }
+}
+
+@media (min-width: ($sv-bp-portrait + 1px)) {
+    // Above the bar the opener lives in the nav bar, as the reference draws it — the
+    // header carries three icons, not four. `!important` because the cell-centring
+    // rule above is `.header-actions-col > .row > .col-auto:not(.d-lg-none):not(.d-none)`,
+    // five classes deep; the sibling `.d-lg-none` override next to it does the same.
+    .header-actions-col .header-actions-menu {
+        display: none !important;
+    }
+}
+
+// ============================================================
+//  Search: open field above 900, magnifier + collapsing panel below
+//  `#searchCollapse` carries Bootstrap's `.collapse`, which is `display: none` until
+//  `.show` is added. Above the breakpoint there is no toggle to add it, so the panel
+//  is forced open here and the reference's always-visible desktop field is unchanged.
+// ============================================================
+@media (min-width: ($sv-bp-portrait + 1px)) {
+    #searchCollapse.collapse:not(.show) {
+        display: block;
+    }
+
+    .header-search-toggle-col {
+        display: none;
+    }
+}

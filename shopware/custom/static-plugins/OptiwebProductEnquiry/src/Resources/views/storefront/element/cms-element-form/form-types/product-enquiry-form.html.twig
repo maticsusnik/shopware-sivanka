@@ -1,0 +1,127 @@
+{% set product = element.extensions.product %}
+{% set enquiryProducts = element.extensions.products.items ?? [] %}
+{% set isMultiProduct = enquiryProducts|length > 1 %}
+
+<div class="form-content">
+    <form action="{{ path('frontend.form.product-enquiry.send') }}"
+          method="POST"
+          data-form-csrf-handler="true"
+          data-form-validation="true"
+          data-error-unexpected="{{ 'optiwebProductEnquiry.errors.unexpectedError'|trans|striptags }}"
+          data-error-captcha="{{ 'optiwebProductEnquiry.errors.captcha'|trans|striptags }}">
+
+        <input type="hidden" name="slotId" value="{{ element.id }}">
+
+        {% if isMultiProduct %}
+            <div class="product-row product-row-multi mb-4">
+                {% include '@OptiwebProductEnquiry/storefront/component/product/quickview/enquiry-lines.html.twig' with { products: enquiryProducts } %}
+            </div>
+        {% elseif product %}
+            <div class="row product-row mb-4">
+                <div class="col-12">
+                    {% include '@OptiwebProductEnquiry/storefront/component/product/quickview/minimal.html.twig' with { product: product } %}
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="row">
+            <div class="col-12 col-md-6 mb-3">
+                <label for="firstName" class="form-label">{{ 'account.personalFirstName'|trans }}*</label>
+                <input type="text"
+                       id="firstName"
+                       name="firstName"
+                       class="form-control"
+                       required
+                       autocomplete="given-name">
+                <div class="invalid-feedback"></div>
+            </div>
+            <div class="col-12 col-md-6 mb-3">
+                <label for="lastName" class="form-label">{{ 'account.personalLastName'|trans }}*</label>
+                <input type="text"
+                       id="lastName"
+                       name="lastName"
+                       class="form-control"
+                       required
+                       autocomplete="family-name">
+                <div class="invalid-feedback"></div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12 col-md-6 mb-3">
+                <label for="email" class="form-label">{{ 'account.personalMailLabel'|trans }}*</label>
+                <input type="email"
+                       id="email"
+                       name="email"
+                       class="form-control"
+                       required
+                       autocomplete="email">
+                <div class="invalid-feedback"></div>
+            </div>
+            <div class="col-12 col-md-6 mb-3">
+                <label for="phone" class="form-label">{{ 'account.profilePhoneNumber'|trans }}</label>
+                <input type="tel"
+                       id="phone"
+                       name="phone"
+                       class="form-control"
+                       autocomplete="tel">
+                <div class="invalid-feedback"></div>
+            </div>
+        </div>
+
+        {# Multi-product enquiries carry a quantity per line instead. #}
+        {% if not isMultiProduct %}
+            <div class="mb-3">
+                <label for="productQty" class="form-label">{{ 'optiwebProductEnquiry.form.qtyLabel'|trans }}*</label>
+                <div class="qtyField">
+                    <input type="number"
+                           id="productQty"
+                           name="productQty"
+                           class="form-control"
+                           value="1"
+                           min="1"
+                           step="1"
+                           required>
+                </div>
+                <div class="invalid-feedback"></div>
+            </div>
+        {% endif %}
+
+        <div class="mb-3">
+            <label for="comment" class="form-label">{{ 'optiwebProductEnquiry.form.commentLabel'|trans }}</label>
+            <textarea id="comment"
+                      name="comment"
+                      class="form-control"
+                      rows="5"
+                      placeholder="{{ 'optiwebProductEnquiry.form.commentPlaceholder'|trans }}"></textarea>
+            <div class="invalid-feedback"></div>
+        </div>
+
+        <div class="mb-3 form-check enquiry-checkbox-wrap">
+            <input type="checkbox" id="privacyPolicy" name="privacyPolicy" class="form-check-input" required>
+            <label class="form-check-label" for="privacyPolicy">
+                {{ 'general.privacyPolicyCheckboxLabel'|trans|sw_sanitize }}
+            </label>
+            <div class="invalid-feedback"></div>
+        </div>
+
+        {# Whatever captchas are active in Settings → Basic information (honeypot, basic
+           captcha, Google reCAPTCHA v2 checkbox/invisible, v3). The route carries
+           `_captcha`, so the server validates them; optiweb-product-enquiry.plugin.js
+           hands the submit over to the captcha plugins when one needs a token first. #}
+        <div class="enquiry-captcha">
+            {% sw_include '@Storefront/storefront/component/captcha/base.html.twig' with {
+                additionalClass: 'col-12',
+                formId: 'product-enquiry-' ~ element.id
+            } %}
+        </div>
+
+        <p class="required-fields-info">
+            <small>* {{ 'general.requiredFields'|trans }}</small>
+        </p>
+
+        <button type="submit" class="btn btn-primary w-100 mt-3">
+            {{ 'optiwebProductEnquiry.form.submit'|trans }}
+        </button>
+    </form>
+</div>

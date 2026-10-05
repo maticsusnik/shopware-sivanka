@@ -1,0 +1,102 @@
+{
+    "checkout": {
+        "confirmTermsTextModal": "Prebral sem in sprejemam %tosModalTagOpen%splošne pogoje%tosModalTagClose% ter politiko odpovedi.",
+        "confirmLegalGuaranteeNoticeLink": "Vaše pravice iz zakonske garancije",
+        "createAccountHeading": "Za hitrejše nakupe v prihodnje si ustvarite uporabniški račun.",
+        "createAccountButton": "Ustvari račun"
+    },
+    "optiweb": {
+        "toggleMenuText": "Izdelki",
+        "privacyPolicyUrl": "/politika-zasebnosti",
+        "privacyPolicyText": "Politika zasebnosti",
+        "termsUrl": "/splosni-pogoji-poslovanja",
+        "termsText": "Splošni pogoji poslovanja",
+        "openingHoursTitle": "Odpiralni čas",
+        "categoriesTitle": "Povezave",
+        "showMore": "Preberi več",
+        "showLess": "Skrij",
+        "listing": {
+            "filter": {
+                "show": "Prikaži več",
+                "hide": "Skrij"
+            },
+            "selectedFilters": "Izbrani filtri",
+            "showingBefore": "Prikazanih",
+            "showingAfter": "izdelkov"
+        },
+        "search": {
+            "headlineSuper": "Rezultati iskanja"
+        },
+        "product": {
+            "inStock": "Na zalogi",
+            "specificationTitle": "Specifikacije",
+            "addAllProducts": "Dodaj vse v košarico",
+            "logIn": "Prijavi se",
+            "logInTitle": "Nakup je omogočen samo prijavljenim strankam",
+            "priceOnRequest": "Cena na povpraševanje"
+        },
+        "checkout": {
+            "logInAlert": "Če želite opraviti nakup, morate biti prijavljeni.",
+            "freeShipping": "Brezplačno",
+            "title": "Oddaj naročilo",
+            "stepCart": "Košarica",
+            "stepCheckout": "Blagajna",
+            "stepComplete": "Zaključek",
+            "confirmAddressHeader": "Podatki za dostavo",
+            "confirmPaymentShippingHeader": "Dostava in plačilo",
+            "confirmProductsHeader": "Pregled naročila",
+            "sslSecure": "Varno plačilo s SSL šifriranjem",
+            "colProduct": "Izdelek",
+            "colQuantity": "Količina",
+            "colSubtotal": "Vmesni seštevek",
+            "continueShopping": "Nadaljuj z nakupovanjem",
+            "promoPlaceholder": "Koda za popust",
+            "applyPromo": "Uveljavi",
+            "toCheckout": "Na blagajno",
+            "freeShippingNote": "<strong>Brezplačna dostava</strong> pri naročilu nad %amount%.",
+            "shippingInfoHeader": "Informacije o pošiljanju",
+            "backToShop": "Nazaj v trgovino",
+            "orderQuestions": "Vprašanja v zvezi z vašim naročilom?",
+            "supportPhone": "05 90 31 676",
+            "supportHours": "Pon–pet 8:00–14:00",
+            "confirmTermsText": "Prebral sem in sprejemam %tosModalTagOpen%splošne pogoje%tosModalTagClose% ter %revocationModalTagOpen%politiko odpovedi%revocationModalTagClose%.",
+            "confirmTermsTextWithGuarantee": "Prebral sem in sprejemam %tosModalTagOpen%splošne pogoje%tosModalTagClose%, %revocationModalTagOpen%politiko odpovedi%revocationModalTagClose% in %legalGuaranteeNoticeModalTagOpen%obvestilo o zakonski garanciji%legalGuaranteeNoticeModalTagClose%."
+        },
+        "navigation": {
+            "allCategories": "Vse kategorije",
+            "menuTitle": "Kategorije"
+        }
+    },
+    "sivanka": {
+        "topbarDelivery": "Brezplačna dostava nad %amount%",
+        "topbarQuality": "Vrhunska kakovost za ustvarjalce",
+        "topbarSupport": "Z veseljem vam pomagamo",
+        "topbarHelp": "Pomoč & kontakt",
+        "nlSvc1Title": "Obiščite nas v Kranju",
+        "nlSvc1Text": "Cesta Staneta Žagarja 32",
+        "nlSvc2Title": "Prevzem v trgovini",
+        "nlSvc2Text": "Naročilo pripravimo isti dan",
+        "nlSvc3Title": "Šivanje in popravila",
+        "nlSvc3Text": "Storitve v naši delavnici",
+        "searchClear": "Počisti iskanje",
+        "noticeBarLabel": "Obvestilo trgovine",
+        "noticeBarMore": "Več informacij",
+        "noticeBarClose": "Zapri obvestilo"
+    },
+    "prems-one-page-checkout": {
+        "steps": {
+            "step1-headline": "Podatki plačnika",
+            "step2-headline": "Dostava in plačilo",
+            "step3-headline": "Povzetek naročila"
+        },
+        "shipping": {
+            "change": "Uredi"
+        },
+        "billing": {
+            "change": "Uredi"
+        }
+    },
+    "footer": {
+        "serviceRevocationRequestTextPage": "<a class=\"btn btn-primary\" href=\"%url%\" title=\"Odstop od pogodbe\">Odstop od pogodbe</a>"
+    }
+}

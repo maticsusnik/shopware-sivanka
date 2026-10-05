@@ -1,0 +1,227 @@
+.offcanvas.offcanvas-bottom {
+    max-height: 80%;
+    border-radius: 0;
+    height: auto;
+}
+
+.is--sidebar .filter-panel-items-container {
+    margin-top: 0;
+    display: grid;
+    // Without an explicit column the grid sized to the price row's min-content and
+    // the cards spilled outside the 297px sidebar.
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+}
+
+// A filter that has no results left for the current selection gets a disabled
+// toggle, which is hidden below — but its card kept its border and padding, so an
+// empty 24px strip stayed behind for every one. Hide the whole card instead.
+.filter-panel-item:has(> .filter-panel-item-toggle.disabled),
+.filter-panel-item:has(> .filter-panel-item-toggle:disabled) {
+    display: none !important;
+}
+
+.is--sidebar .filter-panel-item {
+    // Each filter becomes its own rounded, bordered card (design mock)
+    margin: 0;
+    border: 1px solid $sv-border;
+    border-radius: $sv-r-panel;
+    padding: 4px 20px 18px;
+
+    &-toggle {
+        border: none;
+        margin-top: 0;
+        transition: none;
+        padding: 14px 0 8px;
+        font-family: $sv-serif;
+        font-size: 18px;
+        font-weight: 600;
+        color: $sv-ink;
+
+        .icon, svg {
+            color: $sv-bordo;
+        }
+
+        &[aria-expanded=true] {
+            color: $sv-ink;
+            margin-bottom: 0;
+            border-bottom: none;
+
+            .icon, svg {
+                color: $sv-bordo;
+            }
+        }
+
+        &.disabled {
+            display: none;
+
+            + .filter-multi-select-dropdown {
+                display: none;
+            }
+        }
+    }
+
+    &-dropdown {
+        border: none;
+        padding-top: 0;
+    }
+
+    // Price range — two columns (label above input), matches the design mock
+    .filter-range-container {
+        padding: 0 !important;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .filter-range-min,
+    .filter-range-max {
+        flex: 1 1 0;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        margin: 0;
+        padding: 0;
+        font-size: 11.5px;
+        font-weight: 400;
+        color: $sv-ink-muted;
+        position: relative;
+    }
+
+    .filter-range-input,
+    .min-input,
+    .max-input {
+        width: 100%;
+        min-width: 0;
+        border: 1px solid $sv-border;
+        border-radius: $sv-r-field;
+        height: 40px;
+        padding: 0 26px 0 12px;
+        font-size: 14px;
+        color: $sv-ink;
+
+        &:focus {
+            border-color: $sv-bordo;
+            box-shadow: none;
+        }
+    }
+
+    // € sign sits inside the input on the right
+    .filter-range-unit {
+        position: absolute;
+        right: 12px;
+        bottom: 11px;
+        color: $sv-ink-muted;
+        font-size: 13px;
+        pointer-events: none;
+    }
+
+    // "–" divider, vertically centred against the inputs (offset by the label height)
+    .filter-range-divider {
+        align-self: flex-start;
+        margin-top: 28px;
+        color: $sv-meta;
+    }
+
+    .form-check-input[type=checkbox] {
+        border-radius: 0;
+        border-color: $sv-ink-muted;
+        width: 1.5rem;
+        height: 1.5rem;
+        margin-top: 0;
+        cursor: pointer;
+    }
+
+    .filter-property-select-preview {
+        border-radius: 0;
+        width: 1.5rem;
+        height: 1.5rem;
+
+        .filter-property-select-checkbox {
+            border-radius: 0;
+            cursor: pointer;
+        }
+    }
+}
+
+.filter-multi-select-list {
+    margin-bottom: 1rem;
+
+    &-item, .filter-range-container {
+        padding-inline: 4px 0;
+    }
+}
+
+.filter-active, .btn.filter-reset-all, .filter-active-preview {
+    border-radius: 0;
+}
+
+.filter-panel-item-toggle {
+    white-space:normal;
+    line-height:1.4;
+}
+
+.filter-multi-select-dropdown {
+    border-radius: 0;
+    //max-height: none;
+    border: none;
+    //overflow: hidden;
+    padding: 0;
+
+    /* width */
+    &::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    /* Track */
+    &::-webkit-scrollbar-track {
+        background: white;
+    }
+
+    /* Handle */
+    &::-webkit-scrollbar-thumb {
+        background: $sv-ink-muted;
+        border-radius: $sv-r-field;
+    }
+
+    .filter-multi-select-list-item.disabled,
+    .hidden,
+    .filter-multi-select-list-item:has(input[data-label="Out of stock"]),
+    .filter-multi-select-list-item:has(input[data-label="Ni na zalogi"]) {
+        display: none;
+    }
+}
+
+.btn.filter-panel-wrapper-toggle.d-none {
+    display: none;
+}
+
+@media screen and (min-width: 992px) {
+    .cms-block-sidebar-filter {
+        //top: 20px;
+        //position: sticky;
+    }
+}
+
+.offcanvas-filter {
+    overflow: hidden;
+
+    .filter-panel {
+        /* width */
+        &::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        /* Track */
+        &::-webkit-scrollbar-track {
+            background: white;
+        }
+
+        /* Handle */
+        &::-webkit-scrollbar-thumb {
+            background: $sv-ink-muted;
+            border-radius: $sv-r-field;
+        }
+    }
+}

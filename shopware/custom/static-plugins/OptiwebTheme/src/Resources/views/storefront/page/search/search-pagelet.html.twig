@@ -1,0 +1,29 @@
+{% set listingColumns = 'col-sm-6 col-lg-4' %}
+
+{% block element_product_listing_wrapper %}
+    <div class="cms-section-sidebar cms-section-sidebar-mobile-wrap boxed row">
+        {% block search_sidebar_content %}
+            <div class="cms-section-sidebar-sidebar-content col-lg-4 col-xl-3">
+                {% sw_include '@Storefront/storefront/element/cms-element-sidebar-filter.html.twig' with {
+                    listing: page.listing,
+                    sidebar: true
+                } %}
+            </div>
+        {% endblock %}
+
+        {% block search_main_content %}
+            <div class="cms-section-sidebar-main-content col-lg-8 col-xl-9">
+                {% sw_include '@Storefront/storefront/component/product/listing.html.twig' with {
+                    searchResult: page.listing,
+                    dataUrl: path('widgets.search.pagelet.v2'),
+                    filterUrl: path('widgets.search.filter'),
+                    params: { search: page.searchTerm },
+                    sidebar: 1,
+                    boxLayout: 'minimal',
+                    displayMode: '',
+                    ariaLiveUpdates: true
+                } %}
+            </div>
+        {% endblock %}
+    </div>
+{% endblock %}

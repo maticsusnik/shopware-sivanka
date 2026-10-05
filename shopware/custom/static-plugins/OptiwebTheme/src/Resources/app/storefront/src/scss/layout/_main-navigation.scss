@@ -1,0 +1,436 @@
+
+.menu-wrapper {
+    margin-inline: 0;
+
+    .icon {
+        vertical-align: middle;
+        color: inherit;
+        transition: inherit;
+
+        svg {
+            top: 0;
+        }
+    }
+}
+
+// The bar is `padding-block: 16px` around a 17px link row plus a 1px border — 50px.
+// The flyout offset is derived from this, so keep the two in step.
+$sv-navbar-pad-block: 16px;
+
+.nav-main {
+    // Reference: the strong border, same as the topbar and header.
+    border-bottom: 1px solid $sv-border-strong;
+    background-color: $sv-white;
+
+    // Reference: the bar is `padding: 16px 20px` around a 17px-tall list, so 50px
+    // including the border. Below 1280 the links take a 48px min-height and the bar
+    // grows to 81px.
+    .container {
+        padding-block: $sv-navbar-pad-block;
+    }
+
+    // `navbar-expand` gives the collapse `flex-basis: auto`, which lets the list
+    // size to its content instead of the bar — the scroller then never scrolls.
+    .navbar-collapse {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .navbar-nav {
+        display: flex;
+        align-items: center;
+        flex-wrap: nowrap;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        height: 17px;
+        // Reference: the list itself carries the nav weight and leading.
+        font-weight: 500;
+        line-height: 16px;
+
+        // The reference pushes everything after the menu opener to the right.
+        li:nth-child(2) {
+            margin-left: auto;
+        }
+    }
+
+    // Below 1280 the reference turns the bar into a horizontal scroller instead of
+    // collapsing it: items keep their order, the right-alignment is dropped, and
+    // the scrollbar is hidden.
+    @media (max-width: $sv-bp-touch) {
+        .navbar-nav {
+            overflow-x: auto;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+            height: 48px;
+
+            &::-webkit-scrollbar {
+                display: none;
+            }
+
+            li:nth-child(2) {
+                margin-left: 0;
+            }
+        }
+
+        .nav-item {
+            flex: 0 0 auto;
+            white-space: nowrap;
+        }
+
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            min-height: 48px;
+        }
+    }
+}
+
+.main-menu {
+    padding-inline: 0;
+
+    .nav-main-toggle-btn {
+        padding-inline: 0;
+    }
+
+}
+
+.dropdown-toggle {
+    &::after {
+        display: none;
+    }
+}
+
+.navbar {
+    padding: 0;
+
+    .nav-link {
+        font-family: $sv-sans;
+        font-size: 16px;
+        font-weight: 500;
+        padding-block: 0;
+        color: $sv-ink;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        position: relative;
+        letter-spacing: normal;
+        line-height: 1;
+
+        // Keep any leading/trailing icon vertically centered with the label
+        .icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            svg {
+                top: -2px;
+            }
+        }
+
+        .main-navigation-link-text {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding-bottom:0;
+        }
+
+        &::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -3px;
+            height: 2.5px;
+            background: $sv-bordo;
+            transform: scaleX(0);
+            transition: transform 0.2s;
+        }
+
+        &:hover, &:focus, &:focus-visible {
+            color: $sv-bordo;
+            box-shadow: none;
+
+            &::after {
+                transform: scaleX(1);
+            }
+        }
+
+        // No "you are here" state on the nav: core underlines the active root's label
+        // (`.main-navigation-link.root.active .main-navigation-link-text`), which left
+        // e.g. "Storitve" underlined on every page below it. Hover keeps its own
+        // `::after` underline.
+        &.active {
+            color: $sv-ink;
+
+            .main-navigation-link-text {
+                border-color: transparent;
+            }
+        }
+
+        &.mega-menu-link {
+            cursor: pointer;
+            color: $sv-ink !important;
+
+            &:hover, &:focus, &:focus-visible {
+                color: $sv-ink !important;
+            }
+
+            &::after {
+                display: none;
+            }
+        }
+    }
+
+    // Reference: 32px between items, 24px below 1280.
+    // Reference: 32px between items, 24px below 1280. The item box is the label's
+    // own height so the hover rule sits 3px under the text rather than at the foot
+    // of the bar.
+    .nav-item {
+        display: flex;
+        align-items: center;
+        align-self: center;
+
+        &:not(:last-child) {
+            padding-right: 32px;
+
+            @media (max-width: $sv-bp-touch) {
+                padding-right: 24px;
+            }
+        }
+    }
+}
+
+// ============================================================
+//  The "Izdelki" menu opener
+//  Two controls, one visible at a time. Shopware 6.7 ships the Bootstrap display
+//  utilities as plain, non-responsive, non-!important rules (`.d-lg-none {
+//  display:none }` with no media query), so `d-none` / `d-lg-none` cannot be used
+//  to switch them — a two-class selector beats them outright.
+//  Above lg the flyout div drives the mega menu; below it the button opens the
+//  offcanvas, because OwMegaMenu bails out under 992px.
+// ============================================================
+// Scoped under .nav-main: `.navbar .nav-link { display: inline-flex }` is a
+// two-class selector and would otherwise beat a bare `.sv-nav-opener--touch`,
+// leaving both openers on screen at once.
+.nav-main {
+    .sv-nav-opener--desktop {
+        display: inline-flex;
+        padding: 0 !important;
+
+        @include media-breakpoint-down(lg) {
+            display: none;
+        }
+    }
+
+    // Deliberately NOT `.mega-menu-link`: a `@media (min-width: 992px)` rule gives
+    // `.ow-mega-menu > .nav-link.mega-menu-link { display: flex }`, which would put
+    // the touch opener back on screen next to the desktop one.
+    .sv-nav-opener--touch {
+        display: none;
+        background: none;
+        border: 0;
+        padding: 0 !important;
+        color: $sv-ink;
+        cursor: pointer;
+
+        &:hover,
+        &:focus,
+        &:focus-visible {
+            color: $sv-ink;
+        }
+
+        &::after {
+            display: none;
+        }
+
+        @include media-breakpoint-down(lg) {
+            display: inline-flex;
+        }
+    }
+}
+
+// Override mega-menu flyout hover: bold text, no underline
+.ow-mega-menu,
+.navigation-offcanvas-desktop {
+    .navigation-flyout-categories {
+        .nav-item {
+            &:hover, &.is-active {
+                text-decoration: none !important;
+                font-weight: 700;
+            }
+        }
+    }
+
+    .navigation-flyout-link {
+        &:hover {
+            text-decoration: none !important;
+        }
+
+        &.is-active, &:hover {
+            font-weight: 700;
+        }
+    }
+}
+
+// Mobile/tablet nav toggle — no purple hover
+.nav-main-toggle-btn {
+    color: $sv-ink;
+
+    &:hover {
+        color: $sv-ink;
+        background: none;
+    }
+
+    .icon {
+        width: 22px;
+        height: 22px;
+        color: $sv-ink;
+    }
+}
+
+.navigation-offcanvas-desktop-placeholder {
+    position: relative;
+}
+
+.navigation-offcanvas-desktop {
+    position: absolute;
+    bottom: unset;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: $sv-cream;
+
+    .offcanvas-body {
+        padding-block: 1.5rem;
+    }
+
+    .offcanvas-backdrop.show {
+        top: 0;
+        position: absolute;
+        width: 100%;
+    }
+
+    .offcanvas-header, .navigation-offcanvas-actions, .is-back-link {
+        display: none;
+    }
+
+    .navigation-offcanvas {
+        &-containers {
+            max-width: $header-width;
+            margin-inline: auto;
+
+            > div {
+                padding-inline: 1rem;
+
+                &:not(:first-child) .navigation-offcanvas-content {
+                    border-left: 1px solid $sv-border;
+                }
+            }
+        }
+
+        &-list-item {
+            border: 0;
+            background: none;
+        }
+
+        &-link {
+            @include fontSpecs(14, 20, 400);
+            color: $sv-ink;
+            padding-block: 0.5rem;
+            padding-left: 1rem;
+            padding-right: 0;
+
+            &-icon, .icon {
+                color: $sv-ink-muted;
+            }
+
+            &.is-active, &:hover {
+                text-decoration: none;
+            }
+
+            &:focus-visible {
+                box-shadow: none;
+            }
+
+            // No bold "you are here" weight — core's `is-current-category` rule is
+            // (0,2,0), this one outranks it.
+            &.is-current-category {
+                justify-content: start;
+                gap: 0.25rem;
+                font-weight: 400;
+
+                &:hover {
+                    letter-spacing: unset;
+                }
+            }
+
+            &.is-active, &:hover {
+                font-weight: 700;
+                color: inherit;
+
+                .icon {
+                    color: $sv-ink;
+                }
+            }
+        }
+    }
+}
+
+.navigation-offcanvas {
+    &-icon {
+        width: 1.5rem;
+        height: 1.5rem;
+        display: inline-block;
+
+        img {
+            width: 100%;
+            max-height: 100%;
+        }
+    }
+}
+
+.dropdown-menu {
+    border: 0;
+    background: $sv-cream;
+    padding: 1.5rem;
+
+    &[data-bs-popper] {
+        // The flyout is positioned against `.navbar`, which is only as tall as the
+        // 17px link row — the bar's own height comes from `.nav-main .container`'s
+        // 16px block padding plus the 1px border. A hard-coded offset drifts the
+        // moment either changes; 56px left the flyout 22px below the bar, and the
+        // pointer crossing that dead band closed the menu before it could be used.
+        top: calc(100% + #{$sv-navbar-pad-block} + 1px);
+        margin: 0;
+    }
+}
+
+.navigation-flyout-categories.is-level-0 {
+
+    .navigation-flyout-col {
+        margin-bottom: 0;
+
+        &:before {
+            display: none;
+        }
+
+        .nav-item {
+            margin: 0;
+            @include fontSpecs(14, 20, 400);
+            color: $sv-ink;
+            padding-block: 0.5rem;
+            padding-inline: 1rem;
+
+            &.is-active, &:hover {
+                text-decoration: none;
+                color: inherit;
+                font-weight: 700;
+            }
+        }
+    }
+}
+
+.offcanvas-backdrop.show + .offcanvas-backdrop.show {
+    display: none;
+}

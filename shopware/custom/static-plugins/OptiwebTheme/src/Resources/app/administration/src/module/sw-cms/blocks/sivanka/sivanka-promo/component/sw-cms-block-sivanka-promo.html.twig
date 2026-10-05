@@ -1,0 +1,13 @@
+{% block sw_cms_block_sivanka_promo %}
+<div class="sw-cms-block-sivanka-promo">
+    <div class="sw-cms-block-sivanka-promo__slot">
+        <slot name="promoOne">{% block sw_cms_block_sivanka_promo_slot_promoone %}{% endblock %}</slot>
+    </div>
+    <div class="sw-cms-block-sivanka-promo__slot">
+        <slot name="promoTwo">{% block sw_cms_block_sivanka_promo_slot_promotwo %}{% endblock %}</slot>
+    </div>
+    <div class="sw-cms-block-sivanka-promo__slot">
+        <slot name="promoThree">{% block sw_cms_block_sivanka_promo_slot_promothree %}{% endblock %}</slot>
+    </div>
+</div>
+{% endblock %}

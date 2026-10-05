@@ -1,0 +1,596 @@
+// ============================================================
+//  Sivanka local service strip (above the footer)
+//  Reference: the section directly above <footer> on Storitve / Merjenje /
+//  Siviljstvo / Menjava zadrg / Popravila / Category / Product.
+//
+//  The cream surface *is* the strip — no inner card, no border around the items,
+//  no shadow. It is the deliberate inverse of the home hero trust row: that one is
+//  a white card floating on the page ground with cream medallions; this one is a
+//  cream band with white medallions, columns split by hairlines alone.
+//
+//  section (cream, 1px top rule)
+//    └ .container   max-width 1406, padding 34px 20px 36px
+//        └ .nl-svc-grid  max-width 1366, 3 equal columns
+//  Column ladder: 3 -> 2 (<=1100, divider on the even item) -> 1 (<=720).
+//  Row rules use $sv-border; column dividers use $sv-border-strong.
+// ============================================================
+.sivanka-newsletter-strip {
+    background: $sv-cream;
+    border-top: 1px solid $sv-border;
+    font-family: $sv-sans;
+    // The band owns its separation from the content above it, so the gap is the
+    // same on every route. Without this it inherited whatever trailing padding the
+    // last block happened to carry — 72px on home, 24 on category, 0 on the
+    // service and product pages, which left the strip 8px under the cross-sell row.
+    margin-top: 72px;
+
+    @media (max-width: $sv-bp-phone) {
+        margin-top: 44px;
+    }
+
+    .container {
+        max-width: $sv-container;
+        padding: 34px $sv-gutter 36px;
+
+        @media (max-width: $sv-bp-phone) {
+            padding-inline: $sv-gutter-sm;
+        }
+
+        @media (max-width: $sv-bp-tiny) {
+            padding-inline: $sv-gutter-xs;
+        }
+    }
+
+    .nl-svc-grid {
+        max-width: $sv-inner;
+        margin-inline: auto;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+
+        @media (max-width: $sv-bp-tablet) {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            row-gap: 26px;
+        }
+
+        // From here down the wrapped row gains a rule of its own (see `.nl-svc`), and
+        // the item padding is already 22px, so the gap has to go or the rule sits
+        // 48px below one row and 23px above the next.
+        @media (max-width: $sv-bp-portrait) {
+            row-gap: 0;
+        }
+
+        @media (max-width: $sv-bp-phone) {
+            grid-template-columns: minmax(0, 1fr);
+            // No row gap once stacked. The divider is drawn on each item's own top
+            // edge, so a grid gap would pile all the whitespace ABOVE the rule and
+            // leave the icon welded to its underside. The breathing room has to come
+            // from the items' own padding instead — see `.nl-svc` below.
+            row-gap: 0;
+        }
+    }
+
+    .nl-svc {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        padding: 8px 32px;
+        // Hairline between columns; the strip has no outer border of its own.
+        border-left: 1px solid $sv-border-strong;
+
+        &:first-child {
+            border-left: 0;
+        }
+
+        // Two columns: only the right-hand cell of each row keeps its divider.
+        @media (max-width: $sv-bp-tablet) {
+            border-left: 0;
+
+            &:nth-child(even) {
+                border-left: 1px solid $sv-border-strong;
+            }
+        }
+
+        // Still two columns, but the wrapped row now gets a rule above it. Row rules
+        // are drawn in the softer $sv-border, not the $sv-border-strong of the columns.
+        @media (max-width: $sv-bp-portrait) {
+            padding: 22px 24px;
+
+            &:nth-child(n + 3) {
+                border-top: 1px solid $sv-border;
+            }
+        }
+
+        // One column: no columns left to divide, and every item after the first
+        // carries the row rule instead. Stacked, the items read better centred than
+        // ragged-left against the full page width.
+        //
+        // 20px above and below every rule, so it sits centred in the whitespace. The
+        // outer edges are trimmed so the strip's own 34/36 container padding still
+        // sets the distance to the band edges rather than stacking on top of these.
+        @media (max-width: $sv-bp-phone) {
+            padding: 20px 0;
+            justify-content: center;
+            // Stacked to one column there is width to spare above the copy but none
+            // beside it, so the medallion moves on top of its text instead of eating
+            // 56px + gap out of the line the two-line label has to fit into.
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            text-align: center;
+
+            &,
+            &:nth-child(even) {
+                border-left: 0;
+            }
+
+            &:nth-child(n + 2) {
+                border-top: 1px solid $sv-border;
+            }
+
+            &:first-child {
+                padding-top: 0;
+            }
+
+            &:last-child {
+                padding-bottom: 0;
+            }
+        }
+
+        @media (max-width: $sv-bp-small) {
+            gap: 14px;
+        }
+    }
+
+    // White on cream — the inverse of the hero trust row's cream-on-white medallion.
+    .nl-svc-ic {
+        flex: 0 0 56px;
+        width: 56px;
+        height: 56px;
+        border-radius: $sv-r-round;
+        background: $sv-white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: $sv-bordo;
+
+        @media (max-width: $sv-bp-small) {
+            flex-basis: 48px;
+            width: 48px;
+            height: 48px;
+        }
+
+        .icon {
+            width: 28px;
+            height: 28px;
+        }
+    }
+
+    .nl-svc-text {
+        min-width: 0;
+
+        b {
+            display: block;
+            font-family: $sv-serif;
+            font-size: 18px;
+            font-weight: $sv-heading-weight;
+            line-height: 24px;
+            color: $sv-bordo-head;
+        }
+
+        span,a {
+            display: block;
+            margin-top: 3px;
+            font-size: 14px;
+            line-height: 21px;
+            color: $sv-ink-muted;
+        }
+    }
+}
+
+// ============================================================
+//  Footer
+//  Reference: white, `padding: 56px 0 0`, a four-column grid of
+//  462 / 289 / 289 / 231 with space-between and a 32px gap, 44px of space under
+//  it, then a hairline bottom bar.
+//  Column ladder: 4 fixed -> 4 equal (<=1420) -> 2 (<=1100) -> 1 (<=720).
+// ============================================================
+.footer-main {
+    background: $sv-white;
+    color: $sv-ink;
+    border-top: 0;
+    font-family: $sv-sans;
+    padding-top: 56px;
+
+
+    a, h4 {
+        color: inherit;
+    }
+
+    a {
+        text-decoration: none;
+
+        &:hover {
+            color: $sv-bordo;
+        }
+    }
+
+    p {
+        margin-bottom: 0.5rem;
+    }
+
+    .footer-logo {
+        margin-bottom: 18px;
+        display: block;
+        text-align: left;
+
+        // Override Bootstrap .text-center and .m-auto that come from the base logo template
+        .header-logo-main,
+        .header-logo-main.text-center {
+            text-align: left !important;
+        }
+
+        .header-logo-main-link {
+            display: inline-flex;
+            justify-content: flex-start;
+        }
+
+        .header-logo-picture,
+        .header-logo-picture.m-auto {
+            margin-inline: 0 !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            max-width: 100%;
+            max-height: 44px;
+            display: block;
+        }
+
+        // Constrain the actual image so it never overflows the footer column
+        .header-logo-main-img {
+            display: block;
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            max-height: 44px;
+            object-fit: contain;
+        }
+    }
+}
+
+.footer-column {
+    border-bottom: 0;
+
+    &-content-inner {
+        padding: 0;
+    }
+
+    // Reference: Inter 12/700, .96px tracking, uppercase, INK — not the bordo
+    // eyebrow. 16px below.
+    .footer-column-content-title,
+    h4 {
+        @include sv-footer-heading;
+        margin-bottom: 16px;
+    }
+
+    .list-unstyled {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-block: 0;
+    }
+
+    .footer-link-item {
+        padding-block: 0;
+        line-height: 1.5;
+    }
+
+    .footer-link {
+        font-size: 15px;
+        line-height: 24px;
+        color: $sv-ink;
+        text-decoration: none;
+
+        &:hover {
+            color: $sv-bordo;
+        }
+    }
+}
+
+// Social links in footer
+.social-links {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-inline: 0;
+}
+
+.social-link-item {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    // Pinned so no touch-target rule can stretch the circle into an oval again.
+    min-height: 36px;
+    flex: 0 0 36px;
+    border-radius: $sv-r-round;
+    border: 1px solid $sv-border;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $sv-ink;
+    transition: background 0.18s, border-color 0.18s, color 0.18s;
+    padding: 0;
+    flex-shrink: 0;
+    overflow: hidden;
+    box-sizing: border-box;
+
+    &:hover {
+        background: $sv-bordo !important;
+        border-color: $sv-bordo !important;
+        color: $sv-white !important;
+    }
+
+    // Inline social SVG — perfectly centered in the 36px circle
+    .social-svg {
+        display: block;
+        width: 18px;
+        height: 18px;
+        color: inherit;
+    }
+
+    // Center the icon span and force SVG to 18x18 inside a 36px circle (legacy sw_icon fallback)
+    .icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+        line-height: 0;
+
+        svg {
+            display: block;
+            width: 18px !important;
+            height: 18px !important;
+            max-width: 18px;
+            max-height: 18px;
+        }
+    }
+}
+
+// Footer bottom bar
+.footer-bottom {
+    background: $sv-white;
+    color: $sv-ink;
+    border-top: 1px solid $sv-border;
+    font-size: 14px;
+    // The bar runs edge to edge; the row inside it is the page's own container, so
+    // the copyright sits on the same 1366px column as the footer columns above it.
+    // (The reference pads the bar by 16px, which nudges that container 1px off the
+    // grid — Matic asked for the page alignment instead.)
+    padding-block: 20px;
+    padding-inline: 0;
+
+    a {
+        color: inherit;
+        text-decoration: none;
+
+        &:hover {
+            color: $sv-bordo;
+        }
+    }
+}
+
+// Footer columns — 4-column CSS Grid, remove Bootstrap row's negative margins
+// Reference: fixed tracks of 462 / 289 / 289 / 231 with space-between and a 32px
+// gap, 44px of space beneath. The ladder is 4 fixed -> 4 equal (<=1420) ->
+// 2 (<=1100) -> 1 (<=720); Bootstrap's xl/lg/md/sm do not land on any of those.
+// The rule is anchored on the id because that is what the markup gives us and a
+// class-level rule would lose to it.
+#footerColumns {
+    display: grid !important;
+    grid-template-columns: 462px 289px 289px 231px;
+    justify-content: space-between;
+    gap: 32px;
+    padding-bottom: 44px;
+    padding-top: 0;
+    // Remove Bootstrap .row negative margins that push col1 outside container
+    margin-inline: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+
+    > [class*="col-"] {
+        width: auto !important;
+        max-width: none !important;
+        flex: none;
+        padding-inline: 0 !important;
+    }
+
+    @media (max-width: $sv-bp-footer) {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    @media (max-width: $sv-bp-tablet) {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @media (max-width: $sv-bp-phone) {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 26px;
+    }
+}
+
+// ---- Footer text consistency ----
+// All footer column headings uniform
+.footer-main {
+    .footer-column-content-title,
+    h4.footer-column-content-title,
+    .footer-column h4 {
+        font-family: $sv-sans !important;
+        font-size: 12px !important;
+        font-weight: 700 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.08em !important; // .96px at 12px — the reference value
+        line-height: 24px !important;
+        color: $sv-ink !important;
+        margin-bottom: 16px !important;
+    }
+
+    // All body text inside footer columns
+    .footer-column-content-inner,
+    // Reference: 15/24 in ink-muted. Only the shop-name line and any bold run are
+    // ink — that contrast is what separates the address block from the hours.
+    .footer-column-content-inner,
+    .footer-column-content-inner p,
+    .footer-column-content-inner li,
+    .footer-column-content-inner span,
+    .footer-column-content-inner div {
+        font-family: $sv-sans;
+        font-size: 15px;
+        color: $sv-ink-muted;
+        line-height: 24px;
+    }
+
+    .footer-column-content-inner p {
+        margin-bottom: 8px;
+
+        &:last-child { margin-bottom: 0; }
+    }
+
+    .footer-column-content-inner b,
+    .footer-column-content-inner strong {
+        font-weight: 700;
+        color: $sv-ink;
+    }
+
+    // All links in footer columns.
+    // Social icon links carry their own colours (white glyph on the magenta hover
+    // circle), so they must stay out of this rule — its `!important` would otherwise
+    // repaint the glyph magenta on magenta and make it disappear.
+    .footer-column-content-inner a:not(.social-link-item),
+    .footer-link:not(.social-link-item) {
+        font-family: $sv-sans;
+        font-size: 15px;
+        color: $sv-ink !important;
+        text-decoration: none;
+        line-height: 1.6;
+
+        &:hover {
+            color: $sv-bordo !important;
+        }
+    }
+
+    // Copyright bar — 14/21 ink-muted, with the privacy link in ink.
+    .footer-copyright-text {
+        font-family: $sv-sans;
+        font-size: 14px;
+        line-height: 21px;
+        color: $sv-ink-muted;
+    }
+
+    .footer-copyright-link {
+        font-family: $sv-sans;
+        font-size: 14px;
+        line-height: 21px;
+        color: $sv-ink;
+    }
+}
+
+
+
+// ---- Footer logo ----
+// Reference: 214x44, 18px below.
+.footer-main .footer-logo {
+    .header-logo-main-link,
+    .header-logo-picture,
+    .header-logo-main-img {
+        width: 214px;
+        height: 44px;
+        max-height: 44px;
+    }
+
+    .header-logo-main-img {
+        object-fit: contain;
+        object-position: left center;
+    }
+}
+
+// ---- Bottom bar ----
+// Reference: a hairline rule, 20px/16px padding, 14/21 ink-muted, the privacy
+// link in ink. Stacks below 720.
+.footer-main .footer-copyright {
+    // The hairline and the 20px band belong to `.footer-bottom`, which wraps this row.
+    // Declaring them here too drew a second rule 21px below the first.
+    margin-top: 0;
+    padding-block: 0;
+    font-size: 14px;
+    line-height: 21px;
+    color: $sv-ink-muted;
+
+    .footer-copyright-links {
+        display: flex;
+        flex-wrap: wrap;
+        column-gap: 36px;
+        row-gap: 8px;
+    }
+
+    .footer-copyright-link {
+        color: $sv-ink;
+
+        &:hover { color: $sv-bordo; }
+    }
+
+}
+
+// It carries `.row` but holds no `.col-*`, so the row's negative gutter margin pulled
+// both cells outside the container and widened them past the reference's 284px at
+// 340 — enough to stop the copyright line wrapping. Two class names to outrank the
+// `--bs-gutter-x` ladder in _general.scss, which also targets `.row`.
+.footer-bottom .footer-copyright.row {
+    // The row carries `g-0` in the markup rather than a `--bs-gutter-x` override
+    // here: `_general.scss` re-declares that variable on
+    // `.row:not(.g-0):not(.gx-0):…`, five classes deep, and would win back the
+    // gutter below 720. `g-0` opts out of that rule by name, which leaves the
+    // container's own 20/16/12 padding as the only inset — the same content column
+    // the footer links above sit on.
+    margin-inline: auto;
+    padding-inline: $sv-gutter;
+
+    @media (max-width: $sv-bp-phone) {
+        padding-inline: $sv-gutter-sm;
+    }
+
+    @media (max-width: $sv-bp-tiny) {
+        padding-inline: $sv-gutter-xs;
+    }
+
+    // Stacked below 720, as the reference draws it. Once the direction flips,
+    // `align-items` governs the horizontal axis — left at the `center` it inherits
+    // from the row, the two lines float in the middle instead of starting on the
+    // content column. Declared here rather than on `.footer-main .footer-copyright`
+    // so it outranks whatever set that `center`.
+    @media (max-width: $sv-bp-phone) {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+    }
+}
+
+// The strip supplies the gap above itself (see `margin-top` there), so nothing at
+// the end of the page may add a second one on top of it. Two things did: the last
+// block's own bottom padding, and — on the sidebar layouts (category, search, the
+// service pages) — the 60px bottom margin core puts on the section wrapper.
+.content-main .cms-sections > .cms-section:last-child {
+    > * {
+        margin-bottom: 0;
+    }
+
+    .cms-block:last-child {
+        padding-bottom: 0;
+    }
+}
+
+// The footer logo reuses the header's `.header-logo-main-link`, which the <1280
+// touch-target list in _reset.scss sizes to 46px. In the footer it is not chrome and
+// that height only pushed the address block down.
+.footer-main .header-logo-main-link {
+    min-height: 0;
+}

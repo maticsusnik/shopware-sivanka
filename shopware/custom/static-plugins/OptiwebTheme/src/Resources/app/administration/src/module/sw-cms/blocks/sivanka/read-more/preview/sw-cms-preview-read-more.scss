@@ -1,0 +1,17 @@
+.sw-cms-preview-read-more {
+    position: relative;
+    padding: 16px 10px;
+
+    .sw-cms-preview-read-more__inner {
+        display: flex;
+        position: relative;
+        gap: 16px;
+
+        .sw-cms-preview-read-more__content {
+            display: block;
+            & div {
+                font-size: 10px;
+            }
+        }
+    }
+}

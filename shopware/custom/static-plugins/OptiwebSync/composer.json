@@ -1,0 +1,22 @@
+{
+    "name": "optiweb/sync",
+    "description": "Optiweb Sync",
+    "type": "shopware-platform-plugin",
+    "version": "1.0.0",
+    "license": "MIT",
+    "require": {
+        "shopware/core": "~6.7.0"
+    },
+    "extra": {
+        "shopware-plugin-class": "OptiwebSync\\OptiwebSync",
+        "label": {
+            "de-DE": "Optiweb Sync",
+            "en-GB": "Optiweb Sync"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "OptiwebSync\\": "src/"
+        }
+    }
+}

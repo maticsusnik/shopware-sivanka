@@ -1,0 +1,19 @@
+@import "../../../../sivanka-service-shared";
+
+.sw-cms-block-sivanka-faq {
+    &__heading {
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    &__grid {
+        @include sivanka-service-block-grid(1fr 1fr);
+        gap: 24px;
+    }
+
+    &__aside {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+}

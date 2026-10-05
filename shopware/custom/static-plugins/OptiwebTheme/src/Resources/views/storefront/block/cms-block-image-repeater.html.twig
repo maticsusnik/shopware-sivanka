@@ -1,0 +1,9 @@
+{% block block_image_repeater %}
+    <div class="col-12 cms-block-image-repeater" data-cms-element-id="{{ block.id }}">
+            <div class="content-container">
+                {% sw_include "@Storefront/storefront/element/cms-element-image-tabs.html.twig" with {
+                    element: block
+                } %}
+            </div>
+    </div>
+{% endblock %}

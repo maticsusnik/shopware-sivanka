@@ -1,0 +1,16 @@
+{% sw_extends '@Storefront/storefront/layout/header/top-bar.html.twig' %}
+
+{% block layout_header_top_bar %}
+<div class="sivanka-topbar">
+    <div class="container">
+        {% sw_include '@Storefront/storefront/layout/header/top-bar-items.html.twig' %}
+
+        <a class="tb-item tb-help" href="{{ path('frontend.home.page') }}">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M6 3h4l2 5-2.5 1.5a12 12 0 0 0 5 5L16 12l5 2v4a2 2 0 0 1-2.2 2A17 17 0 0 1 4 5.2 2 2 0 0 1 6 3z"/>
+            </svg>
+            {{ 'sivanka.topbarHelp'|trans }}
+        </a>
+    </div>
+</div>
+{% endblock %}

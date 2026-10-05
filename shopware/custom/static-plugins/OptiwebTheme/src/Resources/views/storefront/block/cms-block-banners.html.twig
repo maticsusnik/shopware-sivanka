@@ -1,0 +1,8 @@
+{% block block_content %}
+    {% set element = block.slots.getSlot('banners') %}
+    <div class="cms-block-banners">
+        {% sw_include '@Storefront/storefront/element/cms-element-banners.html.twig' %}
+    </div>
+{% endblock %}
+
+

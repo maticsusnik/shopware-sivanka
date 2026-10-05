@@ -1,0 +1,22 @@
+{
+  "name": "optiweb/theme",
+  "description": "Optiweb theme plugin",
+  "type": "shopware-platform-plugin",
+  "license": "MIT",
+  "version": "1.0.0",
+  "require": {
+    "shopware/core": "~6.7.0",
+    "shopware/storefront": "~6.7.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "OptiwebTheme\\": "src/"
+    }
+  },
+  "extra": {
+    "shopware-plugin-class": "OptiwebTheme\\OptiwebTheme",
+    "label": {
+      "en-GB": "Theme OptiwebTheme plugin"
+    }
+  }
+}

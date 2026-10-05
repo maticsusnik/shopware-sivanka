@@ -1,0 +1,21 @@
+{% block element_sivanka_step_card %}
+    {% set config = element.fieldConfig.elements %}
+
+    <div class="cms-element-{{ element.type }} sivanka-step-card">
+        {% block element_sivanka_step_card_number %}
+            {% if config.number.value %}
+                <span class="sivanka-step-card__number" aria-hidden="true">{{ config.number.value }}</span>
+            {% endif %}
+        {% endblock %}
+
+        {% block element_sivanka_step_card_body %}
+            {% if config.title.value %}
+                <h3 class="sivanka-step-card__title">{{ config.title.value }}</h3>
+            {% endif %}
+            {% sw_include '@Storefront/storefront/utilities/sivanka-rich-text.html.twig' with {
+                sivankaText: config.text.value,
+                sivankaClass: 'sivanka-step-card__text'
+            } only %}
+        {% endblock %}
+    </div>
+{% endblock %}

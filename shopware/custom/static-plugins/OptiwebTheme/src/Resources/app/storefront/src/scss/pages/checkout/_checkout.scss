@@ -1,0 +1,539 @@
+// ============================================================
+// CHECKOUT STEPS PROGRESS BAR
+// ============================================================
+.checkout-steps {
+    @include margin('bottom', 32, true);
+
+    &-list {
+        display: flex;
+        align-items: center;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    &-item {
+        display: flex;
+        align-items: center;
+        flex: 1;
+
+        &:last-child .checkout-steps-connector {
+            display: none;
+        }
+    }
+
+    &-link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        color: $sv-ink-muted;
+        pointer-events: none;
+        @include fontSpecs(14, 20, 400, false, false);
+
+        &[href] {
+            pointer-events: auto;
+            &:hover { color: $sv-ink; }
+        }
+    }
+
+    &-number {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: $sv-r-round;
+        background: $sv-border;
+        color: $sv-white;
+        @include fontSpecs(13, 20, 700, false, false);
+        flex-shrink: 0;
+        transition: background 0.2s;
+    }
+
+    &-label {
+        @include media-breakpoint-down(sm) {
+            display: none;
+        }
+    }
+
+    &-connector {
+        flex: 1;
+        height: 1px;
+        background: $sv-border;
+        margin-inline: 8px;
+        transition: background 0.2s;
+    }
+
+    .is-active {
+        .checkout-steps-number {
+            background: $sv-bordo;
+        }
+
+        .checkout-steps-link {
+            color: $sv-ink;
+            font-weight: 700;
+        }
+    }
+
+    .is-done:not(.is-active) {
+        .checkout-steps-number {
+            background: $sv-ink;
+        }
+
+        .checkout-steps-link[href] {
+            color: $sv-ink;
+        }
+
+        .checkout-steps-connector {
+            background: $sv-ink;
+        }
+    }
+}
+
+// ============================================================
+// MINIMAL HEADER
+// ============================================================
+.header-minimal-row {
+    border-bottom: 1px solid $sv-cream;
+    align-items: center;
+    min-height: 64px;
+
+    .header-minimal-contact {
+        text-align: center;
+        align-items: center;
+        justify-content: center;
+        @include fontSpecs(14, 20, 400, false, false);
+        color: $sv-ink-muted;
+
+        p { margin: 0; }
+    }
+
+    .header-minimal-back-to-shop {
+        text-align: right;
+
+        .btn {
+            @include fontSpecs(14, 20, 700, false, false);
+            @include padding('top', 8, false);
+            @include padding('bottom', 8, false);
+            @include padding('left', 16, false);
+            @include padding('right', 16, false);
+        }
+    }
+}
+
+// ============================================================
+// REGISTER / ADDRESS PAGE
+// ============================================================
+.is-act-checkoutregisterpage {
+    .checkout {
+        padding-top: 0;
+    }
+
+    .address-main-header {
+        @include margin('bottom', 32, true);
+        @include fontSpecs(28, 34, 700, false, true);
+        display: block;
+    }
+}
+
+// ============================================================
+// CONFIRM PAGE
+// ============================================================
+.is-act-confirmpage {
+    .checkout {
+        padding-top: 0;
+    }
+
+    .confirm-main-header {
+        @include margin('bottom', 32, true);
+        @include fontSpecs(28, 34, 700, false, true);
+        display: block;
+    }
+}
+
+.confirm-section {
+    @include margin('bottom', 24, false);
+
+    &-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        @include margin('bottom', 16, false);
+        border-bottom: 1px solid $sv-border;
+        @include padding('bottom', 12, false);
+    }
+
+    &-number {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: $sv-r-round;
+        background: $sv-ink;
+        color: $sv-white;
+        @include fontSpecs(16, 24, 700, false, false);
+        flex-shrink: 0;
+    }
+
+    &-title {
+        @include fontSpecs(18, 24, 700, false, false);
+        margin: 0;
+    }
+}
+
+.confirm-address {
+    margin-bottom: 0;
+}
+
+// Payment + Shipping section
+.confirm-payment-shipping {
+    margin-bottom: 0;
+
+    .confirm-shipping {
+        order: 1;
+        @include margin('bottom', 16, false);
+    }
+
+    .confirm-payment {
+        order: 2;
+        margin-bottom: 0;
+    }
+
+    .card-title {
+        border-bottom: 0;
+        padding-bottom: 0;
+        @include margin('bottom', 12, false);
+        @include fontSpecs(16, 24, 700, false, false);
+    }
+
+
+    .shipping-method-description,
+    .payment-method-description {
+        p {
+            color: $sv-ink-muted;
+            @include fontSpecs(14, 20, 400, false, false);
+        }
+    }
+
+    .payment-method-description {
+        width: 100%;
+    }
+}
+
+// TOS checkboxes
+.confirm-tos {
+    .form-check {
+        min-height: 0;
+    }
+
+    .form-check-input.d-none + .form-check-label {
+        display: none;
+    }
+}
+
+// Customer comment textarea
+.checkout-customer-comment-control {
+    label { display: none; }
+
+    textarea {
+        background: transparent;
+        border: 0;
+
+        &:hover, &:focus, &:active {
+            background: $sv-white;
+        }
+    }
+}
+
+// ============================================================
+// CHECKOUT ASIDE — SIDEBAR
+// ============================================================
+.checkout-aside {
+    .card-title {
+        border-bottom: 0;
+        padding-bottom: 0;
+        @include margin('bottom', 8, false);
+        @include fontSpecs(16, 24, 700, false, false);
+    }
+}
+
+.checkout-aside-container {
+    padding: 0;
+    background: $sv-cream;
+    border-radius: $sv-r-btn-sm;
+}
+
+// Products list in aside (checkout address/register page)
+.checkout-aside-products {
+    padding: $product-buy-spacer;
+    padding-top: 0;
+
+    .checkout-aside-product-header {
+        @include fontSpecs(16, 24, 700, false, false);
+        border-top: 1px solid $sv-border;
+        @include padding('top', 16, false);
+    }
+
+    .checkout-aside-product-list {
+        .line-item {
+            padding-block: 0.75rem;
+            border-bottom: 1px solid $sv-border;
+
+            &:last-child { border-bottom: none; }
+
+            // Outer row: image+details | remove+price — single horizontal line
+            > .line-item-row {
+                display: flex;
+                flex-wrap: nowrap;
+                align-items: center;
+                gap: 8px;
+            }
+
+            // info block: let it grow, not forced to 100% by Bootstrap col-*
+            .line-item-info {
+                flex: 1 !important;
+                width: auto !important;
+                max-width: none !important;
+                min-width: 0;
+
+                // Inner row: image left, details right
+                .line-item-row {
+                    flex-wrap: nowrap;
+                    align-items: center;
+                    gap: 8px;
+                }
+            }
+
+            .line-item-img-container {
+                width: 48px;
+                flex-shrink: 0;
+
+                img { width: 100%; height: auto; object-fit: contain; }
+            }
+
+            .line-item-details {
+                flex: 1;
+                min-width: 0;
+            }
+
+            // Quantity inside details (actual class in DOM)
+            .line-item-cart-quantity {
+                margin-top: 2px;
+                @include fontSpecs(13, 18, 400, false, false);
+                color: $sv-ink-muted;
+
+                .line-item-quantity-row { margin: 0; }
+                .line-item-quantity-label { display: none; }
+                .line-item-quantity-select-wrapper { width: auto; }
+            }
+
+            // Price duplicated inside details — hide it
+            .line-item-total-price.checkout-price { display: none; }
+
+            // Outer price+remove column (no checkout-price class): show both remove btn and price
+            .line-item-total-price.line-item-price:not(.checkout-price) {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-end;
+                flex-shrink: 0;
+                width: auto !important;
+                max-width: none !important;
+                gap: 4px;
+
+                .line-item-total-price-label { display: none; }
+                .line-item-total-price-value {
+                    @include fontSpecs(14, 20, 700, false, false);
+                }
+            }
+
+            // Hide columns not needed in aside
+            .line-item-unit-price,
+            .line-item-tax-price { display: none; }
+
+            .line-item-label { @include fontSpecs(14, 20, 500, false, false); }
+
+            .line-item-details-characteristics {
+                @include fontSpecs(12, 16, 400, false, false);
+
+                .line-item-details-characteristics-option { font-weight: unset; }
+            }
+        }
+    }
+}
+
+// Summary area
+.checkout-aside-summary {
+    background: none;
+    padding: $product-buy-spacer;
+    padding-bottom: 0;
+
+    &-header {
+        @include fontSpecs(18, 24, 700, false, false);
+        @include margin('bottom', 16, false);
+        border-bottom: 1px solid $sv-border;
+        @include padding('bottom', 12, false);
+    }
+
+    &-label,
+    &-value,
+    &-header-row {
+        @include margin('bottom', 8, false);
+        margin-top: 0 !important;
+    }
+
+    &-value {
+        font-weight: 700;
+    }
+
+    &-list {
+        margin: 0;
+    }
+}
+
+// Grand total with strong visual separator
+// display:contents makes this div layout-transparent so dt.col-7/dd.col-5
+// inside it remain direct flex children of the parent dl.row grid.
+.checkout-aside-summary-grand-total-wrapper {
+    display: contents;
+}
+
+// Visual separator: applied directly to the first total dt/dd pair
+dt.checkout-aside-summary-total,
+dd.checkout-aside-summary-total {
+    border-top: 2px solid $sv-ink;
+    padding-top: 12px;
+    margin-top: 8px;
+    @include fontSpecs(17, 24, 700, false, false);
+}
+
+// Trust badge strip
+.checkout-aside-trust {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    @include padding('top', 12, false);
+    @include padding('bottom', 8, false);
+    @include padding('left', 20, false);
+    @include padding('right', 20, false);
+    @include fontSpecs(13, 18, 400, false, false);
+    color: $sv-ink-muted;
+
+    .icon {
+        width: 14px;
+        height: 14px;
+        color: $sv-bordo;
+        flex-shrink: 0;
+    }
+}
+
+// Aside action buttons
+.checkout-aside-action {
+    @include padding('left', 20, false);
+    @include padding('right', 20, false);
+    @include padding('bottom', 20, false);
+    @include padding('top', 8, false);
+
+    &:first-child {
+        padding-top: 20px;
+    }
+
+    .btn-primary {
+        background: $sv-bordo;
+        border-color: $sv-bordo;
+        width: 100%;
+
+        &:hover {
+            background: $sv-bordo-hover;
+            border-color: $sv-bordo-hover;
+        }
+    }
+}
+
+// Product list in aside (confirm page)
+.checkout-aside .confirm-product {
+    .line-item-row {
+        .line-item-info { margin: 0; }
+
+        .line-item-total-price {
+            &:not(.checkout-price) { display: none; }
+
+            &.checkout-price {
+                width: auto;
+                max-width: 100%;
+
+                .line-item-total-price-value {
+                    text-align: left;
+                }
+            }
+        }
+    }
+
+    .card-body {
+        margin-top: -1rem;
+        margin-bottom: 0;
+    }
+}
+
+// Line items visible in aside
+.checkout-aside {
+    .line-item {
+        padding-block: 1rem;
+
+        &-cart-quantity,
+        &-tax-price {
+            display: none;
+        }
+
+        &-label {
+            text-decoration: none;
+            @include fontSpecs(15, 22, 400, false, false);
+        }
+
+        &-details-characteristics {
+            @include fontSpecs(13, 18, 400, false, false);
+
+            &-option {
+                font-weight: unset;
+            }
+        }
+
+        &:last-child {
+            border-bottom: 1px solid $sv-border;
+        }
+    }
+}
+
+// ============================================================
+// ADDRESS MANAGER MODAL
+// ============================================================
+.address-manager-modal {
+    .modal-header {
+        padding-top: 1.5rem;
+    }
+
+    .text-bg-info {
+        background-color: $sv-bordo;
+        color: $sv-ink;
+    }
+
+    .address-manager-modal-tab-navigation-list,
+    .address-manager-list-base {
+        .btn {
+            @include fontSpecs(16, 24, 700, false, false);
+            padding: 6px 12px;
+        }
+    }
+
+    .address-manager-select-address {
+        min-height: 155px;
+    }
+
+    .dropdown-menu {
+        padding: 0.5rem;
+    }
+}
+
+// NOTE: the finish (thank-you) page is styled in checkout-flow.scss, together with
+// the register and confirm pages it shares its shell with.

@@ -1,0 +1,79 @@
+{% block element_sivanka_service_card %}
+    {% set config = element.fieldConfig.elements %}
+    {% set variant = config.variant.value in ['wide', 'compact', 'tile'] ? config.variant.value : 'wide' %}
+    {% set media = element.data.media %}
+    {% set url = config.url.value %}
+    {% set tag = url ? 'a' : 'div' %}
+
+    <{{ tag }} class="cms-element-{{ element.type }} sivanka-service-card sivanka-service-card--{{ variant }}{% if media %} sivanka-service-card--has-media{% endif %}"
+        {% if url %}href="{{ url }}"{% endif %}>
+
+        {% block element_sivanka_service_card_media %}
+            {% if media %}
+                <div class="sivanka-service-card__media">
+                    {% sw_thumbnails 'sivanka-service-card-thumbnails' with {
+                        media: media,
+                        sizes: { default: '420px' },
+                        attributes: {
+                            class: 'sivanka-service-card__image',
+                            alt: media.translated.alt ?: config.title.value,
+                            loading: 'lazy'
+                        }
+                    } %}
+
+                    {# The tile lifts the icon out of the head and floats it as a medallion
+                       straddling the bottom edge of the photograph. #}
+                    {% if variant == 'tile' and config.icon.value %}
+                        <span class="sivanka-service-card__medallion">
+                            {% sw_include '@Storefront/storefront/utilities/sivanka-icon.html.twig' with {
+                                sivankaIcon: config.icon.value,
+                                sivankaIconSize: 24
+                            } only %}
+                        </span>
+                    {% endif %}
+                </div>
+            {% endif %}
+        {% endblock %}
+
+        {% block element_sivanka_service_card_body %}
+            <div class="sivanka-service-card__body">
+                <div class="sivanka-service-card__head">
+                    {% if config.icon.value and variant != 'tile' %}
+                        <span class="sivanka-service-card__icon">
+                            {% sw_include '@Storefront/storefront/utilities/sivanka-icon.html.twig' with {
+                                sivankaIcon: config.icon.value,
+                                sivankaIconSize: 21
+                            } only %}
+                        </span>
+                    {% endif %}
+                    {% if config.title.value %}
+                        <h3 class="sivanka-service-card__title">{{ config.title.value }}</h3>
+                    {% endif %}
+                </div>
+
+                {% if variant != 'compact' %}
+                    {# The card is an <a> when it has a URL, so links inside the copy are dropped. #}
+                    {% sw_include '@Storefront/storefront/utilities/sivanka-rich-text.html.twig' with {
+                        sivankaText: config.text.value,
+                        sivankaClass: 'sivanka-service-card__text',
+                        sivankaAllowLinks: not url
+                    } only %}
+                {% endif %}
+
+                {% if config.meta.value and variant == 'tile' %}
+                    <span class="sivanka-service-card__meta">{{ config.meta.value }}</span>
+                {% endif %}
+
+                {% if url %}
+                    <span class="sivanka-service-card__link">
+                        <span class="sivanka-service-card__link-label">{{ config.linkLabel.value|default('Več') }}</span>
+                        {% sw_include '@Storefront/storefront/utilities/sivanka-icon.html.twig' with {
+                            sivankaIcon: 'arrow',
+                            sivankaIconSize: 15
+                        } only %}
+                    </span>
+                {% endif %}
+            </div>
+        {% endblock %}
+    </{{ tag }}>
+{% endblock %}

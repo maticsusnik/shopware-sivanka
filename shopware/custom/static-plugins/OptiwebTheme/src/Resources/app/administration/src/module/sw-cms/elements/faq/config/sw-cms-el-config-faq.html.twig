@@ -1,0 +1,26 @@
+{% block sw_cms_element_faq_config %}
+    <div class="optiweb-faq-config">
+        <div v-if="element.config.faq.value.length > 0">
+            <div class="faq-single" v-for="(faq, index) in faqs">
+                <mt-text-field label="Question" :copyable="false" v-model="element.config.faq.value[index].question"
+                               :copyableTooltip="false">
+                </mt-text-field>
+
+                <mt-textarea label="Answer"
+                             v-model="element.config.faq.value[index].answer">
+                </mt-textarea>
+                <div>
+                    <mt-button variant="critical" size="small" @click="removeFaq(index)">
+                        Remove
+                    </mt-button>
+                </div>
+            </div>
+        </div>
+        <div v-else>
+            <mt-banner variant="info">Insert faq questions.</mt-banner>
+        </div>
+        <mt-button variant="secondary" ghost @click="createNewFaq()">
+            Add new faq
+        </mt-button>
+    </div>
+{% endblock %}

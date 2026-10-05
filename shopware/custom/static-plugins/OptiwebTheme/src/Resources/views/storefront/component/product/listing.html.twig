@@ -1,0 +1,72 @@
+{% sw_extends '@Storefront/storefront/component/product/listing.html.twig' %}
+
+{#{% block product_listing %}#}
+{#    {% set owThemeConfig = config("OptiwebTheme.config") %}#}
+{#    {% set absCategories = owThemeConfig.absSearchCategories %}#}
+{#    <div class="category-view" data-view="view-grid">#}
+{#        {{ parent() }}#}
+{#    </div>#}
+{#{% endblock %}#}
+
+{% block element_product_listing_pagination_nav_top %}{% endblock %}
+{% block element_product_listing_pagination_nav_actions %}
+    <div class="cms-element-product-listing-actions row justify-content-between align-items-center">
+        {# Below md the two controls stack: Kategorije button, sort button, then the count.
+           From md up they sit on one line again with the count on the left. #}
+        <div class="col-md-auto listing-result-count order-2 order-md-0">
+            <span class="listing-result-count-text">
+                {{ 'optiweb.listing.showingBefore'|trans }}
+                <strong>{{ searchResult.total }}</strong>
+                {{ 'optiweb.listing.showingAfter'|trans }}
+            </span>
+        </div>
+
+        <div class="col-md-auto order-1 order-md-0">
+            {% block element_product_listing_sorting %}
+                {% sw_include '@Storefront/storefront/component/sorting.html.twig' with {
+                    current: searchResult.sorting,
+                    sortings: searchResult.availableSortings
+                } %}
+            {% endblock %}
+        </div>
+    </div>
+{% endblock %}
+
+{#{% block element_product_listing_pagination_nav_actions %}#}
+{#    <div class="d-flex align-items-center justify-content-between gap-3 mb-lg-4">#}
+{#        {% block element_product_listing_sorting %}#}
+{#            <div class="col-md-auto d-flex gap-3 align-items-center col-sorting">#}
+{#                {{ parent() }}#}
+{#            </div>#}
+{#        {% endblock %}#}
+{#        <div class="col-md-auto col-view">#}
+{#            {% block element_product_listing_view %}#}
+{#                {% sw_include '@Storefront/storefront/component/category-view.html.twig' with #}{#}#}
+{#                    view: categoryView,#}
+{#                } %}#}
+{#            {% endblock %}#}
+{#        </div>#}
+{#    </div>#}
+{#{% endblock %}#}
+
+
+{% block element_product_listing_wrapper_content %}
+    <div class="filter-panel-active-container-wrapper d-flex gap-3 align-items-baseline is-hidden">
+        <div class="selected-filters-label col-auto d-none d-lg-block">{{ 'optiweb.listing.selectedFilters'|trans }}:</div>
+        <div class="filter-panel-active-container"></div>
+    </div>
+
+    {{ parent() }}
+{% endblock %}
+
+{# Theme only changes the column classes (2-up on mobile); the box include itself stays
+   core's, which passes referrerCategoryId behind the v6.8 / BREADCRUMB_REWORK flags. #}
+{% block element_product_listing_col %}
+    {% for product in searchResult.entities %}
+        <div class="cms-listing-col col-6 {{ listingColumns }}" role="listitem">
+            {% block element_product_listing_box %}
+                {{ parent() }}
+            {% endblock %}
+        </div>
+    {% endfor %}
+{% endblock %}

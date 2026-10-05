@@ -1,0 +1,29 @@
+services:
+  OptiwebProductEnquiry\Core\Content\ProductEnquiry\ProductEnquiryDefinition:
+    tags:
+      - { name: shopware.entity.definition }
+
+  OptiwebProductEnquiry\Core\Content\ProductEnquiryLine\ProductEnquiryLineDefinition:
+    tags:
+      - { name: shopware.entity.definition }
+
+  OptiwebProductEnquiry\Content\Cms\DataResolver\Element\ProductEnquiryCmsElementResolver:
+    arguments:
+      $salutationRepository: '@salutation.repository'
+      $productRepository: '@product.repository'
+    tags:
+      - { name: shopware.cms.data_resolver }
+
+  OptiwebProductEnquiry\Controller\ProductEnquiryController:
+    public: true
+    autoconfigure: true
+    autowire: true
+    arguments:
+      $mailService: '@Shopware\Core\Content\Mail\Service\MailService'
+      $productRepository: '@product.repository'
+      $mailTemplateRepository: '@mail_template.repository'
+      $mailTemplateTypeRepository: '@mail_template_type.repository'
+      $productEnquiryRepository: '@product_enquiry.repository'
+      $cmsSlotRepository: '@cms_slot.repository'
+    tags:
+      - { name: controller.service_arguments }

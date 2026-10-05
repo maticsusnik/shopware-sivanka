@@ -1,0 +1,237 @@
+.is-ctl-navigation {
+    // Scope this to the listing's own title, which the layout renders as a text
+    // element. A bare `.is-ctl-navigation h1` outranks every component's own H1
+    // rule (0,1,1 beats 0,1,0) — it silently reset the home hero to 40px.
+    .cms-element-text h1 {
+        font-family: $sv-serif;
+        font-size: 40px;
+        font-weight: 600;
+        line-height: 1.15;
+        color: $sv-bordo-head;
+        padding-block: 1rem 0.75rem;
+        margin: 0;
+
+        @include media-breakpoint-down(lg) {
+            font-size: 30px;
+            padding-block: 0.5rem;
+        }
+    }
+}
+
+// A .row gutter wider than the container's inset pushes the row past the page
+// edge (negative margins exceed the padding). Cap the gutter at $bs-gutter-x so
+// the outer edges stay flush, then restore the design's 59px sidebar-to-main gap
+// with extra padding on the main column instead.
+.cms-section .cms-section-sidebar > .row {
+    --bs-gutter-x: #{$bs-gutter-x};
+}
+
+@include media-breakpoint-up(lg) {
+    .cms-section-sidebar-main-content {
+        padding-left: calc(#{$bs-gutter-x} / 2 + 19px);
+    }
+}
+
+.cms-section-sidebar-sidebar-content {
+    @include media-breakpoint-down(lg) {
+        display: flex;
+        gap: 1rem;
+
+        .cms-element-sidebar-filter, .cms-block {
+            flex: 1 1 50%;
+            min-width: 0;
+        }
+        .cms-block-container {
+            padding: 0 !important;
+        }
+        // The container inset is what cancels a row's negative margins; with the
+        // padding zeroed above, the margins have to go too or the row overhangs.
+        .cms-block-container-row {
+            margin-inline: 0 !important;
+
+            > * {
+                padding-inline: 0 !important;
+            }
+        }
+    }
+
+    // Two 50% blocks are unusable on a phone — stack them instead
+    @include media-breakpoint-down(sm) {
+        flex-direction: column;
+        // Stacked, the filter block renders nothing: below `sm` the filters live in
+        // the fixed "Filter" pill and its offcanvas, so the block is a zero-height
+        // flex item. The 1rem column gap was therefore pure dead space between the
+        // "Kategorije" button and the sort bar under it.
+        gap: 0;
+    }
+}
+
+.sorting {
+    width: auto;
+
+    @include media-breakpoint-down(lg) {
+        width: 100%;
+    }
+
+    &-label {
+        font-family: $sv-sans;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 21px;
+        color: $sv-ink;
+    }
+
+    &.panel-content {
+        margin-bottom: 0;
+    }
+
+    &-panel {
+        &-wrapper-toggle {
+            border-radius: $sv-r-btn;
+            background: $sv-ink;
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 0.75rem;
+            color: $sv-white;
+            z-index: 5;
+            padding-block: 0.5rem;
+            padding-inline: 2rem;
+
+            .icon {
+                color: $sv-white;
+
+                svg {
+                    top: 0.25em;
+                }
+            }
+
+            &:hover, &:focus {
+                background: $sv-ink;
+                color: $sv-white;
+            }
+        }
+    }
+}
+
+.pagination {
+    justify-content: center;
+    gap: 8px;
+    margin-top: 44px;
+
+    .page-item {
+        margin: 0;
+    }
+
+    .page-link {
+        min-width: 40px;
+        height: 40px;
+        padding: 0 6px;
+        margin: 0;
+        border: 1px solid $sv-border;
+        border-radius: $sv-r-field;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: $sv-ink-muted;
+        font-family: $sv-sans;
+        font-size: 14px;
+        font-weight: 600;
+        background: $sv-white;
+        transition: border-color 0.16s, color 0.16s, background 0.16s;
+
+        &:hover {
+            border-color: $sv-bordo;
+            color: $sv-bordo;
+            background: $sv-white;
+            z-index: 1;
+        }
+
+        &:focus {
+            box-shadow: none;
+            z-index: 1;
+        }
+
+        .icon {
+            width: 16px;
+            height: 16px;
+        }
+    }
+
+    // Active page — solid pink
+    .page-item.active .page-link,
+    .page-link.is-active {
+        background: $sv-bordo;
+        border-color: $sv-bordo;
+        color: $sv-white;
+    }
+
+    .page-item.disabled .page-link {
+        opacity: 0.45;
+    }
+}
+
+.cms-section-sidebar-mobile-wrap {
+    @include padding('top', 20);
+    @include margin('bottom', 60, true);
+}
+
+.cms-block-category-navigation {
+    @include padding('bottom', 24);
+    @include media-breakpoint-down(md) {
+        padding-bottom: 0;
+    }
+}
+
+.search {
+    &-super-title {
+        color: $sv-ink-muted;
+    }
+
+    &-headline {
+        border-bottom: 1px solid $sv-border;
+        margin-bottom: 1.25rem;
+        padding-block: 1rem 2.75rem;
+
+        @include media-breakpoint-down(lg) {
+            border-bottom: 0;
+            padding-block: 0.5rem;
+            margin: 0;
+        }
+    }
+}
+
+.selected-filters {
+    &-label {
+        text-transform: uppercase;
+        @include fontSpecs(13, 20, 700, 2, false);
+    }
+}
+
+
+.filter-panel-active-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+
+    &-wrapper {
+        margin-bottom: 1.5rem;
+    }
+
+    .btn {
+        border-radius: $sv-r-chrome;
+        padding: 0 10px;
+
+        @include media-breakpoint-down(lg) {
+            font-size: 14px;
+        }
+
+        &.filter-active {
+            border: 1px solid $sv-ink;
+
+            &:hover {
+                color: $sv-ink;
+            }
+        }
+    }
+}

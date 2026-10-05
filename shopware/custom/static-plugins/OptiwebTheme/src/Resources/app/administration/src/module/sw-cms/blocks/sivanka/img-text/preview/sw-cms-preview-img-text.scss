@@ -1,0 +1,22 @@
+.sw-cms-preview-img-text {
+    position: relative;
+    padding: 16px 10px;
+
+    .sw-cms-preview-img-text__inner {
+        display: flex;
+        position: relative;
+        gap: 16px;
+
+        .sw-cms-preview-img-text__image {
+            display: block;
+            width: 50%;
+        }
+
+        .sw-cms-preview-img-text__content {
+            display: block;
+            & div {
+                font-size: 10px;
+            }
+        }
+    }
+}

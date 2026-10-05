@@ -1,0 +1,111 @@
+.is-ctl-product {
+    .cms-element-image-gallery {
+        .gallery-slider-controls-prev,
+        .gallery-slider-controls-next {
+            border:none !important;
+            z-index:999;
+        }
+        .gallery-slider-item {
+            cursor:pointer;
+        }
+    }
+}
+
+.product-detail-stock-information-wrapper{
+    margin: 0 0 10px 0;
+}
+.product-detail-stock {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    &__text {
+        color: $sv-ink;
+        @include fontSpecs(14, 20, 400);
+    }
+}
+
+.out-of-stock{
+    .dot{
+        background-color: $sv-out-of-stock;
+    }
+}
+
+.low-stock{
+    .dot{
+        background-color: $sv-low-stock;
+    }
+}
+
+.dot {
+    width: 11px;
+    height: 11px;
+    display: block;
+    background-color: $sv-in-stock;
+    border-radius: $sv-r-round;
+    position: relative;
+    top: 0;
+}
+
+//fix for iframe slider swipe actions on mobile
+.gallery-slider-item {
+    @include media-breakpoint-down(md) {
+        .overlay{
+            position: absolute;
+            background-color: transparent !important;
+            height: 100%;
+            width: 100%;
+            z-index: 99;
+        }
+    }
+}
+
+// Gallery thumbnail overrides
+.gallery-slider-thumbnails-item {
+    height: 70px;
+    width: 90px;
+    border: none;
+    cursor: pointer;
+
+    &.tns-nav-active,
+    &:hover {
+        .gallery-slider-thumbnails-item-inner {
+            border-color: $sv-bordo;
+        }
+    }
+}
+
+.gallery-slider-thumbnails-item-inner {
+    border: 1px solid $sv-border;
+    border-radius: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+
+    img.gallery-slider-thumbnails-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        max-height: none;
+        max-width: none;
+        flex: none;
+    }
+}
+
+.gallery-slider-thumbnails-controls-prev,
+.gallery-slider-thumbnails-controls-next {
+    border: none !important;
+}
+
+.modal.zoom-modal .image-zoom-container {
+    width: 90%;
+    margin: 0 auto;
+    @include media-breakpoint-down(md) {
+        width: 80%;
+    }
+
+    .gallery-slider-image {
+        max-height: 95%;
+    }
+}

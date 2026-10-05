@@ -1,0 +1,45 @@
+{
+    "account": {
+        "personalFirstName": "First name",
+        "personalLastName": "Last name",
+        "profilePhoneNumber": "Phone number"
+    },
+    "general": {
+        "privacyPolicyCheckboxLabel": "I agree to the <a href=\"/privacy\">privacy policy</a>."
+    },
+    "optiwebProductEnquiry": {
+        "headline": "Product Enquiry",
+        "subject": "Product Enquiry",
+        "send": "Send Enquiry",
+        "close": "Close",
+        "form": {
+            "submit": "Send Enquiry",
+            "commentLabel": "Your message",
+            "commentPlaceholder": "Please describe your enquiry...",
+            "qtyLabel": "Quantity",
+            "productsLabel": "Products in this enquiry"
+        },
+        "success": {
+            "message": "Thank you for your enquiry. We will get back to you shortly."
+        },
+        "errors": {
+            "checkErrors": "Please check the errors in the form and try again.",
+            "productNotFound": "The requested product could not be found.",
+            "missingProductId": "No product was specified for this enquiry.",
+            "missingMailTemplate": "The mail template is not configured. Please contact the administrator.",
+            "unexpectedError": "An unexpected error occurred. Please try again later.",
+            "captcha": "The security check failed. Please try again.",
+            "noProductsSelected": "Select at least one product."
+        },
+        "wishlist": {
+            "include": "Include in enquiry",
+            "barTitle": "Enquiry for several products",
+            "send": "Send enquiry",
+            "selectAll": "Select all",
+            "deselectAll": "Clear selection",
+            "summaryOne": "1 product selected.",
+            "summaryMany": "%count% products selected.",
+            "summaryNone": "Select at least one product."
+        }
+    }
+}

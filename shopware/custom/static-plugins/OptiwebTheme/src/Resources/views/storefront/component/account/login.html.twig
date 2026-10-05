@@ -1,0 +1,70 @@
+{% sw_extends '@Storefront/storefront/component/account/login.html.twig' %}
+
+{# The login pane of the two-tab auth page. Styling lives in `pages/_login.scss`,
+   which covers BOTH panes — the register pane beside this one renders from core.
+
+   Only the two field blocks are overridden, to swap core's `form-input.html.twig`
+   include for markup carrying `.login-form-group` / `.login-input`. Two further
+   overrides used to sit here against block names core renamed in 6.7
+   (`..._form_card_title`, `..._form_password_recover`) and had silently stopped
+   applying; the heading is now styled as the shared `.card-title` and the recovery
+   link block is spelled the way core spells it. #}
+
+{% block component_account_login_form_mail %}
+    <div class="form-group login-form-group">
+        {% block component_account_login_form_mail_label %}
+            <label class="form-label" for="loginMail">
+                {{ "account.loginMailLabel"|trans|sw_sanitize }}
+            </label>
+        {% endblock %}
+
+        {% block component_account_login_form_mail_input %}
+            <input type="email"
+                   class="form-control login-input"
+                   id="loginMail"
+                   placeholder="{{ "account.loginMailPlaceholder"|trans|striptags }}"
+                   name="username"
+                   required="required"
+                   autocomplete="username">
+        {% endblock %}
+    </div>
+{% endblock %}
+
+{% block component_account_login_form_password %}
+    <div class="form-group login-form-group">
+        {% block component_account_login_form_password_label %}
+            <label class="form-label" for="loginPassword">
+                {{ "account.loginPasswordLabel"|trans|sw_sanitize }}
+            </label>
+        {% endblock %}
+        {% block component_account_login_form_password_input %}
+            <input type="password"
+                   class="form-control login-input"
+                   id="loginPassword"
+                   placeholder="{{ "account.loginPasswordPlaceholder"|trans|striptags }}"
+                   name="password"
+                   required="required"
+                   autocomplete="current-password">
+        {% endblock %}
+    </div>
+{% endblock %}
+
+{% block component_account_login_password_recover %}
+    <div class="login-password-recover">
+        <a href="{{ path('frontend.account.recover.page') }}"
+           class="login-password-recover-link"
+           title="{{ "account.loginPasswordRecover"|trans|striptags }}">
+            {{ "account.loginPasswordRecover"|trans|sw_sanitize }}
+        </a>
+    </div>
+{% endblock %}
+
+{% block component_account_login_submit %}
+    <div class="login-submit">
+        <button type="submit"
+                class="btn btn-primary login-submit-button">
+            <span>{{ "account.loginSubmit"|trans|sw_sanitize }}</span>
+        </button>
+    </div>
+{% endblock %}
+

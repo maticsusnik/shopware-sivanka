@@ -1,0 +1,240 @@
+// $content-width is 1366px + $bs-gutter-x, so the container needs half a gutter of
+// padding per side to resolve to the 1366px inner column the design is built on.
+// Bootstrap's own --bs-gutter-x default (24px) would leave it at 1382px.
+//
+// The reference steps the gutter down as the page narrows: 20 -> 16 (<=720)
+// -> 12 (<=380), which is what keeps the 340px layout clear of the edges.
+.container, .cms-section .boxed {
+    max-width: $content-width;
+    margin-inline: auto;
+    padding-inline: $sv-gutter;
+
+    @media (max-width: $sv-bp-phone) {
+        padding-inline: $sv-gutter-sm;
+    }
+
+    @media (max-width: $sv-bp-tiny) {
+        padding-inline: $sv-gutter-xs;
+    }
+}
+
+// Bootstrap rows cancel the container's padding with a negative margin of
+// --bs-gutter-x / 2. Narrowing the gutter without narrowing that variable leaves
+// every .row hanging 4-8px past the viewport at 720 and below.
+// Bootstrap declares --bs-gutter-x on `.row` itself, so an ancestor declaration is
+// shadowed — the override has to sit on the row. Rows that opted out of gutters
+// (`g-0` / `gx-0`, e.g. the header) must keep their zero: this rule would otherwise
+// outrank the utility on source order and push them past the viewport.
+.row:not(.g-0):not(.gx-0):not([class*=" g-0"]):not([class*=" gx-0"]) {
+    @media (max-width: $sv-bp-phone) {
+        --bs-gutter-x: #{$sv-gutter-sm * 2};
+    }
+
+    @media (max-width: $sv-bp-tiny) {
+        --bs-gutter-x: #{$sv-gutter-xs * 2};
+    }
+}
+
+.btn .icon > svg {
+    top: 0;
+}
+
+.cms-section-default .boxed {
+    max-width: $header-width;
+    margin-inline: auto;
+}
+
+.cms-section {
+    overflow: visible;
+}
+
+// The reference gives every page its own top rhythm — the breadcrumb's 12px, the
+// hero's 0, a section's 56px. A blanket 16px here pushed every page 16px down.
+.container-main {
+    padding-block: 0;
+}
+
+// …but that rhythm assumes a breadcrumb. `.cms-breadcrumb` is always emitted and the
+// trail inside it is not: a product reached by a URL with no category path (e.g.
+// /DRSNIK-25-CRN-ST.ZLATO/700526) renders an empty, zero-height wrapper, and the
+// gallery then starts hard against the nav bar. Pay the breadcrumb's own inset only
+// when there is no breadcrumb to pay it, so every page that has one is untouched.
+.container-main:not(:has(.breadcrumb)) {
+    padding-top: 24px;
+
+    @media (max-width: $sv-bp-phone) {
+        padding-top: 16px;
+    }
+}
+
+header, footer, .nav-main {
+    .container, .cms-section .boxed {
+        max-width: $header-width;
+        margin-inline: auto;
+    }
+}
+
+.add-default-margins {
+    @include margin('bottom', $general-element-margin, true);
+    @include margin('top', $general-element-margin, true);
+}
+
+.btn-primary,
+.btn-outline-primary,
+.btn-secondary,
+.btn-outline-secondary,
+.btn-outline-dark {
+    @include fontSpecs(20, 32, 700, false, true);
+    @include padding('bottom', 12, true);
+    @include padding('top', 12, true);
+    @include padding('left', 24, true);
+    @include padding('right', 24, true);
+}
+
+.btn-grey {
+    color: $sv-ink;
+    background: $sv-cream;
+    @include fontSpecs(16, 24, 700, false, false);
+    @include padding('bottom', 14, false);
+    @include padding('top', 14, false);
+    @include padding('left', 20, false);
+    @include padding('right', 20, false);
+
+    &:hover {
+        color: $sv-ink;
+        background: $sv-border;
+    }
+}
+
+.icon {
+    color: inherit;
+}
+
+.form-check-input {
+    // The dot is centred by the grid, not a fixed margin: the radio is 18px on desktop
+    // but 1.5rem below lg (_responsive.scss), and a 2px margin only centres it at 18px.
+    &[type=radio] {
+        display: inline-grid;
+        place-content: center;
+        border: 1px solid $sv-ink-muted;
+        background: $sv-white;
+        cursor: pointer;
+
+        &:before {
+            content: '';
+            display: block;
+            width: 10px;
+            height: 10px;
+            margin: 0;
+            background: $sv-white;
+            border: 1px solid $sv-ink-muted;
+            border-radius: $sv-r-round;
+            pointer-events: none;
+        }
+
+        &:checked {
+            --bs-form-check-bg-image: none;
+            border: 1px solid $sv-ink;
+
+            &:before {
+                background: $sv-ink;
+                border: 1px solid $sv-ink;
+            }
+        }
+    }
+
+    &[type=checkbox] {
+        border-radius: 0;
+        border-color: $sv-ink;
+
+        &:checked {
+            background-color: $sv-ink;
+            border-color: $sv-ink;
+        }
+    }
+}
+
+// ============================================================
+//  Cookie consent banner
+//  Core renders all three actions as identical .btn-primary. Give them a hierarchy:
+//  "accept all" is the filled primary, "deny" and "configure" are lighter and smaller.
+//  Both refusal paths stay full-height, full-contrast and side by side with accept, so
+//  declining is still a single, obvious tap — see the note in the handover.
+// ============================================================
+.cookie-permission-container {
+    .cookie-permission-actions {
+        gap: 8px;
+        align-items: center;
+    }
+
+    // Secondary — deny + configure
+    .js-cookie-permission-button .btn,
+    .js-cookie-configuration-button .btn {
+        min-height: 38px;
+        padding: 8px 14px;
+        font-size: 13px;
+        font-weight: 600;
+        border: 1px solid $sv-border;
+        border-radius: $sv-r-chrome;
+        background: $sv-white;
+        color: $sv-ink;
+
+        &:hover,
+        &:focus,
+        &:active {
+            background: $sv-cream;
+            border-color: $sv-bordo;
+            color: $sv-bordo;
+        }
+    }
+
+    // Primary — accept all
+    .js-cookie-accept-all-button .btn {
+        min-height: 44px;
+        padding: 11px 24px;
+        font-size: 15px;
+        font-weight: 600;
+        border: 1px solid $sv-bordo;
+        border-radius: $sv-r-chrome;
+        background: $sv-bordo;
+        color: $sv-white;
+
+        &:hover,
+        &:focus,
+        &:active {
+            background: $sv-bordo-hover;
+            border-color: $sv-bordo-hover;
+            color: $sv-white;
+        }
+    }
+
+    .cookie-permission-content {
+        font-size: 13.5px;
+        line-height: 1.5;
+        color: $sv-ink;
+
+        a {
+            color: $sv-bordo;
+            font-weight: 600;
+        }
+    }
+}
+
+// ============================================================
+//  Small structural helpers that replace inline styles in Twig
+// ============================================================
+
+// Pre-JS state for the active-filter row. Deliberately NOT Bootstrap's `d-none`:
+// OwListingPlugin toggles `style.display` between none and flex, and `!important`
+// would make the inline value unreachable.
+.is-hidden {
+    display: none;
+}
+
+// A zero-size probe the filter panel measures against; it must take no space and
+// stay out of the accessibility tree's way.
+.filter-panel-measure-shim {
+    width: 0;
+    height: 0;
+    overflow: hidden;
+}

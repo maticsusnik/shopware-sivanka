@@ -1,0 +1,43 @@
+{# Promo card — reference/Sivanka Home v2 redesign.dc.html, the banner trio.
+   Photograph bled to the card edge, a cream wash that fades out to the right, and
+   the copy stacked over the readable side. #}
+{% block element_sivanka_promo_card %}
+    {% set config = element.fieldConfig.elements %}
+    {% set media = element.data.media %}
+    {% set url = config.url.value %}
+    {% set tag = url ? 'a' : 'div' %}
+    {% set focus = config.imageFocus.value in ['left', 'center', 'right'] ? config.imageFocus.value : 'center' %}
+
+    <{{ tag }} class="cms-element-{{ element.type }} sivanka-promo-card sivanka-promo-card--focus-{{ focus }}"
+        {% if url %}href="{{ url }}"{% endif %}>
+
+        {% block element_sivanka_promo_card_media %}
+            {% if media %}
+                {% sw_thumbnails 'sivanka-promo-card-thumbnails' with {
+                    media: media,
+                    sizes: { default: '900px' },
+                    attributes: {
+                        class: 'sivanka-promo-card__image',
+                        alt: media.translated.alt ?: config.title.value,
+                        loading: 'lazy'
+                    }
+                } %}
+            {% endif %}
+            <span class="sivanka-promo-card__scrim"></span>
+        {% endblock %}
+
+        {% block element_sivanka_promo_card_body %}
+            <span class="sivanka-promo-card__body">
+                {% if config.title.value %}
+                    <b class="sivanka-promo-card__title">{{ config.title.value }}</b>
+                {% endif %}
+                {% if config.text.value %}
+                    <span class="sivanka-promo-card__text">{{ config.text.value }}</span>
+                {% endif %}
+                {% if config.buttonLabel.value %}
+                    <span class="sv-btn sv-btn--sm sv-btn--primary sivanka-promo-card__btn">{{ config.buttonLabel.value }}</span>
+                {% endif %}
+            </span>
+        {% endblock %}
+    </{{ tag }}>
+{% endblock %}

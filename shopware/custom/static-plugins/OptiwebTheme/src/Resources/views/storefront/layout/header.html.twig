@@ -1,0 +1,18 @@
+{% sw_extends '@Storefront/storefront/layout/header.html.twig' %}
+
+{% block base_header %}
+    {% sw_include '@Storefront/storefront/layout/header/notice-bar.html.twig' %}
+
+    {# Topbar is hidden for now at Matic's request (2026-09-03). The bar itself is
+       still built — layout/header/top-bar.html.twig and layout/_topbar.scss — so
+       restoring it is this one include. #}
+    {# {% sw_include '@Storefront/storefront/layout/header/top-bar.html.twig' %} #}
+
+    <header class="header-main">
+        {% block base_header_inner %}
+            <div class="container">
+                {% sw_include '@Storefront/storefront/layout/header/header.html.twig' %}
+            </div>
+        {% endblock %}
+    </header>
+{% endblock %}

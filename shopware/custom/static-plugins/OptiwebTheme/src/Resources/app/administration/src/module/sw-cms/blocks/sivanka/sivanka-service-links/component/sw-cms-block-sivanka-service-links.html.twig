@@ -1,0 +1,16 @@
+{% block sw_cms_block_sivanka_service_links %}
+<div class="sw-cms-block-sivanka-service-links">
+    <div class="sw-cms-block-sivanka-service-links__slot sw-cms-block-sivanka-service-links__slot--heading">
+        <slot name="heading">{% block sw_cms_block_sivanka_service_links_slot_heading %}{% endblock %}</slot>
+    </div>
+    <div class="sw-cms-block-sivanka-service-links__slot sw-cms-block-sivanka-service-links__slot--linkOne">
+        <slot name="linkOne">{% block sw_cms_block_sivanka_service_links_slot_linkone %}{% endblock %}</slot>
+    </div>
+    <div class="sw-cms-block-sivanka-service-links__slot sw-cms-block-sivanka-service-links__slot--linkTwo">
+        <slot name="linkTwo">{% block sw_cms_block_sivanka_service_links_slot_linktwo %}{% endblock %}</slot>
+    </div>
+    <div class="sw-cms-block-sivanka-service-links__slot sw-cms-block-sivanka-service-links__slot--linkThree">
+        <slot name="linkThree">{% block sw_cms_block_sivanka_service_links_slot_linkthree %}{% endblock %}</slot>
+    </div>
+</div>
+{% endblock %}

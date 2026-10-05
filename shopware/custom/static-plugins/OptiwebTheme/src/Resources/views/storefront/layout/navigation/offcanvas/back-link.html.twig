@@ -1,0 +1,58 @@
+{% sw_extends '@Storefront/storefront/layout/navigation/offcanvas/back-link.html.twig' %}
+
+{% set rootUrl = path('frontend.menu.offcanvas') %}
+{# Like core: footer/service category roots always step back to the main menu #}
+{% set isAlternateRoot = item.id == context.salesChannel.footerCategoryId
+    or item.id == context.salesChannel.serviceCategoryId %}
+{% set atFirstLevel = isAlternateRoot or item.parentId == context.salesChannel.navigationCategoryId %}
+
+{% if atFirstLevel %}
+    {% set url = rootUrl %}
+{% else %}
+    {% set url = path('frontend.menu.offcanvas', { navigationId: item.parentId, itemLevel: item.level }) %}
+{% endif %}
+
+{% block layout_navigation_offcanvas_navigation_category_back_link %}
+    <div class="offcanvas-back-link">
+        <a class="nav-item nav-link is-back-link navigation-offcanvas-link js-navigation-offcanvas-link"
+           href="{{ url }}"
+           {% if not feature('JSON_LD_DATA') %}itemprop="url"{% endif %}
+           title="{{ 'general.back'|trans|striptags }}">
+            {% block layout_navigation_offcanvas_navigation_category_back_link_text %}
+                <span class="navigation-offcanvas-link-icon js-navigation-offcanvas-loading-icon">
+                {% block layout_utilities_offcanvas_close_icon %}
+                    {% sw_icon 'arrow-medium-left' style { pack:'solid', size: 'sm' } %}
+                {% endblock %}
+                </span>
+
+                <span {% if not feature('JSON_LD_DATA') %}itemprop="name"{% endif %}>
+                {{ item.translated.name }}
+                </span>
+            {% endblock %}
+        </a>
+
+        <button class="btn btn-secondary offcanvas-close js-offcanvas-close d-lg-none"
+                aria-label="{{ 'general.offcanvasCloseMenu'|trans|striptags }}">
+            {% block utilities_offcanvas_close_icon %}
+                {% sw_icon 'x' style { size: 'md' } %}
+            {% endblock %}
+        </button>
+
+        {# Two levels deep or more, stepping back one at a time is tedious — this jumps
+           straight to the top level. Hidden at the first level, where the back link
+           already goes there. It sits on its own row so the category title above it
+           keeps enough width to read. #}
+        {% if not atFirstLevel %}
+            {# only the js- class is needed for the AJAX handler; the styling class would
+               make this pill inherit the 54px list-row treatment #}
+            <a class="offcanvas-root-link js-navigation-offcanvas-link"
+               href="{{ rootUrl }}"
+               title="{{ 'general.menuLink'|trans|striptags }}">
+                <span class="navigation-offcanvas-link-icon js-navigation-offcanvas-loading-icon">
+                    {% sw_icon 'list' style { pack: 'ow' } %}
+                </span>
+                <span>{{ 'optiweb.navigation.allCategories'|trans|default('Vse kategorije') }}</span>
+            </a>
+        {% endif %}
+    </div>
+{% endblock %}

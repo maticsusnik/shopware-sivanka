@@ -1,0 +1,12 @@
+{% sw_extends '@Storefront/storefront/component/product/card/wishlist.html.twig' %}
+
+{% block component_product_wishlist_icon %}
+    {% sw_icon 'heart-fill' style { pack: 'ow', class: 'wishlist icon-wishlist-added', size: 'md' } %}
+    {% sw_icon 'heart' style { pack: 'ow', class: 'wishlist icon-wishlist-not-added', size: 'md' } %}
+
+    {% if showText %}
+        <span class="product-wishlist-btn-content product-wishlist-btn-content-{{ size }}">
+            {{ 'listing.addToWishlist'|trans|sw_sanitize }}
+        </span>
+    {% endif %}
+{% endblock %}

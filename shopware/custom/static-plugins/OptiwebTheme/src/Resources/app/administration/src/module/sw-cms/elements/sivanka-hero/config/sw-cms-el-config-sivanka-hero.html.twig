@@ -1,0 +1,91 @@
+{% block sw_cms_el_config_sivanka_hero %}
+<div class="sw-cms-el-config-sivanka-hero">
+
+    {% block sw_cms_el_config_sivanka_hero_media %}
+    <sw-container columns="repeat(2, 1fr)" gap="16px">
+        <sw-media-field
+            v-model:value="element.config.imageLeft.value"
+            :label="$t('sw-cms.elements.sivankaHero.config.label.imageLeft')"
+            :allow-empty="true"
+            @update:value="onChange"
+        />
+        <sw-media-field
+            v-model:value="element.config.imageRight.value"
+            :label="$t('sw-cms.elements.sivankaHero.config.label.imageRight')"
+            :allow-empty="true"
+            @update:value="onChange"
+        />
+    </sw-container>
+    {% endblock %}
+
+    {% block sw_cms_el_config_sivanka_hero_copy %}
+    <mt-textarea
+        v-model="element.config.headline.value"
+        :label="$t('sw-cms.elements.sivankaHero.config.label.headline')"
+        :help-text="$t('sw-cms.elements.sivankaHero.config.helpText.headline')"
+        @update:model-value="onChange"
+    />
+
+    <mt-textarea
+        v-model="element.config.subheadline.value"
+        :label="$t('sw-cms.elements.sivankaHero.config.label.subheadline')"
+        @update:model-value="onChange"
+    />
+    {% endblock %}
+
+    {% block sw_cms_el_config_sivanka_hero_buttons %}
+    <mt-text-field
+        v-model="element.config.primaryBtnLabel.value"
+        :label="$t('sw-cms.elements.sivankaHero.config.label.primaryBtnLabel')"
+        @update:model-value="onChange"
+    />
+    <ow-url
+        :label="$t('sw-cms.elements.sivankaHero.config.label.primaryBtnUrl')"
+        hide-text
+        :model-value="element.config.primaryBtnUrl.value"
+        @input="onPrimaryUrlChange"
+    />
+
+    <mt-text-field
+        v-model="element.config.secondaryBtnLabel.value"
+        :label="$t('sw-cms.elements.sivankaHero.config.label.secondaryBtnLabel')"
+        @update:model-value="onChange"
+    />
+    <ow-url
+        :label="$t('sw-cms.elements.sivankaHero.config.label.secondaryBtnUrl')"
+        hide-text
+        :model-value="element.config.secondaryBtnUrl.value"
+        @input="onSecondaryUrlChange"
+    />
+    {% endblock %}
+
+    {% block sw_cms_el_config_sivanka_hero_trust %}
+    <div class="sw-cms-el-config-sivanka-hero__trust">
+        <p class="sw-cms-el-config-sivanka-hero__legend">
+            {{ $t('sw-cms.elements.sivankaHero.config.label.trustLegend') }}
+        </p>
+        <sw-container columns="repeat(2, 1fr)" gap="16px">
+            <div v-for="i in trustSlots" :key="i" class="sw-cms-el-config-sivanka-hero__trust-item">
+                <p class="sw-cms-el-config-sivanka-hero__trust-number">{{ i }}.</p>
+                <mt-select
+                    v-model="element.config['trust' + i + 'Icon'].value"
+                    :label="$t('sw-cms.elements.sivankaHero.config.label.trustIcon')"
+                    :options="iconOptions"
+                    @update:model-value="onChange"
+                />
+                <mt-text-field
+                    v-model="element.config['trust' + i + 'Title'].value"
+                    :label="$t('sw-cms.elements.sivankaHero.config.label.trustTitle')"
+                    @update:model-value="onChange"
+                />
+                <mt-text-field
+                    v-model="element.config['trust' + i + 'Sub'].value"
+                    :label="$t('sw-cms.elements.sivankaHero.config.label.trustSub')"
+                    @update:model-value="onChange"
+                />
+            </div>
+        </sw-container>
+    </div>
+    {% endblock %}
+</div>
+{% endblock %}

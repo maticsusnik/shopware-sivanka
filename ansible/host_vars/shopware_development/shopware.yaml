@@ -1,5 +1,5 @@
 shopware_application_env:
-    APP_ENV: "prod"
+    APP_ENV: "dev"
     APP_DEBUG: "false"
     APP_URL: https://sivanka.dev.matic-susnik.com
     SHOPWARE_HTTP_CACHE_ENABLED: "true"

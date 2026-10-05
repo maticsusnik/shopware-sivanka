@@ -1,0 +1,9 @@
+{% block sw_cms_el_config_read_more_text %}
+    <div class="sw-cms-el-config-read-more-text">
+        <mt-text-editor
+                label="Content"
+                :model-value="element.config.content.value"
+                @update:model-value="onInput"
+        />
+    </div>
+{% endblock %}

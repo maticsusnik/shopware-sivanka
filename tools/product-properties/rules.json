@@ -1,0 +1,186 @@
+{
+  "_comment": [
+    "Rules for deriving product properties from product name + description.",
+    "Evaluated top to bottom. Regexes are matched case-insensitively against a",
+    "normalised (diacritics kept, whitespace collapsed) haystack.",
+    "",
+    "group        - property group name as it will appear in Shopware",
+    "displayType  - text | color | image | select   (Shopware property_group.displayType)",
+    "kind         - 'keyword' (fixed option per matching pattern) or 'pattern' (option value captured from the name)",
+    "first_only   - for keyword groups: stop after the first matching rule (single-valued groups like Tip izdelka)",
+    "source       - name | name+description  (which text the rules see)"
+  ],
+
+  "groups": [
+    {
+      "group": "Tip izdelka",
+      "displayType": "text",
+      "kind": "keyword",
+      "first_only": true,
+      "source": "name",
+      "rules": [
+        ["Šivalni stroji",        "\\bšivaln\\w* stroj|\\bstroj (janome|texi|brother|singer)|\\bovervlok|\\boverlock|\\bcoverlock"],
+        ["Deli za šivalni stroj",  "\\btačka\\b|\\btačke\\b|\\bvreteno\\b|\\bžarnica\\b|\\bnožek\\b|\\bkorektor\\b|\\bvodilo\\b|\\bzobnik\\b|\\bčolniček\\b|\\bnastavek za stroj"],
+        ["Gobelini in vezenje",    "\\bgobelin\\w*\\b|\\bzweigart\\b|\\bvezenj\\w*\\b|\\bkanva\\b|\\betamin\\b"],
+        ["Preja in volna",         "\\bpreja\\b|\\bpreje\\b|\\bprejica|\\bvolna\\b|\\bvolno\\b|\\byarn\\b|\\bza pletenje\\b|\\bza kvačkanje\\b|\\bza vezenje\\b|\\bmerino|\\bmerinos|\\bcotton\\b|\\bsilk\\b|\\bmohair|\\bbombažna nit"],
+        ["Sukanec in nitke",       "\\bsukanec\\b|\\bsukanc|\\bnit\\b|\\bniti\\b|\\bnitke\\b|\\banne \\d+m|\\bmonofil|\\bomnifil\\b|\\d+\\s*/\\s*\\d{2,5}\\s*m\\b"],
+        ["Gumbi",                  "\\bgumb\\w*\\b"],
+        ["Zadrge",                 "\\bzadrg\\w*\\b|\\bdrsnik\\w*\\b|\\bpodaljšek za zadrgo"],
+        ["Pletilke",               "\\bpletilk\\w*\\b|\\bpletiln\\w* igl"],
+        ["Kvačke",                 "\\bkvačk\\w*\\b"],
+        ["Šivanke in igle",        "\\bšivank\\w*\\b|\\bigle\\b|\\bigla\\b|\\bigel\\b|\\bschmetz\\b"],
+        ["Elastike",               "\\belastik\\w*\\b|\\bguma\\b|\\bgumica\\b|\\bpatent\\w*\\b"],
+        ["Trakovi",                "\\btrak\\w*\\b|\\bgurtna\\w*\\b|\\bčipk\\w*\\b|\\bšpic\\w*\\b|\\bvezalk\\w*\\b|\\bvrvic\\w*\\b|\\bpoševni\\b"],
+        ["Zaponke in sponke",      "\\bzaponk\\w*\\b|\\bsponk\\w*\\b|\\bzapiral\\w*\\b|\\bkarabin\\w*\\b|\\bkavelj\\w*\\b|\\bpritiskač\\w*\\b|\\bštopar\\w*\\b"],
+        ["Zakovice in rinčice",    "\\bzakovic\\w*\\b|\\brinčic\\w*\\b|\\bnitk\\w* za zakovice|\\bvijak\\w*\\b|\\bmatica\\b"],
+        ["Obroči in nosilci",      "\\bobroč\\w*\\b|\\bpolobroč\\w*\\b|\\bnosil\\w*\\b|\\bzank\\w*\\b|\\bverižic\\w*\\b|\\bdrsn\\w* obroč"],
+        ["Pasovi",                 "\\bpas\\b|\\bpasov\\w*\\b|\\bza pas\\b"],
+        ["Škarje in rezila",       "\\bškarj\\w*\\b|\\brezil\\w*\\b|\\bkrožno rezilo|\\bskalpel\\b|\\bprebijač\\w*\\b|\\bstiskač\\w*\\b|\\bkopirno kolesce|\\borodje\\b|\\bključ\\b"],
+        ["Našitki in aplikacije",  "\\bnašitek\\b|\\bnašitk\\w*\\b|\\baplikacij\\w*\\b|\\bemblem\\w*\\b|\\boči samolepilne|\\boči\\b"],
+        ["Blago in metraža",       "\\bblago\\b|\\bmetraž\\w*\\b|\\bplatno\\b|\\bkeper\\b|\\bsaten\\b|\\bpodloga\\b|\\bribs\\b|\\bjeans\\b|\\bfilc\\b|\\bjuta\\b|\\bmreža\\b|\\bvlizelin\\b|\\btkanina\\b"],
+        ["Lepila in kemija",       "\\blepil\\w*\\b|\\brazredčil\\w*\\b|\\bolje\\b|\\bbarva za usnje|\\bimpregnac"],
+        ["Pisala in kreda",        "\\bpisalo\\b|\\bkreda\\b|\\bsvinčnik\\b|\\bmarker\\b"],
+        ["Merilni pripomočki",     "\\bmeter\\b|\\bmetrski trak|\\bšablon\\w*\\b|\\bkrojni\\b|\\bravnilo\\b"],
+        ["Nedrčki in perilo",      "\\bnederček\\w*\\b|\\bnedrček\\w*\\b|\\bkošarice\\b|\\bnaramnic\\w*\\b"],
+        ["Šivalni pripomočki",     "\\bblazinic\\w*\\b|\\bbucik\\w*\\b|\\bnaprstnik\\b|\\bkrtač\\w*\\b|\\bvtikalke\\b|\\bškatl\\w*\\b|\\bzvezek\\b|\\bkomplet\\b|\\bpinceta\\b|\\bšilo\\b|\\bročaj\\b|\\bčopič\\w*\\b|\\bkrivuljnik\\b|\\bklina\\b|\\bvosek\\b|\\bkrpa\\b|\\bkrpe\\b|\\bmedvloga\\b|\\bvlizelin\\b|\\bset\\b|\\bpaket\\b|\\bbrivnik\\b"],
+        ["Okrasni dodatki",       "\\bokras\\w*\\b|\\bobesek\\b|\\bdodat\\w*\\b|\\bzaključ\\w*\\b|\\bvogal\\w*\\b|\\bpanti\\b|\\bnogic\\w*\\b|\\bpiramid\\w*\\b|\\bokvir\\b|\\bnitk\\w*\\b"],
+        ["Preja in volna",         "\\d+\\s*(?:gr|g)\\b"]
+      ]
+    },
+
+    {
+      "group": "Barva",
+      "displayType": "color",
+      "kind": "keyword",
+      "first_only": false,
+      "source": "name",
+      "hexCodes": {
+        "Črna": "#000000",
+        "Bela": "#ffffff",
+        "Staro zlato": "#b08d57",
+        "Zlata": "#d4af37",
+        "Srebrna": "#c0c0c0",
+        "Nikel": "#a8a9ad",
+        "Bron": "#8c7853",
+        "Rdeča": "#d0021b",
+        "Modra": "#1f5fbf",
+        "Zelena": "#2e7d32",
+        "Rumena": "#f5c518",
+        "Rjava": "#6d4c33",
+        "Siva": "#8e8e8e",
+        "Roza": "#e75480",
+        "Vijolična": "#7b3fa0",
+        "Oranžna": "#f07818",
+        "Bež": "#e8d9b5",
+        "Transparentna": "#f2f2f2",
+        "Melirana": "#9e8f7e"
+      },
+      "rules": [
+        ["Črna",         "\\bčrn\\w*\\b|\\bblack\\b"],
+        ["Bela",         "\\bbel\\b|\\bbela\\b|\\bbeli\\b|\\bbelo\\b|\\bwhite\\b"],
+        ["Staro zlato",  "\\bstaro zlato\\b|\\bstaro-zlato\\b|\\bantik zlato\\b"],
+        ["Zlata",        "\\bzlat\\w*\\b|\\bgold\\b"],
+        ["Srebrna",      "\\bsrebrn\\w*\\b|\\bsilver\\b"],
+        ["Nikel",        "\\bnikel\\b|\\bniklan\\w*\\b|\\bnik\\b"],
+        ["Bron",         "\\bbron\\w*\\b|\\bbaker\\w*\\b|\\bcopper\\b"],
+        ["Rdeča",        "\\brdeč\\w*\\b|\\bred\\b"],
+        ["Modra",        "\\bmodr\\w*\\b|\\bblue\\b|\\bnavy\\b"],
+        ["Zelena",       "\\bzelen\\w*\\b|\\bgreen\\b"],
+        ["Rumena",       "\\brumen\\w*\\b|\\byellow\\b"],
+        ["Rjava",        "\\brjav\\w*\\b|\\bbrown\\b|\\bkonjak\\b"],
+        ["Siva",         "\\bsiv\\w*\\b|\\bgrey\\b|\\bgray\\b"],
+        ["Roza",         "\\broza\\b|\\brožnat\\w*\\b|\\bpink\\b"],
+        ["Vijolična",    "\\bvijol\\w*\\b|\\blila\\b|\\bpurple\\b"],
+        ["Oranžna",      "\\boranžn\\w*\\b|\\borange\\b"],
+        ["Bež",          "\\bbež\\b|\\bbeige\\b|\\bkrem\\b|\\bcream\\b"],
+        ["Transparentna","\\btransparent\\w*\\b|\\bprozorn\\w*\\b|\\bkristal\\b"],
+        ["Melirana",     "\\bmelir\\w*\\b|\\bmulti\\b|\\bcolor mix\\b"]
+      ]
+    },
+
+    {
+      "group": "Material",
+      "displayType": "text",
+      "kind": "keyword",
+      "first_only": false,
+      "source": "name+description",
+      "rules": [
+        ["Usnje",        "\\busnj\\w*\\b|\\bleather\\b"],
+        ["Kovina",       "\\bkovin\\w*\\b|\\bmetal\\b|\\bjeklo\\b|\\bnerjav\\w*\\b"],
+        ["Medenina",     "\\bmesing\\b|\\bmedenin\\w*\\b|\\bbrass\\b"],
+        ["Plastika",     "\\bplastik\\w*\\b|\\bplastičn\\w*\\b|\\bpvc\\b|\\bnylon\\b|\\bpoliamid\\b"],
+        ["Bombaž",       "\\bbombaž\\w*\\b|\\bcotton\\b"],
+        ["Volna",        "\\bvoln\\w*\\b|\\bwool\\b|\\bmerino\\w*\\b|\\bmohair\\b|\\balpaka\\b"],
+        ["Akril",        "\\bakril\\w*\\b|\\bacryl\\w*\\b|\\bpolyacryl\\w*\\b"],
+        ["Poliester",    "\\bpoliester\\w*\\b|\\bpolyester\\b|\\bpes\\b"],
+        ["Viskoza",      "\\bviskoz\\w*\\b|\\bviscose\\b|\\bbambus\\b"],
+        ["Svila",        "\\bsvil\\w*\\b|\\bsilk\\b"],
+        ["Lan",          "\\blanen\\w*\\b|\\blan\\b|\\blinen\\b"],
+        ["Juta",         "\\bjuta\\b|\\bjuten\\w*\\b|\\bjute\\b"],
+        ["Les",          "\\blesen\\w*\\b|\\bles\\b|\\bbambusov\\w*\\b|\\bwood\\b"],
+        ["Guma",         "\\bgumij\\w*\\b|\\bkavčuk\\b|\\bsilikon\\w*\\b"]
+      ]
+    },
+
+    {
+      "group": "Širina / premer",
+      "displayType": "text",
+      "kind": "pattern",
+      "source": "name",
+      "pattern": "(?<![\\d,.\\-x])(\\d{1,3}(?:[.,]\\d{1,2})?(?:\\s*-\\s*\\d{1,3}(?:[.,]\\d{1,2})?)?)\\s*mm\\b",
+      "unit": "mm",
+      "max_per_product": 1
+    },
+
+    {
+      "group": "Dolžina",
+      "displayType": "text",
+      "kind": "pattern",
+      "source": "name",
+      "pattern": "(?<![\\d,.\\-x])(\\d{1,4}(?:[.,]\\d{1,2})?(?:\\s*-\\s*\\d{1,4}(?:[.,]\\d{1,2})?)?)\\s*cm\\b",
+      "unit": "cm",
+      "max_per_product": 1
+    },
+
+    {
+      "group": "Dolžina navitka",
+      "displayType": "text",
+      "kind": "pattern",
+      "source": "name",
+      "pattern": "(?<![\\d,.\\-x])(\\d{2,5})\\s*m\\b(?!m)",
+      "unit": "m",
+      "max_per_product": 1
+    },
+
+    {
+      "group": "Teža / pakiranje",
+      "displayType": "text",
+      "kind": "pattern",
+      "source": "name",
+      "pattern": "(?<![\\d,.\\-x])(\\d{1,4})\\s*(?:gr|g)\\b",
+      "unit": "g",
+      "max_per_product": 1
+    },
+
+    {
+      "group": "Dimenzije",
+      "displayType": "text",
+      "kind": "pattern",
+      "source": "name",
+      "pattern": "\\b(\\d{1,3}\\s*[x×]\\s*\\d{1,3})\\s*(?:cm)?\\b",
+      "unit": "cm",
+      "normalise": "dimension",
+      "max_per_product": 1
+    },
+
+    {
+      "group": "Vsebina pakiranja",
+      "displayType": "text",
+      "kind": "pattern",
+      "source": "name",
+      "pattern": "\\b(\\d{1,3})\\s*(?:kom|kos)\\b",
+      "unit": "kos",
+      "max_per_product": 1
+    }
+  ]
+}

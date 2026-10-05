@@ -1,0 +1,22 @@
+{
+    "name": "optiweb-snippets/optiweb-snippets",
+    "description": "optiweb-snippets/optiweb-snippets",
+    "type": "shopware-platform-plugin",
+    "version": "1.0.0",
+    "license": "MIT",
+    "require": {
+        "shopware/core": "~6.7.0"
+    },
+    "extra": {
+        "shopware-plugin-class": "OptiwebSnippets\\OptiwebSnippets",
+        "label": {
+            "de-DE": "Optiweb snippets plugin",
+            "en-GB": "Optiweb snippets plugin"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "OptiwebSnippets\\": "src/"
+        }
+    }
+}

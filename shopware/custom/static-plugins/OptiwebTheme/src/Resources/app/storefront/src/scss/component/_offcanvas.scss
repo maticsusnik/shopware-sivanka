@@ -1,0 +1,390 @@
+@include media-breakpoint-down(lg) {
+    .offcanvas {
+        &-footer {
+            background: $sv-cream;
+
+            a {
+                @include fontSpecs(14, 20, 400);
+
+                &:hover {
+                    color: $sv-bordo;
+                }
+            }
+        }
+
+        & .offcanvas-close {
+            padding: 1rem;
+            border: 0;
+            width: 3.5rem;
+            height: 3.5rem;
+
+            .icon {
+                width: 1.5rem;
+                height: 1.5rem;
+                color: $sv-white;
+            }
+        }
+
+        &-back-link {
+            background: $sv-ink;
+        }
+    }
+
+
+    .navigation-offcanvas {
+        &-list {
+            padding-top: 1rem;
+        }
+
+        &-list-item {
+            border-top: 0;
+            border-bottom: 1px solid $sv-border !important;
+        }
+
+        &-link {
+            @include fontSpecs(14, 20, 400);
+
+            &.is-back-link {
+                line-height: 1.5rem;
+                padding: 1rem;
+                padding-right: 0;
+                border: 0;
+                color: $sv-white;
+                @include fontSpecs(16, 24, 600);
+
+                .icon {
+                    color: inherit;
+                }
+            }
+
+            &.is-current-category {
+                color: $sv-ink;
+
+            }
+        }
+
+        &-actions {
+            display: none;
+        }
+    }
+}
+// ============================================================
+//  Mobile navigation offcanvas — Sivanka styling
+// ============================================================
+@include media-breakpoint-down(lg) {
+    .navigation-offcanvas {
+        font-family: $sv-sans;
+    }
+
+    // ---- Sticky header row: back link + "all categories" + close ----
+    .offcanvas-back-link {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        row-gap: 8px;
+        gap: 10px;
+        position: sticky;
+        top: 0;
+        z-index: 3;
+        background: $sv-cream;
+        border-bottom: 1px solid $sv-border;
+        padding: 10px 12px;
+
+        .is-back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1 1 auto;
+            min-width: 0;
+            padding: 8px 10px !important;
+            border: 0 !important;
+            border-radius: $sv-r-chrome;
+            font-family: $sv-serif;
+            font-size: 17px;
+            font-weight: 600;
+            line-height: 1.25;
+            color: $sv-bordo-head !important;
+            background: transparent;
+
+            > span[itemprop="name"] {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .icon {
+                color: $sv-bordo;
+                flex-shrink: 0;
+
+                svg { top: 0; }
+                svg path { fill: currentColor; }
+            }
+
+            &:active {
+                background: rgba(160, 43, 107, 0.06);
+            }
+        }
+    }
+
+    .offcanvas-root-head {
+        justify-content: space-between;
+    }
+
+    .offcanvas-root-title {
+        flex: 1 1 auto;
+        min-width: 0;
+        padding: 8px 10px;
+        font-family: $sv-serif;
+        font-size: 17px;
+        font-weight: 600;
+        line-height: 1.25;
+        color: $sv-bordo-head;
+    }
+
+    // Jump straight back to the top level from any depth — own row, full width, so the
+    // category title above it is not squeezed down to a few characters.
+    .offcanvas-root-link {
+        flex: 1 1 100%;
+        justify-content: center;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+        padding: 7px 12px;
+        border: 1px solid $sv-bordo;
+        border-radius: $sv-r-btn;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: $sv-bordo;
+        text-decoration: none;
+        background: $sv-white;
+
+        .icon {
+            width: 14px;
+            height: 14px;
+            color: $sv-bordo;
+
+            svg { top: 0; width: 14px; height: 14px; }
+            svg path { fill: currentColor; }
+        }
+
+        &:active {
+            background: $sv-bordo;
+            color: $sv-white;
+
+            .icon { color: $sv-white; }
+        }
+    }
+
+    .offcanvas-back-link .offcanvas-close {
+        flex: 0 0 auto;
+        position: relative;
+        width: 40px;
+        height: 40px;
+        min-width: 40px !important;
+        // Same trap as `.ow-offcanvas-close` below: the <1280 touch-target rule gives
+        // every .btn a 46px min-height, which stretched this into a 40×46 oval. The
+        // ::before keeps the 46px hit area.
+        min-height: 40px !important;
+        padding: 0;
+        border: 0;
+        border-radius: $sv-r-round;
+        background: $sv-white;
+        color: $sv-ink;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        &::before {
+            content: "";
+            position: absolute;
+            inset: -3px;
+            border-radius: $sv-r-round;
+        }
+
+        .icon {
+            width: 18px;
+            height: 18px;
+            color: $sv-ink;
+
+            svg { top: 0; }
+        }
+    }
+
+    // ---- The list itself ----
+    .navigation-offcanvas-list {
+        margin: 0;
+        padding: 0;
+    }
+
+    .navigation-offcanvas-link {
+        display: flex !important;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        min-height: 54px;
+        padding: 14px 16px !important;
+        border: 0 !important;
+        border-bottom: 1px solid $sv-border !important;
+        font-size: 15px;
+        font-weight: 500;
+        line-height: 1.35;
+        color: $sv-ink !important;
+        text-decoration: none;
+
+        transition: background 0.14s;
+
+        // Tap feedback only. The row for the page the shopper is on (`.active`, set
+        // by item-link.html.twig) deliberately gets no highlight.
+        &:active {
+            background: $sv-bordo-tint;
+        }
+    }
+
+    .navigation-offcanvas-label {
+        min-width: 0;
+        flex: 1 1 auto;
+
+        > span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+
+    // Chevron on rows that drill down
+    .navigation-offcanvas-link-icon {
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 22px;
+        height: 22px;
+        color: $sv-bordo;
+
+        .icon,
+        svg {
+            width: 16px;
+            height: 16px;
+            color: inherit;
+        }
+
+        svg {
+            top: 0;
+        }
+
+        svg path {
+            fill: currentColor;
+        }
+    }
+
+    // "Show all products in this category" row. It is the link to the page the shopper
+    // is usually already on (the panel opens at the current category), so it reads like
+    // its siblings instead of carrying a highlighted "active" state.
+    .navigation-offcanvas-list .is-current-category {
+        font-weight: 500; // core bolds `.navigation-offcanvas-link.is-current-category`
+        background: $sv-white;
+    }
+}
+
+// ============================================================
+//  Shared offcanvas close button (cart, account menu, tabs, cookie panels)
+//  Not wrapped in a breakpoint: the cart panel is the only way out on desktop too.
+// ============================================================
+.offcanvas-header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    // Top trimmed, bottom added: the button used to sit flush on the panel body.
+    padding: 8px 16px;
+    border: 0;
+}
+
+// Two class names so this outranks the `.offcanvas .offcanvas-close` block above, which
+// paints the icon white for the dark category menu.
+.offcanvas-close.ow-offcanvas-close {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 36px;
+    height: 36px;
+    min-width: 36px !important;
+    // The <1280 touch-target rule in _responsive.scss gives every .btn a 46px
+    // min-height, which stretched this into a 36×46 oval. The visible circle stays
+    // small; the ::before below keeps the 46px hit area instead.
+    min-height: 36px !important;
+    padding: 0;
+    border: 0;
+    border-radius: $sv-r-round;
+    background: $sv-cream;
+    color: $sv-ink;
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset: -5px;
+        border-radius: $sv-r-round;
+    }
+
+    .icon {
+        width: 16px;
+        height: 16px;
+        color: $sv-ink;
+
+        svg {
+            top: 0;
+            width: 16px;
+            height: 16px;
+        }
+
+        svg path {
+            fill: currentColor;
+        }
+    }
+
+    &:hover,
+    &:focus {
+        background: $sv-border;
+        color: $sv-ink;
+    }
+}
+
+// The filter / sorting / category panels close with Bootstrap's `.btn-close` — a bare X
+// in a 54px square hit box. Drawn as the same 36px cream circle as `.ow-offcanvas-close`
+// so every panel closes with the same control. `!important` on the box because the
+// Storefront's filter-panel rules and the <1280 touch-target rule both size it.
+.filter-panel-offcanvas-close.btn-close {
+    position: relative;
+    flex: 0 0 auto;
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    min-height: 36px !important;
+    margin: 0 0 0 auto;
+    padding: 0 !important;
+    border-radius: $sv-r-round;
+    background: $sv-cream url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%232E1A20' stroke-linecap='round' stroke-width='1.6' d='M3.5 3.5l9 9M12.5 3.5l-9 9'/%3E%3C/svg%3E") center / 14px no-repeat;
+    opacity: 1;
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset: -5px;
+        border-radius: $sv-r-round;
+    }
+
+    &:hover,
+    &:focus {
+        background-color: $sv-border;
+        opacity: 1;
+    }
+}
+
+// The account menu markup is shared between the offcanvas (< md) and the dropdown panel
+// (>= md). `js-offcanvas-close` is only wired up inside an offcanvas, so in the dropdown
+// the button would be dead — hide the header there.
+.account-menu-dropdown > .offcanvas-header,
+.dropdown-menu > .offcanvas-header {
+    display: none;
+}

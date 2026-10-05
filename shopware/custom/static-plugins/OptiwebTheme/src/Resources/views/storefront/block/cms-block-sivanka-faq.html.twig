@@ -1,0 +1,37 @@
+{% block block_sivanka_faq %}
+    {% set image = block.slots.getSlot('image') %}
+    {% set text = block.slots.getSlot('text') %}
+    {% set faq = block.slots.getSlot('faq') %}
+
+    <div class="col-12 cms-block-sivanka-faq__inner">
+        <div class="sivanka-faq-block">
+            {% sw_include '@Storefront/storefront/block/sivanka-service/slot.html.twig' with {
+                slotName: 'heading',
+                slotClass: 'sivanka-faq-block__heading'
+            } %}
+
+            <div class="sivanka-faq-block__grid">
+                <div class="sivanka-faq-block__aside">
+                    {% if image %}
+                        <div class="sivanka-faq-block__media" data-cms-element-id="{{ image.id }}">
+                            {% sw_include '@Storefront/storefront/element/cms-element-' ~ image.type ~ '.html.twig' ignore missing with { element: image } %}
+                        </div>
+                    {% endif %}
+                    {% if text %}
+                        <div class="sivanka-faq-block__text" data-cms-element-id="{{ text.id }}">
+                            {% sw_include '@Storefront/storefront/element/cms-element-' ~ text.type ~ '.html.twig' ignore missing with { element: text } %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="sivanka-faq-block__list">
+                    {% if faq %}
+                        <div data-cms-element-id="{{ faq.id }}">
+                            {% sw_include '@Storefront/storefront/element/cms-element-' ~ faq.type ~ '.html.twig' ignore missing with { element: faq } %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

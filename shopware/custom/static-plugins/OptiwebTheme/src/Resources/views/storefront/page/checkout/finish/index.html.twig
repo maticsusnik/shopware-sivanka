@@ -1,0 +1,19 @@
+{% sw_extends '@Storefront/storefront/page/checkout/finish/index.html.twig' %}
+
+{#
+    No step indicator here. The cart → checkout steps describe a flow that is already
+    over on the thank-you page, and it is hidden on the register / confirm pages too,
+    so it was the only place it ever showed up.
+#}
+
+{% block page_checkout_finish_product_table %}
+    <div class="finish-products">
+        {% block page_checkout_finish_product_table_header %}
+            <h2 class="finish-section-title">
+                {{ 'optiweb.checkout.confirmProductsHeader'|trans|sw_sanitize }}
+            </h2>
+        {% endblock %}
+
+        {{ parent() }}
+    </div>
+{% endblock %}

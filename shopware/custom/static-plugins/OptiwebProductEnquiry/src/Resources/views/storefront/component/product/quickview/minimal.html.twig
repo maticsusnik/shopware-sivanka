@@ -1,0 +1,51 @@
+{% block component_product_quickview_minimal %}
+    {% if product %}
+        <input type="hidden" name="product_id" value="{{ product.id }}"/>
+        <input type="hidden" name="product_name" value="{{ product.translated.name }}"/>
+        <input type="hidden" name="product_number" value="{{ product.productNumber }}"/>
+        <input type="hidden" name="product_url" value="{{ seoUrl('frontend.detail.page', { productId: product.id }) }}"/>
+
+        {% if product.options %}
+            {% set productOption = product.options|first %}
+            {% if productOption %}
+                <input type="hidden" name="product_option" value="{{ productOption.translated.name }}"/>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+
+    <div class="row quickview-minimal-container">
+        <div class="col-12 col-md-6 quickview-minimal-image-wrapper">
+            <div class="quickview-minimal-image">
+                {% if product and product.cover and product.cover.media %}
+                    {% sw_thumbnails 'minimal-image-thumbnails' with {
+                        media: product.cover.media,
+                        sizes: { 'default': '300px' },
+                        attributes: {
+                            class: 'img-fluid quickview-minimal-img',
+                            alt: (product.cover.translated.alt ?: ''),
+                            title: (product.cover.translated.title ?: '')
+                        }
+                    } %}
+                {% else %}
+                    {% sw_icon 'placeholder' style { 'size': 'fluid' } %}
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 quickview-minimal-product-wrapper">
+            <div class="quickview-minimal-product">
+                {% if product %}
+                    <h4 class="quickview-minimal-product-name">
+                        {{ product.translated.name }}
+                    </h4>
+                    {% if product.productNumber %}
+                        <div class="quickview-minimal-product-number">
+                            <span class="product-number-label">{{ 'detail.ordernumberLabel'|trans }}</span>
+                            <span class="product-number-value">{{ product.productNumber }}</span>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,36 @@
+@import "../../../../sivanka-service-shared";
+
+.sw-cms-preview-sivanka-faq {
+    @include sivanka-cms-thumb;
+
+    &__head {
+        @include sivanka-cms-thumb-heading;
+    }
+
+    &__grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+        flex: 1;
+    }
+
+    &__media {
+        border-radius: 3px;
+        background: $sivanka-cms-surface;
+        border: 1px solid $sivanka-cms-border;
+    }
+
+    &__list {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        span {
+            display: block;
+            height: 9px;
+            border-radius: 2px;
+            background: #fff;
+            border: 1px solid $sivanka-cms-border;
+        }
+    }
+}

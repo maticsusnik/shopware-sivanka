@@ -1,0 +1,44 @@
+{% sw_extends '@Storefront/storefront/page/error/error-404.html.twig' %}
+
+
+{% block base_content %}
+    <main class="error_404">
+        {% block not_found_error_content %}
+            <div class="container">
+                <h1>{{ 'general.404ErrorPageHeader'|trans|sw_sanitize }}</h1>
+                <p>{{ 'general.404ErrorDescription'|trans|sw_sanitize }}</p>
+
+                {% block not_found_error_return %}
+                    <div>
+                        <a href="{{ path('frontend.home.page') }}"
+                           class="sv-btn sv-btn--primary">
+                            {% sw_icon 'arrow-left' style { pack: 'ow'} %}
+                            {{ 'general.404ErrorReturn'|trans|sw_sanitize }}
+                        </a>
+                    </div>
+                {% endblock %}
+
+                <div class="text-center mt-4">
+                    {% set themeConfig = config('OptiwebTheme').config %}
+                    {% set error404MediaId = themeConfig.error404Image %}
+                    {% if error404MediaId %}
+                        {% set error404MediaCollection = searchMedia([error404MediaId], context.context) %}
+                        {% set error404Media = error404MediaCollection.get(error404MediaId) %}
+                        {% if error404Media %}
+                            {% sw_thumbnails 'error-404-image' with {
+                                media: error404Media,
+                                sizes: {
+                                    'default': '800px'
+                                },
+                                attributes: {
+                                    'class': 'img-fluid',
+                                    'alt': 'general.404ErrorImageAlt'|trans|sw_sanitize
+                                }
+                            } %}
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        {% endblock %}
+    </main>
+{% endblock %}

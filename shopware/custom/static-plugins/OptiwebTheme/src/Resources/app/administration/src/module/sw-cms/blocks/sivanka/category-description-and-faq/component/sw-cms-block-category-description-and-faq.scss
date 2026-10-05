@@ -1,0 +1,22 @@
+.sw-cms-block-category-description-and-faq {
+    display: flex;
+    gap: 20px;
+
+    &__content {
+        width: 50%;
+        & > div {
+            height: auto;
+        }
+        & .sw-cms-slot-image {
+            margin: 20px 0;
+        }
+    }
+
+    &__faq {
+        width: 50%;
+    }
+
+    & * {
+        height: auto;
+    }
+}

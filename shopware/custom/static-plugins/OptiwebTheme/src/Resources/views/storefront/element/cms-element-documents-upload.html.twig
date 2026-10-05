@@ -1,0 +1,21 @@
+{% block cms_element_documents_upload %}
+    {% set documents = element.config.documents.value %}
+    <div class="col-12 cms-element-documents-upload" data-cms-element-id="{{ element.id }}">
+        {% block cms_element_documents_upload_inner %}
+            <h4 class="title"><span>{{ element.config.title.value }}</span></h4>
+            {% if documents %}
+                {% set sortedDocuments = documents|sort((a, b) => a.order <=> b.order) %}
+                <ul class="documents__list list-unstyled">
+                    {% for document in sortedDocuments %}
+                        <li class="documents__list-item">
+                            <a class="documents__list-link" href="{{ document.media.url }}" title="{{ document.media.fileName }}" target="_blank">
+                                {% sw_icon 'arrow-right' style { pack: 'ow'} %}
+                                <span class="documents__list_label">{{ document.title }}</span>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endblock %}
+    </div>
+{% endblock %}

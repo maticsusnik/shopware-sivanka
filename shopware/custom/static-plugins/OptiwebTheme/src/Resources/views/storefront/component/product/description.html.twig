@@ -1,0 +1,30 @@
+{% sw_extends '@Storefront/storefront/component/product/description.html.twig' %}
+
+{# Only label the description when there is one. `striptags|trim` because an empty
+   WYSIWYG field commonly holds `<p></p>` or a stray `&nbsp;` rather than a true null,
+   which an `is not empty` test alone would happily call content. #}
+{% block component_product_description_title %}
+    {% if product.translated.description|striptags|trim is not empty %}
+        <h4 class="product-detail-description-title">
+            {{ 'detail.tabsDescription'|trans|sw_sanitize }}
+        </h4>
+    {% endif %}
+{% endblock %}
+
+{% block component_product_description_content %}
+    {% block component_product_description_content_text %}
+        {{ parent() }}
+    {% endblock %}
+
+    {% block component_product_specification_title %}
+        {% if product.sortedProperties is defined and product.sortedProperties|length > 0 %}
+            <h4 class="product-detail-specification-title">
+                {{ 'optiweb.product.specificationTitle'|trans|sw_sanitize }}
+            </h4>
+        {% endif %}
+    {% endblock %}
+
+    {% block component_product_description_content_properties %}
+        {{ parent() }}
+    {% endblock %}
+{% endblock %}

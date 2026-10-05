@@ -1,0 +1,15 @@
+meta {
+  name: get products by code
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{minimaxApiUrl}}api/orgs/239849/items/code(40806)
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}

@@ -2,7 +2,7 @@ name: Build & Deploy (develop)
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: ["develop"]
   workflow_dispatch: {}
 
 concurrency:
@@ -14,9 +14,10 @@ permissions:
   packages: write   # needed to push to GHCR
 
 env:
-  IMAGE: ghcr.io/${{ github.repository }}      # ghcr.io/maticsusnik/shopware-sivanka
+  IMAGE: ghcr.io/${{ github.repository }}   # e.g. ghcr.io/owner/repo
   TAG: ${{ github.sha }}
   ANSIBLE_DIR: ansible
+  COLLECTION_REF: "2.1.52"                  # tag in maticsusnik/ansible-collections; must be >= 2.1.52 (adds shopware_frankenphp)
 
 jobs:
   build:
@@ -31,16 +32,15 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_TOKEN || github.token }}
+          password: ${{ github.token }}
 
       - name: Set up Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and push (prod target)
+      - name: Build and push image
         uses: docker/build-push-action@v6
         with:
           context: .
-          target: prod
           push: true
           platforms: linux/amd64
           provenance: false
@@ -56,29 +56,117 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Ansible + docker collection
+      - name: Install Ansible + community collections
         run: |
           python -m pip install --upgrade pip
-          pip install "ansible-core==2.16.*" "community.docker==3.*"
+          pip install "ansible-core==2.16.*"
+          ansible-galaxy collection install "community.docker:>=3.6.0,<4.0.0"
+          ansible-galaxy collection install "community.general:>=9.0.0,<10.0.0"
 
-      - name: Prepare SSH
+      - name: Prepare SSH (write key, add host)
+        shell: bash
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.DEV_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          set -euo pipefail
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          
+          if [ -n "${{ secrets.DEV_SSH_PRIVATE_KEY_B64 || '' }}" ]; then
+            printf '%s' "${{ secrets.DEV_SSH_PRIVATE_KEY_B64 }}" | base64 -d > ~/.ssh/id_rsa || {
+              echo "::error::Failed to decode DEV_SSH_PRIVATE_KEY_B64"; exit 1; }
+          elif [ -n "${{ secrets.DEV_SSH_PRIVATE_KEY || '' }}" ]; then
+            printf '%s\n' "${{ secrets.DEV_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+            sed -i 's/\r$//' ~/.ssh/id_rsa
+          else
+            echo "::error::No SSH key provided. Set DEV_SSH_PRIVATE_KEY_B64 (preferred) or DEV_SSH_PRIVATE_KEY"
+            exit 1
+          fi
+
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H "${{ secrets.DEV_HOST }}" >> ~/.ssh/known_hosts
+
+          HOST="${{ secrets.DEV_HOST }}"
+          PORT="${{ secrets.DEV_SSH_PORT }}"
+          : "${HOST:?DEV_HOST secret missing}"
+          : "${PORT:?DEV_SSH_PORT secret missing}"
+
+          ssh-keyscan -4 -T 10 -p "$PORT" -t rsa,ecdsa,ed25519 "$HOST" 2>/dev/null >> ~/.ssh/known_hosts || true
+          ssh-keyscan -6 -T 10 -p "$PORT" -t rsa,ecdsa,ed25519 "$HOST" 2>/dev/null >> ~/.ssh/known_hosts || true
+          chmod 644 ~/.ssh/known_hosts
 
       - name: Write Ansible vault password
         run: |
           echo "${{ secrets.DEV_VAULT_PASSWORD }}" > .vault_pass
           chmod 600 .vault_pass
 
-      - name: Deploy via Ansible
+      - name: Connectivity diagnostics
+        shell: bash
+        run: |
+          echo "HOST=${{ secrets.DEV_HOST }}"
+          echo "PORT=${{ secrets.DEV_SSH_PORT }}"
+          getent hosts "${{ secrets.DEV_HOST }}" || true
+          (command -v nc >/dev/null && nc -vz -w 10 "${{ secrets.DEV_HOST }}" "${{ secrets.DEV_SSH_PORT }}") || true
+          timeout 5 bash -lc 'cat </dev/null > /dev/tcp/${{ secrets.DEV_HOST }}/${{ secrets.DEV_SSH_PORT }}' && echo RAW_TCP_OK || echo RAW_TCP_FAIL
+
+      - name: Smoke test SSH as deploy (force IPv4 and key only)
+        shell: bash
+        run: |
+          ssh -4 -vvv \
+            -o IdentitiesOnly=yes \
+            -o PreferredAuthentications=publickey \
+            -o ServerAliveInterval=15 -o ServerAliveCountMax=3 \
+            -o ConnectTimeout=10 \
+            -o BatchMode=yes \
+            -o StrictHostKeyChecking=yes \
+            -i ~/.ssh/id_rsa \
+            -p "${{ secrets.DEV_SSH_PORT }}" \
+            deploy@${{ secrets.DEV_HOST }} 'echo SSH_OK'
+
+      - name: Install collection maticsusnik.common (private)
         working-directory: ${{ env.ANSIBLE_DIR }}
+        env:
+          GH_PAT: ${{ secrets.MATICSUSNIK_COLLECTIONS_PAT }}
+          REF: ${{ env.COLLECTION_REF }}
+        run: |
+          set -euo pipefail
+          mkdir -p ./collections
+          if [ -z "${GH_PAT:-}" ]; then
+            echo "::error::Secret MATICSUSNIK_COLLECTIONS_PAT is missing (required for private repo)."
+            exit 1
+          fi
+          # The corrected URL with the Git reference
+          URL="git+https://${GH_PAT}@github.com/maticsusnik/ansible-collections.git,${REF}"
+          echo "Installing collection from ${URL##*@} ..."
+          ansible-galaxy collection install "$URL" -p ./collections --force
+
+          echo "=== Installed collections at ./collections ==="
+          ansible-galaxy collection list -p ./collections || true
+
+          echo "=== Sanity check for role path ==="
+          # Check the role the playbook actually uses, and fail here rather than
+          # letting ansible-playbook report a confusing "role was not found".
+          ROLE_DIR="$(find ./collections -type d -path "*/ansible_collections/maticsusnik/common/roles/shopware_frankenphp" -print -quit)"
+          if [ -z "$ROLE_DIR" ]; then
+            echo "::error::Role 'shopware_frankenphp' is missing from maticsusnik.common at ref '${REF}'. It was added in 2.1.52 - bump COLLECTION_REF."
+            find ./collections -type d -path "*/maticsusnik/common/roles/*" -maxdepth 6 -print
+            exit 1
+          fi
+          echo "Found role at ${ROLE_DIR}"
+
+      - name: Deploy via Ansible (use deploy user + key)
+        working-directory: ${{ env.ANSIBLE_DIR }}
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: "True"
+          # Must include the parent dir that now contains 'ansible_collections/'
+          ANSIBLE_COLLECTIONS_PATH: "${{ github.workspace }}/ansible/collections:/home/runner/.ansible/collections:/usr/share/ansible/collections"
+          ANSIBLE_ROLES_PATH: "${{ github.workspace }}/ansible/roles:/home/runner/.ansible/roles:/usr/share/ansible/roles"
+          ANSIBLE_SSH_ARGS: "-o IdentitiesOnly=yes -o PreferredAuthentications=publickey -o StrictHostKeyChecking=yes -o ServerAliveInterval=15 -o ServerAliveCountMax=3 -i ~/.ssh/id_rsa -p ${{ secrets.DEV_SSH_PORT }}"
         run: |
           ansible-playbook shopware.yaml \
             -i inventory/hosts.yaml \
             -l shopware_development \
+            -u deploy \
             --diff \
-            --extra-vars "shopware_docker_image_tag=${{ env.TAG }}" \
+            --extra-vars "shopware_docker_image_tag=${{ github.sha }}" \
             --vault-password-file ../.vault_pass
+
+      - name: Clean up vault file
+        if: always()
+        run: rm -f .vault_pass

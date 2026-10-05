@@ -1,0 +1,14 @@
+.sw-cms-el-preview-sivanka-hero {
+    &__box {
+        min-height: 80px;
+        background: linear-gradient(95deg, #FBE7EF, #F7EDE8);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        text-align: center;
+    }
+    &__h { font-weight: 600; font-size: 13px; color: #1B1B1B; }
+    &__sub { font-size: 11px; color: #A02B6B; margin-top: 4px; }
+}

@@ -1,0 +1,125 @@
+{% sw_extends "@Storefront/storefront/component/buy-widget/buy-widget-form.html.twig" %}
+
+{% block buy_widget_buy_container %}
+    {% if buyable %}
+        <div class="row g-2 buy-widget-container align-items-center">
+
+            {% block buy_widget_buy_quantity_container %}
+                {% if showQuantitySelect %}
+                    <fieldset class="col-4 d-flex justify-content-start">
+                        {% block buy_widget_buy_quantity_input_group %}
+                            <legend class="form-label visually-hidden">
+                                {{ 'component.product.quantitySelect.legend'|trans|striptags }}
+                            </legend>
+                            <div id="product-detail-quantity-group-{{ product.id }}" class="input-group product-detail-quantity-group quantity-selector-group" data-quantity-selector="true"{% if product.isCloseout %} data-quantity-selector-options="{{ { purchaseLimitUrl: path('frontend.product.purchase-limit', { productId: product.id }) }|json_encode|e('html_attr') }}"{% endif %}>
+                                <button type="button" class="btn btn-outline-light btn-minus js-btn-minus" aria-label="{{ 'component.product.quantitySelect.decrease'|trans|striptags }}">
+                                    {% sw_icon 'minus' style {size: 'xs'} %}
+                                </button>
+                                <input
+                                    type="number"
+                                    name="lineItems[{{ product.id }}][quantity]"
+                                    class="form-control js-quantity-selector quantity-selector-group-input"
+                                    min="{{ product.minPurchase }}"
+                                    max="{{ product.calculatedMaxPurchase }}"
+                                    step="{{ product.purchaseSteps }}"
+                                    value="{{ product.minPurchase }}"
+                                    aria-label="{{ 'component.product.quantitySelect.label'|trans|striptags }}"
+                                />
+                                <button type="button" class="btn btn-outline-light btn-plus js-btn-plus" aria-label="{{ 'component.product.quantitySelect.increase'|trans|striptags }}">
+                                    {% sw_icon 'plus' style {size: 'xs'} %}
+                                </button>
+                                {# The JS unit hooks only go on a real pack unit; the "kos" fallback stays static #}
+                                <span
+                                    class="input-group-text{% if product.translated.packUnit %} js-quantity-selector-unit{% endif %}"
+                                    {% if product.translated.packUnit %}
+                                        data-unit-singular="{{ product.translated.packUnit|e('html_attr') }}"
+                                        {% if product.translated.packUnitPlural %}
+                                            data-unit-plural="{{ product.translated.packUnitPlural|e('html_attr') }}"
+                                        {% endif %}
+                                    {% endif %}>
+                                    {% if product.minPurchase > 1 and product.translated.packUnitPlural %}
+                                        {{ product.translated.packUnitPlural }}
+                                    {% elseif product.translated.packUnit %}
+                                        {{ product.translated.packUnit }}
+                                    {% else %}
+                                        kos
+                                    {% endif %}
+                                </span>
+                            </div>
+                            {% block buy_widget_buy_quantity_live_area %}
+                                <div
+                                    class="quantity-area-live visually-hidden"
+                                    aria-live="polite"
+                                    aria-atomic="true"
+                                    data-aria-live-text="{{ 'component.product.quantitySelect.areaLiveText'|trans|striptags }}"
+                                    data-aria-live-product-name="{{ product.translated.name }}">
+                                </div>
+                            {% endblock %}
+                        {% endblock %}
+                    </fieldset>
+                {% endif %}
+
+                <div class="{% if showQuantitySelect %}col-8{% else %}col-12{% endif %} text-end">
+                    {% block buy_widget_price %}
+                        <div class="product-detail-price-container">
+                            {% sw_include '@Storefront/storefront/component/product/card/price-unit.html.twig' %}
+                        </div>
+                    {% endblock %}
+                </div>
+            {% endblock %}
+
+            {% block buy_widget_buy_redirect_input %}
+                {{ parent() }}
+            {% endblock %}
+
+            {% block buy_widget_buy_product_buy_info %}
+                {{ parent() }}
+            {% endblock %}
+
+            {% block buy_widget_product_buy_meta %}
+                {{ parent() }}
+            {% endblock %}
+
+            {% block buy_widget_delivery_informations %}
+                <div class="col-12 product-detail-delivery-information">
+                    {% sw_include '@Storefront/storefront/component/delivery-information.html.twig' %}
+                </div>
+            {% endblock %}
+
+            {% block buy_widget_buy_button_container %}
+                <div class="col-12">
+                    {% block buy_widget_buy_button %}
+                        <div class="d-grid">
+                            <button class="btn btn-primary btn-buy"
+                                    type="submit"
+                                    title="{{ 'detail.addProduct'|trans|striptags }}"
+                                    aria-label="{{ 'detail.addProduct'|trans|striptags }}">
+                                {% sw_icon 'cart2' style { pack: 'ow', size: 'lg'} %}
+                                <span>{{ 'detail.addProduct'|trans|sw_sanitize }}</span>
+                            </button>
+                        </div>
+                    {% endblock %}
+                </div>
+            {% endblock %}
+        </div>
+
+        {% if product.isCloseout %}
+            {% block buy_widget_buy_quantity_stock_adjusted_template %}
+                <template class="js-quantity-stock-adjusted-template">
+                    <div class="mt-2">
+                        {% sw_include '@Storefront/storefront/utilities/alert.html.twig' with {
+                            type: 'warning',
+                            content: '',
+                        } %}
+                    </div>
+                </template>
+            {% endblock %}
+        {% endif %}
+    {% else %}
+        {% block buy_widget_delivery_informations_non_buyable %}
+            <div class="product-detail-delivery-information">
+                {% sw_include '@Storefront/storefront/component/delivery-information.html.twig' %}
+            </div>
+        {% endblock %}
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,410 @@
+// ============================================================
+//  Responsive corrections — imported LAST on purpose
+//  These override component partials, so they must win on source order rather
+//  than by sprinkling !important through the component files.
+// ============================================================
+
+// Touch ergonomics. The Sivanka v2 checklist asks for 46px below 1280 — stricter
+// than WCAG 2.5.8's 24x24 — and scss/_reset.scss carries that floor. What is left
+// here is the form-control sizing, which the reset does not cover, plus the
+// utility links that need a flex display before a min-height can apply to them.
+@include media-breakpoint-down(lg) {
+
+    // Radios / checkboxes ship at 16-18px across the checkout
+    .form-check-input,
+    .payment-method-input,
+    .shipping-method-input,
+    .checkout-confirm-tos-checkbox {
+        width: 1.5rem;
+        height: 1.5rem;
+        min-width: 1.5rem;
+        min-height: 1.5rem;
+        margin-top: 0;
+    }
+
+    // min-height only — changing `display` here would rearrange the payment/shipping
+    // labels, which carry the price and description as children.
+    .form-check-label {
+        min-height: 1.5rem;
+    }
+
+    // Standalone utility links. `.sivanka-topbar .tb-item` used to be in this list
+    // at 24px, which beat the topbar's own `display:none` below 1100 on source
+    // order and kept the promises on screen down to 340px. The topbar promises are
+    // non-interactive spans and are excluded now. `.footer-link` is excluded too —
+    // the forced height spread the footer columns far apart.
+    .footer-copyright-link,
+    .breadcrumb a,
+    .breadcrumb .breadcrumb-link,
+    .cart-continue-link,
+    .sv-cart-name,
+    .sv-co-contact a {
+        display: inline-flex;
+        align-items: center;
+        min-height: $sv-touch;
+    }
+}
+
+// Full-width action buttons must be allowed to wrap their label rather than clip it
+@include media-breakpoint-down(sm) {
+    #confirmFormSubmit,
+    .begin-checkout-btn,
+    .btn-buy {
+        white-space: normal;
+    }
+}
+
+// Core pins the thumbnail arrows at left/right:-25px on the underneath layout, which
+// pushed them past the page edge once the gallery column met the container inset.
+.is-ctl-product {
+    .gallery-slider-thumbnails-container.is-underneath .gallery-slider-thumbnails-controls-prev {
+        left: 0;
+    }
+
+    .gallery-slider-thumbnails-container.is-underneath .gallery-slider-thumbnails-controls-next {
+        right: 0;
+    }
+}
+
+// Shipping method name and price on one row, the price on the right
+// (component/shipping/shipping-method.html.twig).
+.shipping-method-label,
+.payment-method-label {
+    display: block;
+    width: 100%;
+}
+
+// Core caps the description at 66% (page/checkout/_confirm.scss), which stopped the
+// price short of the right edge.
+.shipping-method-label .shipping-method-description {
+    width: 100%;
+}
+
+.shipping-method-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+
+    .shipping-price {
+        white-space: nowrap;
+    }
+}
+
+// Footer bottom bar: centre-stack instead of leaving a stray link hanging left
+@include media-breakpoint-down(sm) {
+    .footer-bottom .container {
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        text-align: center;
+    }
+}
+
+// The discount field and its button do not fit side by side on a phone
+@include media-breakpoint-down(sm) {
+    .cart-promo-form {
+        .cart-promo-input {
+            flex: 1 1 100%;
+            width: 100%;
+        }
+
+        .cart-promo-btn {
+            flex: 1 1 100%;
+            padding-block: 12px;
+        }
+    }
+}
+
+// ============================================================
+//  Mobile header icons
+//  -----------------------------------------------------------------------
+//  This block used to move the four header icons into a fixed app-style bottom
+//  bar below 768px. The v2 reference keeps them in the header at every width
+//  down to 340px, at 46x46 — see [data-r="hicons"] in the reference pages — so
+//  the bar has been removed and the icons stay where the design puts them.
+//  (Removed with it: the body bottom padding, and the bottom offsets the sort
+//  pill, filter pill and cookie banner needed to clear the bar.)
+// ============================================================
+@media (max-width: $sv-bp-touch) {
+    .header-actions-col > .row {
+        gap: 12px;
+    }
+
+    .header-actions-btn {
+        justify-content: center;
+    }
+
+    // Core nudges every glyph down by 6px, which reads as mis-centred in a
+    // 46px square.
+    .header-actions-col .btn .icon > svg,
+    .header-actions-col .icon > svg {
+        top: 0;
+    }
+}
+
+// ============================================================
+//  Stacked img-text block: square off the corners
+//  Side by side the card overlaps the photo and the radii read as intentional;
+//  stacked they are two separate slabs and the rounding looks accidental.
+// ============================================================
+@include media-breakpoint-down(md) {
+    .cms-block-img-text__inner {
+        .yellow-container,
+        .content-container {
+            border-radius: 0;
+        }
+
+        .image-container,
+        .image-container img,
+        .image-container .cms-image,
+        .cms-element-image,
+        .cms-element-image img,
+        .cms-element-image picture {
+            border-radius: 0;
+        }
+    }
+}
+
+
+// Core sets `.offcanvas.offcanvas-start .offcanvas-close { justify-content: space-between;
+// flex-direction: row-reverse }` for its label-plus-icon close button. That outranks a
+// two-class selector, so the glyph sat off-centre in the round icon button. Matched at
+// the same specificity here, and this file loads last.
+.offcanvas.offcanvas-start .offcanvas-close,
+.offcanvas.offcanvas-end .offcanvas-close {
+    justify-content: center;
+    flex-direction: row;
+}
+
+// ============================================================
+//  Mobile listing controls: Sort inline, Filter floating (< lg)
+//  These were the other way round — the floating pill is the control people reach for
+//  while scrolling, and that is Filter, not Sort.
+// ============================================================
+@include media-breakpoint-down(lg) {
+
+    // Sort drops into the flow, directly under the "Kategorije" button, styled to match it
+    .sorting-panel-wrapper-toggle {
+        position: static !important;
+        left: auto !important;
+        bottom: auto !important;
+        transform: none !important;
+        z-index: auto !important;
+        display: flex !important;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        width: 100%;
+        min-height: 54px;
+        margin: 0;
+        padding: 0.75rem 1.25rem !important;
+        border-radius: $sv-r-chrome !important;
+        background: $sv-cream !important;
+        color: $sv-ink !important;
+        font-size: 15px;
+        font-weight: 600;
+
+        .icon {
+            color: $sv-ink !important;
+            flex-shrink: 0;
+
+            svg { top: 0; }
+        }
+
+        &:hover,
+        &:focus {
+            background: $sv-border !important;
+            color: $sv-ink !important;
+        }
+    }
+
+    // …and Filter takes over the floating pill
+    .filter-panel-wrapper-toggle[data-off-canvas-filter] {
+        position: fixed;
+        left: 50%;
+        transform: translateX(-50%);
+        // Clear the fixed action bar. Core puts this at `safe-area + 0.75rem`, which
+        // parks it underneath the bar (z-index 1030 vs 5) and makes it unclickable.
+        bottom: calc(env(safe-area-inset-bottom, 0px) + var(--sv-action-bar, 0px) + 0.75rem);
+        z-index: 5;
+        width: auto;
+        min-height: $sv-touch;
+        margin: 0;
+        padding: 0.6rem 2rem;
+        border: 0;
+        border-radius: $sv-r-btn;
+        background: $sv-ink;
+        color: $sv-white;
+        font-size: 15px;
+        font-weight: 600;
+        box-shadow: $sv-shadow-deep;
+
+        .icon {
+            color: $sv-white;
+
+            svg { top: 0; }
+        }
+
+        &:hover,
+        &:focus {
+            background: $sv-ink;
+            color: $sv-white;
+        }
+    }
+
+    // Back-to-top only has to clear the bottom bar. It used to be lifted a further 6rem
+    // to stay above the floating Filter pill, which left it hovering mid-screen — but the
+    // pill is centred and this is pinned to the right edge, so they never overlap. Same
+    // line as the pill now.
+    .scroll-up-button {
+        bottom: calc(env(safe-area-inset-bottom, 0px) + 0.75rem) !important;
+    }
+}
+
+// ============================================================
+//  Back-to-top button: square tap target, centred glyph
+//  Core renders it as a default inline-block .btn, so the arrow sat on the text
+//  baseline — off-centre in both directions inside the pink box.
+// ============================================================
+.scroll-up-button .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+
+    .icon {
+        width: 18px;
+        height: 18px;
+    }
+
+    .icon > svg {
+        top: 0;
+    }
+
+    // Smaller on phones so it covers less of the content.
+    @include media-breakpoint-down(md) {
+        width: 36px;
+        height: 36px;
+        min-height: 36px; // beats the global 46px touch minimum on .btn (_reset.scss)
+
+        .icon {
+            width: 15px;
+            height: 15px;
+        }
+    }
+}
+
+// ============================================================
+//  Pagination on one row (< sm)
+//  7 items x 40px + 6 x 8px gap = 328px, which wrapped inside a 280px column.
+//  36px items with a 4px gap come to 276px and fit.
+// ============================================================
+@include media-breakpoint-down(sm) {
+    .cms-element-product-listing .pagination {
+        flex-wrap: nowrap;
+        gap: 4px;
+
+        .page-item {
+            flex: 0 0 auto;
+        }
+
+        .page-link {
+            min-width: 36px;
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+        }
+    }
+}
+
+// ============================================================
+//  Landing-with-sidebar pages: content before the category nav (< lg)
+//  Scoped with :has() to the sections whose sidebar holds the category-navigation
+//  element. The product listing uses the same sidebar layout, and there the sidebar
+//  carries the Kategorije / Sort controls, which must stay at the top.
+// ============================================================
+@include media-breakpoint-down(lg) {
+    .cms-section-sidebar > .row:has(.cms-element-sivanka-category-navigation) {
+        .cms-section-sidebar-main-content {
+            order: 1;
+        }
+
+        .cms-section-sidebar-sidebar-content {
+            order: 2;
+        }
+    }
+}
+
+// ============================================================
+//  .form-check laid out as a flex row
+//  Bootstrap's contract is `padding-left: 1.5em` on the wrapper plus
+//  `float: left; margin-left: -1.5em` on the input — the negative margin is what pulls
+//  the control back into the reserved gutter. The theme lays several of these out as
+//  flex rows with no padding, so the negative margin had nothing to cancel it and hung
+//  the radio outside its card (2px on desktop, ~34px on mobile). Opt out of the float
+//  model instead of trying to patch the offsets.
+// ============================================================
+.confirm-payment-shipping .form-check,
+.confirm-address .form-check,
+.checkout-confirm-tos .form-check,
+.address-manager-modal .form-check,
+.payment-method-radio,
+.shipping-method-radio {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding-left: 0;
+
+    > .form-check-input {
+        float: none;
+        margin-left: 0;
+        margin-right: 0;
+        flex: 0 0 auto;
+    }
+
+    > .form-check-label {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+}
+
+// A <legend> reverts to the UA "sits astride the fieldset border" rendering as soon as
+// it stops being floated, which pushes it outside the card padding. The checkout-scoped
+// fix did not reach /account/register, so keep it global.
+legend.card-title {
+    float: left;
+    width: 100%;
+}
+
+
+// Below 1280 every product-card CTA — "V košarico", "Pošlji povpraševanje", "Podrobnosti" —
+// uses exactly the same type and padding: 14/18, 8px, no letter-spacing. The generic 46px
+// touch floor (_reset.scss) is the minimum height. Labels may wrap: "Pošlji povpraševanje"
+// is too long for one line in a 117–150px phone card and ran past the border when forced.
+// `.product-box.card` (0,3,0) sets the desktop values, so matching `.product-box` alone here
+// would lose on specificity however late the rule sits.
+@media (max-width: $sv-bp-touch) {
+    .product-box,
+    .product-box.card {
+        .btn-buy,
+        .btn.btn-primary,
+        .btn-send-enquiry,
+        .btn.btn-send-enquiry,
+        .btn.btn-detail {
+            min-height: $sv-touch;
+            padding: 8px;
+            font-size: 14px;
+            line-height: 18px;
+            letter-spacing: normal;
+            white-space: normal;
+            text-wrap: balance;
+        }
+    }
+}

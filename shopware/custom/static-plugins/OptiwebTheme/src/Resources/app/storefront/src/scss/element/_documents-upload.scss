@@ -1,0 +1,8 @@
+.cms-element-documents-upload {
+    @include margin('top', 20, false);
+    @include margin('bottom', 20, false);
+
+    a {
+        text-decoration: none;
+    }
+}

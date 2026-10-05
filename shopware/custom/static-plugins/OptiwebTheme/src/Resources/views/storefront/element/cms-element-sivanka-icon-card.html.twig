@@ -1,0 +1,33 @@
+{% block element_sivanka_icon_card %}
+    {% set config = element.fieldConfig.elements %}
+    {% set variant = config.variant.value in ['card', 'fact', 'medallion'] ? config.variant.value : 'card' %}
+
+    <div class="cms-element-{{ element.type }} sivanka-icon-card sivanka-icon-card--{{ variant }}">
+        {% block element_sivanka_icon_card_icon %}
+            {% if config.icon.value %}
+                <span class="sivanka-icon-card__icon">
+                    {% sw_include '@Storefront/storefront/utilities/sivanka-icon.html.twig' with {
+                        sivankaIcon: config.icon.value,
+                        sivankaIconSize: variant == 'medallion' ? 32 : 22
+                    } only %}
+                </span>
+            {% endif %}
+        {% endblock %}
+
+        {% block element_sivanka_icon_card_body %}
+            <div class="sivanka-icon-card__body">
+                {% if config.title.value %}
+                    <h3 class="sivanka-icon-card__title">{{ config.title.value }}</h3>
+                {% endif %}
+                {# The medallion card separates title from copy with a short bordo rule. #}
+                {% if variant == 'medallion' and config.title.value and config.text.value|striptags|trim is not empty %}
+                    <span class="sivanka-icon-card__rule" aria-hidden="true"></span>
+                {% endif %}
+                {% sw_include '@Storefront/storefront/utilities/sivanka-rich-text.html.twig' with {
+                    sivankaText: config.text.value,
+                    sivankaClass: 'sivanka-icon-card__text'
+                } only %}
+            </div>
+        {% endblock %}
+    </div>
+{% endblock %}

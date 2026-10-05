@@ -1,0 +1,17 @@
+.sw-cms-preview-text-button {
+    position: relative;
+    padding: 16px 10px;
+
+    .sw-cms-preview-text-button__inner {
+        display: flex;
+        position: relative;
+        gap: 16px;
+
+        .sw-cms-preview-text-button__content {
+            display: block;
+            & div {
+                font-size: 10px;
+            }
+        }
+    }
+}

@@ -1,0 +1,11 @@
+{% block cms_block_img_text %}
+    <div class="col-12 cms-block-text-button__inner" data-cms-element-id="{{ block.id }}">
+        {% block cms_block_text_button_inner %}
+            <div class="content-container">
+                {% sw_include "@Storefront/storefront/element/cms-element-title-content-button.html.twig" with {
+                    element: block
+                } %}
+            </div>
+        {% endblock %}
+    </div>
+{% endblock %}

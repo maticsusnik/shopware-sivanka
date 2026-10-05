@@ -1,0 +1,113 @@
+.product-detail-cross-selling {
+    .cms-element-title {
+        display: block;
+
+        &.d-flex {
+            display: flex;
+        }
+    }
+
+    .product-slider.has-nav {
+        padding: 0;
+    }
+
+    .card {
+        margin: 0;
+    }
+}
+
+.cms-block-cross-selling {
+    .col-12 {
+        padding: 0;
+    }
+}
+
+.cross-selling-slider {
+    &.cross-selling {
+        background: $sv-cream;
+    }
+
+    .cms-element-product-slider {
+        max-width: $content-width;
+        margin-inline: auto;
+        margin-block: 0;
+        @include padding('top', 64, true);
+        @include padding('bottom', 64, true);
+        padding-inline: calc(#{$bs-gutter-x} / 2);
+    }
+
+    &.up-selling {
+        .cms-element-product-slider {
+            @include margin('top', -64, true);
+        }
+    }
+
+    .cms-element-title-paragraph {
+        margin-bottom: 1rem;
+    }
+}
+
+// =============================================================================
+//  "Sorodni izdelki" — reference/Sivanka Product.dc.html
+//  A left-aligned section heading over the shared home rail (component/_rail.scss).
+//  The reference draws a static 4-up row; the 330px `sv-rail--products` card lands
+//  four across at 1366, so the row survives on desktop and turns into a swipe on a
+//  phone rather than stacking into a four-card column.
+// =============================================================================
+.sivanka-related {
+    &__group {
+        padding-block: 56px 8px;
+    }
+
+    // Subpage heading: left-aligned in the content column, no flourish.
+    &__title {
+        @include sv-h2;
+        margin: 0 0 24px;
+    }
+
+    // The rail is the section's last element, so the arrow pair's 26px top margin is
+    // all the room the group needs under it.
+    &__rail {
+        .sv-rail__item {
+            // The cross-sell row lives in the full-width content column, where four
+            // 330px cards fill it exactly — a narrower card here would leave a ragged
+            // half-card at the right edge on desktop.
+            align-items: stretch;
+        }
+    }
+}
+
+// ============================================================
+//  Container alignment
+//  A Bootstrap `.row` carries a negative inline margin of half a gutter, which its
+//  columns are supposed to pay back as padding. Wherever the theme zeroes that column
+//  padding the row escapes its container by 20px on each side. That is why the image
+//  gallery and the cross-sell rail both sat 20px left of every other block on the
+//  product page. Zero the gutter on those rows instead of fighting it downstream.
+// ============================================================
+// The `:not()` chain is not decoration: `_general.scss` re-declares `--bs-gutter-x`
+// on `.row:not(.g-0):not(.gx-0):not([class*=" g-0"]):not([class*=" gx-0"])` below 720,
+// five classes deep. Without matching that weight the ladder won the variable back
+// below 720 and only `margin-inline` survived — which is exactly how the gallery ended
+// up 16px narrower per side than the buy panel under it on a phone.
+.product-detail-media,
+.gallery-slider-col {
+    .gallery-slider-row,
+    > .row {
+        &:not(.g-0):not(.gx-0):not([class*=" g-0"]):not([class*=" gx-0"]) {
+            --bs-gutter-x: 0;
+        }
+
+        margin-inline: 0;
+    }
+}
+
+.cross-selling-section,
+.cms-block-cross-selling,
+.product-detail-cross-selling {
+    .cms-block-container-row,
+    .cms-block-container > .row {
+        --bs-gutter-x: 0;
+        margin-inline: 0;
+    }
+}

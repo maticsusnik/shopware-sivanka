@@ -1,0 +1,79 @@
+// =============================================================================
+//  Authored content normalisation
+//  -----------------------------------------------------------------------
+//  Product descriptions arrive from the ERP as HTML carrying inline styles, e.g.
+//    <span style="background-color:rgb(245,245,245);color:rgb(45,45,45);
+//                 font-family:Arial, Helvetica, sans-serif;text-align:justify;">
+//  Across 3682 products that is the single largest source of off-palette colour
+//  and Arial fallbacks in the shop, and no amount of theme SCSS reaches it
+//  without overriding the inline style itself. CMS rich-text elements have the
+//  same problem whenever copy is pasted in from Word or a browser.
+//
+//  So: inside authored-content containers only, inline typography and colour are
+//  neutralised and the content inherits the design system instead. Structure
+//  (lists, tables, emphasis, links) is left alone.
+// =============================================================================
+
+%sv-authored-content {
+    @include sv-prose;
+
+    [style] {
+        font-family: $sv-sans !important;
+        color: inherit !important;
+        background-color: transparent !important;
+        text-align: inherit !important;
+    }
+
+    font {
+        font-family: $sv-sans !important;
+        color: inherit !important;
+    }
+
+    // Structure the editor may legitimately author
+    p { margin: 0 0 1em; }
+    p:last-child { margin-bottom: 0; }
+
+    ul,
+    ol {
+        margin: 0 0 1em 1.25em;
+        padding: 0;
+        list-style: revert;
+    }
+
+    li { margin-bottom: .35em; }
+
+    a {
+        color: $sv-bordo;
+        text-decoration: underline;
+
+        &:hover { color: $sv-bordo-hover; }
+    }
+
+    strong,
+    b { font-weight: 600; color: $sv-ink; }
+
+    img { border-radius: $sv-r-card; }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+
+        td,
+        th {
+            padding: 10px 12px;
+            border-bottom: 1px solid $sv-border;
+            text-align: left;
+        }
+
+        th { color: $sv-ink; font-weight: 600; }
+    }
+}
+
+.product-detail-description-text,
+.product-detail-tab-content,
+.cms-element-product-description-reviews .product-detail-description-text,
+.cms-element-text,
+.cms-element-read-more-text,
+.category-description {
+    @extend %sv-authored-content;
+}

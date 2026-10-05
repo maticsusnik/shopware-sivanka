@@ -1,0 +1,9 @@
+.sw-block-field__block-multifield {
+    border: 1px solid rgba(#d1d9e0, 0.5);
+    padding: 16px;
+    margin-bottom: 16px;
+
+    > div:last-child > *:last-child {
+        margin-bottom: 0;
+    }
+}

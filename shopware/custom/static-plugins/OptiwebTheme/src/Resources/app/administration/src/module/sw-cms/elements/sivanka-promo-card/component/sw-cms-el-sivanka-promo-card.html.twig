@@ -1,0 +1,11 @@
+{% block sw_cms_el_sivanka_promo_card %}
+<div class="sw-cms-el-sivanka-promo-card">
+    <img v-if="media" class="sw-cms-el-sivanka-promo-card__image" :src="media.url" alt="">
+    <span class="sw-cms-el-sivanka-promo-card__scrim"></span>
+    <div class="sw-cms-el-sivanka-promo-card__body">
+        <b class="sw-cms-el-sivanka-promo-card__title">{{ element.config.title.value }}</b>
+        <span v-if="element.config.text.value" class="sw-cms-el-sivanka-promo-card__text">{{ element.config.text.value }}</span>
+        <span v-if="element.config.buttonLabel.value" class="sw-cms-el-sivanka-promo-card__btn">{{ element.config.buttonLabel.value }}</span>
+    </div>
+</div>
+{% endblock %}

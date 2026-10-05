@@ -1,0 +1,74 @@
+.cms-element-product-listing-actions {
+    margin-bottom: 22px;
+
+    .col-md-auto {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    // Stacked (< md) the count is ordered below the sort button, and a flex row gives it
+    // no separation from the button above it.
+    @include media-breakpoint-down(md) {
+        .listing-result-count {
+            margin-top: 10px;
+        }
+    }
+}
+
+// "Prikazanih X izdelkov" result count on the left of the sort bar
+.listing-result-count-text {
+    font-family: $sv-sans;
+    font-size: 14px;
+    line-height: 21px;
+    color: $sv-ink;
+
+    strong {
+        color: $sv-ink;
+        font-weight: 700;
+    }
+}
+
+// Sort <select> — rounded pill matching the design mock (keeps Bootstrap caret)
+select.sorting.form-select {
+    appearance: none;
+    height: 42px;
+    border: 1px solid $sv-border;
+    border-radius: $sv-r-field;
+    padding: 0 40px 0 16px;
+    background-color: $sv-white;
+    font-family: $sv-sans;
+    font-size: 14px;
+    color: $sv-ink;
+    cursor: pointer;
+    width: auto;
+    min-width: 170px;
+
+    &:focus {
+        border-color: $sv-bordo;
+        box-shadow: none;
+    }
+
+    @include media-breakpoint-down(lg) {
+        width: 100%;
+    }
+}
+
+// Ten pagination controls do not fit a 320px screen in one line
+.cms-element-product-listing .pagination {
+    flex-wrap: wrap;
+    justify-content: center;
+    row-gap: 8px;
+}
+
+// Tighter card grid on a phone. The `:not()` chain matches the weight of the
+// `--bs-gutter-x` ladder in `_general.scss`
+// (`.row:not(.g-0):not(.gx-0):not([class*=" g-0"]):not([class*=" gx-0"])`, five classes
+// deep) — without it the ladder's 32px won below 720 and the two cards in a row sat a
+// full gutter apart while each one lost 8px of its own width.
+.cms-element-product-listing .cms-listing-row:not(.g-0):not(.gx-0):not([class*=" g-0"]):not([class*=" gx-0"]) {
+    @include media-breakpoint-down(md) {
+        --bs-gutter-x: 15px;
+        --bs-gutter-y: 15px;
+    }
+}

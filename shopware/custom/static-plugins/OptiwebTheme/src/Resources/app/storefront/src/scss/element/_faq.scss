@@ -1,0 +1,78 @@
+
+// ---- Sivanka FAQ ("Pogosta vprašanja") — each item is a bordered, rounded card ----
+.ow-faq {
+    border-top: none;
+
+    &__wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    &__single {
+        border: 1px solid $sv-border;
+        border-radius: $sv-r-card;
+        background: $sv-white;
+        // The padding lives on the question and the answer, not on the card, so the
+        // question's hit area covers the whole closed card.
+        padding: 0;
+        cursor: pointer;
+
+        &-question {
+            // The FAQ question role: Inter 15.5/23.25 600 ink.
+            @include sv-faq-question;
+            margin: 0;
+            padding-block: 0;
+            display: flex;
+            gap: 16px;
+            justify-content: space-between;
+            align-items: center;
+
+            &:hover {
+                cursor: pointer;
+            }
+
+            padding: 18px 22px;
+
+            // The chevron sits in a wrapper span; leave it inline and the svg's
+            // baseline gap adds 3px to the row and the card measures 64 instead of 61.
+            &-icon {
+                display: flex;
+                align-items: center;
+                line-height: 0;
+                flex-shrink: 0;
+            }
+
+            .icon,
+            svg {
+                color: $sv-bordo;
+                width: 20px;
+                height: 20px;
+                flex-shrink: 0;
+                transition: transform 0.2s;
+            }
+        }
+
+        &-answer {
+            font-family: $sv-sans;
+            font-size: 14.5px;
+            line-height: 1.7;
+            color: $sv-ink-muted;
+            display: none;
+            margin: 0;
+            padding: 0 22px 18px;
+            cursor: auto;
+        }
+
+        &.open {
+            .ow-faq__single-question .icon,
+            .ow-faq__single-question svg {
+                transform: rotate(180deg);
+            }
+
+            p {
+                display: block;
+            }
+        }
+    }
+}

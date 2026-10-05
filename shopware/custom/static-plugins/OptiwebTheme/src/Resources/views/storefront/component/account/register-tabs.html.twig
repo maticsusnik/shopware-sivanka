@@ -1,0 +1,76 @@
+{% set isRegister = app.request.pathInfo == path('frontend.account.register.page') %}
+{% set isLogin = app.request.pathInfo == path('frontend.account.login.page') %}
+
+{% block page_register_tabs_inner %}
+    <div class="card card-tabs card-tabs-registration">
+        {% block page_register_tabs_navigation %}
+            <div class="card-header register-login-tab-navigation">
+                {% block page_register_tabs_navigation_container %}
+                    <ul class="nav nav-tabs register-login-tab-navigation-list"
+                        id="register-login-tabs"
+                        role="tablist">
+                        {% block page_register_tabs_navigation_login %}
+                            <li class="nav-item nav-item-login">
+                                <a class="nav-link {% if isLogin %}active{% endif %} login-tab-navigation-link"
+                                   id="login-tab"
+                                   data-toggle="tab"
+                                   href="#login-tab-pane"
+                                   role="tab"
+                                   aria-controls="login-tab-pane"
+                                   aria-selected="{% if isLogin %}true{% else %}false{% endif %}"
+                                   data-login-tab-link>
+                                    <div class="tabs-title tabs-login-title">{{ "account.tabsLogin"|trans|sw_sanitize }}</div>
+                                    <div class="tabs-legend tabs-login-additional">{{ "account.tabsLoginAdditional"|trans|sw_sanitize }}</div>
+                                </a>
+                            </li>
+                        {% endblock %}
+                        {% block page_register_tabs_navigation_register %}
+                            <li class="nav-item nav-item-register">
+                                <a class="nav-link {% if isRegister %}active{% endif %} register-tab-navigation-link"
+                                   id="register-tab"
+                                   data-toggle="tab"
+                                   href="#register-tab-pane"
+                                   role="tab"
+                                   aria-controls="register-tab-pane"
+                                   aria-selected="{% if isRegister %}true{% else %}false{% endif %}"
+                                   data-register-tab-link>
+                                    <div class="tabs-title tabs-register-title">{{ "account.tabsRegister"|trans|sw_sanitize }}</div>
+                                    <div class="tabs-legend tabs-register-additional">{{ "account.tabsRegisterAdditional"|trans|sw_sanitize }}</div>
+                                </a>
+                            </li>
+                        {% endblock %}
+                    </ul>
+                {% endblock %}
+            </div>
+        {% endblock %}
+
+        {% block page_register_tabs_tabs_content %}
+            <div class="register-login-tabs-content">
+                {% block page_register_tabs_inner_content %}
+                    <div class="tab-content">
+                        {% block page_register_tabs_login %}
+                            <div
+                                class="tab-pane fade show {% if isLogin %}active{% endif %}"
+                                id="login-tab-pane"
+                                role="tabpanel"
+                                aria-labelledby="login-tab">
+                                {% sw_include '@Storefront/storefront/component/account/login.html.twig' with {'cardTitle': "account.loginHeader"|trans|sw_sanitize} %}
+                            </div>
+                        {% endblock %}
+
+                        {% block page_register_tabs_register %}
+                            <div
+                                class="tab-pane fade show {% if isRegister %}active{% endif %}"
+                                id="register-tab-pane"
+                                role="tabpanel"
+                                aria-labelledby="register-tab">
+                                {% sw_include '@Storefront/storefront/component/account/register-account.html.twig' with {'cardTitle': "account.registerPersonalHeader"|trans|sw_sanitize} %}
+                            </div>
+                        {% endblock %}
+                    </div>
+                {% endblock %}
+            </div>
+        {% endblock %}
+    </div>
+{% endblock %}
+

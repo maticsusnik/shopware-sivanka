@@ -1,0 +1,61 @@
+{% sw_extends '@Storefront/storefront/component/listing/filter/filter-multi-select.html.twig' %}
+
+{% block component_filter_multi_select_toggle %}
+    {% set collapsed = "collapsed" %}
+    {% set expanded = "false" %}
+    {% if name == "manufacturer" %}
+        {% set collapsed = "" %}
+        {% set expanded = "true" %}
+    {% endif %}
+    <button class="filter-panel-item-toggle btn{% if sidebar %} btn-block{% endif %} {{ collapsed }}"
+            aria-expanded= {{ expanded }}
+            {% if sidebar %}
+        data-bs-toggle="collapse"
+        data-bs-target="#{{ filterItemId }}"
+    {% else %}
+        data-bs-toggle="dropdown"
+        data-boundary="viewport"
+        data-offset="0,8"
+        aria-haspopup="true"
+            {% endif %}>
+
+        {{ block('component_filter_multi_select_display_name') }}
+        {{ block('component_filter_multi_select_count') }}
+
+        {% block component_filter_multi_select_toggle_icon %}
+            {% sw_icon 'caret-down' style {
+                'pack': 'ow', 'class': 'filter-panel-item-toggle'
+            } %}
+        {% endblock %}
+    </button>
+{% endblock %}
+
+
+{% block component_filter_multi_select_dropdown %}
+
+    {% set show = "" %}
+    {% if name == "manufacturer" %}
+        {% set show = "show" %}
+    {% endif %}
+
+    <div class="filter-multi-select-dropdown filter-panel-item-dropdown{% if sidebar %} collapse{% else %} dropdown-menu{% endif %} {{ show }}"
+         id="{{ filterItemId }}">
+        {% block component_filter_multi_select_list %}
+            <ul class="filter-multi-select-list">
+                {% for element in elements %}
+                    {% block component_filter_multi_select_list_item %}
+                        <li data-index="{{ loop.index }}" class="filter-multi-select-list-item">
+                            {% block component_filter_multi_select_list_item_inner %}
+                                {% sw_include '@Storefront/storefront/component/listing/filter/filter-multi-select-list-item.html.twig' %}
+                            {% endblock %}
+                        </li>
+                    {% endblock %}
+                {% endfor %}
+            </ul>
+        {% endblock %}
+    </div>
+{% endblock %}
+
+
+
+

@@ -1,0 +1,48 @@
+{% sw_extends '@Storefront/storefront/layout/header/search.html.twig' %}
+
+
+{% set searchWidgetOptions = { searchWidgetMinChars: shopware.minSearchLength } %}
+
+{% block layout_header_search %}
+    {# `collapse` is Bootstrap's, and it is what makes the mobile magnifier work: the
+       toggle in header.html.twig targets this id. Above 900 the panel is forced open
+       again in SCSS, so the desktop field stays exactly as the reference draws it. #}
+    <div class="collapse" id="searchCollapse">
+        <div class="header-search">
+            {% block layout_header_search_form %}
+                {{ parent() }}
+            {% endblock %}
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block layout_header_search_input_group %}
+    {% block layout_header_search_button %}
+        <button type="submit"
+                class="btn header-search-btn"
+                aria-label="{{ 'header.searchButton'|trans|striptags }}">
+                <svg class="header-search-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="11" cy="11" r="7"></circle>
+                    <path d="m21 21-4.3-4.3"></path>
+                </svg>
+        </button>
+    {% endblock %}
+
+    {# Shown in place of the magnifier once the field holds text (SearchClear plugin) #}
+    {% block layout_header_close_button %}
+        <button class="btn header-close-btn js-search-close-btn d-none"
+                type="button"
+                aria-label="{{ 'sivanka.searchClear'|trans|striptags|default('Počisti iskanje') }}">
+                <span class="header-close-icon">
+                    {% sw_icon 'close' style {pack: 'ow'} %}
+                </span>
+        </button>
+    {% endblock %}
+
+    <div class="input-group">
+        {% block layout_header_search_input %}
+           {{ parent() }}
+        {% endblock %}
+    </div>
+{% endblock %}

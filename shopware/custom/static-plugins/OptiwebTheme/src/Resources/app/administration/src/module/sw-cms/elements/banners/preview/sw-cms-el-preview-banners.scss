@@ -1,0 +1,9 @@
+.sw-cms-el-preview-banners {
+  &__title { margin-bottom: 8px; font-weight: 600; }
+  &__grid { display: grid; gap: 6px; grid-template-columns: repeat(3, 1fr); }
+  &__item { background: #f0f2f5; height: 24px; border-radius: 4px; }
+}
+
+
+
+

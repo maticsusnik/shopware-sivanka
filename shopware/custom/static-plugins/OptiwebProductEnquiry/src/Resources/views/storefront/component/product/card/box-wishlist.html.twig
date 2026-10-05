@@ -1,0 +1,30 @@
+{% sw_extends '@Storefront/storefront/component/product/card/box-wishlist.html.twig' %}
+
+{#
+ # Selection checkbox for the bulk wishlist enquiry.
+ #
+ # It rides on the card rather than the page so it works for both wishlist
+ # flavours: a logged-in customer gets these cards rendered server-side, a guest
+ # gets the very same cards back from the guest pagelet.
+ #
+ # Hooked onto `component_product_box_wishlist` and NOT
+ # `component_product_box_wishlist_action`: the latter is declared in both
+ # box-standard (inside the image wrapper) and box-wishlist, so an override of it
+ # renders the checkbox twice per card.
+ #}
+{% block component_product_box_wishlist %}
+    {{ parent() }}
+
+    {% if config('OptiwebProductEnquiry.config.enquiryForm') and (config('OptiwebProductEnquiry.config.wishlistEnquiry') ?? true) %}
+        <div class="wishlist-enquiry-select form-check">
+            <input type="checkbox"
+                   class="form-check-input js-wishlist-enquiry-checkbox"
+                   id="wishlist-enquiry-{{ product.id }}"
+                   value="{{ product.id }}"
+                   checked>
+            <label class="form-check-label" for="wishlist-enquiry-{{ product.id }}">
+                {{ 'optiwebProductEnquiry.wishlist.include'|trans }}
+            </label>
+        </div>
+    {% endif %}
+{% endblock %}

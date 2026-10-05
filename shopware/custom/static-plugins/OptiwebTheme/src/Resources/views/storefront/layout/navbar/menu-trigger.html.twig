@@ -1,0 +1,23 @@
+{# The "Izdelki" opener below lg.
+   The mega-menu flyout only initialises at >=992 (OwMegaMenu bails below that), so
+   on touch the same nav item has to open the offcanvas menu instead. Both controls
+   are rendered and CSS picks one, which keeps every existing JS binding intact —
+   the offcanvas plugin binds to [data-off-canvas-menu-mobile] wherever it lives.
+   This replaces the hamburger that used to sit as a fourth icon in the header; the
+   reference has three header icons at every width and the opener in the nav bar. #}
+{% block layout_navbar_menu_trigger %}
+    <button type="button"
+            class="nav-link root main-navigation-link sv-nav-opener sv-nav-opener--touch"
+            data-off-canvas-menu-mobile="true"
+            aria-label="{{ 'general.menuLink'|trans|striptags }}">
+        {# The theme's own inline glyph, not `sw_icon 'nav-button'`: the `ow` pack
+           does not resolve from this template (it is a theme-only path, so the icon
+           renders as an empty span), and that SVG hardcodes `fill="white"`, which is
+           invisible on the cream nav bar. #}
+        {% sw_include '@Storefront/storefront/utilities/sivanka-icon.html.twig' with {
+            sivankaIcon: 'menu',
+            sivankaIconSize: 18
+        } only %}
+        <span class="main-navigation-link-text">{{ label }}</span>
+    </button>
+{% endblock %}

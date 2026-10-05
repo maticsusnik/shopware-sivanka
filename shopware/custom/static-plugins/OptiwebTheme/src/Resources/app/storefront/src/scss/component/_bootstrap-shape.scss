@@ -1,0 +1,108 @@
+// =============================================================================
+//  Bootstrap shape corrections
+//  -----------------------------------------------------------------------
+//  Every border-radius in this system is a SINGLE token — no asymmetric
+//  shorthands anywhere. Bootstrap violates that on its own for grouped controls:
+//  it squares the inner corners of input groups, button groups, pagination ends,
+//  card headers and collapse toggles, producing values like `8px 8px 0 0`.
+//  None of those come from the theme's own SCSS, so a string sweep never finds
+//  them — they have to be restated here.
+// =============================================================================
+
+// `!important` is deliberate throughout this file. Bootstrap zeroes the inner
+// corners with selectors like
+//   .input-group:not(.has-validation) > :not(:last-child):not(.dropdown-toggle)...
+// whose specificity no sane theme selector can outrank. These are corrections of
+// framework output, not design decisions, so they are the one place it belongs.
+
+// ---- input groups: quantity steppers, search-in-group, price range ----
+.input-group {
+    > .form-control,
+    > .form-select,
+    > .input-group-text,
+    > .btn,
+    > .dropdown-toggle,
+    .form-control,
+    .btn {
+        border-radius: $sv-r-field !important;
+    }
+}
+
+// ---- button groups ----
+.btn-group,
+.btn-group-vertical {
+    > .btn,
+    > .btn-group > .btn {
+        border-radius: $sv-r-btn !important;
+    }
+}
+
+// ---- pagination: Bootstrap rounds only the first and last item ----
+.pagination {
+    .page-link,
+    .page-item:first-child .page-link,
+    .page-item:last-child .page-link {
+        border-radius: $sv-r-field;
+    }
+}
+
+// ---- cards: the radius belongs to the card, never to a half-rounded child ----
+.card {
+    border-radius: $sv-r-panel;
+}
+
+.card > .card-header:first-child,
+.card > .card-footer:last-child,
+.card > .card-img-top,
+.card > .card-img-bottom,
+.card > .list-group:first-child > .list-group-item:first-child,
+.card > .list-group:last-child > .list-group-item:last-child {
+    border-radius: 0;
+}
+
+// ---- collapse toggles and their panels (filter panel, accordions) ----
+.accordion-button,
+.accordion-item,
+.accordion-item:first-of-type,
+.accordion-item:last-of-type,
+.accordion-item:first-of-type .accordion-button,
+.accordion-item:last-of-type .accordion-button.collapsed {
+    border-radius: $sv-r-field !important;
+}
+
+.filter-panel-item-toggle,
+.filter-panel-item-toggle.btn,
+.filter-panel-item-dropdown,
+.filter-range-container,
+.filter-multi-select-dropdown,
+.filter-panel [id^='filter-'],
+.filter-panel .dropdown-menu {
+    border-radius: $sv-r-field !important;
+}
+
+// ---- list groups ----
+.list-group {
+    border-radius: $sv-r-panel;
+}
+
+.list-group > .list-group-item:first-child,
+.list-group > .list-group-item:last-child {
+    border-radius: 0;
+}
+
+// ---- modals, offcanvas, dropdowns, toasts ----
+.modal-content,
+.offcanvas,
+.toast {
+    border-radius: $sv-r-panel;
+}
+
+.dropdown-menu {
+    border-radius: $sv-r-field;
+}
+
+// ---- Shopware's own round indicators use 100%, which computes to an ellipse ----
+.delivery-status-indicator,
+.badge-circle {
+    border-radius: $sv-r-round;
+}

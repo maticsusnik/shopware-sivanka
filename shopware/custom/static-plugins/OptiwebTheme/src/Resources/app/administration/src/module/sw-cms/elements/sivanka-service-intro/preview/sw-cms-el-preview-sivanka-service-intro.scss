@@ -1,0 +1,29 @@
+@import "../../../sivanka-service-shared";
+
+.sw-cms-el-preview-sivanka-service-intro {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px;
+    background: $sivanka-cms-tint;
+    border-radius: 4px;
+
+    &__eyebrow {
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: $sivanka-cms-primary;
+    }
+
+    &__headline {
+        font-size: 13px;
+        font-weight: 600;
+        color: #1b1b1b;
+    }
+
+    &__lead {
+        font-size: 11px;
+        color: $sivanka-cms-muted;
+    }
+}
