@@ -109,3 +109,13 @@
         max-height: 95%;
     }
 }
+
+// Core nudges inline icons down with `.icon > svg { top: .25em }`; the page gallery
+// resets it (pages/_product.scss, scoped to .gallery-slider-col), the zoom modal did
+// not, so its arrows sat 4px low in the circle.
+.zoom-modal-wrapper {
+    .gallery-slider-controls-prev,
+    .gallery-slider-controls-next {
+        svg { top: 0; }
+    }
+}
