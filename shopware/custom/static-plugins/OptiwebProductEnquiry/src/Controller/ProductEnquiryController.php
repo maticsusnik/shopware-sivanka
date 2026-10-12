@@ -4,6 +4,8 @@ namespace OptiwebProductEnquiry\Controller;
 
 use OptiwebProductEnquiry\Core\Content\ProductEnquiry\ProductEnquiryStatus;
 use Psr\Log\LoggerInterface;
+use Shopware\Core\Content\Media\MediaEntity;
+use Shopware\Core\Content\MailTemplate\MailTemplateEntity;
 use Shopware\Core\Content\Product\ProductEntity;
 use Shopware\Core\Defaults;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\RangeFilter;
@@ -20,6 +22,8 @@ use Shopware\Core\PlatformRequest;
 use Shopware\Storefront\Controller\StorefrontController;
 use Shopware\Storefront\Framework\Routing\StorefrontRouteScope;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -27,16 +31,22 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[Route(defaults: [PlatformRequest::ATTRIBUTE_ROUTE_SCOPE => [StorefrontRouteScope::ID]])]
 class ProductEnquiryController extends StorefrontController
 {
+    private const NOTIFICATION_MAIL_TYPE = 'product_enquiry_form';
+    private const CONFIRMATION_MAIL_TYPE = 'product_enquiry_confirmation';
+
+    /** Smallest thumbnail width that still looks sharp at 64px on a retina screen. */
+    private const MAIL_IMAGE_MIN_WIDTH = 128;
+
     public function __construct(
         private readonly SystemConfigService $systemConfigService,
         private readonly AbstractMailService $mailService,
         private readonly EntityRepository $productRepository,
         private readonly EntityRepository $mailTemplateRepository,
-        private readonly EntityRepository $mailTemplateTypeRepository,
         private readonly EntityRepository $productEnquiryRepository,
         private readonly EntityRepository $cmsSlotRepository,
         private readonly ValidatorInterface $validator,
         private readonly LoggerInterface $logger,
+        private readonly string $administrationPathName,
     ) {
     }
 
@@ -47,7 +57,7 @@ class ProductEnquiryController extends StorefrontController
         options: ['seo' => false],
         methods: ['POST']
     )]
-    public function sendProductEnquiry(RequestDataBag $data, SalesChannelContext $context): JsonResponse
+    public function sendProductEnquiry(Request $request, RequestDataBag $data, SalesChannelContext $context): JsonResponse
     {
         $constraints = new Assert\Collection(
             fields: [
@@ -143,10 +153,11 @@ class ProductEnquiryController extends StorefrontController
             ]);
         }
 
-        $first = $lines[0];
+        $first     = $lines[0];
+        $enquiryId = Uuid::randomHex();
 
         $this->productEnquiryRepository->create([[
-            'id'             => Uuid::randomHex(),
+            'id'             => $enquiryId,
             'salesChannelId' => $context->getSalesChannelId(),
             'firstName'      => $data->getString('firstName'),
             'lastName'       => $data->getString('lastName'),
@@ -165,11 +176,32 @@ class ProductEnquiryController extends StorefrontController
             'lines'          => $lines,
         ]], $context->getContext());
 
+        $templateData = [
+            'contactFormData' => $data->all(),
+            // `product` stays for templates written before multi-product
+            // enquiries existed; `enquiryLines` is the full set.
+            'product'         => $entities[0] ?? null,
+            'products'        => $entities,
+            'enquiryLines'    => $this->buildMailLines($lines, $entities),
+            'enquiryId'       => $enquiryId,
+            'adminUrl'        => $this->buildAdminUrl($request, $enquiryId),
+        ];
+
+        // Two independent mails: the enquiry is already stored, so neither failure
+        // may fail the request, and one failing must not stop the other.
         try {
-            $this->sendAdminEmail($data, $entities, $lines, $context);
+            $this->sendAdminEmail($data, $templateData, $context);
         } catch (\Throwable $e) {
-            // The enquiry itself is already stored, so a mail failure must not fail the request.
             $this->logger->error('OptiwebProductEnquiry: notification mail failed', [
+                'exception' => $e,
+                'products'  => array_column($lines, 'productNumber'),
+            ]);
+        }
+
+        try {
+            $this->sendCustomerConfirmation($data, $templateData, $context);
+        } catch (\Throwable $e) {
+            $this->logger->error('OptiwebProductEnquiry: customer confirmation mail failed', [
                 'exception' => $e,
                 'products'  => array_column($lines, 'productNumber'),
             ]);
@@ -326,30 +358,15 @@ class ProductEnquiryController extends StorefrontController
     }
 
     /**
-     * @param list<ProductEntity>                                                                           $products
-     * @param list<array{productName: string, productNumber: string, productOption: ?string, quantity: int}> $lines
+     * The shop's notification. Reply-To is the customer, so answering the mail
+     * answers the enquiry.
+     *
+     * @param array<string, mixed> $templateData
      */
-    private function sendAdminEmail(RequestDataBag $data, array $products, array $lines, SalesChannelContext $context): void
+    private function sendAdminEmail(RequestDataBag $data, array $templateData, SalesChannelContext $context): void
     {
-        $typeCriteria = new Criteria();
-        $typeCriteria->addFilter(new EqualsFilter('technicalName', 'product_enquiry_form'));
-        $typeCriteria->setLimit(1);
-
-        $type = $this->mailTemplateTypeRepository->search($typeCriteria, $context->getContext())->getEntities()->first();
-        if (!$type) {
-            $this->logger->warning('OptiwebProductEnquiry: mail template type "product_enquiry_form" is missing');
-
-            return;
-        }
-
-        $templateCriteria = new Criteria();
-        $templateCriteria->addFilter(new EqualsFilter('mailTemplateTypeId', $type->getId()));
-        $templateCriteria->setLimit(1);
-
-        $template = $this->mailTemplateRepository->search($templateCriteria, $context->getContext())->getEntities()->first();
-        if (!$template) {
-            $this->logger->warning('OptiwebProductEnquiry: no mail template for type "product_enquiry_form"');
-
+        $template = $this->findMailTemplate(self::NOTIFICATION_MAIL_TYPE, $context);
+        if ($template === null) {
             return;
         }
 
@@ -359,7 +376,7 @@ class ProductEnquiryController extends StorefrontController
         );
 
         if (empty($adminEmail)) {
-            $adminEmail = $this->systemConfigService->getString('core.basicInformation.email');
+            $adminEmail = $this->systemConfigService->getString('core.basicInformation.email', $context->getSalesChannelId());
         }
 
         if (empty($adminEmail)) {
@@ -368,28 +385,139 @@ class ProductEnquiryController extends StorefrontController
             return;
         }
 
-        $recipients = [$adminEmail => $adminEmail];
+        $this->sendMail($template, [$adminEmail => $adminEmail], $templateData, $context, [
+            'replyTo' => [$data->getString('email') => $this->customerName($data)],
+        ]);
+    }
 
+    /**
+     * The customer's copy: confirms the enquiry arrived and repeats what was sent.
+     *
+     * @param array<string, mixed> $templateData
+     */
+    private function sendCustomerConfirmation(RequestDataBag $data, array $templateData, SalesChannelContext $context): void
+    {
+        if (!$this->systemConfigService->getBool('OptiwebProductEnquiry.config.sendCustomerConfirmation', $context->getSalesChannelId())) {
+            return;
+        }
+
+        $template = $this->findMailTemplate(self::CONFIRMATION_MAIL_TYPE, $context);
+        if ($template === null) {
+            return;
+        }
+
+        $this->sendMail($template, [$data->getString('email') => $this->customerName($data)], $templateData, $context);
+    }
+
+    /**
+     * @param array<string, string> $recipients
+     * @param array<string, mixed>  $templateData
+     * @param array<string, mixed>  $extra
+     */
+    private function sendMail(MailTemplateEntity $template, array $recipients, array $templateData, SalesChannelContext $context, array $extra = []): void
+    {
+        $translated = $template->getTranslated();
+
+        // No `salesChannel` in the template data on purpose: MailService then loads
+        // it itself, with the mail header/footer and the domain of this language,
+        // which the branded layout needs.
         $this->mailService->send(
             [
                 'recipients'     => $recipients,
-                'senderName'     => $template->getTranslated()['senderName'] ?? '{{ salesChannel.name }}',
+                'senderName'     => $translated['senderName'] ?? '{{ salesChannel.translated.name }}',
                 'salesChannelId' => $context->getSalesChannelId(),
                 'templateId'     => $template->getId(),
-                'contentHtml'    => $template->getTranslated()['contentHtml'] ?? '',
-                'contentPlain'   => $template->getTranslated()['contentPlain'] ?? '',
-                'subject'        => $template->getTranslated()['subject'] ?? 'Product Enquiry',
-            ],
+                'contentHtml'    => $translated['contentHtml'] ?? '',
+                'contentPlain'   => $translated['contentPlain'] ?? '',
+                'subject'        => $translated['subject'] ?? '',
+            ] + $extra,
             $context->getContext(),
-            [
-                'contactFormData' => $data->all(),
-                // `product` stays for templates written before multi-product
-                // enquiries existed; `enquiryLines` is the full set.
-                'product'         => $products[0] ?? null,
-                'products'        => $products,
-                'enquiryLines'    => $lines,
-                'salesChannel'    => $context->getSalesChannel(),
-            ]
+            $templateData
         );
+    }
+
+    private function findMailTemplate(string $technicalName, SalesChannelContext $context): ?MailTemplateEntity
+    {
+        $criteria = new Criteria();
+        $criteria->addFilter(new EqualsFilter('mailTemplateType.technicalName', $technicalName));
+        $criteria->setLimit(1);
+
+        $template = $this->mailTemplateRepository->search($criteria, $context->getContext())->getEntities()->first();
+
+        if (!$template instanceof MailTemplateEntity) {
+            $this->logger->warning(sprintf('OptiwebProductEnquiry: no mail template for type "%s"', $technicalName));
+
+            return null;
+        }
+
+        return $template;
+    }
+
+    /**
+     * The stored lines plus what only the mails need: a link to the product and a
+     * small image.
+     *
+     * @param list<array{productId: string, productName: string, productNumber: string, productOption: ?string, quantity: int}> $lines
+     * @param list<ProductEntity>                                                                                              $products
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function buildMailLines(array $lines, array $products): array
+    {
+        $byId = [];
+        foreach ($products as $product) {
+            $byId[$product->getId()] = $product;
+        }
+
+        return array_map(function (array $line) use ($byId): array {
+            $product = $byId[$line['productId']] ?? null;
+
+            return $line + [
+                'productUrl' => $this->generateUrl(
+                    'frontend.detail.page',
+                    ['productId' => $line['productId']],
+                    UrlGeneratorInterface::ABSOLUTE_URL
+                ),
+                'imageUrl'   => $this->mailImageUrl($product?->getCover()?->getMedia()),
+            ];
+        }, $lines);
+    }
+
+    /** The smallest thumbnail that is still sharp in the mail, else the original. */
+    private function mailImageUrl(?MediaEntity $media): ?string
+    {
+        if ($media === null) {
+            return null;
+        }
+
+        $best = null;
+        foreach ($media->getThumbnails() ?? [] as $thumbnail) {
+            if ($thumbnail->getWidth() < self::MAIL_IMAGE_MIN_WIDTH || $thumbnail->getUrl() === '') {
+                continue;
+            }
+
+            if ($best === null || $thumbnail->getWidth() < $best->getWidth()) {
+                $best = $thumbnail;
+            }
+        }
+
+        return $best?->getUrl() ?: ($media->getUrl() ?: null);
+    }
+
+    /** Deep link to the enquiry in the administration, for the shop's notification. */
+    private function buildAdminUrl(Request $request, string $enquiryId): string
+    {
+        return sprintf(
+            '%s%s/%s#/optiweb/product/enquiry/detail/%s',
+            $request->getSchemeAndHttpHost(),
+            $request->getBasePath(),
+            trim($this->administrationPathName, '/'),
+            $enquiryId
+        );
+    }
+
+    private function customerName(RequestDataBag $data): string
+    {
+        return trim($data->getString('firstName') . ' ' . $data->getString('lastName'));
     }
 }

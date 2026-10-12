@@ -8,6 +8,7 @@ import CategoryFiltersShowMorePlugin from './js/category-filters-show-more.plugi
 import LoginPagePlugin from "./js/login-page.plugin";
 import SearchClearPlugin from "./js/search-clear.plugin";
 import SvRailPlugin from './js/sv-rail.plugin';
+import GaAccountEventsPlugin from './js/ga-account-events.plugin';
 
 const PluginManager = window.PluginManager;
 
@@ -21,8 +22,14 @@ PluginManager.register('CategoryFiltersShowMorePlugin', CategoryFiltersShowMoreP
 PluginManager.register('LoginPage', LoginPagePlugin, '[data-login-container]');
 PluginManager.register('SearchClear', SearchClearPlugin, '[data-search-widget]');
 PluginManager.register('SvRail', SvRailPlugin, '[data-sv-rail]');
+PluginManager.register('GaAccountEvents', GaAccountEventsPlugin, 'form.register-form, form.login-form');
 PluginManager.override('Listing', () => import("./js/ow-listing.plugin"), '[data-listing]');
 PluginManager.register('OwMegaMenu', () => import('./js/ow-mega-menu.plugin'), '[data-ow-mega-menu="true"]');
+
+// core only registers GoogleAnalytics when tracking is on, and override() needs it registered
+if (window.gtagActive) {
+    PluginManager.override('GoogleAnalytics', () => import('./js/ow-google-analytics.plugin'));
+}
 
 
 

@@ -13,9 +13,10 @@
 
         {% block element_sivanka_promo_card_media %}
             {% if media %}
+                {# Full width on phones; desktop keeps the 900px it always asked for. #}
                 {% sw_thumbnails 'sivanka-promo-card-thumbnails' with {
                     media: media,
-                    sizes: { default: '900px' },
+                    sizes: { xs: '100vw', sm: '100vw', md: '900px', lg: '900px', xl: '900px', xxl: '900px' },
                     attributes: {
                         class: 'sivanka-promo-card__image',
                         alt: media.translated.alt ?: config.title.value,

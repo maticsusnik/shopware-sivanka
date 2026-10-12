@@ -1,0 +1,25 @@
+{% sw_extends '@Storefront/storefront/base.html.twig' %}
+
+{# A small cookie button in the bottom-left corner that reopens the cookie preferences,
+   so a visitor can change or withdraw consent after the bar is gone (GDPR: withdrawing
+   must be as easy as giving). No JS of its own: core's CookieConfiguration plugin opens
+   the offcanvas for any link to `frontend.cookie.offcanvas`. While the cookie bar is
+   open it covers the button (higher z-index), so the two never compete. #}
+{% block base_cookie_permission %}
+    {{ parent() }}
+
+    {% block sivanka_cookie_reopen %}
+        <a href="{{ path('frontend.cookie.offcanvas') }}"
+           class="sivanka-cookie-reopen"
+           rel="nofollow"
+           title="{{ 'cookie.headline'|trans|striptags }}"
+           aria-label="{{ 'cookie.headline'|trans|striptags }}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <path d="M21 12.5A9 9 0 1 1 11.5 3a3 3 0 0 0 3.5 3.5 3 3 0 0 0 3.5 3.5 3 3 0 0 0 2.5 2.5z"/>
+                <circle cx="8.5" cy="10" r="1" fill="currentColor"/>
+                <circle cx="9" cy="15.5" r="1" fill="currentColor"/>
+                <circle cx="14.5" cy="15" r="1" fill="currentColor"/>
+            </svg>
+        </a>
+    {% endblock %}
+{% endblock %}

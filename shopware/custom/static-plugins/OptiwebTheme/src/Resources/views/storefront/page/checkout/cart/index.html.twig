@@ -51,8 +51,13 @@
             </div>
         {% endblock %}
 
+        {# Below the minimum order value (MinimumOrderValueValidator) there is nothing to
+           check out yet — the cart shows why, the button stays visibly off. #}
+        {% import '@OptiwebTheme/storefront/utilities/sivanka-min-order-value.html.twig' as minOrder %}
+        {% set belowMinimum = minOrder.belowMinimum(page.cart, context)|trim is not empty %}
         <a href="{{ path('frontend.checkout.confirm.page') }}"
-           class="sv-checkout-btn begin-checkout-btn"
+           class="sv-checkout-btn begin-checkout-btn{% if belowMinimum %} disabled{% endif %}"
+           {% if belowMinimum %}aria-disabled="true" tabindex="-1"{% endif %}
            title="{{ 'checkout.proceedLink'|trans|striptags }}">
             {{ 'optiweb.checkout.toCheckout'|trans|sw_sanitize }}
             <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>

@@ -1,0 +1,33 @@
+// Floating "cookie preferences" button, bottom-left (the back-to-top button owns the
+// bottom-right corner). z-index 1029 keeps it under everything that should cover it:
+// the mobile action bar (1030), the offcanvas (1045) and the cookie bar (1100). On
+// phones it sits above the action bar, on the same line as the floating Filter pill.
+.sivanka-cookie-reopen {
+    position: fixed;
+    left: 16px;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + var(--sv-action-bar, 0px) + 16px);
+    z-index: 1029;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid $border-color;
+    border-radius: 50%;
+    background: $white;
+    color: $primary;
+    box-shadow: 0 2px 8px rgba(46, 26, 32, 0.12);
+    opacity: 0.85;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+
+    &:hover,
+    &:focus-visible {
+        opacity: 1;
+        color: $primary;
+        transform: scale(1.06);
+    }
+
+    @media print {
+        display: none;
+    }
+}

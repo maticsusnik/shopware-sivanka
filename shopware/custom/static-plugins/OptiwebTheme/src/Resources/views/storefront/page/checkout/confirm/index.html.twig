@@ -87,3 +87,22 @@
         <span>{{ 'optiweb.checkout.sslSecure'|trans|sw_sanitize }}</span>
     </div>
 {% endblock %}
+
+{# Below the minimum order value the order cannot be placed (the server refuses it
+   anyway); the warning above explains why, the button is switched off. #}
+{% block page_checkout_confirm_form_submit %}
+    {% import '@OptiwebTheme/storefront/utilities/sivanka-min-order-value.html.twig' as minOrder %}
+    {% if minOrder.belowMinimum(page.cart, context)|trim is not empty %}
+        <div class="d-grid">
+            <button id="confirmFormSubmit"
+                    class="btn btn-primary btn-lg"
+                    form="confirmOrderForm"
+                    disabled
+                    type="submit">
+                {{ 'checkout.confirmSubmit'|trans|sw_sanitize }}
+            </button>
+        </div>
+    {% else %}
+        {{ parent() }}
+    {% endif %}
+{% endblock %}

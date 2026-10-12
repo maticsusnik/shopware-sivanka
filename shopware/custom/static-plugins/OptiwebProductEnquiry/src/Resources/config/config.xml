@@ -23,5 +23,13 @@
             <label>Admin Notification Email</label>
             <helpText>Email address for admin notifications. Overrides the store default. Leave blank to use the store default email.</helpText>
         </input-field>
+
+        <input-field type="bool">
+            <name>sendCustomerConfirmation</name>
+            <label>Send a confirmation to the customer</label>
+            <label lang="de-DE">Bestätigung an den Kunden senden</label>
+            <helpText>Mails the customer a summary of their enquiry (template "Product enquiry confirmation" in Settings → Email templates).</helpText>
+            <defaultValue>true</defaultValue>
+        </input-field>
     </card>
 </config>

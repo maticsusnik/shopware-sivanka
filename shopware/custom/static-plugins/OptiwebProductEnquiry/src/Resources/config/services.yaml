@@ -22,8 +22,8 @@ services:
       $mailService: '@Shopware\Core\Content\Mail\Service\MailService'
       $productRepository: '@product.repository'
       $mailTemplateRepository: '@mail_template.repository'
-      $mailTemplateTypeRepository: '@mail_template_type.repository'
       $productEnquiryRepository: '@product_enquiry.repository'
       $cmsSlotRepository: '@cms_slot.repository'
+      $administrationPathName: '%shopware_administration.path_name%'
     tags:
       - { name: controller.service_arguments }

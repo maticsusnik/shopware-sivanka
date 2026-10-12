@@ -4214,11 +4214,11 @@
         },
         {
             "name": "optiweb/product-enquiry",
-            "version": "3.0.0",
+            "version": "3.1.0",
             "dist": {
                 "type": "path",
                 "url": "custom/static-plugins/OptiwebProductEnquiry",
-                "reference": "b483e8df1050ec338b29de4ad1657c0d1ed193ce"
+                "reference": "d3d16da90ef9898177857eb722c068b6bf67c029"
             },
             "require": {
                 "shopware/core": "~6.7.0"
@@ -4283,11 +4283,11 @@
         },
         {
             "name": "optiweb/theme",
-            "version": "1.0.0",
+            "version": "1.1.0",
             "dist": {
                 "type": "path",
                 "url": "custom/static-plugins/OptiwebTheme",
-                "reference": "7635d3b8179c22453ac6a2a3bceb6cea6b7f79e3"
+                "reference": "0a8af478403ce8622b244981c87603d02d32d0ec"
             },
             "require": {
                 "shopware/core": "~6.7.0",
