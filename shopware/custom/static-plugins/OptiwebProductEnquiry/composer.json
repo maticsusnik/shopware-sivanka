@@ -2,7 +2,7 @@
   "name": "optiweb/product-enquiry",
   "description": "Optiweb Product Enquiry plugin for Shopware 6.7",
   "type": "shopware-platform-plugin",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "license": "MIT",
   "require": {
     "shopware/core": "~6.7.0"

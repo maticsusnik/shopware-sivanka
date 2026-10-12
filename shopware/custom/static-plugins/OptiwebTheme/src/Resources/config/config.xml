@@ -27,6 +27,19 @@
     </card>
 
     <card>
+        <title>Košarica</title>
+        <title lang="en-GB">Cart</title>
+
+        <input-field type="float">
+            <name>minOrderValue</name>
+            <label>Najnižja vrednost naročila (€)</label>
+            <label lang="en-GB">Minimum order value (EUR)</label>
+            <helpText>Najmanjša vrednost izdelkov v košarici (z DDV, brez dostave), potrebna za oddajo naročila. Kupec vidi opozorilo v košarici in na blagajni. Pustite prazno ali 0, da je omejitev izklopljena.</helpText>
+            <helpText lang="en-GB">Minimum value of the goods in the cart (gross, without shipping) needed to place an order. The customer sees a notice in the cart and at checkout. Leave empty or 0 to switch it off.</helpText>
+        </input-field>
+    </card>
+
+    <card>
         <title>Footer information</title>
 
         <input-field type="text-editor" cache-relevant="true">

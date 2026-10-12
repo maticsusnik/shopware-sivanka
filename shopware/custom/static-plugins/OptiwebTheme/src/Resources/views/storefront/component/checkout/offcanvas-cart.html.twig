@@ -24,7 +24,21 @@
 
         {% if isCartNotEmpty %}
             {% block component_offcanvas_cart_actions_checkout %}
-                {{ parent() }}
+                {% import '@OptiwebTheme/storefront/utilities/sivanka-min-order-value.html.twig' as minOrder %}
+                {% if minOrder.belowMinimum(page.cart, context)|trim is not empty %}
+                    {# Below the minimum order value: same button, switched off. #}
+                    <div class="d-grid">
+                        <a href="{{ path('frontend.checkout.confirm.page') }}"
+                           class="btn btn-primary begin-checkout-btn mb-2 disabled"
+                           aria-disabled="true"
+                           tabindex="-1"
+                           title="{{ 'checkout.proceedToCheckout'|trans|striptags }}">
+                            {{ 'checkout.proceedToCheckout'|trans|sw_sanitize }}
+                        </a>
+                    </div>
+                {% else %}
+                    {{ parent() }}
+                {% endif %}
             {% endblock %}
 
             {% block component_offcanvas_cart_actions_cart %}

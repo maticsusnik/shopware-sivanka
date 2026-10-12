@@ -1,0 +1,13 @@
+{% sw_extends '@Storefront/storefront/layout/cookie/cookie-configuration.html.twig' %}
+
+{# "Save" is the secondary action next to "Accept all cookies", so it gets the outline
+   button instead of a second solid one. #}
+{% block layout_cookie_configuration_button %}
+    <div class="d-grid">
+        <button
+            type="submit"
+            class="btn btn-outline-primary js-offcanvas-cookie-submit">
+            {{ 'global.default.save'|trans|sw_sanitize }}
+        </button>
+    </div>
+{% endblock %}

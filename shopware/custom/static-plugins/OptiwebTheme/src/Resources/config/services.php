@@ -2,6 +2,7 @@
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use OptiwebTheme\Core\Checkout\Cart\MinimumOrderValueValidator;
 use OptiwebTheme\Core\Content\Cms\CmsLink;
 use OptiwebTheme\Core\Content\Cms\DataResolvers\BannersResolver;
 use OptiwebTheme\Core\Content\Cms\DataResolvers\CatalogsResolver;
@@ -31,6 +32,7 @@ use Shopware\Core\Content\Product\SalesChannel\CrossSelling\ProductCrossSellingR
 use Shopware\Core\Content\Seo\SeoUrlPlaceholderHandlerInterface;
 use Shopware\Core\Framework\Rule\RuleIdMatcher;
 use Shopware\Core\Framework\Util\HtmlSanitizer;
+use Shopware\Core\System\Currency\CurrencyFormatter;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
 
 return static function (ContainerConfigurator $configurator): void {
@@ -95,6 +97,14 @@ return static function (ContainerConfigurator $configurator): void {
     $services->set(ProductAvailabilitySubscriber::class)
         ->args([service('category.repository')])
         ->tag('kernel.event_subscriber');
+
+    // Cart
+    $services->set(MinimumOrderValueValidator::class)
+        ->args([
+            service(SystemConfigService::class),
+            service(CurrencyFormatter::class),
+        ])
+        ->tag('shopware.cart.validator');
 
     // Twig
     $services->set(GlobalTwigVariables::class)

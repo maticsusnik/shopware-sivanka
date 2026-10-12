@@ -2,13 +2,32 @@
 {% set enquiryProducts = element.extensions.products.items ?? [] %}
 {% set isMultiProduct = enquiryProducts|length > 1 %}
 
+{# Product data for the Google Analytics events in optiweb-product-enquiry.plugin.js.
+   `product_id` only maps a line to its quantity field and is stripped before sending.
+   Prices are the stored gross list prices, so a lead's value is an estimate. #}
+{% set analyticsItems = [] %}
+{% for enquiryProduct in (isMultiProduct ? enquiryProducts : (product ? [product] : [])) %}
+    {% set analyticsItems = analyticsItems|merge([{
+        product_id: enquiryProduct.id,
+        item_id: enquiryProduct.productNumber,
+        item_name: enquiryProduct.translated.name ?: enquiryProduct.productNumber,
+        item_variant: enquiryProduct.options is not empty ? (enquiryProduct.options|first).translated.name : null,
+        price: enquiryProduct.price is not empty ? enquiryProduct.price.first.gross : null
+    }]) %}
+{% endfor %}
+
 <div class="form-content">
     <form action="{{ path('frontend.form.product-enquiry.send') }}"
           method="POST"
           data-form-csrf-handler="true"
           data-form-validation="true"
           data-error-unexpected="{{ 'optiwebProductEnquiry.errors.unexpectedError'|trans|striptags }}"
-          data-error-captcha="{{ 'optiwebProductEnquiry.errors.captcha'|trans|striptags }}">
+          data-error-captcha="{{ 'optiwebProductEnquiry.errors.captcha'|trans|striptags }}"
+          data-enquiry-analytics="{{ {
+              type: isMultiProduct ? 'multiple' : 'single',
+              currency: context.currency.isoCode,
+              items: analyticsItems
+          }|json_encode }}">
 
         <input type="hidden" name="slotId" value="{{ element.id }}">
 

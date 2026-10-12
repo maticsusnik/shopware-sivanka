@@ -5,7 +5,10 @@
 //  Eyebrows are Inter 700 uppercase.
 // =============================================================================
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');
+// Fonts are not @imported here: an @import inside all.css is a second render-blocking
+// request that only starts after all.css arrives. Playfair Display is linked from
+// layout/meta.html.twig (preconnect + non-blocking); Inter is core's self-hosted
+// variable font (skin/shopware/vendor/_inter-fontface.scss, 400-700, Latin + Latin Ext).
 
 
 // -----------------------------------------------------------------------------
