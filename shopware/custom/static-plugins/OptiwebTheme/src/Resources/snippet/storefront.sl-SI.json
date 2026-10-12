@@ -37,7 +37,6 @@
             "priceOnRequest": "Cena na povpraševanje"
         },
         "checkout": {
-            "logInAlert": "Če želite opraviti nakup, morate biti prijavljeni.",
             "freeShipping": "Brezplačno",
             "title": "Oddaj naročilo",
             "stepCart": "Košarica",
@@ -59,7 +58,6 @@
             "backToShop": "Nazaj v trgovino",
             "orderQuestions": "Vprašanja v zvezi z vašim naročilom?",
             "supportPhone": "05 90 31 676",
-            "supportHours": "Pon–pet 8:00–14:00",
             "confirmTermsText": "Prebral sem in sprejemam %tosModalTagOpen%splošne pogoje%tosModalTagClose% ter %revocationModalTagOpen%politiko odpovedi%revocationModalTagClose%.",
             "confirmTermsTextWithGuarantee": "Prebral sem in sprejemam %tosModalTagOpen%splošne pogoje%tosModalTagClose%, %revocationModalTagOpen%politiko odpovedi%revocationModalTagClose% in %legalGuaranteeNoticeModalTagOpen%obvestilo o zakonski garanciji%legalGuaranteeNoticeModalTagClose%."
         },

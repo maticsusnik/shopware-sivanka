@@ -9,6 +9,7 @@ use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\System\SalesChannel\Entity\SalesChannelEntityLoadedEvent;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
+use Shopware\Core\System\SystemConfig\SystemConfigService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class ProductAvailabilitySubscriber implements EventSubscriberInterface
@@ -29,8 +30,17 @@ class ProductAvailabilitySubscriber implements EventSubscriberInterface
 
     private const PRODUCT_FIELD_HIDE_PRICE = 'custom_product_hidePrice';
 
+    /**
+     * Plugin config switches that apply the category flags to every product, so
+     * products without a category are covered too.
+     */
+    private const CONFIG_GLOBAL_NOT_SELLABLE = 'OptiwebTheme.config.globalNotSellable';
+
+    private const CONFIG_GLOBAL_HIDE_PRICE = 'OptiwebTheme.config.globalHidePrice';
+
     public function __construct(
-        private readonly EntityRepository $categoryRepository
+        private readonly EntityRepository $categoryRepository,
+        private readonly SystemConfigService $systemConfigService
     ) {
     }
 
@@ -55,6 +65,9 @@ class ProductAvailabilitySubscriber implements EventSubscriberInterface
         }
 
         $context = $event->getContext();
+        $salesChannelId = $event->getSalesChannelContext()->getSalesChannelId();
+        $globalNotSellable = $this->systemConfigService->getBool(self::CONFIG_GLOBAL_NOT_SELLABLE, $salesChannelId);
+        $globalHidePrice = $this->systemConfigService->getBool(self::CONFIG_GLOBAL_HIDE_PRICE, $salesChannelId);
 
         // Collect all category IDs from products using categoryTree (includes all parent categories)
         $categoryIds = [];
@@ -107,8 +120,8 @@ class ProductAvailabilitySubscriber implements EventSubscriberInterface
                 continue;
             }
 
-            $isNotSellable = false;
-            $isHidePrice = false;
+            $isNotSellable = $globalNotSellable;
+            $isHidePrice = $globalHidePrice;
 
             // Check product's own custom fields
             $customFields = $product->getCustomFields() ?? [];

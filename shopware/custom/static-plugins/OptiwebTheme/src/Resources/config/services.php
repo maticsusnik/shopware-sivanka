@@ -95,7 +95,7 @@ return static function (ContainerConfigurator $configurator): void {
         ->tag('kernel.event_subscriber');
 
     $services->set(ProductAvailabilitySubscriber::class)
-        ->args([service('category.repository')])
+        ->args([service('category.repository'), service(SystemConfigService::class)])
         ->tag('kernel.event_subscriber');
 
     // Cart
