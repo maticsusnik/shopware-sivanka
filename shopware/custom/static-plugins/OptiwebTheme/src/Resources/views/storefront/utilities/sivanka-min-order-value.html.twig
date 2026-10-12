@@ -1,0 +1,13 @@
+{#
+ # Is the cart below the minimum order value? The goods in `cart` against
+ # OptiwebTheme.config.minOrderValue. Mirrors MinimumOrderValueValidator, which is
+ # what actually blocks the order — the cart and offcanvas pages clear the cart errors
+ # before rendering, so templates cannot read the validator's error there.
+ #
+ # Used as a macro: {% import ... as minOrder %} then minOrder.belowMinimum(page.cart, context)
+ # renders "1" when the cart is below the minimum, nothing otherwise.
+ #}
+{% macro belowMinimum(cart, context) %}
+    {%- set minimum = (config('OptiwebTheme.config.minOrderValue') ?: 0) * context.currency.factor -%}
+    {{- (minimum > 0 and cart.lineItems.count > 0 and cart.price.positionPrice|round(2) < minimum|round(2)) ? '1' : '' -}}
+{% endmacro %}

@@ -3,7 +3,8 @@
         "confirmTermsTextModal": "Prebral sem in sprejemam %tosModalTagOpen%splošne pogoje%tosModalTagClose% ter politiko odpovedi.",
         "confirmLegalGuaranteeNoticeLink": "Vaše pravice iz zakonske garancije",
         "createAccountHeading": "Za hitrejše nakupe v prihodnje si ustvarite uporabniški račun.",
-        "createAccountButton": "Ustvari račun"
+        "createAccountButton": "Ustvari račun",
+        "sivanka-min-order-value": "Najnižja vrednost naročila je %minValue% (brez dostave). Za oddajo naročila dodajte v košarico še izdelke v vrednosti vsaj %missing%."
     },
     "optiweb": {
         "toggleMenuText": "Izdelki",

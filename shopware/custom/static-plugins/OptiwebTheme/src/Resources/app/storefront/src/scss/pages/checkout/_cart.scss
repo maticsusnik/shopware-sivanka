@@ -507,8 +507,11 @@
     }
 }
 
-// Checkout button inside the card
-.sv-checkout-btn {
+// Checkout button inside the card. `.checkout-aside .sv-checkout-btn` outranks the
+// ≤1280px touch-target rule `.checkout-aside a { display: inline-flex }`, which
+// otherwise shrinks the button to its text on laptops and tablets.
+.sv-checkout-btn,
+.checkout-aside .sv-checkout-btn {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -530,6 +533,19 @@
     }
 
     svg { flex-shrink: 0; }
+
+    // Below the minimum order value
+    &.disabled {
+        opacity: 0.45;
+        pointer-events: none;
+        cursor: default;
+    }
+}
+
+// Offcanvas "to checkout" below the minimum order value — the theme's button styles
+// keep .disabled at full opacity, which reads as clickable.
+.offcanvas-cart-actions .begin-checkout-btn.disabled {
+    opacity: 0.45;
 }
 
 .sv-ssl-note {
@@ -855,7 +871,10 @@
             }
         }
 
+        // Secondary action: a size smaller than "to checkout", so the two never compete.
         .btn-outline-secondary {
+            padding: 9px 13px;
+            font-size: 15px;
             background: transparent;
             border: 1.5px solid $sv-bordo;
             color: $sv-bordo;
