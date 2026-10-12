@@ -37,13 +37,16 @@
              data-sv-rail-options='{"cloneToLoop": true}'
              role="region"
              aria-label="{{ data.headline|default('')|striptags }}">
+            {# Below 720 each photo is a full-width slide, above it ~700px wide. Both are
+               the LCP candidates, so they load eagerly and first. #}
+            {% set heroSizes = { xs: '100vw', sm: '100vw', md: '700px', lg: '700px', xl: '700px', xxl: '700px' } %}
             <div class="sivanka-hero__track sv-rail__track" tabindex="0">
                 {% if data.imageLeft %}
                     <div class="sivanka-hero__photo sivanka-hero__photo--left sv-rail__item">
                         {% sw_thumbnails 'sivanka-hero-left' with {
                             media: data.imageLeft,
-                            sizes: { default: '700px' },
-                            attributes: { alt: data.imageLeft.translated.alt ?: '' }
+                            sizes: heroSizes,
+                            attributes: { alt: data.imageLeft.translated.alt ?: '', fetchpriority: 'high' }
                         } %}
                     </div>
                 {% endif %}
@@ -52,8 +55,8 @@
                     <div class="sivanka-hero__photo sivanka-hero__photo--right sv-rail__item">
                         {% sw_thumbnails 'sivanka-hero-right' with {
                             media: data.imageRight,
-                            sizes: { default: '700px' },
-                            attributes: { alt: data.imageRight.translated.alt ?: '' }
+                            sizes: heroSizes,
+                            attributes: { alt: data.imageRight.translated.alt ?: '', fetchpriority: 'high' }
                         } %}
                     </div>
                 {% endif %}

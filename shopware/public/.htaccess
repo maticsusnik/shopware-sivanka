@@ -10,6 +10,26 @@
     RewriteRule ^ https://www.sivanka.com%{REQUEST_URI} [R=301,L]
 </IfModule>
 
+# Browser caching for static files. Everything the storefront links is versioned:
+# theme CSS/JS sit in a seed folder and carry a ?<timestamp>, JS chunks have hashed
+# names, media and thumbnails carry ?ts= — a changed file always gets a new URL, so a
+# year is safe. Only static files are affected; Shopware's PHP responses (HTML, JSON)
+# set their own headers. SVGs stay short: theme icons are linked without a version.
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType text/javascript "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+    ExpiresByType font/woff "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/avif "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 week"
+</IfModule>
+
 # BEGIN Shopware
 # The directives (lines) between "# BEGIN Shopware" and "# END Shopware" are dynamically generated. Any changes to the directives between these markers will be overwritten.
 
