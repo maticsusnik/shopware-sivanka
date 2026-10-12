@@ -66,10 +66,18 @@
     margin-bottom: 0;
 }
 
+// The items already stretch to the taller one; the links fill them, so the bottom rules
+// line up when one legend wraps to two lines on a phone and the other does not.
 .nav-item-login,
 .nav-item-register {
     flex: 1;
     position: relative;
+    display: flex;
+    flex-direction: column;
+
+    > .nav-link {
+        flex: 1 1 auto;
+    }
 }
 
 // The rule under the strip runs the full width — $sv-border under the inactive tab,

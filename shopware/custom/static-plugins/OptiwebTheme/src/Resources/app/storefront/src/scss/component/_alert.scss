@@ -104,3 +104,13 @@
 
     .alert { margin-bottom: 0; }
 }
+
+// The page-level flash bags sit right under the header; give them air only when a
+// message is shown, so empty containers add no gap.
+.content-main > .flashbags:has(.alert) {
+    margin-top: 24px;
+
+    @include media-breakpoint-down(md) {
+        margin-top: 16px;
+    }
+}
