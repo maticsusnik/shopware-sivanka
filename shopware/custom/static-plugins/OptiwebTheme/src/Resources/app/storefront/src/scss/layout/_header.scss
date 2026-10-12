@@ -272,6 +272,16 @@ $sv-logo-widths: (
             z-index: 7; // sit above the submit button
             cursor: pointer;
 
+            // Same slot as the submit button on touch screens: flush in the corner at
+            // the full 46px. Without this it kept the desktop 5px inset while something
+            // else stretched it to 46px, so it hung 5px below the field.
+            @media (max-width: $sv-bp-touch) {
+                right: 0 !important;
+                top: 0 !important;
+                width: $sv-touch;
+                height: $sv-touch;
+            }
+
             &:not(.d-none) {
                 display: flex !important; // shown when JS removes d-none
             }
