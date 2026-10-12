@@ -4,3 +4,17 @@ shopware:
     # not poll the queue from the browser.
     admin_worker:
         enable_admin_worker: false
+        enable_queue_stats_worker: false
+        enable_notification_worker: false
+
+    # 1 CPU core: skip the database writes Shopware does on every admin click and
+    # every queued message just to feed statistics nobody looks at.
+    increment:
+        user_activity:
+            type: 'array'
+        message_queue:
+            type: 'array'
+
+    # Don't rewrite the mail template preview data on every mail sent.
+    mail:
+        update_mail_variables_on_send: false
