@@ -1,3 +1,15 @@
+# Production only: send http:// and the bare domain to https://www.sivanka.com in one
+# 301. Kept outside the Shopware markers, which get regenerated. .well-known stays
+# reachable on every host for AutoSSL validation. Other hosts (dev) are not touched.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_URI} !^/\.well-known/
+    RewriteCond %{HTTP_HOST} ^(www\.)?sivanka\.com$ [NC]
+    RewriteCond %{HTTPS} !=on [OR]
+    RewriteCond %{HTTP_HOST} !^www\. [NC]
+    RewriteRule ^ https://www.sivanka.com%{REQUEST_URI} [R=301,L]
+</IfModule>
+
 # BEGIN Shopware
 # The directives (lines) between "# BEGIN Shopware" and "# END Shopware" are dynamically generated. Any changes to the directives between these markers will be overwritten.
 
