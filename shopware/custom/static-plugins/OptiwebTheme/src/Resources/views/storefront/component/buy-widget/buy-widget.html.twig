@@ -137,7 +137,8 @@
         <meta itemprop="price" content="{{ price.unitPrice }}">
         <link itemprop="itemCondition" href="https://schema.org/NewCondition">
         <div itemprop="seller" itemscope itemtype="https://schema.org/OnlineStore" itemid="{{ url('frontend.home.page') }}#organization">
-            <meta itemprop="name" content="{{ config('OptiwebTheme.config.schemaBusinessName')|default(basicConfig.shopName) }}">
+            {# Same fallback chain as utilities/sivanka-schema.html.twig — basicConfig.shopName is empty on prod #}
+            <meta itemprop="name" content="{{ (config('OptiwebTheme.config.schemaBusinessName') ?? '')|trim ?: (context.salesChannel.translated.name ?? basicConfig.shopName) }}">
         </div>
     {% endif %}
 {% endblock %}

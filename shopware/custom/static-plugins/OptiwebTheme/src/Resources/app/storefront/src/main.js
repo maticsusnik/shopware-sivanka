@@ -26,6 +26,11 @@ PluginManager.register('GaAccountEvents', GaAccountEventsPlugin, 'form.register-
 PluginManager.override('Listing', () => import("./js/ow-listing.plugin"), '[data-listing]');
 PluginManager.register('OwMegaMenu', () => import('./js/ow-mega-menu.plugin'), '[data-ow-mega-menu="true"]');
 
+// core only registers GoogleAnalytics when tracking is on, and override() needs it registered
+if (window.gtagActive) {
+    PluginManager.override('GoogleAnalytics', () => import('./js/ow-google-analytics.plugin'));
+}
+
 
 
 
