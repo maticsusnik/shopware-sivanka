@@ -380,14 +380,15 @@ TWIG;
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;margin:0 0 24px;">
 {% for line in enquiryLines %}
 <tr>
-<td width="76" valign="top" style="width:76px;padding:12px 12px 12px 0;border-bottom:1px solid #EADFD1;">
-{% if line.imageUrl is defined and line.imageUrl %}<img src="{{ line.imageUrl }}" width="64" alt="" style="display:block;width:64px;height:auto;border:1px solid #EADFD1;border-radius:4px;">{% endif %}
-</td>
-<td valign="top" style="padding:12px 0;border-bottom:1px solid #EADFD1;font-size:14px;line-height:1.5;">
+{% set hasImage = line.imageUrl is defined and line.imageUrl %}
+{% if hasImage %}
+<td width="76" valign="top" style="width:76px;padding:12px 12px 12px 0;border-bottom:1px solid #EADFD1;"><img src="{{ line.imageUrl }}" width="64" alt="" style="display:block;width:64px;height:auto;border:1px solid #EADFD1;border-radius:4px;"></td>
+{% endif %}
+<td{% if not hasImage %} colspan="2"{% endif %} valign="top" style="padding:12px 0;border-bottom:1px solid #EADFD1;font-size:14px;line-height:1.5;">
 {% if line.productUrl is defined and line.productUrl %}<a href="{{ line.productUrl }}" style="color:#2E1A20;font-weight:bold;text-decoration:none;">{{ line.productName }}</a>{% else %}<strong>{{ line.productName }}</strong>{% endif %}<br>
-<span style="color:#6B5A55;font-size:13px;">%number%: {{ line.productNumber }}{% if line.productOption %} &middot; %variant%: {{ line.productOption }}{% endif %}</span>
+<span style="color:#6B5A55;font-size:13px;">%number%: {{ line.productNumber }}{% if line.productOption %} &middot; %variant%: {{ line.productOption }}{% endif %}</span><br>
+<span style="font-size:13px;">%quantity%: <strong>{{ line.quantity }}</strong></span>
 </td>
-<td align="right" valign="top" style="padding:12px 0 12px 12px;border-bottom:1px solid #EADFD1;font-size:14px;white-space:nowrap;"><span style="color:#6B5A55;font-size:13px;">%quantity%</span><br><strong>{{ line.quantity }}</strong></td>
 </tr>
 {% endfor %}
 </table>
