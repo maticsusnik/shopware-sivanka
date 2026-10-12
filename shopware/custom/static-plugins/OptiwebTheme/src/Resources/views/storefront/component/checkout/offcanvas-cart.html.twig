@@ -3,22 +3,6 @@
 {% block component_offcanvas_cart_header_item_counter %}
 {% endblock %}
 
-{% block component_offcanvas_cart_empty %}
-    {% if customerIsLoggedIn %}
-        {% sw_include '@Storefront/storefront/utilities/alert.html.twig' with {
-            type: 'info',
-            content: 'checkout.emptyCart'|trans|sw_sanitize
-        } %}
-    {% else %}
-        <div class="flashbags">
-            {% sw_include '@Storefront/storefront/utilities/alert.html.twig' with {
-                type:"info",
-                content:'optiweb.checkout.logInAlert'|trans|sw_sanitize
-            } %}
-        </div>
-    {% endif %}
-{% endblock %}
-
 {% block component_offcanvas_cart_actions %}
     <div class="offcanvas-cart-actions">
 

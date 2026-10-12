@@ -37,6 +37,22 @@
             <helpText>Najmanjša vrednost izdelkov v košarici (z DDV, brez dostave), potrebna za oddajo naročila. Kupec vidi opozorilo v košarici in na blagajni. Pustite prazno ali 0, da je omejitev izklopljena.</helpText>
             <helpText lang="en-GB">Minimum value of the goods in the cart (gross, without shipping) needed to place an order. The customer sees a notice in the cart and at checkout. Leave empty or 0 to switch it off.</helpText>
         </input-field>
+
+        <input-field type="bool" cache-relevant="true">
+            <name>globalNotSellable</name>
+            <label>Ni na prodaj (vsi izdelki)</label>
+            <label lang="en-GB">Not sellable (all products)</label>
+            <helpText>Enako kot "Ni na prodaj" na kategoriji, le za vse izdelke v trgovini, tudi tiste brez kategorije. Cene ostanejo vidne, namesto gumba za nakup je povpraševanje.</helpText>
+            <helpText lang="en-GB">Same as "Not Sellable" on a category, but for every product in the shop, including products without a category. Prices stay visible; the buy button becomes an enquiry.</helpText>
+        </input-field>
+
+        <input-field type="bool" cache-relevant="true">
+            <name>globalHidePrice</name>
+            <label>Skrij cene (vsi izdelki)</label>
+            <label lang="en-GB">Hide prices (all products)</label>
+            <helpText>Enako kot "Skrij cene" na kategoriji, le za vse izdelke v trgovini, tudi tiste brez kategorije. Skrije ceno in gumb za nakup, mogoče je samo povpraševanje.</helpText>
+            <helpText lang="en-GB">Same as "Hide Prices" on a category, but for every product in the shop, including products without a category. Hides the price and the buy button; only an enquiry is possible.</helpText>
+        </input-field>
     </card>
 
     <card>

@@ -331,6 +331,7 @@
         align-items: center;
         justify-content: center;
         transition: all 0.16s;
+        min-height: 0; // the global .btn min-height made it 40x46
 
         &:hover {
             color: $sv-bordo;
@@ -338,6 +339,7 @@
             background: $sv-white;
         }
 
+        .icon { width: 18px; height: 18px; }
         .icon > svg { width: 18px; height: 18px; }
         .icon svg use,
         .icon svg path { fill: currentColor; }
@@ -809,8 +811,13 @@
             justify-content: center;
             transition: all 0.16s;
 
+            // the global .btn min-height (46px) stretched it into a 30x46 pill
+            min-height: 0;
+
             &:hover { color: $sv-bordo; border-color: $sv-border; }
 
+            // icon-sm makes the span larger than the svg, which then sat top-left in it
+            .icon { width: 15px; height: 15px; }
             .icon > svg { width: 15px; height: 15px; }
             .icon svg use,
             .icon svg path { fill: currentColor; }
