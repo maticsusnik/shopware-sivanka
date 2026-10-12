@@ -104,16 +104,15 @@ TWIG;
 {% if salesChannel is defined and salesChannel and salesChannel.domains is not empty %}
     {% set shopUrl = (salesChannel.domains|first).url %}
 {% endif %}
-{% set linkStyle = 'color:#8E2247;text-decoration:none;' %}
+{% set linkStyle = 'color:#6B5A55;text-decoration:none;' %}
 </td>
 </tr>
 <tr>
 <td style="padding:24px 32px;background-color:#FDF8F2;border-top:1px solid #EADFD1;border-radius:0 0 8px 8px;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.6;color:#6B5A55;">
-<p style="margin:0 0 6px;font-family:Georgia,'Times New Roman',serif;font-size:17px;color:#5C1229;">Trgovina ŠIVANKA</p>
 <p style="margin:0 0 10px;">Cesta Staneta Žagarja 32, 4000 Kranj<br>
 PON–ČET 8:00–17:00 &middot; PET 8:00–14:00 &middot; SOB zaprto</p>
 <p style="margin:0;"><a href="tel:+38631413597" style="{{ linkStyle }}">031 413 597</a> &middot; <a href="tel:+38659031676" style="{{ linkStyle }}">05 90 31 676</a><br>
-<a href="mailto:sivanka.and@gmail.com" style="{{ linkStyle }}">sivanka.and@gmail.com</a> &middot; <a href="{{ shopUrl }}" style="{{ linkStyle }}">{{ shopUrl|replace({'https://': '', 'http://': ''}) }}</a></p>
+<a href="mailto:info@sivanka.com" style="{{ linkStyle }}">info@sivanka.com</a> &middot; <a href="{{ shopUrl }}" style="{{ linkStyle }}">sivanka.com</a></p>
 </td>
 </tr>
 </table>
@@ -130,11 +129,11 @@ TWIG;
 
 
 --
-Trgovina ŠIVANKA
 Cesta Staneta Žagarja 32, 4000 Kranj
 PON–ČET 8:00–17:00, PET 8:00–14:00, SOB zaprto
 031 413 597 / 05 90 31 676
-sivanka.and@gmail.com
+info@sivanka.com
+sivanka.com
 TWIG;
     }
 }
