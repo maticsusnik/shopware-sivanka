@@ -1,4 +1,5 @@
 import Plugin from 'src/plugin-system/plugin.class';
+import CookieStorageHelper from 'src/helper/storage/cookie-storage.helper';
 
 export default class OptiwebProductEnquiryPlugin extends Plugin {
 
@@ -10,6 +11,81 @@ export default class OptiwebProductEnquiryPlugin extends Plugin {
         this._form.addEventListener('submit', (e) => this._onSubmit(e));
         this._initFieldValidation();
         this._bindCaptchaSubmit();
+
+        this._track('enquiry_form_view', this._analyticsPayload());
+    }
+
+    /**
+     * Google Analytics 4 events for the enquiry, the shop's main conversion besides
+     * an order:
+     *
+     *   enquiry_form_view  the form was shown (product modal, wishlist modal or page)
+     *   generate_lead      the server accepted the enquiry
+     *
+     * Sent only when Shopware's own GA integration is active and, with the default
+     * cookie consent, only after the visitor accepted the GA or Ads cookie — the
+     * same rule google-analytics.plugin.js applies to the core events.
+     */
+    _track(eventName, params) {
+        if (!params || !window.gtagActive || typeof window.gtag !== 'function') {
+            return;
+        }
+
+        if (window.useDefaultCookieConsent
+            && !CookieStorageHelper.getItem('google-analytics-enabled')
+            && !CookieStorageHelper.getItem('google-ads-enabled')) {
+            return;
+        }
+
+        window.gtag('event', eventName, params);
+    }
+
+    /** GA4 event parameters for the products on this form, with their current quantities. */
+    _analyticsPayload() {
+        let data = null;
+
+        try {
+            data = JSON.parse(this._form.dataset.enquiryAnalytics || 'null');
+        } catch {
+            return null;
+        }
+
+        if (!data || !Array.isArray(data.items) || data.items.length === 0) {
+            return null;
+        }
+
+        const items = data.items.map(({ product_id: productId, price, ...item }) => {
+            const line = { ...item, quantity: this._quantityFor(productId) };
+
+            if (price !== null && price !== undefined) {
+                line.price = Number(price);
+            }
+
+            if (!line.item_variant) {
+                delete line.item_variant;
+            }
+
+            return line;
+        });
+
+        const value = items.reduce((sum, item) => sum + (item.price ?? 0) * item.quantity, 0);
+
+        return {
+            currency: data.currency,
+            value: Math.round(value * 100) / 100,
+            lead_source: 'product_enquiry',
+            enquiry_type: data.type,
+            items,
+        };
+    }
+
+    /** Quantity typed for a product: the wishlist modal has one field per line, the product modal one in total. */
+    _quantityFor(productId) {
+        const field = this._form.querySelector(`[name="products[${productId}][qty]"]`)
+            ?? this._form.querySelector('[name="productQty"]');
+        const quantity = parseInt(field?.value ?? '1', 10);
+
+        return quantity > 0 ? quantity : 1;
     }
 
     /**
@@ -118,20 +194,6 @@ export default class OptiwebProductEnquiryPlugin extends Plugin {
             return;
         }
 
-        if (window.dataLayer) {
-            window.dataLayer.push({
-                event: 'productEnquiry',
-                ecommerce: {
-                    items: [{
-                        id: this._getFieldValue('product_id'),
-                        name: this._getFieldValue('product_name'),
-                        product_number: this._getFieldValue('product_number'),
-                        variant: this._getFieldValue('product_option'),
-                    }],
-                },
-            });
-        }
-
         const formData = new FormData(this._form);
 
         this._setLoading(true);
@@ -201,6 +263,9 @@ export default class OptiwebProductEnquiryPlugin extends Plugin {
         const alerts = response.alerts ?? [];
 
         if (response.type === 'success') {
+            // Read before the form is replaced below — the quantities live in it.
+            this._track('generate_lead', this._analyticsPayload());
+
             const message = alerts[0]?.content ?? '';
             this._wrapper.innerHTML = `<div class="enquiry-success"><p>${message}</p></div>`;
             return;
@@ -259,9 +324,5 @@ export default class OptiwebProductEnquiryPlugin extends Plugin {
         const attr = key === 'captcha' ? 'errorCaptcha' : 'errorUnexpected';
 
         return this._form.dataset[attr] || 'Prišlo je do nepričakovane napake. Prosimo, poskusite znova.';
-    }
-
-    _getFieldValue(name) {
-        return this._form.querySelector(`input[name="${name}"]`)?.value ?? '';
     }
 }
