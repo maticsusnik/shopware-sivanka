@@ -165,6 +165,42 @@
             <defaultValue>Mo-Th 08:00-17:00
 Fr 08:00-14:00</defaultValue>
         </input-field>
+
+        <input-field type="text" cache-relevant="true">
+            <name>schemaShippingRate</name>
+            <label>Cena standardne dostave (EUR, z DDV)</label>
+            <label lang="en-GB">Standard delivery price (EUR, gross)</label>
+            <helpText>Za Google »shippingDetails«. Prazno = dostava se izpiše le pri izdelkih nad mejo za brezplačno dostavo.</helpText>
+            <helpText lang="en-GB">For Google's "shippingDetails". Empty = shipping is only published on products above the free-delivery threshold.</helpText>
+        </input-field>
+        <input-field type="text" cache-relevant="true">
+            <name>schemaFreeShippingFrom</name>
+            <label>Brezplačna dostava od (EUR)</label>
+            <label lang="en-GB">Free delivery from (EUR)</label>
+            <helpText>Prazno = brez brezplačne dostave.</helpText>
+            <helpText lang="en-GB">Empty = no free delivery.</helpText>
+            <defaultValue>60</defaultValue>
+        </input-field>
+        <input-field type="text" cache-relevant="true">
+            <name>schemaHandlingDays</name>
+            <label>Čas priprave (delovni dnevi, npr. 1-2)</label>
+            <label lang="en-GB">Handling time (business days, e.g. 1-2)</label>
+            <defaultValue>1-2</defaultValue>
+        </input-field>
+        <input-field type="text" cache-relevant="true">
+            <name>schemaTransitDays</name>
+            <label>Čas dostave (delovni dnevi, npr. 1-2)</label>
+            <label lang="en-GB">Transit time (business days, e.g. 1-2)</label>
+            <defaultValue>1-2</defaultValue>
+        </input-field>
+        <input-field type="text" cache-relevant="true">
+            <name>schemaReturnDays</name>
+            <label>Rok za vračilo (dni)</label>
+            <label lang="en-GB">Return window (days)</label>
+            <helpText>Kupec plača poštnino za vračilo; vračilo po pošti ali v trgovini. Prazno = politika vračil se ne izpiše.</helpText>
+            <helpText lang="en-GB">Customer pays return postage; return by mail or in store. Empty = no return policy is published.</helpText>
+            <defaultValue>14</defaultValue>
+        </input-field>
     </card>
 
 </config>

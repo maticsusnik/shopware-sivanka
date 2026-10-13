@@ -50,6 +50,16 @@
 
     {% block buy_widget_rich_snippets %}
         {{ parent() }}
+        {# 480 of ~1300 products have no description, and Google's merchant listing report
+           flags the missing field. Fall back to the short description, then the meta
+           description (every product has one). The description tab drops its own empty
+           `itemprop` (component/product/description.html.twig) so there is just one. #}
+        {% if not feature('JSON_LD_DATA') and product.translated.description|striptags|trim is empty %}
+            {% set fallbackDescription = (product.translated.customFields.shortDescription ?? '')|striptags|trim ?: (product.translated.metaDescription ?? '')|striptags|trim %}
+            {% if fallbackDescription %}
+                <meta itemprop="description" content="{{ fallbackDescription }}">
+            {% endif %}
+        {% endif %}
     {% endblock %}
     {% block buy_widget_ordernumber_container %}
         {{ parent() }}
@@ -152,6 +162,10 @@
 {% block buy_widget_data_rich_snippet_price_currency %}
     {% if not (product.customFields._isHidePrice ?? false) %}
         {{ parent() }}
+        {# @deprecated tag:v6.8.0 - Offer microdata replaced by JSON-LD, gated like core #}
+        {% if not feature('JSON_LD_DATA') %}
+            {% sw_include '@Storefront/storefront/utilities/sivanka-offer-policies.html.twig' with { product: product } %}
+        {% endif %}
     {% endif %}
 {% endblock %}
 {% block buy_widget_tax %}{% endblock %}

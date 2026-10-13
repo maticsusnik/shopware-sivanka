@@ -72,6 +72,21 @@
         {% set organization = organization|merge({ contactPoint: contactPoint }) %}
     {% endif %}
 
+    {# Global return policy — Google's recommended place for it. Product offers repeat it
+       (utilities/sivanka-offer-policies.html.twig) because offer-level markup wins and
+       the merchant listing report checks offers. #}
+    {% set returnDays = (cfg.schemaReturnDays ?? '14')|trim %}
+    {% if returnDays matches '/^\\d+$/' and returnDays > 0 %}
+        {% set organization = organization|merge({ hasMerchantReturnPolicy: {
+            '@type': 'MerchantReturnPolicy',
+            applicableCountry: (cfg.schemaCountry ?? '')|trim|upper ?: 'SI',
+            returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+            merchantReturnDays: returnDays + 0,
+            returnMethod: ['https://schema.org/ReturnByMail', 'https://schema.org/ReturnInStore'],
+            returnFees: 'https://schema.org/ReturnFeesCustomerResponsibility'
+        } }) %}
+    {% endif %}
+
     {# ---- WebSite + sitelinks search box ------------------------------------- #}
     {% set website = {
         '@type': 'WebSite',
