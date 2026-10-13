@@ -18,27 +18,41 @@
     {% block optiweb_product_enquiry_list_content %}
     <template #content>
         <sw-data-grid
+            ref="grid"
             :data-source="enquiries"
-            :columns="[
-                { property: 'createdAt', label: $t('optiwebProductEnquiry.admin.list.columns.date'), sortable: true },
-                { property: 'firstName', label: $t('optiwebProductEnquiry.admin.list.columns.customer'), sortable: true },
-                { property: 'email', label: $t('optiwebProductEnquiry.admin.list.columns.email'), sortable: true },
-                { property: 'productName', label: $t('optiwebProductEnquiry.admin.list.columns.product') },
-                { property: 'quantity', label: $t('optiwebProductEnquiry.admin.list.columns.quantity') },
-            ]"
+            :columns="columns"
             :is-loading="isLoading"
+            :sort-by="sortBy"
+            :sort-direction="sortDirection"
             :show-actions="true"
+            :show-selection="true"
+            :rows-clickable="true"
+            :item-identifier-property="'id'"
             identifier="optiweb-product-enquiry-list"
             @row-click="onRowClick"
+            @column-sort="onColumnSort"
+            @selection-change="onSelectionChange"
         >
+            {# The checkbox sits inside the row; the grid ignores clicks on inputs, so
+               ticking it does not open the enquiry #}
+            <template #column-status="{ item }">
+                <mt-checkbox
+                    class="optiweb-product-enquiry-list__done"
+                    :checked="isDone(item)"
+                    @update:checked="setDone(item, $event)"
+                />
+            </template>
             <template #column-createdAt="{ item }">
-                {{ formatDate(item.createdAt) }}
+                <span :class="{ 'optiweb-product-enquiry-list__muted': isDone(item) }">{{ formatDate(item.createdAt) }}</span>
             </template>
             <template #column-firstName="{ item }">
-                {{ item.firstName }} {{ item.lastName }}
+                <span :class="{ 'optiweb-product-enquiry-list__muted': isDone(item) }">{{ item.firstName }} {{ item.lastName }}</span>
+            </template>
+            <template #column-email="{ item }">
+                <span :class="{ 'optiweb-product-enquiry-list__muted': isDone(item) }">{{ item.email }}</span>
             </template>
             <template #column-productName="{ item }">
-                {{ item.productName }}
+                <span :class="{ 'optiweb-product-enquiry-list__muted': isDone(item) }">{{ item.productName }}</span>
                 <sw-label
                     v-if="item.productCount > 1"
                     appearance="pill"
@@ -51,12 +65,59 @@
                 <template v-if="item.productCount > 1">&mdash;</template>
                 <template v-else>{{ item.quantity }}</template>
             </template>
+
+            <template #bulk>
+                <a
+                    class="link link-danger"
+                    role="button"
+                    tabindex="0"
+                    @click="onDelete(Object.keys(selection))"
+                    @keydown.enter="onDelete(Object.keys(selection))"
+                >
+                    {{ $t('global.default.delete') }}
+                </a>
+            </template>
+
             <template #actions="{ item }">
                 <sw-context-menu-item @click="onRowClick(item)">
                     {{ $t('global.default.view') }}
                 </sw-context-menu-item>
+                <sw-context-menu-item @click="setDone(item, !isDone(item))">
+                    {{ isDone(item) ? $t('optiwebProductEnquiry.admin.markNotDone') : $t('optiwebProductEnquiry.admin.markDone') }}
+                </sw-context-menu-item>
+                <sw-context-menu-item variant="danger" @click="onDelete([item.id])">
+                    {{ $t('global.default.delete') }}
+                </sw-context-menu-item>
+            </template>
+
+            <template #pagination>
+                <sw-pagination
+                    :page="page"
+                    :limit="limit"
+                    :total="total"
+                    :total-visible="7"
+                    @page-change="onPageChange"
+                />
             </template>
         </sw-data-grid>
+
+        <sw-modal
+            v-if="deleteIds"
+            :title="$t('global.default.warning')"
+            variant="small"
+            @modal-close="onCloseDeleteModal"
+        >
+            <p>{{ $t('optiwebProductEnquiry.admin.deleteConfirm', { count: deleteIds.length }, deleteIds.length) }}</p>
+
+            <template #modal-footer>
+                <mt-button size="small" variant="secondary" @click="onCloseDeleteModal">
+                    {{ $t('global.default.cancel') }}
+                </mt-button>
+                <mt-button size="small" variant="critical" @click="onConfirmDelete">
+                    {{ $t('global.default.delete') }}
+                </mt-button>
+            </template>
+        </sw-modal>
     </template>
     {% endblock %}
 </sw-page>

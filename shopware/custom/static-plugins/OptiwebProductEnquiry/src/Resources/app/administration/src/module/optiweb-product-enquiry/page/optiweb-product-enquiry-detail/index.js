@@ -9,6 +9,8 @@ Shopware.Component.register('optiweb-product-enquiry-detail', {
 
     inject: ['repositoryFactory'],
 
+    mixins: [Shopware.Mixin.getByName('notification')],
+
     props: {
         enquiryId: {
             type: String,
@@ -19,13 +21,19 @@ Shopware.Component.register('optiweb-product-enquiry-detail', {
     setup() {
         const enquiry = ref(null);
         const isLoading = ref(true);
+        const isSaving = ref(false);
+        const showDeleteModal = ref(false);
 
-        return { enquiry, isLoading };
+        return { enquiry, isLoading, isSaving, showDeleteModal };
     },
 
     computed: {
         repository() {
             return this.repositoryFactory.create('product_enquiry');
+        },
+
+        isDone() {
+            return this.enquiry?.status === 'done';
         },
 
         /**
@@ -87,6 +95,38 @@ Shopware.Component.register('optiweb-product-enquiry-detail', {
 
             this.enquiry = await this.repository.get(this.enquiryId, Shopware.Context.api, criteria);
             this.isLoading = false;
+        },
+
+        async toggleDone() {
+            const previous = this.enquiry.status;
+            // Reopening goes back to read, not new: someone has already handled it once
+            this.enquiry.status = this.isDone ? 'read' : 'done';
+            this.isSaving = true;
+
+            try {
+                await this.repository.save(this.enquiry, Shopware.Context.api);
+            } catch {
+                this.enquiry.status = previous;
+                this.createNotificationError({ message: this.$t('optiwebProductEnquiry.admin.notification.saveError') });
+            }
+
+            this.isSaving = false;
+        },
+
+        async onConfirmDelete() {
+            this.showDeleteModal = false;
+            this.isSaving = true;
+
+            try {
+                await this.repository.delete(this.enquiry.id, Shopware.Context.api);
+                this.createNotificationSuccess({
+                    message: this.$t('optiwebProductEnquiry.admin.notification.deleted', { count: 1 }, 1),
+                });
+                this.goBack();
+            } catch {
+                this.isSaving = false;
+                this.createNotificationError({ message: this.$t('optiwebProductEnquiry.admin.notification.deleteError') });
+            }
         },
 
         goBack() {
