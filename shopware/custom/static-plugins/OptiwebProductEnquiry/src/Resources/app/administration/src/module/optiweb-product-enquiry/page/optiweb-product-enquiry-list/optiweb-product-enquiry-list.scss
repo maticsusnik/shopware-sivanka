@@ -1,5 +1,6 @@
 .optiweb-product-enquiry-list {
-    .sw-data-grid__row {
+    // Rows open the enquiry, except while the done boxes are being edited
+    &:not(.is--editing) .sw-data-grid__row {
         cursor: pointer;
     }
 

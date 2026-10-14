@@ -27,8 +27,26 @@ Shopware.Component.register('optiweb-product-enquiry-list', {
         const selection = ref({});
         // Ids waiting for delete confirmation; null when no modal is open
         const deleteIds = ref(null);
+        // The done checkboxes only change local state while editing; Save writes them
+        const isEditing = ref(false);
+        const isSaving = ref(false);
+        const isSaveSuccessful = ref(false);
 
-        return { enquiries, isLoading, total, page, limit, sortBy, sortDirection, searchTerm, selection, deleteIds };
+        return {
+            enquiries,
+            isLoading,
+            total,
+            page,
+            limit,
+            sortBy,
+            sortDirection,
+            searchTerm,
+            selection,
+            deleteIds,
+            isEditing,
+            isSaving,
+            isSaveSuccessful,
+        };
     },
 
     computed: {
@@ -79,6 +97,11 @@ Shopware.Component.register('optiweb-product-enquiry-list', {
         },
 
         onRowClick(item) {
+            // Opening an enquiry mid-edit would throw away the unsaved checkboxes
+            if (this.isEditing) {
+                return;
+            }
+
             this.$router.push({ name: 'optiweb.product.enquiry.detail', params: { id: item.id } });
         },
 
@@ -112,16 +135,65 @@ Shopware.Component.register('optiweb-product-enquiry-list', {
             return item.status === STATUS_DONE;
         },
 
+        nextStatus(item, done) {
+            if (done) {
+                return STATUS_DONE;
+            }
+
+            // Unticking a box ticked in this edit restores the stored status, so a
+            // new enquiry is not silently turned into a read one
+            const stored = item.getOrigin().status;
+            return stored && stored !== STATUS_DONE ? stored : STATUS_OPEN;
+        },
+
+        onToggleDone(item, done) {
+            item.status = this.nextStatus(item, done);
+        },
+
+        onEdit() {
+            this.isEditing = true;
+        },
+
+        async onCancelEdit() {
+            this.isEditing = false;
+            // Reloading drops the local changes
+            await this.loadEnquiries();
+        },
+
+        async onSave() {
+            this.isSaving = true;
+
+            try {
+                // Entities without changes produce no request
+                await this.repository.saveAll(this.enquiries, Shopware.Context.api);
+                this.isSaveSuccessful = true;
+                this.isEditing = false;
+            } catch {
+                this.createNotificationError({ message: this.$t('optiwebProductEnquiry.admin.notification.saveError') });
+            }
+
+            this.isSaving = false;
+            await this.loadEnquiries();
+        },
+
+        saveFinish() {
+            this.isSaveSuccessful = false;
+        },
+
+        // Row menu action: saves one enquiry straight away
         async setDone(item, done) {
             const previous = item.status;
-            item.status = done ? STATUS_DONE : STATUS_OPEN;
+            item.status = this.nextStatus(item, done);
 
             try {
                 await this.repository.save(item, Shopware.Context.api);
             } catch {
                 item.status = previous;
                 this.createNotificationError({ message: this.$t('optiwebProductEnquiry.admin.notification.saveError') });
+                return;
             }
+
+            await this.loadEnquiries();
         },
 
         onDelete(ids) {

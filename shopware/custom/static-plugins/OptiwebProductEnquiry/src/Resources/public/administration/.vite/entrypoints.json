@@ -3,13 +3,13 @@
   "entryPoints": {
     "optiweb-product-enquiry": {
       "css": [
-        "/bundles/optiwebproductenquiry/administration/assets/optiweb-product-enquiry-CuYuq_ms.css"
+        "/bundles/optiwebproductenquiry/administration/assets/optiweb-product-enquiry-LuUiJ1wD.css"
       ],
       "dynamic": [
-        "/bundles/optiwebproductenquiry/administration/assets/en-GB-E58uGsz-.js"
+        "/bundles/optiwebproductenquiry/administration/assets/en-GB-BURAhIs1.js"
       ],
       "js": [
-        "/bundles/optiwebproductenquiry/administration/assets/optiweb-product-enquiry-DbLTFqkU.js"
+        "/bundles/optiwebproductenquiry/administration/assets/optiweb-product-enquiry-Dk9O7jEe.js"
       ],
       "legacy": false,
       "preload": []

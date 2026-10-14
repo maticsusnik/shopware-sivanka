@@ -23,7 +23,10 @@ class ProductEnquiryEntity extends Entity
     protected int $productCount = 1;
     protected ?string $message = null;
     protected ?ProductEnquiryLineCollection $lines = null;
-    protected ProductEnquiryStatus $status;
+    // Kept as the raw string: the DAL hydrator assigns properties directly, and a
+    // string into an enum-typed property throws, which assign() swallows, leaving
+    // status unset and missing from every API response
+    protected string $status;
 
     public function getSalesChannelId(): string { return $this->salesChannelId; }
     public function setSalesChannelId(string $salesChannelId): void { $this->salesChannelId = $salesChannelId; }
@@ -62,10 +65,10 @@ class ProductEnquiryEntity extends Entity
     public function getMessage(): ?string { return $this->message; }
     public function setMessage(?string $message): void { $this->message = $message; }
 
-    public function getStatus(): ProductEnquiryStatus { return $this->status; }
+    public function getStatus(): ProductEnquiryStatus { return ProductEnquiryStatus::from($this->status); }
 
     public function setStatus(string|ProductEnquiryStatus $status): void
     {
-        $this->status = is_string($status) ? ProductEnquiryStatus::from($status) : $status;
+        $this->status = $status instanceof ProductEnquiryStatus ? $status->value : ProductEnquiryStatus::from($status)->value;
     }
 }

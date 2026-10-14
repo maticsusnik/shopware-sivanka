@@ -40,6 +40,8 @@
                 "email": "Email",
                 "phone": "Phone",
                 "metaSection": "Meta",
+                "statusSection": "Status",
+                "doneLabel": "Done (the enquiry has been answered)",
                 "submitted": "Submitted"
             },
             "markDone": "Mark as done",
