@@ -1,5 +1,8 @@
 {% block optiweb_product_enquiry_list %}
-<sw-page class="optiweb-product-enquiry-list">
+<sw-page
+    class="optiweb-product-enquiry-list"
+    :class="{ 'is--editing': isEditing }"
+>
     {% block optiweb_product_enquiry_list_header %}
     <template #smart-bar-header>
         <h2>{{ $t('optiwebProductEnquiry.admin.list.title') }}</h2>
@@ -12,6 +15,23 @@
             v-model:value="searchTerm"
             @search-term-change="onSearch"
         />
+        <template v-if="isEditing">
+            <mt-button variant="secondary" :disabled="isSaving" @click="onCancelEdit">
+                {{ $t('global.default.cancel') }}
+            </mt-button>
+            <sw-button-process
+                variant="primary"
+                :is-loading="isSaving"
+                :process-success="isSaveSuccessful"
+                @update:process-success="saveFinish"
+                @click.prevent="onSave"
+            >
+                {{ $t('global.default.save') }}
+            </sw-button-process>
+        </template>
+        <mt-button v-else variant="primary" :disabled="isLoading" @click="onEdit">
+            {{ $t('global.default.edit') }}
+        </mt-button>
     </template>
     {% endblock %}
 
@@ -26,20 +46,20 @@
             :sort-direction="sortDirection"
             :show-actions="true"
             :show-selection="true"
-            :rows-clickable="true"
+            :rows-clickable="!isEditing"
             :item-identifier-property="'id'"
             identifier="optiweb-product-enquiry-list"
             @row-click="onRowClick"
             @column-sort="onColumnSort"
             @selection-change="onSelectionChange"
         >
-            {# The checkbox sits inside the row; the grid ignores clicks on inputs, so
-               ticking it does not open the enquiry #}
+            {# Only editable after Edit; the change is written by Save #}
             <template #column-status="{ item }">
                 <mt-checkbox
                     class="optiweb-product-enquiry-list__done"
                     :checked="isDone(item)"
-                    @update:checked="setDone(item, $event)"
+                    :disabled="!isEditing || isSaving"
+                    @update:checked="onToggleDone(item, $event)"
                 />
             </template>
             <template #column-createdAt="{ item }">

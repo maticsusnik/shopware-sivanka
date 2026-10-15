@@ -22,9 +22,10 @@ Shopware.Component.register('optiweb-product-enquiry-detail', {
         const enquiry = ref(null);
         const isLoading = ref(true);
         const isSaving = ref(false);
+        const isSaveSuccessful = ref(false);
         const showDeleteModal = ref(false);
 
-        return { enquiry, isLoading, isSaving, showDeleteModal };
+        return { enquiry, isLoading, isSaving, isSaveSuccessful, showDeleteModal };
     },
 
     computed: {
@@ -32,8 +33,27 @@ Shopware.Component.register('optiweb-product-enquiry-detail', {
             return this.repositoryFactory.create('product_enquiry');
         },
 
-        isDone() {
-            return this.enquiry?.status === 'done';
+        // Bound to the checkbox; only Save writes it
+        isDone: {
+            get() {
+                return this.enquiry?.status === 'done';
+            },
+            set(done) {
+                if (done) {
+                    this.enquiry.status = 'done';
+                    return;
+                }
+
+                // Unticking restores the stored status; reopening a done one goes
+                // back to read, not new: someone has already handled it once
+                const stored = this.enquiry.getOrigin().status;
+                this.enquiry.status = stored && stored !== 'done' ? stored : 'read';
+            },
+        },
+
+        // The header pill shows what is stored, not the unsaved checkbox
+        isStoredDone() {
+            return this.enquiry?.getOrigin().status === 'done';
         },
 
         /**
@@ -97,20 +117,23 @@ Shopware.Component.register('optiweb-product-enquiry-detail', {
             this.isLoading = false;
         },
 
-        async toggleDone() {
-            const previous = this.enquiry.status;
-            // Reopening goes back to read, not new: someone has already handled it once
-            this.enquiry.status = this.isDone ? 'read' : 'done';
+        async onSave() {
             this.isSaving = true;
 
             try {
                 await this.repository.save(this.enquiry, Shopware.Context.api);
+                this.isSaveSuccessful = true;
+                // Reload so the page shows what was actually stored
+                await this.loadEnquiry();
             } catch {
-                this.enquiry.status = previous;
                 this.createNotificationError({ message: this.$t('optiwebProductEnquiry.admin.notification.saveError') });
             }
 
             this.isSaving = false;
+        },
+
+        saveFinish() {
+            this.isSaveSuccessful = false;
         },
 
         async onConfirmDelete() {

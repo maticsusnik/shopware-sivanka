@@ -4,7 +4,7 @@
     <template #smart-bar-header>
         <h2>
             {{ $t('optiwebProductEnquiry.admin.detail.title') }}
-            <sw-label v-if="isDone" variant="success" appearance="pill" size="small">
+            <sw-label v-if="isStoredDone" variant="success" appearance="pill" size="small">
                 {{ $t('optiwebProductEnquiry.admin.detail.status.done') }}
             </sw-label>
         </h2>
@@ -23,14 +23,16 @@
         >
             {{ $t('global.default.delete') }}
         </mt-button>
-        <mt-button
+        <sw-button-process
             v-if="enquiry"
-            :variant="isDone ? 'secondary' : 'primary'"
+            variant="primary"
             :is-loading="isSaving"
-            @click="toggleDone"
+            :process-success="isSaveSuccessful"
+            @update:process-success="saveFinish"
+            @click.prevent="onSave"
         >
-            {{ isDone ? $t('optiwebProductEnquiry.admin.markNotDone') : $t('optiwebProductEnquiry.admin.markDone') }}
-        </mt-button>
+            {{ $t('global.default.save') }}
+        </sw-button-process>
     </template>
     {% endblock %}
 
@@ -38,6 +40,17 @@
     <template #content>
         <mt-loader v-if="isLoading" />
         <template v-else-if="enquiry">
+            <mt-card
+                position-identifier="optiweb-product-enquiry-detail-status"
+                :title="$t('optiwebProductEnquiry.admin.detail.statusSection')"
+            >
+                <mt-checkbox
+                    v-model:checked="isDone"
+                    :label="$t('optiwebProductEnquiry.admin.detail.doneLabel')"
+                    :disabled="isSaving"
+                />
+            </mt-card>
+
             <mt-card
                 position-identifier="optiweb-product-enquiry-detail-customer"
                 :title="$t('optiwebProductEnquiry.admin.detail.customerSection')"
