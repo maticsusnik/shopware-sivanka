@@ -1,6 +1,6 @@
 {
   "main.js": {
-    "file": "assets/optiweb-product-enquiry-CKrg_w-o.js",
+    "file": "assets/optiweb-product-enquiry-Dk9O7jEe.js",
     "name": "optiweb-product-enquiry",
     "src": "main.js",
     "isEntry": true,
@@ -8,11 +8,11 @@
       "module/optiweb-product-enquiry/snippet/en-GB.json"
     ],
     "css": [
-      "assets/optiweb-product-enquiry-CA3sZ60G.css"
+      "assets/optiweb-product-enquiry-LuUiJ1wD.css"
     ]
   },
   "module/optiweb-product-enquiry/snippet/en-GB.json": {
-    "file": "assets/en-GB-lp_2ZTaN.js",
+    "file": "assets/en-GB-BURAhIs1.js",
     "name": "en-GB",
     "src": "module/optiweb-product-enquiry/snippet/en-GB.json",
     "isDynamicEntry": true

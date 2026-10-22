@@ -12,10 +12,16 @@
         "shopware/core": "v6.7.14.1",
         "shopware/elasticsearch": "*",
         "shopware/storefront": "*",
+        "store.shopware.com/stripepaymentsapp": "^1.5",
         "symfony/flex": "~2",
         "twig/twig": "~3.28.0"
     },
     "repositories": [
+        {
+            "name": "shopware-packages",
+            "type": "composer",
+            "url": "https://packages.shopware.com"
+        },
         {
             "type": "path",
             "url": "custom/plugins/*",

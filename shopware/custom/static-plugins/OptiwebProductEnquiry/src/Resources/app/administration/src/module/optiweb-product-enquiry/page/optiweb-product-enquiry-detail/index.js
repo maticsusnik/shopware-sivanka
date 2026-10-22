@@ -9,6 +9,8 @@ Shopware.Component.register('optiweb-product-enquiry-detail', {
 
     inject: ['repositoryFactory'],
 
+    mixins: [Shopware.Mixin.getByName('notification')],
+
     props: {
         enquiryId: {
             type: String,
@@ -19,13 +21,39 @@ Shopware.Component.register('optiweb-product-enquiry-detail', {
     setup() {
         const enquiry = ref(null);
         const isLoading = ref(true);
+        const isSaving = ref(false);
+        const isSaveSuccessful = ref(false);
+        const showDeleteModal = ref(false);
 
-        return { enquiry, isLoading };
+        return { enquiry, isLoading, isSaving, isSaveSuccessful, showDeleteModal };
     },
 
     computed: {
         repository() {
             return this.repositoryFactory.create('product_enquiry');
+        },
+
+        // Bound to the checkbox; only Save writes it
+        isDone: {
+            get() {
+                return this.enquiry?.status === 'done';
+            },
+            set(done) {
+                if (done) {
+                    this.enquiry.status = 'done';
+                    return;
+                }
+
+                // Unticking restores the stored status; reopening a done one goes
+                // back to read, not new: someone has already handled it once
+                const stored = this.enquiry.getOrigin().status;
+                this.enquiry.status = stored && stored !== 'done' ? stored : 'read';
+            },
+        },
+
+        // The header pill shows what is stored, not the unsaved checkbox
+        isStoredDone() {
+            return this.enquiry?.getOrigin().status === 'done';
         },
 
         /**
@@ -87,6 +115,41 @@ Shopware.Component.register('optiweb-product-enquiry-detail', {
 
             this.enquiry = await this.repository.get(this.enquiryId, Shopware.Context.api, criteria);
             this.isLoading = false;
+        },
+
+        async onSave() {
+            this.isSaving = true;
+
+            try {
+                await this.repository.save(this.enquiry, Shopware.Context.api);
+                this.isSaveSuccessful = true;
+                // Reload so the page shows what was actually stored
+                await this.loadEnquiry();
+            } catch {
+                this.createNotificationError({ message: this.$t('optiwebProductEnquiry.admin.notification.saveError') });
+            }
+
+            this.isSaving = false;
+        },
+
+        saveFinish() {
+            this.isSaveSuccessful = false;
+        },
+
+        async onConfirmDelete() {
+            this.showDeleteModal = false;
+            this.isSaving = true;
+
+            try {
+                await this.repository.delete(this.enquiry.id, Shopware.Context.api);
+                this.createNotificationSuccess({
+                    message: this.$t('optiwebProductEnquiry.admin.notification.deleted', { count: 1 }, 1),
+                });
+                this.goBack();
+            } catch {
+                this.isSaving = false;
+                this.createNotificationError({ message: this.$t('optiwebProductEnquiry.admin.notification.deleteError') });
+            }
         },
 
         goBack() {

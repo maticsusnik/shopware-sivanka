@@ -1,0 +1,65 @@
+{#
+ # Shipping and return policy microdata for a product Offer — Google's merchant listing
+ # report flags both as missing. Included inside the `itemprop="offers"` scope of
+ # component/buy-widget/buy-widget.html.twig. Values come from the plugin config card
+ # "Structured data (SEO)"; the defaults match the terms of business (§7, §8).
+ #
+ # Google only accepts shippingDetails with a concrete rate, so without a configured
+ # delivery price the block is printed only where delivery is free (price >= threshold).
+ #
+ # Params: product (SalesChannelProductEntity)
+ #}
+{% block sivanka_offer_policies %}
+    {% set cfg = config('OptiwebTheme').config %}
+    {% set country = (cfg.schemaCountry ?? '')|trim|upper ?: 'SI' %}
+    {% set currency = context.currency.isoCode %}
+
+    {% set price = product.calculatedPrices|length ? product.calculatedPrices.first.unitPrice : product.calculatedPrice.unitPrice %}
+    {% set rate = (cfg.schemaShippingRate ?? '')|trim|replace({ ',': '.' }) %}
+    {% set freeFrom = (cfg.schemaFreeShippingFrom ?? '60')|trim|replace({ ',': '.' }) %}
+    {% if freeFrom is not same as('') and price >= freeFrom %}
+        {% set rate = '0' %}
+    {% endif %}
+
+    {% block sivanka_offer_policies_shipping %}
+        {% if rate is not same as('') and rate matches '/^\\d+(\\.\\d+)?$/' %}
+            <div itemprop="shippingDetails" itemscope itemtype="https://schema.org/OfferShippingDetails">
+                <div itemprop="shippingRate" itemscope itemtype="https://schema.org/MonetaryAmount">
+                    <meta itemprop="value" content="{{ rate }}">
+                    <meta itemprop="currency" content="{{ currency }}">
+                </div>
+                <div itemprop="shippingDestination" itemscope itemtype="https://schema.org/DefinedRegion">
+                    <meta itemprop="addressCountry" content="{{ country }}">
+                </div>
+                <div itemprop="deliveryTime" itemscope itemtype="https://schema.org/ShippingDeliveryTime">
+                    {% for prop, value in { handlingTime: cfg.schemaHandlingDays ?? '1-2', transitTime: cfg.schemaTransitDays ?? '1-2' } %}
+                        {% set days = value|trim|split('-') %}
+                        {% if (days|first)|trim matches '/^\\d+$/' and (days|last)|trim matches '/^\\d+$/' %}
+                            <div itemprop="{{ prop }}" itemscope itemtype="https://schema.org/QuantitativeValue">
+                                <meta itemprop="minValue" content="{{ (days|first)|trim }}">
+                                <meta itemprop="maxValue" content="{{ (days|last)|trim }}">
+                                <meta itemprop="unitCode" content="DAY">
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    {% endblock %}
+
+    {% block sivanka_offer_policies_return %}
+        {% set returnDays = (cfg.schemaReturnDays ?? '14')|trim %}
+        {% if returnDays matches '/^\\d+$/' and returnDays > 0 %}
+            {# The customer pays the direct cost of sending it back (§8), an amount we
+               cannot know up front — hence CustomerResponsibility, not ReturnShippingFees #}
+            <div itemprop="hasMerchantReturnPolicy" itemscope itemtype="https://schema.org/MerchantReturnPolicy">
+                <meta itemprop="applicableCountry" content="{{ country }}">
+                <link itemprop="returnPolicyCategory" href="https://schema.org/MerchantReturnFiniteReturnWindow">
+                <meta itemprop="merchantReturnDays" content="{{ returnDays }}">
+                <link itemprop="returnMethod" href="https://schema.org/ReturnByMail">
+                <link itemprop="returnMethod" href="https://schema.org/ReturnInStore">
+                <link itemprop="returnFees" href="https://schema.org/ReturnFeesCustomerResponsibility">
+            </div>
+        {% endif %}
+    {% endblock %}
+{% endblock %}

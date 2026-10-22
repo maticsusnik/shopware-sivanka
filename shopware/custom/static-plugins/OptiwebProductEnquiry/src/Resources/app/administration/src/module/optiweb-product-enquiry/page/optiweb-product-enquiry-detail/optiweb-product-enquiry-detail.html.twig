@@ -2,13 +2,37 @@
 <sw-page class="optiweb-product-enquiry-detail">
     {% block optiweb_product_enquiry_detail_header %}
     <template #smart-bar-header>
-        <h2>{{ $t('optiwebProductEnquiry.admin.detail.title') }}</h2>
+        <h2>
+            {{ $t('optiwebProductEnquiry.admin.detail.title') }}
+            <sw-label v-if="isStoredDone" variant="success" appearance="pill" size="small">
+                {{ $t('optiwebProductEnquiry.admin.detail.status.done') }}
+            </sw-label>
+        </h2>
     </template>
     {% endblock %}
 
     {% block optiweb_product_enquiry_detail_actions %}
     <template #smart-bar-actions>
         <mt-button variant="secondary" @click="goBack">{{ $t('global.default.cancel') }}</mt-button>
+        <mt-button
+            v-if="enquiry"
+            variant="critical"
+            ghost
+            :disabled="isSaving"
+            @click="showDeleteModal = true"
+        >
+            {{ $t('global.default.delete') }}
+        </mt-button>
+        <sw-button-process
+            v-if="enquiry"
+            variant="primary"
+            :is-loading="isSaving"
+            :process-success="isSaveSuccessful"
+            @update:process-success="saveFinish"
+            @click.prevent="onSave"
+        >
+            {{ $t('global.default.save') }}
+        </sw-button-process>
     </template>
     {% endblock %}
 
@@ -17,14 +41,25 @@
         <mt-loader v-if="isLoading" />
         <template v-else-if="enquiry">
             <mt-card
+                position-identifier="optiweb-product-enquiry-detail-status"
+                :title="$t('optiwebProductEnquiry.admin.detail.statusSection')"
+            >
+                <mt-checkbox
+                    v-model:checked="isDone"
+                    :label="$t('optiwebProductEnquiry.admin.detail.doneLabel')"
+                    :disabled="isSaving"
+                />
+            </mt-card>
+
+            <mt-card
                 position-identifier="optiweb-product-enquiry-detail-customer"
                 :title="$t('optiwebProductEnquiry.admin.detail.customerSection')"
             >
                 <sw-container columns="1fr 1fr" gap="16px">
-                    <mt-text-field :model-value="enquiry.firstName" :label="$t('account.personalFirstName')" disabled />
-                    <mt-text-field :model-value="enquiry.lastName" :label="$t('account.personalLastName')" disabled />
-                    <mt-text-field :model-value="enquiry.email" :label="$t('account.personalMailLabel')" disabled />
-                    <mt-text-field :model-value="enquiry.phone || '—'" :label="$t('account.profilePhoneNumber')" disabled />
+                    <mt-text-field :model-value="enquiry.firstName" :label="$t('optiwebProductEnquiry.admin.detail.firstName')" disabled />
+                    <mt-text-field :model-value="enquiry.lastName" :label="$t('optiwebProductEnquiry.admin.detail.lastName')" disabled />
+                    <mt-text-field :model-value="enquiry.email" :label="$t('optiwebProductEnquiry.admin.detail.email')" disabled />
+                    <mt-text-field :model-value="enquiry.phone || '—'" :label="$t('optiwebProductEnquiry.admin.detail.phone')" disabled />
                 </sw-container>
             </mt-card>
 
@@ -52,15 +87,33 @@
 
             <mt-card
                 position-identifier="optiweb-product-enquiry-detail-meta"
-                title="Meta"
+                :title="$t('optiwebProductEnquiry.admin.detail.metaSection')"
             >
                 <mt-text-field
                     :model-value="formattedCreatedAt"
-                    label="Submitted"
+                    :label="$t('optiwebProductEnquiry.admin.detail.submitted')"
                     disabled
                 />
             </mt-card>
         </template>
+
+        <sw-modal
+            v-if="showDeleteModal"
+            :title="$t('global.default.warning')"
+            variant="small"
+            @modal-close="showDeleteModal = false"
+        >
+            <p>{{ $t('optiwebProductEnquiry.admin.deleteConfirm', { count: 1 }, 1) }}</p>
+
+            <template #modal-footer>
+                <mt-button size="small" variant="secondary" @click="showDeleteModal = false">
+                    {{ $t('global.default.cancel') }}
+                </mt-button>
+                <mt-button size="small" variant="critical" @click="onConfirmDelete">
+                    {{ $t('global.default.delete') }}
+                </mt-button>
+            </template>
+        </sw-modal>
     </template>
     {% endblock %}
 </sw-page>

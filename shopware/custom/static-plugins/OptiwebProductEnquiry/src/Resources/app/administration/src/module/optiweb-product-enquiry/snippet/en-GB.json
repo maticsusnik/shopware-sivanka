@@ -15,7 +15,8 @@
                     "email": "Email",
                     "product": "Product",
                     "quantity": "Qty",
-                    "status": "Status"
+                    "status": "Status",
+                    "done": "Done"
                 },
                 "moreProducts": "{count} more product | {count} more products"
             },
@@ -27,12 +28,29 @@
                 "messageSection": "Message",
                 "status": {
                     "new": "New",
-                    "read": "Read"
+                    "read": "Read",
+                    "done": "Done"
                 },
                 "columnProduct": "Product",
                 "columnNumber": "Product number",
                 "columnVariant": "Variant",
-                "columnQuantity": "Quantity"
+                "columnQuantity": "Quantity",
+                "firstName": "First name",
+                "lastName": "Last name",
+                "email": "Email",
+                "phone": "Phone",
+                "metaSection": "Meta",
+                "statusSection": "Status",
+                "doneLabel": "Done (the enquiry has been answered)",
+                "submitted": "Submitted"
+            },
+            "markDone": "Mark as done",
+            "markNotDone": "Mark as not done",
+            "deleteConfirm": "Delete this enquiry? This cannot be undone. | Delete {count} enquiries? This cannot be undone.",
+            "notification": {
+                "deleted": "Enquiry deleted. | {count} enquiries deleted.",
+                "deleteError": "The enquiry could not be deleted.",
+                "saveError": "The enquiry could not be saved."
             }
         }
     },

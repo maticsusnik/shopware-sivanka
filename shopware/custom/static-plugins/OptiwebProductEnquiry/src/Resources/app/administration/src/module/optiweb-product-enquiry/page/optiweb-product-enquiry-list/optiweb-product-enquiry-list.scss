@@ -1,5 +1,16 @@
 .optiweb-product-enquiry-list {
-    .sw-data-grid__row {
+    // Rows open the enquiry, except while the done boxes are being edited
+    &:not(.is--editing) .sw-data-grid__row {
         cursor: pointer;
+    }
+
+    .optiweb-product-enquiry-list__done {
+        display: inline-flex;
+        justify-content: center;
+        margin: 0;
+    }
+
+    .optiweb-product-enquiry-list__muted {
+        color: var(--color-gray-500, #758ca3);
     }
 }
