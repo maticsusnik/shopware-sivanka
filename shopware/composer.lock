@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "056010617dac5ac558e0a6772311e891",
+    "content-hash": "7919708b5372001ee2fe1c5dc93a0489",
     "packages": [
         {
             "name": "async-aws/core",
@@ -6931,6 +6931,21 @@
                 "source": "https://github.com/squirrelphp/twig-php-syntax/tree/v1.13"
             },
             "time": "2025-05-03T06:37:30+00:00"
+        },
+        {
+            "name": "store.shopware.com/stripepaymentsapp",
+            "version": "1.5.1",
+            "dist": {
+                "type": "zip",
+                "url": "https://packages.shopware.com/download?downloadUrl=%2Fpackages%2Fplugins%2FStripePaymentsApp%2Fbinaries%2F1.5.1"
+            },
+            "type": "shopware-app",
+            "notification-url": "https://packages.shopware.com/downloads/",
+            "authors": [
+                {
+                    "name": "Stripe"
+                }
+            ]
         },
         {
             "name": "symfony/asset",
