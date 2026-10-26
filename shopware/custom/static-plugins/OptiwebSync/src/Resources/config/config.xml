@@ -16,6 +16,13 @@
         </input-field>
 
         <input-field type="text">
+            <name>endCustomerCode</name>
+            <label>Minimax customer for buyers without a VAT ID</label>
+            <label lang="de-DE">Minimax-Kunde für Käufer ohne USt-IdNr.</label>
+            <helpText>Code of the shared Minimax customer every order without a VAT ID goes to; the buyer's name and address are still written on the document. Leave empty for "končni kupec". A buyer with a VAT ID is matched by tax number and created in Minimax when not found.</helpText>
+        </input-field>
+
+        <input-field type="text">
             <name>shippingItemCode</name>
             <label>Minimax item for shipping costs (code or name)</label>
             <label lang="de-DE">Minimax-Artikel für Versandkosten (Code oder Name)</label>

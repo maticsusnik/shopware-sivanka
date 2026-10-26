@@ -53,6 +53,7 @@ class MinimaxClient implements ClientInterface
     // Lookup caches — populated on first use
     private array $currencyCache   = [];  // isoCode → int ID
     private array $countryCache    = [];  // isoCode → int|null ID
+    private ?int $endCustomerId    = null;
     private array $itemCache       = [];  // SKU → int|null ID
     private array $stockMap        = [];  // SKU → float quantity
     private bool  $stockMapLoaded  = false;
@@ -512,8 +513,14 @@ class MinimaxClient implements ClientInterface
 
         $customer   = $orderData['customer'] ?? [];
         $customerId = $this->findCustomer($customer, $orgId);
-        if ($customerId === null && $createMissingCustomer) {
+        // Only a company (VAT ID) gets its own partner; the shared B2C customer
+        // must already exist and is never created.
+        $mayCreate = trim((string) ($customer['vatId'] ?? '')) !== '';
+        if ($customerId === null && $mayCreate && $createMissingCustomer) {
             $customerId = $this->createCustomer($customer, $orgId);
+        }
+        if ($customerId === null && !$mayCreate) {
+            throw new \RuntimeException(sprintf('Minimax end customer "%s" not found', (string) ($customer['endCustomerCode'] ?? '')));
         }
         $currencyId = $this->resolveCurrencyId((string) ($orderData['currencyIso'] ?? 'EUR'), $orgId);
 
@@ -719,12 +726,18 @@ class MinimaxClient implements ClientInterface
     // -------------------------------------------------------------------------
 
     /**
-     * Find the Minimax customer for an order: match by VAT (tax) number first,
-     * then by the Code we file customers under (their e-mail). Read-only; the
-     * caller decides whether a missing customer may be created.
+     * Find the Minimax customer for an order. A buyer without a VAT ID goes to
+     * the shared end customer (`endCustomerCode`); a company is matched by VAT
+     * (tax) number first, then by the Code we file customers under (their
+     * e-mail). Read-only; the caller decides whether a missing one may be created.
      */
     private function findCustomer(array $customer, string $orgId): ?int
     {
+        $endCustomerCode = trim((string) ($customer['endCustomerCode'] ?? ''));
+        if ($endCustomerCode !== '') {
+            return $this->endCustomerId ??= $this->findCustomerIdByCode($endCustomerCode, $orgId);
+        }
+
         $vatId = trim((string) ($customer['vatId'] ?? ''));
         if ($vatId !== '') {
             $existing = $this->searchCustomerByTaxNumber($vatId, $orgId);

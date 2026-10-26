@@ -60,6 +60,12 @@ class OrderExportSync extends AbstractSyncBase
     /** The Minimax shipping item (no Code there, so it is found by name). */
     private const DEFAULT_SHIPPING_ITEM = 'POŠTNINA';
 
+    /** Minimax customer for buyers without a VAT ID (B2C). */
+    private const DEFAULT_END_CUSTOMER = 'končni kupec';
+
+    /** Code of the shared Minimax customer every order without a VAT ID goes to. */
+    private string $endCustomerCode = self::DEFAULT_END_CUSTOMER;
+
     /** Code or exact name of the Minimax item every shipping row references. */
     private string $shippingItem = self::DEFAULT_SHIPPING_ITEM;
 
@@ -115,6 +121,8 @@ class OrderExportSync extends AbstractSyncBase
         $this->context          = Context::createDefaultContext();
         $this->shippingItem = trim((string) ($this->systemConfigService->get('OptiwebSync.config.shippingItemCode') ?? ''))
             ?: self::DEFAULT_SHIPPING_ITEM;
+        $this->endCustomerCode = trim((string) ($this->systemConfigService->get('OptiwebSync.config.endCustomerCode') ?? ''))
+            ?: self::DEFAULT_END_CUSTOMER;
     }
 
     // -------------------------------------------------------------------------
@@ -330,6 +338,9 @@ class OrderExportSync extends AbstractSyncBase
                 'city'       => $billing['city'],
                 'countryIso' => $billing['countryIso'] !== '' ? $billing['countryIso'] : 'SI',
                 'vatId'      => $vatId,
+                // Without a VAT ID the order goes to the shared B2C customer; the
+                // buyer's name and address still go on the document (Customer* fields).
+                'endCustomerCode' => $vatId === '' ? $this->endCustomerCode : '',
             ],
             'recipient'   => [
                 'name'       => $shipping['name'],
