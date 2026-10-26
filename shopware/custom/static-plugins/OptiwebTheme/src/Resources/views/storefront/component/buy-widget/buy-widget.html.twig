@@ -129,6 +129,10 @@
                                 {% sw_include '@Storefront/storefront/component/product/card/price-unit.html.twig' with { product: page.product } %}
                             </div>
                         {% endif %}
+                        {% sw_include '@Storefront/storefront/component/buy-widget/purchase-rules.html.twig' with {
+                            product: page.product,
+                            additionalClass: 'product-purchase-rules--enquiry'
+                        } %}
                         {{ parent() }}
                     {% endblock %}
                 {% endif %}

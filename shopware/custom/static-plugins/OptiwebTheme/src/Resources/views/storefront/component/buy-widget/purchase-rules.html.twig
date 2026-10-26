@@ -1,0 +1,34 @@
+{#
+ # Minimum order quantity and purchase step, shown above the quantity selector + cart
+ # button and above the enquiry button. Renders nothing for a product that can be
+ # ordered one at a time. The enquiry form enforces the same rules on its quantity.
+ #}
+{% set purchaseMin = product.minPurchase ?? 1 %}
+{% set purchaseStep = product.purchaseSteps ?? 1 %}
+
+{% if purchaseMin > 1 or purchaseStep > 1 %}
+    {% block component_buy_widget_purchase_rules %}
+        {# Both values are above 1, so the plural pack unit fits; "kos" as in the quantity selector #}
+        {% set purchaseUnit = product.translated.packUnitPlural ?: (product.translated.packUnit ?: 'kos') %}
+        <ul class="product-purchase-rules{% if additionalClass is defined %} {{ additionalClass }}{% endif %}">
+            {% if purchaseMin > 1 %}
+                <li class="product-purchase-rule">
+                    {% sw_icon 'info' style { size: 'xs' } %}
+                    <span class="product-purchase-rule-text">
+                        {{ 'sivanka.purchaseRules.minPurchase'|trans|sw_sanitize }}
+                        <strong class="product-purchase-rule-value">{{ purchaseMin }}&nbsp;{{ purchaseUnit }}</strong>
+                    </span>
+                </li>
+            {% endif %}
+            {% if purchaseStep > 1 %}
+                <li class="product-purchase-rule">
+                    {% sw_icon 'info' style { size: 'xs' } %}
+                    <span class="product-purchase-rule-text">
+                        {{ 'sivanka.purchaseRules.purchaseSteps'|trans|sw_sanitize }}
+                        <strong class="product-purchase-rule-value">{{ purchaseStep }}&nbsp;{{ purchaseUnit }}</strong>
+                    </span>
+                </li>
+            {% endif %}
+        </ul>
+    {% endblock %}
+{% endif %}

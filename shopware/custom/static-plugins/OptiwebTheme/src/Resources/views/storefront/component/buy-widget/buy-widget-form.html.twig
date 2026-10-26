@@ -4,6 +4,14 @@
     {% if buyable %}
         <div class="row g-2 buy-widget-container align-items-center">
 
+            {% block buy_widget_purchase_rules %}
+                {% if product.minPurchase > 1 or product.purchaseSteps > 1 %}
+                    <div class="col-12">
+                        {% sw_include '@Storefront/storefront/component/buy-widget/purchase-rules.html.twig' with { product: product } %}
+                    </div>
+                {% endif %}
+            {% endblock %}
+
             {% block buy_widget_buy_quantity_container %}
                 {% if showQuantitySelect %}
                     <fieldset class="col-4 d-flex justify-content-start">

@@ -49,6 +49,8 @@
                     </div>
 
                     <div class="enquiry-line-qty">
+                        {% set qtyMin = product.minPurchase ?? 1 %}
+                        {% set qtyStep = product.purchaseSteps ?? 1 %}
                         <label class="form-label" for="qty-{{ product.id }}">
                             {{ 'optiwebProductEnquiry.form.qtyLabel'|trans }}
                         </label>
@@ -56,10 +58,16 @@
                                id="qty-{{ product.id }}"
                                name="products[{{ product.id }}][qty]"
                                class="form-control"
-                               value="1"
-                               min="1"
-                               step="1"
+                               value="{{ qtyMin }}"
+                               min="{{ qtyMin }}"
+                               step="{{ qtyStep }}"
+                               {% if qtyMin > 1 or qtyStep > 1 %}aria-describedby="qty-help-{{ product.id }}"{% endif %}
                                required>
+                        {% sw_include '@OptiwebProductEnquiry/storefront/component/product/quickview/enquiry-qty-help.html.twig' with {
+                            qtyMin: qtyMin,
+                            qtyStep: qtyStep,
+                            helpId: 'qty-help-' ~ product.id
+                        } %}
                     </div>
                 </div>
             {% endblock %}

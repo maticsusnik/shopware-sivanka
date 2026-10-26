@@ -1,0 +1,14 @@
+{# Minimum order quantity / purchase step under an enquiry quantity field; nothing when both are 1. #}
+{% block component_product_enquiry_qty_help %}
+    {% if qtyMin > 1 or qtyStep > 1 %}
+        <div id="{{ helpId }}" class="form-text enquiry-qty-help">
+            {% if qtyMin > 1 %}
+                {{ 'optiwebProductEnquiry.form.qtyMin'|trans({ '%min%': qtyMin }) }}
+            {% endif %}
+            {% if qtyMin > 1 and qtyStep > 1 %}·{% endif %}
+            {% if qtyStep > 1 %}
+                {{ 'optiwebProductEnquiry.form.qtyStep'|trans({ '%step%': qtyStep }) }}
+            {% endif %}
+        </div>
+    {% endif %}
+{% endblock %}
