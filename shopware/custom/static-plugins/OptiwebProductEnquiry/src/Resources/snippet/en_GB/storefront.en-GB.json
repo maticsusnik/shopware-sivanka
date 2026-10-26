@@ -17,7 +17,9 @@
             "commentLabel": "Your message",
             "commentPlaceholder": "Please describe your enquiry...",
             "qtyLabel": "Quantity",
-            "productsLabel": "Products in this enquiry"
+            "productsLabel": "Products in this enquiry",
+            "qtyMin": "Minimum quantity: %min%",
+            "qtyStep": "in steps of %step%"
         },
         "success": {
             "message": "Thank you for your enquiry. We will get back to you shortly."

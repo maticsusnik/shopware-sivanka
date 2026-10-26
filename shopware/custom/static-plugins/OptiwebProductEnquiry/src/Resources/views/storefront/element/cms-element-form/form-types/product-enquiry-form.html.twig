@@ -92,17 +92,26 @@
         {% if not isMultiProduct %}
             <div class="mb-3">
                 <label for="productQty" class="form-label">{{ 'optiwebProductEnquiry.form.qtyLabel'|trans }}*</label>
+                {# Same minimum order quantity / purchase step as the cart; the controller enforces them too #}
+                {% set qtyMin = product.minPurchase ?? 1 %}
+                {% set qtyStep = product.purchaseSteps ?? 1 %}
                 <div class="qtyField">
                     <input type="number"
                            id="productQty"
                            name="productQty"
                            class="form-control"
-                           value="1"
-                           min="1"
-                           step="1"
+                           value="{{ qtyMin }}"
+                           min="{{ qtyMin }}"
+                           step="{{ qtyStep }}"
+                           {% if qtyMin > 1 or qtyStep > 1 %}aria-describedby="productQtyHelp"{% endif %}
                            required>
                 </div>
                 <div class="invalid-feedback"></div>
+                {% sw_include '@OptiwebProductEnquiry/storefront/component/product/quickview/enquiry-qty-help.html.twig' with {
+                    qtyMin: qtyMin,
+                    qtyStep: qtyStep,
+                    helpId: 'productQtyHelp'
+                } %}
             </div>
         {% endif %}
 

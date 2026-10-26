@@ -660,6 +660,53 @@
         }
     }
 
+    // Minimum order quantity / purchase step — an info panel above the bordered
+    // qty/price line (or above the enquiry button).
+    .product-purchase-rules {
+        list-style: none;
+        margin: 0 0 16px;
+        padding: 10px 14px;
+        // White, not cream: the buy box itself is cream
+        background: $sv-white;
+        border: 1px solid $sv-border;
+        border-radius: $sv-r-chrome;
+        font-size: 14px;
+        line-height: 21px;
+        color: $sv-ink-muted;
+    }
+
+    .product-purchase-rules--enquiry {
+        margin-top: 16px;
+    }
+
+    .product-purchase-rule {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+
+        & + & {
+            margin-top: 4px;
+        }
+
+        // core's `svg { top: .25em }` would push it below the text line
+        .icon {
+            color: $sv-bordo;
+            flex: 0 0 auto;
+            width: 16px;
+            height: 16px;
+            margin-top: 0;
+
+            svg {
+                top: 0;
+            }
+        }
+
+        .product-purchase-rule-value {
+            color: $sv-ink;
+            font-weight: 600;
+        }
+    }
+
     // Enquiry button — replaces add-to-cart on unpriced / unavailable products.
     // Core ships it as `.btn-light` (pale grey) with an inline-block layout, so the
     // baseline-aligned envelope sat ~5px above the label and the button did not match
