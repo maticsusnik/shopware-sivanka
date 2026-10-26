@@ -15,23 +15,11 @@
             <defaultValue>false</defaultValue>
         </input-field>
 
-        <component name="sw-entity-single-select">
-            <name>orderExportState</name>
-            <entity>state_machine_state</entity>
-            <label>Select default order state for export</label>
-        </component>
-
-        <component name="sw-entity-multi-id-select">
-            <name>allowedOrderPaymentStateToExport</name>
-            <entity>state_machine_state</entity>
-            <label>Select allowed order payment state to export</label>
-        </component>
-
         <input-field type="text">
             <name>shippingItemCode</name>
-            <label>Minimax item code for shipping costs</label>
-            <label lang="de-DE">Minimax-Artikelcode für Versandkosten</label>
-            <helpText>Code of an item in Minimax representing shipping (e.g. "POSTNINA"). A Minimax order row carries no VAT rate of its own — it inherits it from the referenced item — so without this the shipping row is exported as free text with no VAT rate. Leave empty to keep the free-text row.</helpText>
+            <label>Minimax item for shipping costs (code or name)</label>
+            <label lang="de-DE">Minimax-Artikel für Versandkosten (Code oder Name)</label>
+            <helpText>Code or exact name of the Minimax item every shipping row points to. A Minimax order row carries no VAT rate of its own — it inherits it from the referenced item. Leave empty for "POŠTNINA". Which orders are exported is fixed: order state "Open"; card / online payments only once paid; cash on delivery, invoice and prepayment right away.</helpText>
         </input-field>
     </card>
 

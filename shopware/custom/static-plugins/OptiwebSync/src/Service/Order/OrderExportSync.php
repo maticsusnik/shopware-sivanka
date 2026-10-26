@@ -14,7 +14,9 @@ use Shopware\Core\Checkout\Order\Aggregate\OrderAddress\OrderAddressEntity;
 use Shopware\Core\Checkout\Order\Aggregate\OrderDelivery\OrderDeliveryEntity;
 use Shopware\Core\Checkout\Order\Aggregate\OrderLineItem\OrderLineItemEntity;
 use Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionEntity;
+use Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionStates;
 use Shopware\Core\Checkout\Order\OrderEntity;
+use Shopware\Core\Checkout\Order\OrderStates;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
@@ -25,7 +27,13 @@ use Shopware\Core\Framework\DataAbstractionLayer\Search\Sorting\FieldSorting;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
 
 /**
- * Exports paid Shopware orders to Minimax as issued sales orders.
+ * Exports open Shopware orders to Minimax as issued sales orders.
+ *
+ * Which orders: order state "open" only. Offline payment methods (cash on
+ * delivery, invoice, prepayment, direct debit) go over as soon as the order is
+ * open; any other method — card and other online payments (Stripe) — only once
+ * its payment state is "paid". Always judged on the order's current (primary)
+ * transaction, so after a customer switches the payment method the new one counts.
  *
  * Reads and writes through the DAL — one query with the associations it needs,
  * rather than a chain of admin-API round-trips per order.
@@ -41,8 +49,19 @@ class OrderExportSync extends AbstractSyncBase
 
     private Context $context;
 
-    /** Minimax item code used for the shipping row; empty = free-text row. */
-    private string $shippingItemCode = '';
+    /** Payment handlers that never take money online: exportable while unpaid. */
+    private const OFFLINE_PAYMENT_HANDLERS = [
+        'Shopware\\Core\\Checkout\\Payment\\Cart\\PaymentHandler\\CashPayment',
+        'Shopware\\Core\\Checkout\\Payment\\Cart\\PaymentHandler\\InvoicePayment',
+        'Shopware\\Core\\Checkout\\Payment\\Cart\\PaymentHandler\\PrePayment',
+        'Shopware\\Core\\Checkout\\Payment\\Cart\\PaymentHandler\\DebitPayment',
+    ];
+
+    /** The Minimax shipping item (no Code there, so it is found by name). */
+    private const DEFAULT_SHIPPING_ITEM = 'POŠTNINA';
+
+    /** Code or exact name of the Minimax item every shipping row references. */
+    private string $shippingItem = self::DEFAULT_SHIPPING_ITEM;
 
     private int $exported = 0;
     private int $failed = 0;
@@ -94,7 +113,8 @@ class OrderExportSync extends AbstractSyncBase
     protected function initialize(): void
     {
         $this->context          = Context::createDefaultContext();
-        $this->shippingItemCode = trim((string) ($this->systemConfigService->get('OptiwebSync.config.shippingItemCode') ?? ''));
+        $this->shippingItem = trim((string) ($this->systemConfigService->get('OptiwebSync.config.shippingItemCode') ?? ''))
+            ?: self::DEFAULT_SHIPPING_ITEM;
     }
 
     // -------------------------------------------------------------------------
@@ -106,35 +126,25 @@ class OrderExportSync extends AbstractSyncBase
      */
     protected function setExportData(): array
     {
-        $orderExportState = (string) ($this->systemConfigService->get('OptiwebSync.config.orderExportState') ?? '');
-        $allowedTxStates  = $this->systemConfigService->get('OptiwebSync.config.allowedOrderPaymentStateToExport');
-        $allowedTxStates  = is_array($allowedTxStates) ? array_values(array_filter($allowedTxStates)) : [];
-
-        // Without both settings the filter would be meaningless. Say so loudly
-        // instead of quietly exporting nothing (or everything) forever.
-        if ($orderExportState === '' || $allowedTxStates === []) {
-            OwLogger::error($this->logger, 'Order export is not configured', [
-                'orderExportState'                  => $orderExportState !== '' ? $orderExportState : 'MISSING',
-                'allowedOrderPaymentStateToExport'  => $allowedTxStates !== [] ? $allowedTxStates : 'MISSING',
-            ]);
-
-            return [];
-        }
-
         $criteria = new Criteria();
         $criteria->addFilter(new EqualsAnyFilter('customFields.' . GlobalVariables::CUSTOM_FIELD_OPTIWEB_STATUS, [
             GlobalVariables::STATUS_WAITING,
             GlobalVariables::STATUS_ERROR,
             GlobalVariables::STATUS_PARTIALLY_SENT,
         ]));
-        $criteria->addFilter(new EqualsFilter('stateId', $orderExportState));
-        // Payment state comes from the order's primary transaction; orders written
-        // without a primary transaction reference fall back to "any transaction".
+        $criteria->addFilter(new EqualsFilter('stateMachineState.technicalName', OrderStates::STATE_OPEN));
+        // Offline payment, or paid. Orders written without a primary transaction
+        // reference fall back to "any transaction"; exportOrder() re-checks the
+        // latest one, so the fallback can only let too many through, never too few.
         $criteria->addFilter(new MultiFilter(MultiFilter::CONNECTION_OR, [
-            new EqualsAnyFilter('primaryOrderTransaction.stateId', $allowedTxStates),
+            new EqualsAnyFilter('primaryOrderTransaction.paymentMethod.handlerIdentifier', self::OFFLINE_PAYMENT_HANDLERS),
+            new EqualsFilter('primaryOrderTransaction.stateMachineState.technicalName', OrderTransactionStates::STATE_PAID),
             new MultiFilter(MultiFilter::CONNECTION_AND, [
                 new EqualsFilter('primaryOrderTransactionId', null),
-                new EqualsAnyFilter('transactions.stateId', $allowedTxStates),
+                new MultiFilter(MultiFilter::CONNECTION_OR, [
+                    new EqualsAnyFilter('transactions.paymentMethod.handlerIdentifier', self::OFFLINE_PAYMENT_HANDLERS),
+                    new EqualsFilter('transactions.stateMachineState.technicalName', OrderTransactionStates::STATE_PAID),
+                ]),
             ]),
         ]));
 
@@ -145,6 +155,8 @@ class OrderExportSync extends AbstractSyncBase
         $criteria->addAssociation('deliveries.shippingOrderAddress.country');
         $criteria->addAssociation('deliveries.shippingMethod');
         $criteria->addAssociation('transactions.paymentMethod');
+        $criteria->addAssociation('transactions.stateMachineState');
+        $criteria->addAssociation('primaryOrderTransaction.stateMachineState');
         $criteria->addAssociation('primaryOrderDelivery.shippingOrderAddress.country');
         $criteria->addAssociation('primaryOrderDelivery.shippingMethod');
         $criteria->addAssociation('primaryOrderTransaction.paymentMethod');
@@ -219,6 +231,14 @@ class OrderExportSync extends AbstractSyncBase
         if ($transaction === null) {
             ++$this->skipped;
             OwLogger::warning($this->logger, "Order $orderNumber has no payment transaction — not exported.");
+
+            return;
+        }
+
+        // Left waiting: picked up by a later run once the payment arrives.
+        if (!$this->isPaymentReady($transaction)) {
+            ++$this->skipped;
+            OwLogger::addVisibleLog($this->logger, "Order $orderNumber: online payment not paid yet — not exported for now.");
 
             return;
         }
@@ -384,10 +404,10 @@ class OrderExportSync extends AbstractSyncBase
 
         return [[
             // A Minimax order row inherits its VAT rate from the referenced item
-            // and has no rate of its own. With shippingItemCode configured the
-            // row resolves to a real item and is taxed correctly; without it the
-            // row goes over as free text and carries no VAT rate at all.
-            'sku'             => $this->shippingItemCode,
+            // and has no rate of its own, so the row must point at the shipping
+            // item. Minimax's "POŠTNINA" has no Code, hence the name lookup.
+            'sku'             => '',
+            'itemReference'   => $this->shippingItem,
             'name'            => $shippingName !== '' ? $shippingName : 'Poštnina',
             'quantity'        => 1.0,
             'unitPrice'       => round($net, 4),
@@ -482,6 +502,17 @@ class OrderExportSync extends AbstractSyncBase
         );
 
         return end($transactions) ?: null;
+    }
+
+    /** Offline payment methods are ready right away; online ones once paid. */
+    private function isPaymentReady(OrderTransactionEntity $transaction): bool
+    {
+        $handler = (string) $transaction->getPaymentMethod()?->getHandlerIdentifier();
+        if (\in_array($handler, self::OFFLINE_PAYMENT_HANDLERS, true)) {
+            return true;
+        }
+
+        return $transaction->getStateMachineState()?->getTechnicalName() === OrderTransactionStates::STATE_PAID;
     }
 
     /**

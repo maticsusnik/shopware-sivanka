@@ -522,6 +522,15 @@ class MinimaxClient implements ClientInterface
             $sku    = trim((string) ($line['sku'] ?? ''));
             $itemId = $sku !== '' ? $this->findItemIdByCode($sku, $orgId) : null;
 
+            // A row without a shop SKU (shipping) can name its Minimax item by code or name.
+            $reference = trim((string) ($line['itemReference'] ?? ''));
+            if ($itemId === null && $reference !== '') {
+                $itemId = $this->findItemIdByCodeOrName($reference, $orgId);
+                if ($itemId === null) {
+                    $this->warn(sprintf('Minimax item "%s" not found — "%s" exported as a free-text row without VAT rate.', $reference, (string) ($line['name'] ?? '')));
+                }
+            }
+
             $row = [
                 'ItemCode' => $sku,
                 'ItemName' => (string) ($line['name'] ?? ''),
@@ -961,6 +970,58 @@ class MinimaxClient implements ClientInterface
      *
      * @return array<string, mixed>|null
      */
+    /** An item by Code, or else by exact (case-insensitive) Name. */
+    private function findItemIdByCodeOrName(string $reference, string $orgId): ?int
+    {
+        $cacheKey = "\0name:" . $reference;
+        if (array_key_exists($cacheKey, $this->itemCache)) {
+            return $this->itemCache[$cacheKey];
+        }
+
+        return $this->itemCache[$cacheKey] = $this->lookupItemIdByCodeOrName($reference, $orgId);
+    }
+
+    private function lookupItemIdByCodeOrName(string $reference, string $orgId): ?int
+    {
+        $itemId = $this->findItemIdByCode($reference, $orgId);
+        if ($itemId !== null) {
+            return $itemId;
+        }
+
+        try {
+            $data = $this->get($this->url($orgId, 'items', [
+                'SearchString' => $reference,
+                'PageSize'     => self::PAGE_SIZE,
+                'CurrentPage'  => 1,
+            ]));
+        } catch (\RuntimeException) {
+            return null;
+        }
+
+        // The list rows carry no Name, so a single hit is confirmed by fetching it.
+        foreach ($this->rows($data) as $row) {
+            $id = $row['ItemId'] ?? $row['ItemID'] ?? $row['ID'] ?? null;
+            if ($id === null) {
+                continue;
+            }
+
+            $name = $row['Name'] ?? null;
+            if ($name === null) {
+                try {
+                    $name = $this->get($this->url($orgId, 'items/' . (int) $id))['Name'] ?? null;
+                } catch (\RuntimeException) {
+                    continue;
+                }
+            }
+
+            if (mb_strtolower(trim((string) $name)) === mb_strtolower($reference)) {
+                return (int) $id;
+            }
+        }
+
+        return null;
+    }
+
     private function fetchItemByCode(string $sku, string $orgId): ?array
     {
         try {
