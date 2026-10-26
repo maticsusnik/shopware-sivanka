@@ -11,27 +11,22 @@
             <name>enableOrderExport</name>
             <label>Send orders to Minimax</label>
             <label lang="de-DE">Aufträge an Minimax senden</label>
-            <helpText>Off by default. While off, the export still runs and logs the exact payload it would send, but nothing is created in Minimax.</helpText>
+            <helpText>Off by default. While off, the export still runs and logs the exact payload it would send, using read-only lookups only: nothing is created in Minimax, a customer that does not exist yet is listed as "WouldCreate".</helpText>
             <defaultValue>false</defaultValue>
         </input-field>
 
-        <component name="sw-entity-single-select">
-            <name>orderExportState</name>
-            <entity>state_machine_state</entity>
-            <label>Select default order state for export</label>
-        </component>
-
-        <component name="sw-entity-multi-id-select">
-            <name>allowedOrderPaymentStateToExport</name>
-            <entity>state_machine_state</entity>
-            <label>Select allowed order payment state to export</label>
-        </component>
+        <input-field type="text">
+            <name>endCustomerCode</name>
+            <label>Minimax customer for buyers without a VAT ID</label>
+            <label lang="de-DE">Minimax-Kunde für Käufer ohne USt-IdNr.</label>
+            <helpText>Code of the shared Minimax customer every order without a VAT ID goes to; the buyer's name and address are still written on the document. Leave empty for "končni kupec". A buyer with a VAT ID is matched by tax number and created in Minimax when not found.</helpText>
+        </input-field>
 
         <input-field type="text">
             <name>shippingItemCode</name>
-            <label>Minimax item code for shipping costs</label>
-            <label lang="de-DE">Minimax-Artikelcode für Versandkosten</label>
-            <helpText>Code of an item in Minimax representing shipping (e.g. "POSTNINA"). A Minimax order row carries no VAT rate of its own — it inherits it from the referenced item — so without this the shipping row is exported as free text with no VAT rate. Leave empty to keep the free-text row.</helpText>
+            <label>Minimax item for shipping costs (code or name)</label>
+            <label lang="de-DE">Minimax-Artikel für Versandkosten (Code oder Name)</label>
+            <helpText>Code or exact name of the Minimax item every shipping row points to. A Minimax order row carries no VAT rate of its own — it inherits it from the referenced item. Leave empty for "POŠTNINA". Which orders are exported is fixed: order state "Open"; card / online payments only once paid; cash on delivery, invoice and prepayment right away.</helpText>
         </input-field>
     </card>
 

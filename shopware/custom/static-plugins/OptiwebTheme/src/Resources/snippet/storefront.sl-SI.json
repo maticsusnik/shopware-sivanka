@@ -80,7 +80,11 @@
         "searchClear": "Počisti iskanje",
         "noticeBarLabel": "Obvestilo trgovine",
         "noticeBarMore": "Več informacij",
-        "noticeBarClose": "Zapri obvestilo"
+        "noticeBarClose": "Zapri obvestilo",
+        "purchaseRules": {
+            "minPurchase": "Najmanjša količina naročila:",
+            "purchaseSteps": "Naročilo v korakih po:"
+        }
     },
     "prems-one-page-checkout": {
         "steps": {

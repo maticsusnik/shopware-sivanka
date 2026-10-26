@@ -1,5 +1,11 @@
 {
     "checkout": {
         "sivanka-min-order-value": "The minimum order value is %minValue% (excluding shipping). Please add products worth at least %missing% to place your order."
+    },
+    "sivanka": {
+        "purchaseRules": {
+            "minPurchase": "Minimum order quantity:",
+            "purchaseSteps": "Sold in steps of:"
+        }
     }
 }

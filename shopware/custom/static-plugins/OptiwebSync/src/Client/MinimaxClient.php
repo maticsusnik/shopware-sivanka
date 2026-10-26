@@ -53,6 +53,7 @@ class MinimaxClient implements ClientInterface
     // Lookup caches — populated on first use
     private array $currencyCache   = [];  // isoCode → int ID
     private array $countryCache    = [];  // isoCode → int|null ID
+    private ?int $endCustomerId    = null;
     private array $itemCache       = [];  // SKU → int|null ID
     private array $stockMap        = [];  // SKU → float quantity
     private bool  $stockMapLoaded  = false;
@@ -474,7 +475,7 @@ class MinimaxClient implements ClientInterface
     public function createOrder(array $orderData): array
     {
         try {
-            $payload = $this->buildOrderPayload($orderData);
+            $payload = $this->buildOrderPayload($orderData, true);
             $orgId   = $this->getOrganizationId();
 
             $response = $this->post($this->url($orgId, 'orders'), $payload);
@@ -500,20 +501,42 @@ class MinimaxClient implements ClientInterface
      *
      * Used by createOrder() and by the export's dry-run mode, so a dry run
      * exercises the same customer/item/currency resolution as a real export.
+     *
+     * Only createOrder() passes $createMissingCustomer: everything else (dry run,
+     * export switched off) must stay read-only, so an unknown customer is not
+     * created but reported in the payload as `Customer.WouldCreate`.
      */
-    public function buildOrderPayload(array $orderData): array
+    public function buildOrderPayload(array $orderData, bool $createMissingCustomer = false): array
     {
         $this->ensureAuthenticated();
         $orgId = $this->getOrganizationId();
 
         $customer   = $orderData['customer'] ?? [];
-        $customerId = $this->findOrCreateCustomer($customer, $orgId);
+        $customerId = $this->findCustomer($customer, $orgId);
+        // Only a company (VAT ID) gets its own partner; the shared B2C customer
+        // must already exist and is never created.
+        $mayCreate = trim((string) ($customer['vatId'] ?? '')) !== '';
+        if ($customerId === null && $mayCreate && $createMissingCustomer) {
+            $customerId = $this->createCustomer($customer, $orgId);
+        }
+        if ($customerId === null && !$mayCreate) {
+            throw new \RuntimeException(sprintf('Minimax end customer "%s" not found', (string) ($customer['endCustomerCode'] ?? '')));
+        }
         $currencyId = $this->resolveCurrencyId((string) ($orderData['currencyIso'] ?? 'EUR'), $orgId);
 
         $orderRows = [];
         foreach ($orderData['lines'] ?? [] as $line) {
             $sku    = trim((string) ($line['sku'] ?? ''));
             $itemId = $sku !== '' ? $this->findItemIdByCode($sku, $orgId) : null;
+
+            // A row without a shop SKU (shipping) can name its Minimax item by code or name.
+            $reference = trim((string) ($line['itemReference'] ?? ''));
+            if ($itemId === null && $reference !== '') {
+                $itemId = $this->findItemIdByCodeOrName($reference, $orgId);
+                if ($itemId === null) {
+                    $this->warn(sprintf('Minimax item "%s" not found — "%s" exported as a free-text row without VAT rate.', $reference, (string) ($line['name'] ?? '')));
+                }
+            }
 
             $row = [
                 'ItemCode' => $sku,
@@ -555,7 +578,9 @@ class MinimaxClient implements ClientInterface
             'ReceivedIssued' => 'I',   // issued order
             'Year'           => $year,
             'Date'           => $date,
-            'Customer'       => ['ID' => $customerId],
+            'Customer'       => $customerId !== null
+                ? ['ID' => $customerId]
+                : ['ID' => null, 'WouldCreate' => $this->buildCustomerPayload($customer, $orgId)],
             'Currency'       => ['ID' => $currencyId],
             'Status'         => 'O',   // draft
             'OrderRows'      => $orderRows,
@@ -701,12 +726,18 @@ class MinimaxClient implements ClientInterface
     // -------------------------------------------------------------------------
 
     /**
-     * Resolve the Minimax customer for an order: match by VAT (tax) number
-     * first, then by the Code we file customers under (their e-mail), and create
-     * a new partner only when neither matches.
+     * Find the Minimax customer for an order. A buyer without a VAT ID goes to
+     * the shared end customer (`endCustomerCode`); a company is matched by VAT
+     * (tax) number first, then by the Code we file customers under (their
+     * e-mail). Read-only; the caller decides whether a missing one may be created.
      */
-    private function findOrCreateCustomer(array $customer, string $orgId): int
+    private function findCustomer(array $customer, string $orgId): ?int
     {
+        $endCustomerCode = trim((string) ($customer['endCustomerCode'] ?? ''));
+        if ($endCustomerCode !== '') {
+            return $this->endCustomerId ??= $this->findCustomerIdByCode($endCustomerCode, $orgId);
+        }
+
         $vatId = trim((string) ($customer['vatId'] ?? ''));
         if ($vatId !== '') {
             $existing = $this->searchCustomerByTaxNumber($vatId, $orgId);
@@ -723,7 +754,7 @@ class MinimaxClient implements ClientInterface
             }
         }
 
-        return $this->createCustomer($customer, $orgId);
+        return null;
     }
 
     /**
@@ -772,23 +803,67 @@ class MinimaxClient implements ClientInterface
      * Exact customer lookup by Code (unique within the organisation).
      *
      * GET api/orgs/{orgId}/customers/code({code}) — the route template takes the
-     * bare value, so quoting it would search for a literal quoted string.
+     * bare value, so quoting it would search for a literal quoted string. A code
+     * with a dot in it (every e-mail, "DH d.d.") never reaches that route: IIS
+     * answers 404 for it. So fall back to a SearchString search and match the
+     * Code exactly, as fetchItemByCode() does — otherwise every returning buyer
+     * would get a second customer with the same, unique, Code.
      */
     private function findCustomerIdByCode(string $code, string $orgId): ?int
     {
+        $customerId = static function (array $record): ?int {
+            $id = $record['CustomerId'] ?? $record['CustomerID'] ?? $record['ID'] ?? null;
+
+            return $id !== null ? (int) $id : null;
+        };
+
         try {
             $data = $this->get($this->codeUrl($orgId, 'customers', $code));
+            $id   = $customerId($this->rows($data)[0] ?? $data);
+            if ($id !== null) {
+                return $id;
+            }
+        } catch (\RuntimeException) {
+            // Fall through to the search fallback below.
+        }
+
+        try {
+            $data = $this->get($this->url($orgId, 'customers', [
+                'SearchString' => $code,
+                'PageSize'     => self::PAGE_SIZE,
+                'CurrentPage'  => 1,
+            ]));
         } catch (\RuntimeException) {
             return null;
         }
 
-        $record = $this->rows($data)[0] ?? $data;
-        $id     = $record['CustomerId'] ?? $record['CustomerID'] ?? $record['ID'] ?? null;
+        // E-mail codes are case-insensitive; Minimax keeps whatever case was filed.
+        foreach ($this->rows($data) as $row) {
+            if (mb_strtolower(trim((string) ($row['Code'] ?? ''))) === mb_strtolower($code)) {
+                return $customerId($row);
+            }
+        }
 
-        return $id !== null ? (int) $id : null;
+        return null;
     }
 
     private function createCustomer(array $customer, string $orgId): int
+    {
+        $payload  = $this->buildCustomerPayload($customer, $orgId);
+        $response = $this->post($this->url($orgId, 'customers'), $payload);
+        $id       = $response['CustomerId'] ?? $response['CustomerID'] ?? $response['ID'] ?? null;
+
+        if ($id === null) {
+            throw new \RuntimeException(
+                'Minimax customer created but no ID in response: ' . json_encode($response),
+            );
+        }
+
+        return (int) $id;
+    }
+
+    /** The customer createCustomer() would file — also shown by a dry run. */
+    private function buildCustomerPayload(array $customer, string $orgId): array
     {
         $vatId     = trim((string) ($customer['vatId'] ?? ''));
         $countryIso = (string) ($customer['countryIso'] ?? 'SI');
@@ -819,16 +894,7 @@ class MinimaxClient implements ClientInterface
             $payload['VATIdentificationNumber'] = $vatId;
         }
 
-        $response = $this->post($this->url($orgId, 'customers'), $payload);
-        $id       = $response['CustomerId'] ?? $response['CustomerID'] ?? $response['ID'] ?? null;
-
-        if ($id === null) {
-            throw new \RuntimeException(
-                'Minimax customer created but no ID in response: ' . json_encode($response),
-            );
-        }
-
-        return (int) $id;
+        return $payload;
     }
 
     private function taxNumberDigits(string $vatId): string
@@ -917,6 +983,58 @@ class MinimaxClient implements ClientInterface
      *
      * @return array<string, mixed>|null
      */
+    /** An item by Code, or else by exact (case-insensitive) Name. */
+    private function findItemIdByCodeOrName(string $reference, string $orgId): ?int
+    {
+        $cacheKey = "\0name:" . $reference;
+        if (array_key_exists($cacheKey, $this->itemCache)) {
+            return $this->itemCache[$cacheKey];
+        }
+
+        return $this->itemCache[$cacheKey] = $this->lookupItemIdByCodeOrName($reference, $orgId);
+    }
+
+    private function lookupItemIdByCodeOrName(string $reference, string $orgId): ?int
+    {
+        $itemId = $this->findItemIdByCode($reference, $orgId);
+        if ($itemId !== null) {
+            return $itemId;
+        }
+
+        try {
+            $data = $this->get($this->url($orgId, 'items', [
+                'SearchString' => $reference,
+                'PageSize'     => self::PAGE_SIZE,
+                'CurrentPage'  => 1,
+            ]));
+        } catch (\RuntimeException) {
+            return null;
+        }
+
+        // The list rows carry no Name, so a single hit is confirmed by fetching it.
+        foreach ($this->rows($data) as $row) {
+            $id = $row['ItemId'] ?? $row['ItemID'] ?? $row['ID'] ?? null;
+            if ($id === null) {
+                continue;
+            }
+
+            $name = $row['Name'] ?? null;
+            if ($name === null) {
+                try {
+                    $name = $this->get($this->url($orgId, 'items/' . (int) $id))['Name'] ?? null;
+                } catch (\RuntimeException) {
+                    continue;
+                }
+            }
+
+            if (mb_strtolower(trim((string) $name)) === mb_strtolower($reference)) {
+                return (int) $id;
+            }
+        }
+
+        return null;
+    }
+
     private function fetchItemByCode(string $sku, string $orgId): ?array
     {
         try {

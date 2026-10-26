@@ -4283,11 +4283,11 @@
         },
         {
             "name": "optiweb/theme",
-            "version": "1.1.0",
+            "version": "1.2.0",
             "dist": {
                 "type": "path",
                 "url": "custom/static-plugins/OptiwebTheme",
-                "reference": "0a8af478403ce8622b244981c87603d02d32d0ec"
+                "reference": "bf5002722ba3e82fb0aef40934bbdc28a7024f0e"
             },
             "require": {
                 "shopware/core": "~6.7.0",

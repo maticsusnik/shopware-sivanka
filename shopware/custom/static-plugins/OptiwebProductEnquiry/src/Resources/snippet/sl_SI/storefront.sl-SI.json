@@ -17,7 +17,9 @@
             "commentLabel": "Vaše sporočilo",
             "commentPlaceholder": "Opišite vaše povpraševanje...",
             "qtyLabel": "Količina",
-            "productsLabel": "Izdelki v povpraševanju"
+            "productsLabel": "Izdelki v povpraševanju",
+            "qtyMin": "Najmanjša količina: %min%",
+            "qtyStep": "v korakih po %step%"
         },
         "success": {
             "message": "Hvala za povpraševanje, odgovorimo v najkrajšem možnem času."

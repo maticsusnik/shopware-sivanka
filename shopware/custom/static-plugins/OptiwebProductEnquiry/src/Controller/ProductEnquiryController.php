@@ -128,7 +128,7 @@ class ProductEnquiryController extends StorefrontController
                 'productName'   => $product->getTranslated()['name'] ?? '',
                 'productNumber' => $product->getProductNumber(),
                 'productOption' => $line['option'] ?: null,
-                'quantity'      => $line['quantity'],
+                'quantity'      => $this->applyPurchaseRules($line['quantity'], $product),
                 'position'      => $position++,
             ];
         }
@@ -271,6 +271,22 @@ class ProductEnquiryController extends StorefrontController
         $quantity = (int) $value;
 
         return max(1, min($quantity, 9999));
+    }
+
+    /**
+     * Raised to the product's minimum order quantity and rounded up onto its purchase
+     * step (min, min + step, ...), the same quantities the cart accepts.
+     */
+    private function applyPurchaseRules(int $quantity, ProductEntity $product): int
+    {
+        $min  = max(1, $product->getMinPurchase() ?? 1);
+        $step = max(1, $product->getPurchaseSteps() ?? 1);
+
+        if ($quantity <= $min) {
+            return $min;
+        }
+
+        return $min + (int) ceil(($quantity - $min) / $step) * $step;
     }
 
     /**
