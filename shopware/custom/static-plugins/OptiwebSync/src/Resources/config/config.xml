@@ -11,7 +11,7 @@
             <name>enableOrderExport</name>
             <label>Send orders to Minimax</label>
             <label lang="de-DE">Aufträge an Minimax senden</label>
-            <helpText>Off by default. While off, the export still runs and logs the exact payload it would send, but nothing is created in Minimax.</helpText>
+            <helpText>Off by default. While off, the export still runs and logs the exact payload it would send, using read-only lookups only: nothing is created in Minimax, a customer that does not exist yet is listed as "WouldCreate".</helpText>
             <defaultValue>false</defaultValue>
         </input-field>
 
