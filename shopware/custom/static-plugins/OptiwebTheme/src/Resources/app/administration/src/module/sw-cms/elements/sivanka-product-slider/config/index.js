@@ -19,6 +19,7 @@ Component.register('sw-cms-el-config-sivanka-product-slider', {
             selectionModeOptions: [
                 { label: 'Manual selection', value: 'manual' },
                 { label: 'From category', value: 'from-category' },
+                { label: 'Random', value: 'random' },
             ],
         };
     },
@@ -36,7 +37,7 @@ Component.register('sw-cms-el-config-sivanka-product-slider', {
         fillNestedConfigDefaults(this);
         const cfg = this.element?.config || {};
         const mode = cfg.selectionMode?.value;
-        this.selectionModeLocal = (mode === 'manual' || mode === 'from-category') ? mode : 'manual';
+        this.selectionModeLocal = ['manual', 'from-category', 'random'].includes(mode) ? mode : 'manual';
         this.parentCategoryIdLocal = cfg.parentCategoryId?.value || '';
         this.productIdsLocal = Array.isArray(cfg.productIds?.value) ? cfg.productIds.value : [];
         this.imageIdLocal = cfg.image?.value || null;
@@ -45,7 +46,7 @@ Component.register('sw-cms-el-config-sivanka-product-slider', {
         selectionModeLocal(val) {
             this.element.config.selectionMode.value = val;
             if (val === 'manual') this.parentCategoryIdLocal = '';
-            if (val === 'from-category') this.productIdsLocal = [];
+            if (val !== 'manual') this.productIdsLocal = [];
             this.onElementUpdate();
         },
         parentCategoryIdLocal(val) {

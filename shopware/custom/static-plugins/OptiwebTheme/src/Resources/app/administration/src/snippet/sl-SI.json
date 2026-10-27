@@ -219,5 +219,53 @@
         }
       }
     }
+  },
+  "optiweb-variant-builder": {
+    "bulkAction": "Ustvari variante",
+    "title": "Ustvari variante iz izbranih izdelkov",
+    "modeNew": "Nov starševski izdelek",
+    "modeExisting": "Dodaj obstoječemu staršu",
+    "groups": "Lastnosti, po katerih se variante razlikujejo",
+    "groupsHelp": "Vsak izbran izdelek mora imeti za vsako od teh lastnosti natanko eno vrednost; ta postane opcija variante.",
+    "parentName": "Ime starševskega izdelka",
+    "parentNumber": "Številka starševskega izdelka",
+    "parentNumberHelp": "Predlagana iz skupnega začetka številk izbranih izdelkov; lahko jo spremenite.",
+    "existingParent": "Starševski izdelek",
+    "parentGroups": "Variante tega starša se razlikujejo po:",
+    "inheritData": "Podeduj podatke od starša",
+    "inheritDataHelp": "Vklopljeno: variantam se izbrišejo ime, opis in SEO besedila, zato jih podedujejo od starša. Izklopljeno: vsaka varianta obdrži svoje podatke. Cena, zaloga, številka, slike in kategorije vedno ostanejo pri varianti.",
+    "summaryPartial": "Variant bo postalo {valid} od {total} izbranih izdelkov. Označenih izdelkov ni mogoče dodati.",
+    "columnNumber": "Številka",
+    "columnName": "Ime",
+    "columnStatus": "Stanje",
+    "statusOk": "Postane varianta",
+    "create": "Ustvari variante ({count})",
+    "success": "Ustvarjenih variant: {count}.",
+    "errors": {
+      "isVariant": "Izdelek je že varianta.",
+      "isParent": "Izdelek ima že svoje variante.",
+      "missingProperty": "Nima nastavljene lastnosti {group}.",
+      "multipleValues": "Ima več vrednosti lastnosti {group} ({values}).",
+      "duplicateCombination": "Enake vrednosti kot {productNumber}.",
+      "noGroups": "Izberite vsaj eno lastnost.",
+      "notEnoughProducts": "Variante lahko nastanejo iz najmanj {minimum} ustreznih izdelkov.",
+      "parentNotFound": "Starševskega izdelka ni mogoče najti.",
+      "parentHasNoGroups": "Izbrani starš nima nastavljenih lastnosti za variante.",
+      "parentNumberMissing": "Vpišite številko starševskega izdelka.",
+      "parentNameMissing": "Vpišite ime starševskega izdelka.",
+      "parentNumberTaken": "Ta številka izdelka je že v uporabi.",
+      "unknown": "Variant ni bilo mogoče ustvariti."
+    },
+    "split": {
+      "bulkAction": "Razdruži variante",
+      "title": "Razdruži variante",
+      "notice": "Vse variante izbranih starševskih izdelkov postanejo samostojni izdelki. Kar so podedovale od starša (ime, opis, cena, davek, prodajni kanali, kategorije, proizvajalec, slike), se jim prepiše, zato v trgovini ostanejo enake. Številke, zaloge in naročila ostanejo nespremenjeni.",
+      "variants": "Variant: {count}",
+      "notParent": "Nima variant — ostane nespremenjen.",
+      "deleteParent": "Pobriši starševski izdelek",
+      "deleteParentHelp": "Starš po razdružitvi nima več variant. Izklopite, če ga želite obdržati kot samostojen izdelek.",
+      "confirm": "Razdruži ({count})",
+      "success": "Razdruženih starševskih izdelkov: {parents}, samostojnih izdelkov: {variants}."
+    }
   }
 }

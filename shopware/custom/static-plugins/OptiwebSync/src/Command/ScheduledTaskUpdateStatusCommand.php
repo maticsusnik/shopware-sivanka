@@ -4,6 +4,7 @@ namespace OptiwebSync\Command;
 
 use Doctrine\DBAL\Connection;
 use OptiwebSync\ScheduledTask\Order\ExportOrdersTask;
+use OptiwebSync\ScheduledTask\Order\UpdateOrderStatusTask;
 use OptiwebSync\ScheduledTask\Product\ImportProductsTask;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -57,7 +58,7 @@ class ScheduledTaskUpdateStatusCommand extends Command
             [
                 'newStatus'     => 'scheduled',
                 'currentStatus' => 'running',
-                'names'         => [ExportOrdersTask::getTaskName(), ImportProductsTask::getTaskName()],
+                'names'         => [ExportOrdersTask::getTaskName(), UpdateOrderStatusTask::getTaskName(), ImportProductsTask::getTaskName()],
             ],
             ['names' => \Doctrine\DBAL\ArrayParameterType::STRING],
         );

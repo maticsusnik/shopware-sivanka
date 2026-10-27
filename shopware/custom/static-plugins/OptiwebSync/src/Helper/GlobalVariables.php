@@ -14,6 +14,8 @@ class GlobalVariables
     public const STATUS_PARTIALLY_SENT = 'partially_sent';
     public const STATUS_DONE = 'done';
     public const STATUS_ERROR = 'error';
+    /** Sent, but whether Minimax filed it is unknown — later runs look it up, never resend it. */
+    public const STATUS_UNCONFIRMED = 'unconfirmed';
     public const STATUS_PROCESSING = 'processing';
     public const STATUS_PARTIALLY_SHIPPED = 'partially_shipped';
     public const STATUS_CANCELLED = 'cancelled';

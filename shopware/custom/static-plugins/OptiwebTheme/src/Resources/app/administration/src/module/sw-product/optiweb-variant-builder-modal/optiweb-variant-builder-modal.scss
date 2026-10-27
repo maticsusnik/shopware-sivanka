@@ -1,0 +1,75 @@
+@import "~scss/variables";
+
+.optiweb-variant-builder {
+    &__parent-fields {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0 24px;
+    }
+
+    &__parent-groups {
+        margin-bottom: 20px;
+    }
+
+    &__inherit {
+        margin-bottom: 24px;
+    }
+
+    .mt-banner {
+        margin-bottom: 16px;
+    }
+
+    &__table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 6px;
+        font-size: $font-size-xs;
+
+        th {
+            text-align: left;
+            padding: 6px 10px;
+            color: $color-darkgray-200;
+            font-weight: $font-weight-semi-bold;
+        }
+
+        td {
+            padding: 8px 10px;
+            border-top: 1px solid $color-gray-300;
+            border-bottom: 1px solid $color-gray-300;
+            vertical-align: top;
+
+            &:first-child {
+                border-left: 1px solid $color-gray-300;
+                border-radius: 4px 0 0 4px;
+            }
+
+            &:last-child {
+                border-right: 1px solid $color-gray-300;
+                border-radius: 0 4px 4px 0;
+            }
+        }
+
+        // A product that cannot become a variant: outlined, with the reason.
+        tr.is--invalid td {
+            border-color: $color-crimson-500;
+            background: $color-crimson-50;
+        }
+
+        tr.is--invalid .optiweb-variant-builder__status {
+            color: $color-crimson-500;
+        }
+    }
+
+    .optiweb-variant-split__delete {
+        margin-top: 16px;
+    }
+
+    &__status {
+        white-space: nowrap;
+
+        .mt-icon {
+            color: $color-emerald-500;
+            margin-right: 4px;
+        }
+    }
+}

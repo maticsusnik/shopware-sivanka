@@ -1,0 +1,41 @@
+{% block sw_product_list_bulk_edit_modal %}
+    {% parent %}
+
+    <template #bulk-additional>
+        <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
+        <a
+            v-if="acl.can('product.creator') && acl.can('product.editor')"
+            class="link link-primary optiweb-variant-builder-action"
+            role="button"
+            tabindex="0"
+            @click="showVariantBuilder = true"
+        >
+            {{ $t('optiweb-variant-builder.bulkAction') }}
+        </a>
+        <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
+        <a
+            v-if="acl.can('product.editor') && acl.can('product.deleter')"
+            class="link link-primary optiweb-variant-split-action"
+            role="button"
+            tabindex="0"
+            @click="showVariantSplit = true"
+        >
+            {{ $t('optiweb-variant-builder.split.bulkAction') }}
+        </a>
+    </template>
+
+    <template #bulk-modals-additional="{ selection }">
+        <optiweb-variant-builder-modal
+            v-if="showVariantBuilder"
+            :products="Object.values(selection)"
+            @modal-close="showVariantBuilder = false"
+            @variants-created="onVariantsCreated"
+        />
+        <optiweb-variant-split-modal
+            v-if="showVariantSplit"
+            :products="Object.values(selection)"
+            @modal-close="showVariantSplit = false"
+            @variants-split="onVariantsSplit"
+        />
+    </template>
+{% endblock %}

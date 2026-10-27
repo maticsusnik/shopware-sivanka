@@ -505,7 +505,7 @@
     "confirmRevocationReminder": "Izjavili ste že, da se odpovedujete pravici do odstopa od pogodbe.",
     "finishInfoPayment": "Način plačila:",
     "finishInfoShipping": "Način pošiljanja:",
-    "finishHeader": "Hvala za vaše naročilo z %shop%!",
+    "finishHeader": "Hvala za vaše naročilo!",
     "finishMetaTitle": "Naročilo končano",
     "finishUpdateHeader": "Hvala za posodobitev vaše naročilo!",
     "finishPaymentHeader": "Način plačila vašega naročila je bil spremenjen v %paymentName%!",

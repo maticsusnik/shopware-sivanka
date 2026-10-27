@@ -28,6 +28,13 @@
             <label lang="de-DE">Minimax-Artikel für Versandkosten (Code oder Name)</label>
             <helpText>Code or exact name of the Minimax item every shipping row points to. A Minimax order row carries no VAT rate of its own — it inherits it from the referenced item. Leave empty for "POŠTNINA". Which orders are exported is fixed: order state "Open"; card / online payments only once paid; cash on delivery, invoice and prepayment right away.</helpText>
         </input-field>
+
+        <input-field type="text">
+            <name>warehouseCode</name>
+            <label>Minimax warehouse (code or name)</label>
+            <label lang="de-DE">Minimax-Lager (Code oder Name)</label>
+            <helpText>Warehouse every exported order row is taken from — Minimax requires one, since stock is discharged straight from the order. Leave empty for code "1" (Skladišče).</helpText>
+        </input-field>
     </card>
 
 </config>
