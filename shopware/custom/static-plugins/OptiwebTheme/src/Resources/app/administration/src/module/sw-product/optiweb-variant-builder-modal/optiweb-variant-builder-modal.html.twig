@@ -1,0 +1,162 @@
+{% block optiweb_variant_builder_modal %}
+<sw-modal
+    class="optiweb-variant-builder"
+    variant="large"
+    :title="$t('optiweb-variant-builder.title')"
+    :is-loading="isCreating"
+    @modal-close="$emit('modal-close')"
+>
+    <sw-radio-field
+        class="optiweb-variant-builder__mode"
+        :value="mode"
+        :options="modeOptions"
+        @update:value="onModeChange"
+    />
+
+    <template v-if="mode === 'new'">
+        <sw-entity-multi-id-select
+            class="optiweb-variant-builder__groups"
+            :label="$t('optiweb-variant-builder.groups')"
+            :help-text="$t('optiweb-variant-builder.groupsHelp')"
+            :repository="propertyGroupRepository"
+            :value="groupIds"
+            @update:value="onGroupsChange"
+        />
+
+        <div class="optiweb-variant-builder__parent-fields">
+            <mt-text-field
+                v-model="parentName"
+                :label="$t('optiweb-variant-builder.parentName')"
+                required
+            />
+            <mt-text-field
+                :model-value="parentNumber"
+                :label="$t('optiweb-variant-builder.parentNumber')"
+                :help-text="$t('optiweb-variant-builder.parentNumberHelp')"
+                required
+                @update:model-value="onParentNumberInput"
+            />
+        </div>
+    </template>
+
+    <template v-else>
+        <sw-entity-single-select
+            class="optiweb-variant-builder__parent"
+            entity="product"
+            :label="$t('optiweb-variant-builder.existingParent')"
+            :criteria="parentCriteria"
+            :value="parentId"
+            @update:value="onParentChange"
+        >
+            <template #selection-label-property="{ item }">
+                {{ item.translated?.name || item.name }} ({{ item.productNumber }})
+            </template>
+            <template #result-label-property="{ item }">
+                {{ item.translated?.name || item.name }} ({{ item.productNumber }})
+            </template>
+        </sw-entity-single-select>
+
+        <p
+            v-if="preview && preview.groups.length"
+            class="optiweb-variant-builder__parent-groups"
+        >
+            {{ $t('optiweb-variant-builder.parentGroups') }}
+            <strong>{{ preview.groups.map((group) => group.name).join(', ') }}</strong>
+        </p>
+    </template>
+
+    <mt-switch
+        v-model="inheritData"
+        class="optiweb-variant-builder__inherit"
+        :label="$t('optiweb-variant-builder.inheritData')"
+        :help-text="$t('optiweb-variant-builder.inheritDataHelp')"
+    />
+
+    <sw-loader v-if="isLoading" />
+
+    <template v-if="preview">
+        <mt-banner
+            v-for="error in preview.errors"
+            :key="error.code"
+            variant="attention"
+        >
+            {{ errorText(error) }}
+        </mt-banner>
+
+        <mt-banner
+            v-if="preview.validCount > 0 && preview.validCount < preview.rows.length"
+            variant="info"
+        >
+            {{ $t('optiweb-variant-builder.summaryPartial', { valid: preview.validCount, total: preview.rows.length }) }}
+        </mt-banner>
+
+        <table class="optiweb-variant-builder__table">
+            <thead>
+                <tr>
+                    <th>{{ $t('optiweb-variant-builder.columnNumber') }}</th>
+                    <th>{{ $t('optiweb-variant-builder.columnName') }}</th>
+                    <th
+                        v-for="group in preview.groups"
+                        :key="group.id"
+                    >
+                        {{ group.name }}
+                    </th>
+                    <th>{{ $t('optiweb-variant-builder.columnStatus') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr
+                    v-for="row in preview.rows"
+                    :key="row.id"
+                    :class="{ 'is--invalid': !row.valid }"
+                >
+                    <td>{{ row.productNumber }}</td>
+                    <td>{{ row.name }}</td>
+                    <td
+                        v-for="group in preview.groups"
+                        :key="group.id"
+                    >
+                        {{ optionName(row, group.id) }}
+                    </td>
+                    <td class="optiweb-variant-builder__status">
+                        <template v-if="row.valid">
+                            <mt-icon
+                                name="regular-checkmark-xs"
+                                size="12px"
+                            />
+                            {{ $t('optiweb-variant-builder.statusOk') }}
+                        </template>
+                        <template v-else>
+                            <div
+                                v-for="(error, index) in row.errors"
+                                :key="index"
+                            >
+                                {{ errorText(error) }}
+                            </div>
+                        </template>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </template>
+
+    <template #modal-footer>
+        <mt-button
+            size="small"
+            variant="secondary"
+            @click="$emit('modal-close')"
+        >
+            {{ $t('global.default.cancel') }}
+        </mt-button>
+        <mt-button
+            size="small"
+            variant="primary"
+            :disabled="!canCreate"
+            :is-loading="isCreating"
+            @click="onCreate"
+        >
+            {{ $t('optiweb-variant-builder.create', { count: preview ? preview.validCount : 0 }) }}
+        </mt-button>
+    </template>
+</sw-modal>
+{% endblock %}

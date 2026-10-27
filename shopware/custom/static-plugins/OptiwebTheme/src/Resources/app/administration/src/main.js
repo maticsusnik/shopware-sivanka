@@ -63,3 +63,7 @@ import './module/optiweb-notice-bar';
 /** page **/
 import './page/sw-category-detail-base/index';
 import "./module/sw-product/sw-product-detail/general-information";
+/** product list: "Make variants" from selected products **/
+import './module/sw-product/optiweb-variant-builder-modal';
+import './module/sw-product/optiweb-variant-split-modal';
+import './module/sw-product/sw-product-list';

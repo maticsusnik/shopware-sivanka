@@ -1,0 +1,66 @@
+{% block optiweb_variant_split_modal %}
+<sw-modal
+    class="optiweb-variant-builder optiweb-variant-split"
+    :title="$t('optiweb-variant-builder.split.title')"
+    :is-loading="isSplitting"
+    @modal-close="$emit('modal-close')"
+>
+    <mt-banner variant="info">
+        {{ $t('optiweb-variant-builder.split.notice') }}
+    </mt-banner>
+
+    <table class="optiweb-variant-builder__table">
+        <thead>
+            <tr>
+                <th>{{ $t('optiweb-variant-builder.columnNumber') }}</th>
+                <th>{{ $t('optiweb-variant-builder.columnName') }}</th>
+                <th>{{ $t('optiweb-variant-builder.columnStatus') }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr
+                v-for="product in products"
+                :key="product.id"
+                :class="{ 'is--invalid': !isParent(product) }"
+            >
+                <td>{{ product.productNumber }}</td>
+                <td>{{ product.translated?.name || product.name }}</td>
+                <td class="optiweb-variant-builder__status">
+                    <template v-if="isParent(product)">
+                        {{ $t('optiweb-variant-builder.split.variants', { count: product.childCount }) }}
+                    </template>
+                    <template v-else>
+                        {{ $t('optiweb-variant-builder.split.notParent') }}
+                    </template>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <mt-checkbox
+        v-model:checked="deleteParent"
+        class="optiweb-variant-split__delete"
+        :label="$t('optiweb-variant-builder.split.deleteParent')"
+        :help-text="$t('optiweb-variant-builder.split.deleteParentHelp')"
+    />
+
+    <template #modal-footer>
+        <mt-button
+            size="small"
+            variant="secondary"
+            @click="$emit('modal-close')"
+        >
+            {{ $t('global.default.cancel') }}
+        </mt-button>
+        <mt-button
+            size="small"
+            variant="critical"
+            :disabled="parentIds.length === 0 || isSplitting"
+            :is-loading="isSplitting"
+            @click="onSplit"
+        >
+            {{ $t('optiweb-variant-builder.split.confirm', { count: parentIds.length }) }}
+        </mt-button>
+    </template>
+</sw-modal>
+{% endblock %}
