@@ -27,7 +27,7 @@ use Shopware\Core\Framework\DataAbstractionLayer\Search\Sorting\FieldSorting;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
 
 /**
- * Exports open Shopware orders to Minimax as issued sales orders.
+ * Exports open Shopware orders to Minimax as received customer orders (Prejeta naročila).
  *
  * Which orders: order state "open" only. Offline payment methods (cash on
  * delivery, invoice, prepayment, direct debit) go over as soon as the order is
@@ -38,9 +38,9 @@ use Shopware\Core\System\SystemConfig\SystemConfigService;
  * Reads and writes through the DAL — one query with the associations it needs,
  * rather than a chain of admin-API round-trips per order.
  *
- * Minimax order rows carry prices WITHOUT VAT and cannot carry a VAT rate of
- * their own (see MinimaxClient), so every row is converted to net here, driven
- * by the order's own tax status.
+ * A Minimax order computes no VAT and its rows carry no VAT rate, so row prices
+ * are written in the form the organisation keeps its item prices in — gross for
+ * Sivanka (items/settings PricesIncludeVAT = D). See rowUnitPrice().
  */
 class OrderExportSync extends AbstractSyncBase
 {
@@ -63,11 +63,20 @@ class OrderExportSync extends AbstractSyncBase
     /** Minimax customer for buyers without a VAT ID (B2C). */
     private const DEFAULT_END_CUSTOMER = 'končni kupec';
 
+    /** Minimax warehouse (code) the goods are taken from: "1" = Skladišče. */
+    private const DEFAULT_WAREHOUSE = '1';
+
     /** Code of the shared Minimax customer every order without a VAT ID goes to. */
     private string $endCustomerCode = self::DEFAULT_END_CUSTOMER;
 
     /** Code or exact name of the Minimax item every shipping row references. */
     private string $shippingItem = self::DEFAULT_SHIPPING_ITEM;
+
+    /** Code or exact name of the Minimax warehouse every item row is taken from. */
+    private string $warehouse = self::DEFAULT_WAREHOUSE;
+
+    /** Row prices in the form Minimax's own item prices are kept in (items/settings). */
+    private bool $grossPrices = true;
 
     private int $exported = 0;
     private int $failed = 0;
@@ -123,6 +132,9 @@ class OrderExportSync extends AbstractSyncBase
             ?: self::DEFAULT_SHIPPING_ITEM;
         $this->endCustomerCode = trim((string) ($this->systemConfigService->get('OptiwebSync.config.endCustomerCode') ?? ''))
             ?: self::DEFAULT_END_CUSTOMER;
+        $this->warehouse = trim((string) ($this->systemConfigService->get('OptiwebSync.config.warehouseCode') ?? ''))
+            ?: self::DEFAULT_WAREHOUSE;
+        $this->grossPrices = $this->minimaxClient->pricesIncludeVat();
     }
 
     // -------------------------------------------------------------------------
@@ -138,6 +150,7 @@ class OrderExportSync extends AbstractSyncBase
         $criteria->addFilter(new EqualsAnyFilter('customFields.' . GlobalVariables::CUSTOM_FIELD_OPTIWEB_STATUS, [
             GlobalVariables::STATUS_WAITING,
             GlobalVariables::STATUS_ERROR,
+            GlobalVariables::STATUS_UNCONFIRMED,
             GlobalVariables::STATUS_PARTIALLY_SENT,
         ]));
         $criteria->addFilter(new EqualsFilter('stateMachineState.technicalName', OrderStates::STATE_OPEN));
@@ -254,6 +267,13 @@ class OrderExportSync extends AbstractSyncBase
         $orderData = $this->buildOrderData($order, $transaction, $delivery);
 
         if (!$send) {
+            $existingId = $this->minimaxClient->findOrderIdByReference($orderData['reference'], $orderData['year']);
+            if ($existingId !== null) {
+                OwLogger::addVisibleLog($this->logger, "DRY RUN — order $orderNumber is already Minimax order $existingId, would only link it.");
+
+                return;
+            }
+
             $payload = $this->minimaxClient->buildOrderPayload($orderData);
             OwLogger::addVisibleLog($this->logger, "DRY RUN — order $orderNumber payload:");
             OwLogger::addLog($this->logger, 'Minimax payload', ['payload' => $payload]);
@@ -262,10 +282,30 @@ class OrderExportSync extends AbstractSyncBase
             return;
         }
 
+        // An earlier POST may have been applied: only ever link it, never resend
+        // on our own. Setting the status back to "waiting" resends it.
+        if (($customFields[GlobalVariables::CUSTOM_FIELD_OPTIWEB_STATUS] ?? null) === GlobalVariables::STATUS_UNCONFIRMED) {
+            $existingId = $this->minimaxClient->findOrderIdByReference($orderData['reference'], $orderData['year']);
+            if ($existingId !== null) {
+                ++$this->skipped;
+                $this->markOrder($order, GlobalVariables::STATUS_SENT, (string) $existingId, null);
+                OwLogger::addVisibleLog($this->logger, "Order $orderNumber found as Minimax order $existingId — linked.");
+
+                return;
+            }
+
+            ++$this->skipped;
+            OwLogger::warning($this->logger, "Order $orderNumber is unconfirmed and not found in Minimax — not resent. Check Minimax, then set its Minimax export status to \"waiting\" to resend.");
+
+            return;
+        }
+
         OwLogger::addVisibleLog($this->logger, "Sending order $orderNumber to Minimax.");
         $response = $this->minimaxClient->createOrder($orderData);
 
-        if (($response['status'] ?? '') === 'ok') {
+        $status = $response['status'] ?? '';
+
+        if ($status === 'ok') {
             ++$this->exported;
             $this->markOrder($order, GlobalVariables::STATUS_SENT, (string) $response['orderId'], null);
             OwLogger::addVisibleLog($this->logger, "Order $orderNumber exported as Minimax order " . $response['orderId'] . '.');
@@ -273,8 +313,25 @@ class OrderExportSync extends AbstractSyncBase
             return;
         }
 
+        // Filed by an earlier attempt whose answer was lost: link it, never resend.
+        if ($status === 'existing') {
+            ++$this->skipped;
+            $this->markOrder($order, GlobalVariables::STATUS_SENT, (string) $response['orderId'], null);
+            OwLogger::addVisibleLog($this->logger, "Order $orderNumber is already Minimax order " . $response['orderId'] . ' — linked, not sent again.');
+
+            return;
+        }
+
         ++$this->failed;
         $error = (string) ($response['error'] ?? 'Unknown Minimax error');
+
+        if ($status === 'uncertain') {
+            OwLogger::error($this->logger, "Order $orderNumber may have been filed in Minimax — later runs only look it up, they do not resend it", ['error' => $error]);
+            $this->markOrder($order, GlobalVariables::STATUS_UNCONFIRMED, null, $error);
+
+            return;
+        }
+
         OwLogger::error($this->logger, "Order $orderNumber export rejected", ['error' => $error]);
         $this->markOrder($order, GlobalVariables::STATUS_ERROR, null, $error);
     }
@@ -327,6 +384,7 @@ class OrderExportSync extends AbstractSyncBase
             'reference'   => $orderNumber,
             'note'        => $note,
             'currencyIso' => (string) ($order->getCurrency()?->getIsoCode() ?? 'EUR'),
+            'warehouse'   => $this->warehouse,
             'customer'    => [
                 'name'       => $billing['name'] !== '' ? $billing['name'] : ($email !== '' ? $email : $orderNumber),
                 'email'      => $email,
@@ -354,7 +412,7 @@ class OrderExportSync extends AbstractSyncBase
     }
 
     /**
-     * Every top-level line item as a Minimax row, at net unit prices.
+     * Every top-level line item as a Minimax row.
      *
      * Promotions, credits and custom items are included as free-text rows: they
      * change what the customer paid, so leaving them out would hand Minimax a
@@ -387,7 +445,7 @@ class OrderExportSync extends AbstractSyncBase
                 'sku'             => trim((string) ($payload['productNumber'] ?? '')),
                 'name'            => (string) ($lineItem->getLabel() ?? ''),
                 'quantity'        => $quantity !== 0.0 ? $quantity : 1.0,
-                'unitPrice'       => $this->netUnitPrice($price, $taxStatus),
+                'unitPrice'       => $this->rowUnitPrice($price, $taxStatus),
                 'discountPercent' => 0.0,
             ];
         }
@@ -396,7 +454,7 @@ class OrderExportSync extends AbstractSyncBase
     }
 
     /**
-     * The shipping cost as its own row, net.
+     * The shipping cost as its own row.
      *
      * @return array<int, array<string, mixed>>
      */
@@ -409,9 +467,12 @@ class OrderExportSync extends AbstractSyncBase
             return [];
         }
 
-        $net = $taxStatus === CartPrice::TAX_STATE_GROSS
-            ? $total - $shippingCosts->getCalculatedTaxes()->getAmount()
-            : $total;
+        $taxes = $shippingCosts->getCalculatedTaxes()->getAmount();
+        if ($this->grossPrices) {
+            $rowPrice = $taxStatus === CartPrice::TAX_STATE_NET ? $total + $taxes : $total;
+        } else {
+            $rowPrice = $taxStatus === CartPrice::TAX_STATE_GROSS ? $total - $taxes : $total;
+        }
 
         return [[
             // A Minimax order row inherits its VAT rate from the referenced item
@@ -421,24 +482,25 @@ class OrderExportSync extends AbstractSyncBase
             'itemReference'   => $this->shippingItem,
             'name'            => $shippingName !== '' ? $shippingName : 'Poštnina',
             'quantity'        => 1.0,
-            'unitPrice'       => round($net, 4),
+            'unitPrice'       => round($rowPrice, 4),
             'discountPercent' => 0.0,
         ]];
     }
 
     /**
-     * Net unit price for a calculated price, according to the order's tax status.
+     * Unit price for a Minimax order row.
      *
-     * A gross order stores gross unit prices, so the row has to be divided down
-     * by its own tax rate; a net or tax-free order already stores net.
+     * A Minimax order computes no VAT: its confirmation lists the row prices and
+     * their sum, nothing else. So the rows are written the way the organisation
+     * keeps its item prices — with VAT when items/settings says "D" (Sivanka:
+     * the item ZADRGA costs 5,10 there, as in the shop), without otherwise.
+     *
+     * A gross order stores gross unit prices, a net order net ones; a tax-free
+     * order has no VAT either way.
      */
-    private function netUnitPrice(CalculatedPrice $price, string $taxStatus): float
+    private function rowUnitPrice(CalculatedPrice $price, string $taxStatus): float
     {
         $unitPrice = $price->getUnitPrice();
-
-        if ($taxStatus !== CartPrice::TAX_STATE_GROSS) {
-            return round($unitPrice, 4);
-        }
 
         $rate = 0.0;
         foreach ($price->getTaxRules() as $taxRule) {
@@ -446,15 +508,20 @@ class OrderExportSync extends AbstractSyncBase
             break;
         }
 
-        if ($rate <= 0.0) {
+        if ($taxStatus === CartPrice::TAX_STATE_FREE || $rate <= 0.0) {
             return round($unitPrice, 4);
         }
 
-        return round($unitPrice / (1 + ($rate / 100)), 4);
+        if ($this->grossPrices) {
+            return round($taxStatus === CartPrice::TAX_STATE_NET ? $unitPrice * (1 + ($rate / 100)) : $unitPrice, 4);
+        }
+
+        return round($taxStatus === CartPrice::TAX_STATE_GROSS ? $unitPrice / (1 + ($rate / 100)) : $unitPrice, 4);
     }
 
     /**
-     * Warn when the exported rows do not add up to the order's net total.
+     * Warn when the exported rows do not add up to the order's total (gross or
+     * net, whichever form the rows are in).
      *
      * Cheap insurance: a rounding or tax-status mistake shows up here as a
      * logged discrepancy instead of as a bookkeeping problem weeks later.
@@ -468,13 +535,11 @@ class OrderExportSync extends AbstractSyncBase
             $rowTotal += ((float) $line['unitPrice']) * ((float) $line['quantity']);
         }
 
-        $expected = $order->getTaxStatus() === CartPrice::TAX_STATE_GROSS
-            ? $order->getAmountNet()
-            : $order->getAmountTotal();
+        $expected = $this->grossPrices ? $order->getAmountTotal() : $order->getAmountNet();
 
         if (abs($rowTotal - $expected) > self::RECONCILE_TOLERANCE) {
             OwLogger::warning($this->logger, sprintf(
-                'Order %s: exported rows total %.4f but the order net total is %.4f (difference %.4f).',
+                'Order %s: exported rows total %.4f but the order total is %.4f (difference %.4f).',
                 $orderNumber,
                 $rowTotal,
                 $expected,
