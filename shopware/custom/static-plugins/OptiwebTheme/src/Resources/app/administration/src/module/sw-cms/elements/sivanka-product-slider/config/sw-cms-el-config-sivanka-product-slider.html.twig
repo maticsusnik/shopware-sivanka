@@ -34,7 +34,8 @@
                     labelProperty="name"
                     :criteria="categoryCriteria"
                     :allowCreate="false"
-                    :placeholder="'Select parent category'"
+                    :placeholder="selectionModeLocal === 'random' ? 'All categories' : 'Select parent category'"
+                    :help-text="selectionModeLocal === 'random' ? 'Optional — without a category the slider shows random products from the whole shop.' : null"
                     v-model:value="parentCategoryIdLocal"
                     show-clearable-button />
         </div>

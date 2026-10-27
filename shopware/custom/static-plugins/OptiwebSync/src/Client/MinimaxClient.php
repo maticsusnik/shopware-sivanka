@@ -25,9 +25,11 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  *      ignored and the endpoint answers with the *unfiltered* first page. Single
  *      records are looked up through the `code({code})` route instead — and that
  *      route takes the bare value, not a quoted one.
- *   2. Document rows carry prices WITHOUT VAT. IssuedInvoiceRow distinguishes
- *      `Price` from `PriceWithVAT`; OrderRow has only `Price`, and no VatRate at
- *      all — VAT is derived from the referenced Item. So OrderRow.Price is net.
+ *   2. IssuedInvoiceRow distinguishes `Price` (net) from `PriceWithVAT`. OrderRow
+ *      has only `Price` and no VatRate, and an order computes no VAT at all: its
+ *      confirmation lists the row prices and their sum. So OrderRow.Price is
+ *      written in the form the organisation keeps item prices in (point 3) —
+ *      gross for Sivanka (verified on order 2026-1, 2026-10-27).
  *   3. An *item's* `Price`, unlike a document row's, is net or gross depending on
  *      the organisation's "Vnos cen v šifrantu Artikli" VAT-period setting —
  *      GET items/settings answers D (incl. VAT) or N (excl.). Org 239849 is on
@@ -39,6 +41,8 @@ class MinimaxClient implements ClientInterface
 {
     private const PAGE_SIZE   = 100;
     private const MAX_RETRIES = 3;
+    /** More orders than this for one reference means the filter was ignored. */
+    private const MAX_REFERENCE_MATCHES = 20;
 
     /** Candidate keys for the percent value inside a VatRate record. */
     private const VAT_PERCENT_KEYS = ['Percent', 'Percentage', 'Rate', 'VatRatePercent', 'Value'];
@@ -53,6 +57,7 @@ class MinimaxClient implements ClientInterface
     // Lookup caches — populated on first use
     private array $currencyCache   = [];  // isoCode → int ID
     private array $countryCache    = [];  // isoCode → int|null ID
+    private array $warehouseCache  = [];  // code or name → int ID
     private ?int $endCustomerId    = null;
     private array $itemCache       = [];  // SKU → int|null ID
     private array $stockMap        = [];  // SKU → float quantity
@@ -447,7 +452,7 @@ class MinimaxClient implements ClientInterface
     // -------------------------------------------------------------------------
 
     /**
-     * Export an order to Minimax as an issued sales order (Naročilo).
+     * Export an order to Minimax as a received customer order (Prejeto naročilo).
      *
      * POST api/orgs/{orgId}/orders
      *
@@ -458,7 +463,8 @@ class MinimaxClient implements ClientInterface
      *
      * OrderRow fields: Item, Warehouse, ItemName, ItemCode, Description,
      * Quantity, DiscountPercent, Price, UnitOfMeasurement. A row carries neither
-     * VatRate nor PriceWithVAT, so `unitPrice` MUST be net.
+     * VatRate nor PriceWithVAT, and the order computes no VAT: `unitPrice` is
+     * taken as is (the caller sends it in the organisation's item price form).
      *
      * Input array shape:
      *   date:        string  ISO datetime or YYYY-MM-DD
@@ -466,34 +472,113 @@ class MinimaxClient implements ClientInterface
      *   reference:   string  free-text reference (Shopware order number)
      *   note:        string  order notes
      *   currencyIso: string  ISO currency code (default: EUR)
+     *   warehouse:   string  Minimax warehouse code or name every item row is taken from
      *   customer:    [name, email, code, address, postalCode, city, countryIso, vatId]
      *   recipient:   [name, address, postalCode, city, countryIso]   (optional)
-     *   lines:       [[sku, name, quantity, unitPrice (NET), discountPercent, unitOfMeasurement, description], ...]
+     *   lines:       [[sku, name, quantity, unitPrice, discountPercent, unitOfMeasurement, description], ...]
+     *
+     * Before POSTing, the order is looked up by its reference, so a retry after
+     * an attempt whose outcome was unknown can never file a second document.
+     *
+     * Statuses: `ok` (created now), `existing` (already in Minimax — orderId is
+     * that order), `uncertain` (the POST may have been applied — never resend
+     * it blindly), `error` (nothing was created).
      *
      * @return array{status: string, orderId?: int|string, error?: string}
      */
     public function createOrder(array $orderData): array
     {
         try {
-            $payload = $this->buildOrderPayload($orderData, true);
-            $orgId   = $this->getOrganizationId();
-
-            $response = $this->post($this->url($orgId, 'orders'), $payload);
-            $orderId  = $response['OrderId'] ?? $response['OrderID'] ?? $response['ID'] ?? null;
-
-            if ($orderId === null) {
-                // The order may well have been created — surface the raw body so
-                // the caller can investigate instead of retrying into a duplicate.
-                return [
-                    'status' => 'error',
-                    'error'  => 'Order POST succeeded but no order id in response: ' . json_encode($response),
-                ];
+            $orgId     = $this->getOrganizationId();
+            $reference = trim((string) ($orderData['reference'] ?? ''));
+            if ($reference === '') {
+                return ['status' => 'error', 'error' => 'Order has no reference — refusing to send an order that cannot be looked up again'];
             }
 
-            return ['status' => 'ok', 'orderId' => $orderId];
+            $year       = (int) ($orderData['year'] ?? substr((string) ($orderData['date'] ?? ''), 0, 4));
+            $existingId = $this->findOrderIdByReference($reference, $year);
+            if ($existingId !== null) {
+                return ['status' => 'existing', 'orderId' => $existingId];
+            }
+
+            $payload = $this->buildOrderPayload($orderData, true);
+
+            return ['status' => 'ok', 'orderId' => $this->createRecord(
+                $this->url($orgId, 'orders'),
+                $payload,
+                ['OrderId', 'OrderID', 'ID'],
+            )];
+        } catch (MinimaxUncertainWriteException $e) {
+            return ['status' => 'uncertain', 'error' => $e->getMessage()];
         } catch (\Throwable $e) {
             return ['status' => 'error', 'error' => $e->getMessage()];
         }
+    }
+
+    /**
+     * The status of a Minimax order: P confirmed, O draft, Z terminated
+     * (completed), R invalidated.
+     *
+     * GET api/orgs/{orgId}/orders/{orderId}
+     */
+    public function getOrderStatus(int $orderId): string
+    {
+        $this->ensureAuthenticated();
+        $orgId = $this->getOrganizationId();
+
+        $order = $this->get($this->url($orgId, 'orders/' . $orderId));
+
+        return strtoupper(trim((string) ($order['Status'] ?? '')));
+    }
+
+    /**
+     * The Minimax order filed under this reference (the shop order number), if any.
+     *
+     * GET api/orgs/{orgId}/orders?Reference=…&Year=… — both are documented
+     * filters. The search rows carry no Reference, so every candidate is fetched
+     * and its Reference compared exactly. Issued and received orders are both
+     * searched: an order filed under either must not be sent again.
+     *
+     * Throws instead of answering null whenever the result cannot be trusted
+     * (lookup failed, or so many rows that the filter was evidently ignored) —
+     * a wrong "not found" means a duplicate document.
+     */
+    public function findOrderIdByReference(string $reference, int $year): ?int
+    {
+        $this->ensureAuthenticated();
+        $orgId = $this->getOrganizationId();
+
+        $data = $this->get($this->url($orgId, 'orders', array_filter([
+            'Reference'   => $reference,
+            'Year'        => $year > 0 ? $year : null,
+            'PageSize'    => self::PAGE_SIZE,
+            'CurrentPage' => 1,
+        ], static fn ($value) => $value !== null)));
+
+        $rows      = $this->rows($data);
+        $totalRows = (int) ($data['TotalRows'] ?? count($rows));
+
+        if ($totalRows > self::MAX_REFERENCE_MATCHES || $totalRows > count($rows)) {
+            throw new \RuntimeException(sprintf(
+                'Minimax order lookup for reference "%s" returned %d orders — the Reference filter looks ignored, not sending',
+                $reference,
+                $totalRows,
+            ));
+        }
+
+        foreach ($rows as $row) {
+            $orderId = (int) ($row['OrderId'] ?? $row['OrderID'] ?? 0);
+            if ($orderId <= 0) {
+                continue;
+            }
+
+            $order = $this->get($this->url($orgId, 'orders/' . $orderId));
+            if (trim((string) ($order['Reference'] ?? '')) === $reference) {
+                return $orderId;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -523,6 +608,9 @@ class MinimaxClient implements ClientInterface
             throw new \RuntimeException(sprintf('Minimax end customer "%s" not found', (string) ($customer['endCustomerCode'] ?? '')));
         }
         $currencyId = $this->resolveCurrencyId((string) ($orderData['currencyIso'] ?? 'EUR'), $orgId);
+        // Stock is discharged straight from a received order, so Minimax
+        // rejects (409) any item row without a warehouse.
+        $warehouseId = $this->resolveWarehouseId((string) ($orderData['warehouse'] ?? ''), $orgId);
 
         $orderRows = [];
         foreach ($orderData['lines'] ?? [] as $line) {
@@ -549,7 +637,8 @@ class MinimaxClient implements ClientInterface
             // the row as a free-text line so nothing — shipping, discounts,
             // custom items — is silently dropped from the order.
             if ($itemId !== null) {
-                $row['Item'] = ['ID' => $itemId];
+                $row['Item']      = ['ID' => $itemId];
+                $row['Warehouse'] = ['ID' => $warehouseId];
             } elseif ($sku !== '') {
                 $this->warn(sprintf('SKU "%s" not found in Minimax — exported as a free-text row.', $sku));
             }
@@ -575,7 +664,7 @@ class MinimaxClient implements ClientInterface
         $year = (int) ($orderData['year'] ?? substr($date, 0, 4));
 
         $payload = [
-            'ReceivedIssued' => 'I',   // issued order
+            'ReceivedIssued' => 'P',   // received order — a customer's order to us (I is a purchase order to a supplier)
             'Year'           => $year,
             'Date'           => $date,
             'Customer'       => $customerId !== null
@@ -849,17 +938,20 @@ class MinimaxClient implements ClientInterface
 
     private function createCustomer(array $customer, string $orgId): int
     {
-        $payload  = $this->buildCustomerPayload($customer, $orgId);
-        $response = $this->post($this->url($orgId, 'customers'), $payload);
-        $id       = $response['CustomerId'] ?? $response['CustomerID'] ?? $response['ID'] ?? null;
+        $payload = $this->buildCustomerPayload($customer, $orgId);
 
-        if ($id === null) {
-            throw new \RuntimeException(
-                'Minimax customer created but no ID in response: ' . json_encode($response),
+        // An uncertain create is safe to repeat: the next run finds the customer
+        // by tax number before creating one. No order was sent, so it is a plain
+        // error rather than an uncertain order.
+        try {
+            return $this->createRecord(
+                $this->url($orgId, 'customers'),
+                $payload,
+                ['CustomerId', 'CustomerID', 'ID'],
             );
+        } catch (MinimaxUncertainWriteException $e) {
+            throw new \RuntimeException($e->getMessage(), 0, $e);
         }
-
-        return (int) $id;
     }
 
     /** The customer createCustomer() would file — also shown by a dry run. */
@@ -920,6 +1012,26 @@ class MinimaxClient implements ClientInterface
         }
 
         return $this->currencyCache[$isoCode] = (int) $id;
+    }
+
+    /**
+     * The warehouse with this code or exact name (Sivanka: code "1" = Skladišče,
+     * "2" = Komisija). GET api/orgs/{orgId}/warehouses lists them all.
+     */
+    private function resolveWarehouseId(string $reference, string $orgId): int
+    {
+        $reference = trim($reference);
+        if (isset($this->warehouseCache[$reference])) {
+            return $this->warehouseCache[$reference];
+        }
+
+        foreach ($this->rows($this->get($this->url($orgId, 'warehouses', ['PageSize' => self::PAGE_SIZE]))) as $row) {
+            if ($reference === trim((string) ($row['Code'] ?? '')) || $reference === trim((string) ($row['Name'] ?? ''))) {
+                return $this->warehouseCache[$reference] = (int) $row['WarehouseId'];
+            }
+        }
+
+        throw new \RuntimeException("Minimax: warehouse '$reference' not found");
     }
 
     private function resolveCountryId(string $isoCode, string $orgId): ?int
@@ -1108,13 +1220,58 @@ class MinimaxClient implements ClientInterface
     }
 
     /**
+     * POST a new record and return its id.
+     *
+     * Minimax answers a create with 201 and an EMPTY body: the new record's id
+     * is only in the Location header (".../api/orgs/{org}/orders/{id}?id={id}"). The
+     * body keys are still read first in case an endpoint does return the record.
+     *
+     * @param array<int, string> $idKeys
+     *
+     * @throws MinimaxUncertainWriteException when the record may exist but its id is unknown
+     */
+    private function createRecord(string $url, array $body, array $idKeys): int
+    {
+        $this->ensureAuthenticated();
+
+        $headers  = [];
+        $response = $this->send('POST', $url, $body, $headers);
+
+        foreach ($idKeys as $key) {
+            if (isset($response[$key]) && is_numeric($response[$key])) {
+                return (int) $response[$key];
+            }
+        }
+
+        // e.g. https://moj.minimax.si/SI/API/api/orgs/239849/orders/1496690?id=1496690
+        $location = (string) ($headers['location'][0] ?? '');
+        $path     = (string) parse_url($location, \PHP_URL_PATH);
+        if (preg_match('~/(\d+)/?$~', $path, $match) === 1) {
+            return (int) $match[1];
+        }
+
+        unset($headers['set-cookie']);
+
+        throw new MinimaxUncertainWriteException(sprintf(
+            'Minimax POST %s succeeded but returned no id (body %s, headers %s)',
+            $url,
+            json_encode($response),
+            json_encode($headers),
+        ));
+    }
+
+    /**
      * Send a request, refreshing the token on 401 and backing off on 429/5xx.
      *
      * Only GETs are retried on a server-side error: a POST that may already have
      * been applied must never be replayed, or a flaky connection turns into
-     * duplicate orders and duplicate customers.
+     * duplicate orders and duplicate customers. A POST that may have been applied
+     * throws MinimaxUncertainWriteException, one Minimax rejected (4xx) a plain
+     * RuntimeException.
+     *
+     * @param array<string, array<int, string>>|null $headers receives the response headers
      */
-    private function send(string $method, string $url, ?array $body): array
+    private function send(string $method, string $url, ?array $body, ?array &$headers = null): array
     {
         $lastError = 'unknown error';
 
@@ -1135,12 +1292,17 @@ class MinimaxClient implements ClientInterface
             try {
                 $response   = $this->client->request($method, $url, $options);
                 $statusCode = $response->getStatusCode();
-                $data       = $response->toArray(false);
+                // A create may answer with no body at all (id in Location).
+                $data       = $response->getContent(false) === '' ? [] : $response->toArray(false);
             } catch (\Throwable $e) {
                 $lastError = $e->getMessage();
                 if ($attempt < self::MAX_RETRIES && $method === 'GET') {
                     sleep($attempt);
                     continue;
+                }
+
+                if ($method === 'POST') {
+                    throw new MinimaxUncertainWriteException("Minimax $method $url failed: $lastError", 0, $e);
                 }
 
                 throw new \RuntimeException("Minimax $method $url failed: $lastError", 0, $e);
@@ -1159,11 +1321,19 @@ class MinimaxClient implements ClientInterface
                 continue;
             }
 
+            if ($statusCode >= 500 && $method === 'POST') {
+                throw new MinimaxUncertainWriteException(
+                    "Minimax $method $url returned HTTP $statusCode: " . json_encode($data),
+                );
+            }
+
             if ($statusCode >= 400) {
                 throw new \RuntimeException(
                     "Minimax $method $url returned HTTP $statusCode: " . json_encode($data),
                 );
             }
+
+            $headers = $response->getHeaders(false);
 
             return is_array($data) ? $data : [];
         }

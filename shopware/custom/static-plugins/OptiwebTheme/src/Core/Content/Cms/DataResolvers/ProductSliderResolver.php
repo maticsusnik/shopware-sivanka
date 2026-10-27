@@ -14,9 +14,16 @@ use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsAnyFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\Struct\ArrayStruct;
+use Shopware\Core\System\SalesChannel\Entity\SalesChannelRepository;
 
 class ProductSliderResolver extends AbstractCmsElementResolver
 {
+    private const LIMIT = 10;
+
+    public function __construct(private readonly SalesChannelRepository $productRepository)
+    {
+    }
+
     public function getType(): string
     {
         return 'sivanka-product-slider';
@@ -30,11 +37,17 @@ class ProductSliderResolver extends AbstractCmsElementResolver
         $criteriaCollection = new CriteriaCollection();
         $criteria = new Criteria();
         $criteria->addAssociation('cover');
-        $criteria->setLimit(10);
+        $criteria->setLimit(self::LIMIT);
 
         $hasProducts = false;
         if ($selectionMode === 'manual') {
             $ids = (array) ($config->get('productIds')?->getValue() ?? []);
+            if (!empty($ids)) {
+                $criteria->setIds($ids);
+                $hasProducts = true;
+            }
+        } elseif ($selectionMode === 'random') {
+            $ids = $this->randomProductIds($config->get('parentCategoryId')?->getValue(), $resolverContext);
             if (!empty($ids)) {
                 $criteria->setIds($ids);
                 $hasProducts = true;
@@ -61,6 +74,37 @@ class ProductSliderResolver extends AbstractCmsElementResolver
         }
 
         return $criteriaCollection->all() ? $criteriaCollection : null;
+    }
+
+    /**
+     * LIMIT random products — from the category when one is chosen, from the
+     * whole catalogue otherwise. The DAL has no random sorting, so all visible
+     * ids are fetched (cheap: ids only) and sampled here. Variants are left out
+     * so one article cannot fill the slider twice.
+     *
+     * @return array<int, string>
+     */
+    private function randomProductIds(mixed $categoryId, ResolverContext $resolverContext): array
+    {
+        $salesChannelContext = $resolverContext->getSalesChannelContext();
+
+        $criteria = new Criteria();
+        $criteria->addFilter(new EqualsFilter('product.parentId', null));
+        $criteria->addFilter(new EqualsFilter('product.visibilities.visibility', ProductVisibilityDefinition::VISIBILITY_ALL));
+        $criteria->addFilter(new EqualsFilter('product.visibilities.salesChannelId', $salesChannelContext->getSalesChannelId()));
+        if (is_string($categoryId) && $categoryId !== '') {
+            $criteria->addFilter(new EqualsFilter('product.categoriesRo.id', $categoryId));
+        }
+
+        $ids = $this->productRepository->searchIds($criteria, $salesChannelContext)->getIds();
+        if (count($ids) <= self::LIMIT) {
+            return array_values($ids);
+        }
+
+        $keys = array_rand($ids, self::LIMIT);
+        shuffle($keys);
+
+        return array_map(static fn ($key) => $ids[$key], $keys);
     }
 
     public function enrich(CmsSlotEntity $slot, ResolverContext $resolverContext, ElementDataCollection $result): void

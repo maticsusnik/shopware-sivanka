@@ -283,5 +283,53 @@
         }
       }
     }
+  },
+  "optiweb-variant-builder": {
+    "bulkAction": "Make variants",
+    "title": "Make variants from the selected products",
+    "modeNew": "New parent product",
+    "modeExisting": "Add to an existing parent",
+    "groups": "Properties the variants differ in",
+    "groupsHelp": "Every selected product needs exactly one value for each of these properties; it becomes the variant's option.",
+    "parentName": "Parent product name",
+    "parentNumber": "Parent product number",
+    "parentNumberHelp": "Suggested from the common start of the selected product numbers; you can change it.",
+    "existingParent": "Parent product",
+    "parentGroups": "This parent's variants differ in:",
+    "inheritData": "Inherit data from the parent",
+    "inheritDataHelp": "On: the variants' name, description and SEO texts are cleared, so they are inherited from the parent. Off: every variant keeps its own data. Price, stock, number, images and categories always stay with the variant.",
+    "summaryPartial": "{valid} of {total} selected products will become variants. The highlighted ones cannot be added.",
+    "columnNumber": "Number",
+    "columnName": "Name",
+    "columnStatus": "Status",
+    "statusOk": "Becomes a variant",
+    "create": "Make variants ({count})",
+    "success": "{count} variants created.",
+    "errors": {
+      "isVariant": "The product is a variant already.",
+      "isParent": "The product has variants of its own.",
+      "missingProperty": "Has no value for the property {group}.",
+      "multipleValues": "Has several values for {group} ({values}).",
+      "duplicateCombination": "Same values as {productNumber}.",
+      "noGroups": "Select at least one property.",
+      "notEnoughProducts": "Variants need at least {minimum} suitable products.",
+      "parentNotFound": "The parent product cannot be found.",
+      "parentHasNoGroups": "The selected parent has no variant properties.",
+      "parentNumberMissing": "Enter the parent product number.",
+      "parentNameMissing": "Enter the parent product name.",
+      "parentNumberTaken": "This product number is already in use.",
+      "unknown": "The variants could not be created."
+    },
+    "split": {
+      "bulkAction": "Split variants",
+      "title": "Split variants",
+      "notice": "Every variant of the selected parent products becomes a standalone product. What it inherited from the parent (name, description, price, tax, sales channels, categories, manufacturer, images) is copied onto it, so it looks the same in the shop. Numbers, stock and orders stay unchanged.",
+      "variants": "{count} variants",
+      "notParent": "Has no variants — left unchanged.",
+      "deleteParent": "Delete the parent product",
+      "deleteParentHelp": "After the split the parent has no variants left. Switch off to keep it as a standalone product.",
+      "confirm": "Split ({count})",
+      "success": "{parents} parent products split into {variants} standalone products."
+    }
   }
 }

@@ -4250,11 +4250,11 @@
         },
         {
             "name": "optiweb/sync",
-            "version": "1.0.0",
+            "version": "1.1.0",
             "dist": {
                 "type": "path",
                 "url": "custom/static-plugins/OptiwebSync",
-                "reference": "68d3ab29905da7d1282e1d659490d8826ee96287"
+                "reference": "8be95ba5611f4502d0e2d130e061ebf07d378dad"
             },
             "require": {
                 "shopware/core": "~6.7.0"
@@ -4283,11 +4283,11 @@
         },
         {
             "name": "optiweb/theme",
-            "version": "1.2.0",
+            "version": "1.2.1",
             "dist": {
                 "type": "path",
                 "url": "custom/static-plugins/OptiwebTheme",
-                "reference": "bf5002722ba3e82fb0aef40934bbdc28a7024f0e"
+                "reference": "d2a8894a1b496838b33441e7fb470160c5036c70"
             },
             "require": {
                 "shopware/core": "~6.7.0",

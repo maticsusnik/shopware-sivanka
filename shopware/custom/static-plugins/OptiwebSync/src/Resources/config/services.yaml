@@ -77,6 +77,21 @@ services:
     tags:
       - { name: 'messenger.message_handler' }
 
+  OptiwebSync\Service\Order\OrderStatusSync:
+    autowire: true
+    autoconfigure: true
+    arguments:
+      $minimaxClient: '@OptiwebSync\Client\MinimaxClient'
+      $orderRepository: '@order.repository'
+
+  OptiwebSync\ScheduledTask\Order\UpdateOrderStatusTaskHandler:
+    arguments:
+      $scheduledTaskRepository: '@scheduled_task.repository'
+      $exceptionLogger: '@monolog.logger'
+      $orderStatusSync: '@OptiwebSync\Service\Order\OrderStatusSync'
+    tags:
+      - { name: 'messenger.message_handler' }
+
   OptiwebSync\Storefront\Subscriber\OrderListener:
     arguments:
       $orderRepository: '@order.repository'

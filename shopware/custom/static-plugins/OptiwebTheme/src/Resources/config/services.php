@@ -8,7 +8,10 @@ use OptiwebTheme\Core\Content\Cms\DataResolvers\BannersResolver;
 use OptiwebTheme\Core\Content\Cms\DataResolvers\CatalogsResolver;
 use OptiwebTheme\Core\Content\Cms\DataResolvers\CategoryNavigationResolver;
 use OptiwebTheme\Core\Content\Cms\DataResolvers\CategoryReadMoreResolver;
+use OptiwebTheme\Controller\Api\VariantBuilderController;
 use OptiwebTheme\Core\Content\Cms\DataResolvers\CategorySliderResolver;
+use OptiwebTheme\Core\Content\Product\VariantBuilder\VariantBuilder;
+use OptiwebTheme\Core\Content\Product\VariantBuilder\VariantSplitter;
 use OptiwebTheme\Core\Content\Cms\DataResolvers\ImageTabsResolver;
 use OptiwebTheme\Core\Content\Cms\DataResolvers\MainSliderResolver;
 use OptiwebTheme\Core\Content\Cms\DataResolvers\ProductSliderResolver;
@@ -54,7 +57,20 @@ return static function (ContainerConfigurator $configurator): void {
     $services->set(BannersResolver::class)
         ->tag('shopware.cms.data_resolver');
 
+    // "Make variants" / "Split variants" in the admin product list
+    $services->set(VariantBuilder::class)
+        ->args([service('product.repository'), service('property_group.repository')]);
+
+    $services->set(VariantSplitter::class)
+        ->args([service('product.repository'), service('product_option.repository'), service(\Doctrine\DBAL\Connection::class)]);
+
+    $services->set(VariantBuilderController::class)
+        ->args([service(VariantBuilder::class), service(VariantSplitter::class)])
+        ->public()
+        ->tag('controller.service_arguments');
+
     $services->set(ProductSliderResolver::class)
+        ->args([service('sales_channel.product.repository')])
         ->tag('shopware.cms.data_resolver');
 
     $services->set(CategorySliderResolver::class)
