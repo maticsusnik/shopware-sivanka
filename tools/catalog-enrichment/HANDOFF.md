@@ -48,11 +48,23 @@ Run `runs/2026-11-03-2033/` is built from Matic's prod dump `~/Desktop/sivanka/b
 | Open issues | `data-issues.md`: real contradictions, duplicates, missing category branches; needs a person |
 
 Local DB: prod dump + collapse + all import files (`import-local.log`), checked with `./enrich.sh verify`.
-Matic is reviewing it in the local shop (https://sivanka.shopware.localhost, admin/shopware).
-**Nothing has gone to prod yet. Nothing is committed** (current branch `f/adding-stirpe` is unrelated; ask
-Matic for a YouTrack key and branch before committing, see `~/.claude/skills/_shared/youtrack-conventions.md`).
 
-## Next session: fresh dump → final prod package (2026-11-04)
+## Final prod package (2026-11-04): `runs/2026-11-04-1350/`
+
+Built with the steps below from `~/Desktop/backup_sivanka_04_11_2026.sql` (note: Desktop root, not `sivanka/`).
+- Old families were still on prod: collapsed with the 2026-11-03 plan (29/77, none missing).
+- `reuse-report.json`: 9 changed, 0 new, 0 gone (4 rinčice edited on prod, 5 PATENT got "Cena/m."). One Opus agent
+  redid props + SEO for those 9 into `props|seo/out/batch-delta.json` (sorts before `old-*`, so it wins).
+- Matic approved the one new review item (800250 Barva: Srebrna) and a new fix rule in the run's
+  `fixes/make_fixes.py` (name + short description say N,N mm, Velikost still says N mm → 700606, 700611).
+- Result: props 2,886, SEO 3,776, 273 families / 1,235 products, categories 2,520 (5 fewer: the shop categorised
+  them meanwhile), fixes 237 (fixes-manual 70 items). `import-local`: 0 errors; `verify`: only planned changes.
+  Storefront checked (cards per variant, SEO, square photo swatches). New oddities in the run's `data-issues.md`.
+- Playwright MCP is headless and doesn't trust the Caddy CA; HTML checks work with
+  `curl --cacert <caddy root.crt from local-setup-caddy-1:/data/caddy/pki/authorities/local/>`.
+- **Not imported on prod yet.** After Matic's prod import: `./enrich.sh finish`.
+
+## How the 2026-11-04 package was built (repeat for a newer dump)
 
 Matic puts a fresh prod dump on the Desktop (`~/Desktop/sivanka/backup_sivanka_04_11_2026.sql`; ask if the name
 differs). Goal: the same result as the 2026-11-03 run, rebuilt on that dump, ready for prod. Matic approved
@@ -73,7 +85,7 @@ RUN=<new> ./enrich.sh extract                          # re-extract AFTER the co
   reused `clusters.json`. If there are new or changed products, give only those to agents (a few batches) and
   re-run the fixes generator (`python3 runs/<new>/fixes/make_fixes.py`, it reads the new run's data).
 - Then: the four validators, approve leftovers only if Matic says so (he approved all on 2026-11-03), `build`,
-  `import-local`, `verify`, a storefront check (Playwright works now: Matic accepted the local certificate),
+  `import-local`, `verify`, a storefront check (curl with the Caddy root cert, see above; the headless Playwright MCP does not trust it),
   and the theme must be compiled (`bin/console theme:compile`).
 - Hand Matic `runs/<new>/import/` + its README for the prod Admin import.
 
@@ -95,9 +107,9 @@ in cPanel. Prod is his to touch; the agent never does it.
 **Code first:** the square photo swatches in the variant picker are a theme change
 (`OptiwebTheme/.../scss/pages/_product.scss`, `.is-display-media`). It has to be committed and deployed
 (CI, `main` → prod) before the variant import, otherwise the photos show as stretched full-width strips.
+`f/catalog-enrichment` also carries the Minimax draft-invoice change (OptiwebSync 1.2.0), so merging it deploys both.
 
-
-Follow `runs/2026-11-03-2033/import/README.md`. In short:
+Follow `runs/2026-11-04-1350/import/README.md`. In short:
 1. Back up the prod DB (cPanel).
 2. Collapse the old variants: Products > select the 29 parents in `collapse-plan.json` > "Split variants" with
    **delete parent OFF**, then bulk-delete the 77 numbers under `delete`.
@@ -105,7 +117,7 @@ Follow `runs/2026-11-03-2033/import/README.md`. In short:
    variantListingConfig → `variant_listing_config`).
 4. Import `01` … `10` in numeric order. A dry run only works once the files it depends on are in
    (02 needs 01; 06 needs 04+05; 07 needs 06).
-5. Do `fixes-manual.json` by hand: remove the listed wrong property values (68 items) and correct the listed
+5. Do `fixes-manual.json` by hand: remove the listed wrong property values (65 items) and correct the listed
    short descriptions.
 6. Then `./enrich.sh finish` (records which products were read, so the next run only reads changes).
 

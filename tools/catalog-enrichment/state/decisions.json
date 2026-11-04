@@ -6789,6 +6789,11 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: inactive pass, medium/low approved for local check"
  },
+ "prop|800250|Barva|srebrna": {
+  "date": "2026-11-04",
+  "decision": "approve",
+  "note": ""
+ },
  "prop|800295|Količina v pakiranju|1 kos": {
   "date": "2026-11-03",
   "decision": "reject",
