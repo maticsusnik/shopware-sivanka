@@ -23,6 +23,7 @@ use OptiwebTheme\Core\Content\Product\SalesChannel\CrossSelling\FallbackCrossSel
 use OptiwebTheme\Services\ShippingMethodRouteDecorator;
 use OptiwebTheme\Storefront\Subscriber\CartLineItemAddedEvent;
 use OptiwebTheme\Storefront\Subscriber\HeaderMenuSubscriber;
+use OptiwebTheme\Storefront\Subscriber\NoParentProductsSubscriber;
 use OptiwebTheme\Storefront\Subscriber\ProductAvailabilitySubscriber;
 use OptiwebTheme\Storefront\Twig\GlobalTwigVariables;
 use OptiwebTheme\Storefront\Twig\JsonDecodeExtension;
@@ -108,6 +109,9 @@ return static function (ContainerConfigurator $configurator): void {
 
     $services->set(CartLineItemAddedEvent::class)
         ->args([service(SystemConfigService::class)])
+        ->tag('kernel.event_subscriber');
+
+    $services->set(NoParentProductsSubscriber::class)
         ->tag('kernel.event_subscriber');
 
     $services->set(ProductAvailabilitySubscriber::class)

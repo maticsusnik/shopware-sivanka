@@ -132,6 +132,26 @@
                 height: 56px;
             }
         }
+
+        // Not available in the chosen combination (core sets .disabled / .not-combinable): Bootstrap's
+        // 0.65 opacity is invisible on a photo, so grey it out and dash the border. Still clickable:
+        // core then switches to the nearest combination that has this option.
+        &.is-display-media.disabled,
+        &.is-display-color.disabled {
+            opacity: 1;
+            border-style: dashed;
+            border-color: $sv-border;
+        }
+
+        &.is-display-media.disabled .product-detail-configurator-option-image {
+            filter: grayscale(1);
+            opacity: 0.35;
+        }
+
+        &.is-display-color.disabled {
+            filter: grayscale(1);
+            opacity: 0.35;
+        }
     }
 
     &-quantity-group {

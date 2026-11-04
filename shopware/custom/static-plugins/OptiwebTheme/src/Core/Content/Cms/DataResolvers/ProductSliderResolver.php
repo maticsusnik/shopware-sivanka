@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace OptiwebTheme\Core\Content\Cms\DataResolvers;
 
+use OptiwebTheme\Storefront\Subscriber\NoParentProductsSubscriber;
 use Shopware\Core\Content\Cms\Aggregate\CmsSlot\CmsSlotEntity;
 use Shopware\Core\Content\Cms\DataResolver\CriteriaCollection;
 use Shopware\Core\Content\Cms\DataResolver\Element\AbstractCmsElementResolver;
@@ -38,6 +39,8 @@ class ProductSliderResolver extends AbstractCmsElementResolver
         $criteria = new Criteria();
         $criteria->addAssociation('cover');
         $criteria->setLimit(self::LIMIT);
+        // Never a variant parent, in every mode: only simple products and variants are buyable cards.
+        $criteria->addFilter(NoParentProductsSubscriber::filter());
 
         $hasProducts = false;
         if ($selectionMode === 'manual') {
@@ -79,8 +82,8 @@ class ProductSliderResolver extends AbstractCmsElementResolver
     /**
      * LIMIT random products — from the category when one is chosen, from the
      * whole catalogue otherwise. The DAL has no random sorting, so all visible
-     * ids are fetched (cheap: ids only) and sampled here. Variants are left out
-     * so one article cannot fill the slider twice.
+     * ids are fetched (cheap: ids only) and sampled here. Variant parents are left
+     * out; variants count as products of their own, as in the listings.
      *
      * @return array<int, string>
      */
@@ -89,7 +92,7 @@ class ProductSliderResolver extends AbstractCmsElementResolver
         $salesChannelContext = $resolverContext->getSalesChannelContext();
 
         $criteria = new Criteria();
-        $criteria->addFilter(new EqualsFilter('product.parentId', null));
+        $criteria->addFilter(NoParentProductsSubscriber::filter());
         $criteria->addFilter(new EqualsFilter('product.visibilities.visibility', ProductVisibilityDefinition::VISIBILITY_ALL));
         $criteria->addFilter(new EqualsFilter('product.visibilities.salesChannelId', $salesChannelContext->getSalesChannelId()));
         if (is_string($categoryId) && $categoryId !== '') {
