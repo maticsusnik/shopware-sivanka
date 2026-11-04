@@ -62,7 +62,12 @@ Built with the steps below from `~/Desktop/backup_sivanka_04_11_2026.sql` (note:
   Storefront checked (cards per variant, SEO, square photo swatches). New oddities in the run's `data-issues.md`.
 - Playwright MCP is headless and doesn't trust the Caddy CA; HTML checks work with
   `curl --cacert <caddy root.crt from local-setup-caddy-1:/data/caddy/pki/authorities/local/>`.
-- **Not imported on prod yet.** After Matic's prod import: `./enrich.sh finish`.
+- **On prod since 2026-11-04 ~15:00** (done through the prod Admin in a Playwright session Matic logged into,
+  every step approved by him): collapse via `/api/_action/optiweb/variant-builder/split` (deleteParent=false, it
+  defaults to true!) + sync delete of the 77, profile `sivanka_variant_listing` created, files 01–08, 10, 09
+  imported in the Admin Import screen (all 0 errors, counts identical to local), fixes-manual applied via the
+  sync API (65 links, 5 short descriptions). Prod storefront checked. `./enrich.sh finish` run; the next run
+  only reads products changed after this.
 
 ## How the 2026-11-04 package was built (repeat for a newer dump)
 
