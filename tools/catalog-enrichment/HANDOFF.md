@@ -52,6 +52,44 @@ Matic is reviewing it in the local shop (https://sivanka.shopware.localhost, adm
 **Nothing has gone to prod yet. Nothing is committed** (current branch `f/adding-stirpe` is unrelated; ask
 Matic for a YouTrack key and branch before committing, see `~/.claude/skills/_shared/youtrack-conventions.md`).
 
+## Next session: fresh dump → final prod package (2026-11-04)
+
+Matic puts a fresh prod dump on the Desktop (`~/Desktop/sivanka/backup_sivanka_04_11_2026.sql`; ask if the name
+differs). Goal: the same result as the 2026-11-03 run, rebuilt on that dump, ready for prod. Matic approved
+everything in that run, and `state/decisions.json` carries the decisions over (keyed by product number).
+
+```bash
+cd tools/catalog-enrichment
+./enrich.sh restore ~/Desktop/sivanka/backup_sivanka_04_11_2026.sql -y
+./enrich.sh extract                                    # creates runs/<new>
+cp runs/2026-11-03-2033/collapse-plan.json runs/<new>/ && ./enrich.sh collapse --apply   # if the old families are still there
+RUN=<new> ./enrich.sh extract                          # re-extract AFTER the collapse (same run name)
+./enrich.sh props-prepare --all --scope all
+./enrich.sh seo-prepare --scope all --gsc ~/Desktop/sivanka.com-Performance-on-Search-2026-11-03.zip
+./enrich.sh categories-prepare
+./enrich.sh reuse 2026-11-03-2033                      # copies agent output, fixes, gsc; writes reuse-report.json
+```
+- Do **not** run `variants-prepare` unless reuse-report lists new/changed products: it would overwrite the
+  reused `clusters.json`. If there are new or changed products, give only those to agents (a few batches) and
+  re-run the fixes generator (`python3 runs/<new>/fixes/make_fixes.py`, it reads the new run's data).
+- Then: the four validators, approve leftovers only if Matic says so (he approved all on 2026-11-03), `build`,
+  `import-local`, `verify`, a storefront check (Playwright works now: Matic accepted the local certificate),
+  and the theme must be compiled (`bin/console theme:compile`).
+- Hand Matic `runs/<new>/import/` + its README for the prod Admin import.
+
+### Why not upload the local database to prod instead
+Matic asked. Not recommended, even on a day without orders:
+- The local DB is not a clean copy of prod plus our changes. `restore` changed the sales-channel domain to
+  localhost, turned mail delivery off, set the Minimax tasks inactive and order export off, reset the admin
+  password, and ran `plugin:update:all` with local plugin code that may be newer than what's deployed on prod
+  (schema ahead of prod code). Each of these would have to be reverted exactly before an upload.
+- Prod keeps changing without orders too: the Minimax sync writes stock and prices every 15 minutes, customers
+  register, carts and sessions are written. An upload resets all of that to the dump time.
+- The CSV route was tested end to end locally (0 errors, `verify` OK), changes only the planned fields, and
+  can be undone (Split variants, rollback lists).
+If Matic still wants it: a fresh dump, rebuild, revert the list above, put prod in maintenance mode, then import
+in cPanel. Prod is his to touch; the agent never does it.
+
 ## Going to prod (Matic does it, in the prod Admin)
 
 **Code first:** the square photo swatches in the variant picker are a theme change

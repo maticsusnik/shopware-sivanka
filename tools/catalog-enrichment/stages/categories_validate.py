@@ -28,6 +28,8 @@ for f in sorted(os.listdir(os.path.join(run, 'categories', 'out'))):
         if not item:
             stats['unknown id'] += 1
             continue
+        if any(x[4] == item['number'] for x in rows):
+            continue
         ids = [i for i in r.get('categories') or [] if i]
         why = []
         if not ids:

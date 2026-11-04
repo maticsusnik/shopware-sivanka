@@ -12,6 +12,7 @@
 #   ./enrich.sh variants-validate              check agent families -> variants/review.csv
 #   ./enrich.sh categories-prepare             products without a category -> categories/in/
 #   ./enrich.sh categories-validate            check agent output -> categories/review.csv
+#   ./enrich.sh reuse <old run name>            copy an earlier run's agent results into the latest run
 #   ./enrich.sh review <review.csv>...         store the `decision` column in state/decisions.json
 #   ./enrich.sh build                          accepted rows -> import/NN-*.csv + import/README.md
 #   ./enrich.sh import-local                   LOCAL: import every file of the run in order + apply fixes-manual.json
@@ -38,11 +39,12 @@ case "$cmd" in
     variants-validate) py variants_validate.py "$R" ;;
     categories-prepare)  py categories_prepare.py "$R" "$@" ;;
     categories-validate) py categories_validate.py "$R" ;;
+    reuse)          py reuse.py "$RUNS_DIR/$1" "$R" ;;
     review)         py review.py "$@" ;;
     build)          py build.py "$R" ;;
     import-local)   "$S/import-local.sh" ;;
     verify)         "$S/snapshot.sh" "$R/snapshot-after.tsv"; py verify.py "$R" "$R/snapshot-after.tsv" ;;
     finish)         py finish.py "$R" ;;
     summary)        py summary.py "$R" ;;
-    *)              sed -n '2,20p' "$0"; exit 1 ;;
+    *)              sed -n '2,21p' "$0"; exit 1 ;;
 esac

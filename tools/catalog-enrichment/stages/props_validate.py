@@ -67,6 +67,7 @@ def check(item, p):
 
 rows, accepted = [], []
 stats = collections.Counter()
+done = set()          # batch-*.json sorts before old-*.json (reused): a re-read product counts once, newest first
 outdir = os.path.join(run, 'props', 'out')
 for f in sorted(os.listdir(outdir)):
     for rec in json.load(open(os.path.join(outdir, f), encoding='utf-8')):
@@ -74,6 +75,9 @@ for f in sorted(os.listdir(outdir)):
         if not item:
             stats['unknown product id'] += 1
             continue
+        if item['id'] in done:
+            continue
+        done.add(item['id'])
         taken = {g: set(vs) for g, vs in c.existing(c.by_id[item['id']]).items()}
         for p in rec.get('properties') or []:
             p = dict(p)
