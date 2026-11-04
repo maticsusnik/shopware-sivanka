@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace OptiwebTheme\Core\Content\Product\SalesChannel\CrossSelling;
 
+use OptiwebTheme\Storefront\Subscriber\NoParentProductsSubscriber;
 use Shopware\Core\Content\Product\Aggregate\ProductCrossSelling\ProductCrossSellingEntity;
 use Shopware\Core\Content\Product\Aggregate\ProductVisibility\ProductVisibilityDefinition;
 use Shopware\Core\Content\Product\ProductCollection;
@@ -120,9 +121,11 @@ class FallbackCrossSellingRoute extends AbstractProductCrossSellingRoute
         $criteria->addAssociation('cover');
         $criteria->addAssociation('manufacturer');
         $criteria->addFilter(new EqualsAnyFilter('product.categoriesRo.id', $categoryIds));
+        // Not the product being viewed, and never a variant parent (only buyable cards).
         $criteria->addFilter(new NotFilter(NotFilter::CONNECTION_AND, [
             new EqualsFilter('product.id', $productId),
         ]));
+        $criteria->addFilter(NoParentProductsSubscriber::filter());
         $criteria->addFilter(new ProductAvailableFilter(
             $context->getSalesChannelId(),
             ProductVisibilityDefinition::VISIBILITY_LINK
