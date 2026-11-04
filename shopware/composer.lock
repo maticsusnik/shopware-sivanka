@@ -4250,11 +4250,11 @@
         },
         {
             "name": "optiweb/sync",
-            "version": "1.1.0",
+            "version": "1.2.0",
             "dist": {
                 "type": "path",
                 "url": "custom/static-plugins/OptiwebSync",
-                "reference": "8be95ba5611f4502d0e2d130e061ebf07d378dad"
+                "reference": "4bbbe6affdd8d0624cd0beb5c629ab0f7a5d2f47"
             },
             "require": {
                 "shopware/core": "~6.7.0"

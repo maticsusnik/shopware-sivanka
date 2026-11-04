@@ -22,15 +22,23 @@ use Shopware\Core\System\StateMachine\Transition;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
 
 /**
- * Carries the Minimax order status back onto the Shopware order.
+ * Carries the Minimax document status back onto the Shopware order.
  *
- * Minimax "Potrjeno" (P) moves the order to "In progress", "Zaključeno" (Z) to
- * "Done" — through the regular state transitions, so the customer gets the same
- * status mails as for a change made in the admin. Only ever forwards: an order is
- * never moved back, and a draft (O) or invalidated (R) Minimax order changes nothing.
+ * Invoices (every export since 2026-11): once staff issue the draft in Minimax,
+ * its number (e.g. WEB-02-2026000012, the one in the invoice's barcode) is
+ * stored on the order, the order moves to "Done" and its export status to
+ * "done". A draft deleted in Minimax marks the export "cancelled" — never
+ * re-exported on its own.
  *
- * Only orders this plugin exported (status "sent", with a Minimax id) that are
- * still open or in progress are looked at.
+ * Received orders exported before that: Minimax "Potrjeno" (P) moves the order
+ * to "In progress", "Zaključeno" (Z) to "Done".
+ *
+ * Always through the regular state transitions, so the customer gets the same
+ * status mails as for a change made in the admin. Only ever forwards: an order
+ * is never moved back.
+ *
+ * Only orders this plugin exported (status "sent", with a Minimax id) are
+ * looked at.
  */
 class OrderStatusSync extends AbstractSyncBase
 {
@@ -118,7 +126,12 @@ class OrderStatusSync extends AbstractSyncBase
     {
         $criteria = new Criteria();
         $criteria->addFilter(new EqualsFilter('customFields.' . GlobalVariables::CUSTOM_FIELD_OPTIWEB_STATUS, GlobalVariables::STATUS_SENT));
-        $criteria->addFilter(new EqualsAnyFilter('stateMachineState.technicalName', array_keys(self::TRANSITIONS)));
+        // Completed too: staff may finish an order before issuing its invoice,
+        // and the invoice number still has to come back.
+        $criteria->addFilter(new EqualsAnyFilter('stateMachineState.technicalName', [
+            ...array_keys(self::TRANSITIONS),
+            OrderStates::STATE_COMPLETED,
+        ]));
         $criteria->addAssociation('stateMachineState');
         $criteria->addSorting(new FieldSorting('orderDateTime', FieldSorting::ASCENDING));
 
@@ -156,15 +169,88 @@ class OrderStatusSync extends AbstractSyncBase
 
     private function updateOrder(OrderEntity $order): void
     {
-        $orderNumber = (string) $order->getOrderNumber();
-        $minimaxId   = (int) ($order->getCustomFields()[GlobalVariables::CUSTOM_FIELD_OPTIWEB_KEY] ?? 0);
+        $customFields = $order->getCustomFields() ?? [];
+        $minimaxId    = (int) ($customFields[GlobalVariables::CUSTOM_FIELD_OPTIWEB_KEY] ?? 0);
         if ($minimaxId <= 0) {
+            return;
+        }
+
+        if (($customFields[GlobalVariables::CUSTOM_FIELD_OPTIWEB_DOCUMENT] ?? null) === GlobalVariables::MINIMAX_DOCUMENT_INVOICE) {
+            $this->updateFromInvoice($order, $minimaxId);
+
+            return;
+        }
+
+        $this->updateFromReceivedOrder($order, $minimaxId);
+    }
+
+    private function updateFromInvoice(OrderEntity $order, int $invoiceId): void
+    {
+        $orderNumber = (string) $order->getOrderNumber();
+        $invoice     = $this->minimaxClient->getInvoice($invoiceId);
+
+        if (!$invoice['found']) {
+            OwLogger::warning($this->logger, "Order $orderNumber: Minimax invoice $invoiceId no longer exists (draft deleted) — export marked cancelled, not resent.");
+            if ($this->dryRun) {
+                return;
+            }
+            $this->writeCustomFields($order, [
+                GlobalVariables::CUSTOM_FIELD_OPTIWEB_STATUS => GlobalVariables::STATUS_CANCELLED,
+                GlobalVariables::CUSTOM_FIELD_OPTIWEB_ERROR  => "Minimax invoice $invoiceId was deleted",
+            ]);
+
+            return;
+        }
+
+        // Still a draft: nothing to do until staff issue it.
+        if ($invoice['status'] !== 'I') {
+            return;
+        }
+
+        $current = (string) $order->getStateMachineState()?->getTechnicalName();
+        $actions = self::TRANSITIONS[$current][OrderStates::STATE_COMPLETED] ?? [];
+        $number  = $invoice['number'];
+
+        if ($this->dryRun) {
+            OwLogger::addVisibleLog($this->logger, sprintf(
+                'DRY RUN — order %s: Minimax invoice %s issued, would store the number%s.',
+                $orderNumber,
+                $number ?? '(number unknown)',
+                $actions !== [] ? " and move $current → " . OrderStates::STATE_COMPLETED : '',
+            ));
+
+            return;
+        }
+
+        // Number first: a failed transition must not lose it, and the order
+        // leaves this sync's selection once its status is "done".
+        $this->writeCustomFields($order, [
+            GlobalVariables::CUSTOM_FIELD_OPTIWEB_INVOICE_NUMBER => $number,
+            GlobalVariables::CUSTOM_FIELD_OPTIWEB_STATUS         => GlobalVariables::STATUS_DONE,
+            GlobalVariables::CUSTOM_FIELD_OPTIWEB_ERROR          => null,
+        ]);
+
+        $this->transition($order, $actions);
+
+        ++$this->updated;
+        OwLogger::addVisibleLog($this->logger, sprintf(
+            'Order %s: Minimax invoice %s issued%s.',
+            $orderNumber,
+            $number ?? '(number unknown)',
+            $actions !== [] ? " — moved $current → " . OrderStates::STATE_COMPLETED : '',
+        ));
+    }
+
+    private function updateFromReceivedOrder(OrderEntity $order, int $minimaxId): void
+    {
+        $orderNumber = (string) $order->getOrderNumber();
+        $current     = (string) $order->getStateMachineState()?->getTechnicalName();
+        if (!isset(self::TRANSITIONS[$current])) {
             return;
         }
 
         $minimaxStatus = $this->minimaxClient->getOrderStatus($minimaxId);
         $target        = self::STATE_FOR_MINIMAX_STATUS[$minimaxStatus] ?? null;
-        $current       = (string) $order->getStateMachineState()?->getTechnicalName();
         $actions       = $target !== null ? (self::TRANSITIONS[$current][$target] ?? []) : [];
 
         if ($actions === []) {
@@ -177,14 +263,34 @@ class OrderStatusSync extends AbstractSyncBase
             return;
         }
 
+        $this->transition($order, $actions);
+
+        ++$this->updated;
+        OwLogger::addVisibleLog($this->logger, "Order $orderNumber: Minimax $minimaxStatus — moved $current → $target.");
+    }
+
+    /** @param list<string> $actions */
+    private function transition(OrderEntity $order, array $actions): void
+    {
         foreach ($actions as $action) {
             $this->stateMachineRegistry->transition(
                 new Transition('order', $order->getId(), $action, 'stateId'),
                 $this->context,
             );
         }
+    }
 
-        ++$this->updated;
-        OwLogger::addVisibleLog($this->logger, "Order $orderNumber: Minimax $minimaxStatus — moved $current → $target.");
+    /**
+     * Merge into the order's custom fields; the existing ones are kept so
+     * another plugin's keys are never dropped.
+     *
+     * @param array<string, mixed> $fields
+     */
+    private function writeCustomFields(OrderEntity $order, array $fields): void
+    {
+        $this->orderRepository->update([[
+            'id'           => $order->getId(),
+            'customFields' => array_merge($order->getCustomFields() ?? [], $fields),
+        ]], $this->context);
     }
 }

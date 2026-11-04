@@ -9,8 +9,8 @@
 
         <input-field type="bool">
             <name>enableOrderExport</name>
-            <label>Send orders to Minimax</label>
-            <label lang="de-DE">Aufträge an Minimax senden</label>
+            <label>Send orders to Minimax (as draft invoices)</label>
+            <label lang="de-DE">Aufträge an Minimax senden (als Rechnungsentwürfe)</label>
             <helpText>Off by default. While off, the export still runs and logs the exact payload it would send, using read-only lookups only: nothing is created in Minimax, a customer that does not exist yet is listed as "WouldCreate".</helpText>
             <defaultValue>false</defaultValue>
         </input-field>
@@ -26,14 +26,49 @@
             <name>shippingItemCode</name>
             <label>Minimax item for shipping costs (code or name)</label>
             <label lang="de-DE">Minimax-Artikel für Versandkosten (Code oder Name)</label>
-            <helpText>Code or exact name of the Minimax item every shipping row points to. A Minimax order row carries no VAT rate of its own — it inherits it from the referenced item. Leave empty for "POŠTNINA". Which orders are exported is fixed: order state "Open"; card / online payments only once paid; cash on delivery, invoice and prepayment right away.</helpText>
+            <helpText>Code or exact name of the Minimax item every shipping row points to. Leave empty for "POŠTNINA". Which orders are exported is fixed: order state "Open"; card / online payments only once paid; cash on delivery, invoice and prepayment right away.</helpText>
         </input-field>
 
         <input-field type="text">
             <name>warehouseCode</name>
             <label>Minimax warehouse (code or name)</label>
             <label lang="de-DE">Minimax-Lager (Code oder Name)</label>
-            <helpText>Warehouse every exported order row is taken from — Minimax requires one, since stock is discharged straight from the order. Leave empty for code "1" (Skladišče).</helpText>
+            <helpText>Warehouse every exported invoice row is taken from — stock is discharged straight from the invoice, as on the shop's till invoices. Leave empty for code "1" (Skladišče).</helpText>
+        </input-field>
+        <input-field type="text">
+            <name>documentNumbering</name>
+            <label>Minimax invoice numbering (code or name)</label>
+            <label lang="de-DE">Minimax-Rechnungsnummernkreis (Code oder Name)</label>
+            <helpText>Orders are filed as DRAFT issued invoices on this numbering series; staff issue (number and fiscalise) them in Minimax. Once issued, the invoice number is stored on the order and the order is set to Done. Leave empty for "WEB-02" (SPLETNA TRG. davčna blagajna).</helpText>
+        </input-field>
+    </card>
+
+    <card>
+        <title>Payment methods on the invoice</title>
+        <title lang="de-DE">Zahlungsarten auf der Rechnung</title>
+
+        <input-field type="text">
+            <name>paymentMethodCard</name>
+            <label>Card / online payments (Stripe, Google Pay, Apple Pay)</label>
+            <helpText>Exact name of the Minimax invoice payment method. Leave empty for "Kartica". Marked as already paid — these orders are only exported once paid.</helpText>
+        </input-field>
+
+        <input-field type="text">
+            <name>paymentMethodPaypal</name>
+            <label>PayPal</label>
+            <helpText>Exact name of the Minimax invoice payment method. Leave empty for "Drugo".</helpText>
+        </input-field>
+
+        <input-field type="text">
+            <name>paymentMethodCashOnDelivery</name>
+            <label>Cash on delivery</label>
+            <helpText>Exact name of the Minimax invoice payment method. Leave empty for "Gotovina po povzetju". Not yet paid when exported.</helpText>
+        </input-field>
+
+        <input-field type="text">
+            <name>paymentMethodBankTransfer</name>
+            <label>Bank transfer (Predračun, prepayment, direct debit)</label>
+            <helpText>Exact name of the Minimax invoice payment method. Leave empty for "Transakcijski račun". Marked paid only if the shop payment is already paid when exported.</helpText>
         </input-field>
     </card>
 

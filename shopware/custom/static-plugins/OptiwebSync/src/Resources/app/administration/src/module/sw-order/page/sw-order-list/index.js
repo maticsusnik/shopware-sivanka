@@ -14,6 +14,11 @@ Component.override("sw-order-list", {
                 dataIndex: 'customFields.optiwebOrderStatus',
                 label: 'ERP Status',
                 allowResize: true,
+            }, {
+                property: 'customFields.optiwebMinimaxInvoiceNumber',
+                dataIndex: 'customFields.optiwebMinimaxInvoiceNumber',
+                label: 'Minimax račun',
+                allowResize: true,
             }]
         },
         getStatus(item){

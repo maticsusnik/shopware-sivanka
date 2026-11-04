@@ -41,8 +41,6 @@ class MinimaxClient implements ClientInterface
 {
     private const PAGE_SIZE   = 100;
     private const MAX_RETRIES = 3;
-    /** More orders than this for one reference means the filter was ignored. */
-    private const MAX_REFERENCE_MATCHES = 20;
 
     /** Candidate keys for the percent value inside a VatRate record. */
     private const VAT_PERCENT_KEYS = ['Percent', 'Percentage', 'Rate', 'VatRatePercent', 'Value'];
@@ -58,6 +56,9 @@ class MinimaxClient implements ClientInterface
     private array $currencyCache   = [];  // isoCode → int ID
     private array $countryCache    = [];  // isoCode → int|null ID
     private array $warehouseCache  = [];  // code or name → int ID
+    private array $numberingCache  = [];  // code or name → int ID
+    private ?array $paymentMethodCache = null;  // lower-case name → int ID
+    private array $invoiceReferenceCache = [];  // invoice ID → DocumentReference
     private ?int $endCustomerId    = null;
     private array $itemCache       = [];  // SKU → int|null ID
     private array $stockMap        = [];  // SKU → float quantity
@@ -448,65 +449,66 @@ class MinimaxClient implements ClientInterface
     }
 
     // -------------------------------------------------------------------------
-    // Orders
+    // Issued invoices (web shop orders)
     // -------------------------------------------------------------------------
 
     /**
-     * Export an order to Minimax as a received customer order (Prejeto naročilo).
+     * Export an order to Minimax as a DRAFT issued invoice (Izdani račun, status O).
      *
-     * POST api/orgs/{orgId}/orders
+     * POST api/orgs/{orgId}/issuedinvoices
      *
-     * Order fields per the reference: ReceivedIssued ("I" issued / "P" received,
-     * required), Year (required), Date, Customer, Customer* free-text address,
-     * Recipient* delivery address, Reference, Currency, Notes, Status
-     * ("P" confirmed / "O" draft / "Z" terminated / "R" invalidated), OrderRows.
+     * The invoice goes on the numbering series the shop uses (Sivanka: WEB-02
+     * "SPLETNA TRG. davčna blagajna") and waits there as a draft: the shop staff
+     * issue it in Minimax, which numbers and fiscalises it. This plugin never
+     * calls the "issue" action, and only a draft can be deleted again.
      *
-     * OrderRow fields: Item, Warehouse, ItemName, ItemCode, Description,
-     * Quantity, DiscountPercent, Price, UnitOfMeasurement. A row carries neither
-     * VatRate nor PriceWithVAT, and the order computes no VAT: `unitPrice` is
-     * taken as is (the caller sends it in the organisation's item price form).
+     * What Minimax insists on (verified 2026-11-03, a 409 otherwise): the full
+     * addressee address with a country, and a VATPercent on every row. Rows are
+     * sent gross (PriceWithVAT) when the organisation keeps prices with VAT
+     * (PricesOnInvoice D), net (Price) otherwise; Minimax derives the other one.
      *
      * Input array shape:
-     *   date:        string  ISO datetime or YYYY-MM-DD
-     *   year:        int     optional — derived from date when omitted
-     *   reference:   string  free-text reference (Shopware order number)
-     *   note:        string  order notes
-     *   currencyIso: string  ISO currency code (default: EUR)
-     *   warehouse:   string  Minimax warehouse code or name every item row is taken from
-     *   customer:    [name, email, code, address, postalCode, city, countryIso, vatId]
-     *   recipient:   [name, address, postalCode, city, countryIso]   (optional)
-     *   lines:       [[sku, name, quantity, unitPrice, discountPercent, unitOfMeasurement, description], ...]
+     *   date:          string  Y-m-d the invoice is dated (export day)
+     *   transactionDate: string Y-m-d of the order (date of supply)
+     *   reference:     string  Shopware order number → DocumentReference
+     *   note:          string  internal notes
+     *   currencyIso:   string  ISO currency code (default: EUR)
+     *   numbering:     string  document numbering code (e.g. WEB-02)
+     *   warehouse:     string  Minimax warehouse code or name item rows are taken from
+     *   customer:      [name, email, code, address, postalCode, city, countryIso, vatId, endCustomerCode]
+     *   recipient:     [name, address, postalCode, city, countryIso]   (optional)
+     *   payment:       [method: Minimax payment method name, amount: float, paid: bool]  (optional)
+     *   lines:         [[sku, itemReference, name, quantity, unitPrice, vatPercent], ...]
      *
-     * Before POSTing, the order is looked up by its reference, so a retry after
+     * Before POSTing, the invoice is looked up by its reference, so a retry after
      * an attempt whose outcome was unknown can never file a second document.
      *
-     * Statuses: `ok` (created now), `existing` (already in Minimax — orderId is
-     * that order), `uncertain` (the POST may have been applied — never resend
+     * Statuses: `ok` (created now), `existing` (already in Minimax — invoiceId is
+     * that invoice), `uncertain` (the POST may have been applied — never resend
      * it blindly), `error` (nothing was created).
      *
-     * @return array{status: string, orderId?: int|string, error?: string}
+     * @return array{status: string, invoiceId?: int, error?: string}
      */
-    public function createOrder(array $orderData): array
+    public function createInvoice(array $invoiceData): array
     {
         try {
             $orgId     = $this->getOrganizationId();
-            $reference = trim((string) ($orderData['reference'] ?? ''));
+            $reference = trim((string) ($invoiceData['reference'] ?? ''));
             if ($reference === '') {
-                return ['status' => 'error', 'error' => 'Order has no reference — refusing to send an order that cannot be looked up again'];
+                return ['status' => 'error', 'error' => 'Order has no reference — refusing to send an invoice that cannot be looked up again'];
             }
 
-            $year       = (int) ($orderData['year'] ?? substr((string) ($orderData['date'] ?? ''), 0, 4));
-            $existingId = $this->findOrderIdByReference($reference, $year);
+            $existingId = $this->findInvoiceIdByReference($reference, (string) ($invoiceData['numbering'] ?? ''));
             if ($existingId !== null) {
-                return ['status' => 'existing', 'orderId' => $existingId];
+                return ['status' => 'existing', 'invoiceId' => $existingId];
             }
 
-            $payload = $this->buildOrderPayload($orderData, true);
+            $payload = $this->buildInvoicePayload($invoiceData, true);
 
-            return ['status' => 'ok', 'orderId' => $this->createRecord(
-                $this->url($orgId, 'orders'),
+            return ['status' => 'ok', 'invoiceId' => $this->createRecord(
+                $this->url($orgId, 'issuedinvoices'),
                 $payload,
-                ['OrderId', 'OrderID', 'ID'],
+                ['IssuedInvoiceId', 'IssuedInvoiceID', 'ID'],
             )];
         } catch (MinimaxUncertainWriteException $e) {
             return ['status' => 'uncertain', 'error' => $e->getMessage()];
@@ -516,8 +518,261 @@ class MinimaxClient implements ClientInterface
     }
 
     /**
+     * Status and number of an issued invoice.
+     *
+     * GET api/orgs/{orgId}/issuedinvoices/{id}. Status O = draft (no number yet),
+     * I = issued. The number printed on the invoice — and in its barcode — is
+     * "<numbering>-<year><number, 6 digits>", e.g. TRG-01-2026002215; Minimax
+     * also hands it back in the Document link ("Izdani račun št.:TRG-01-…").
+     * `found` is false when Minimax no longer has the invoice (draft deleted).
+     *
+     * @return array{found: bool, status: string, number: ?string}
+     */
+    public function getInvoice(int $invoiceId): array
+    {
+        $this->ensureAuthenticated();
+        $orgId = $this->getOrganizationId();
+
+        try {
+            $invoice = $this->get($this->url($orgId, 'issuedinvoices/' . $invoiceId));
+        } catch (\RuntimeException $e) {
+            // A deleted invoice answers 404 with an HTML body ("Syntax error" once decoded).
+            if (preg_match('/HTTP 404|Syntax error/', $e->getMessage()) === 1) {
+                return ['found' => false, 'status' => '', 'number' => null];
+            }
+
+            throw $e;
+        }
+
+        $status = strtoupper(trim((string) ($invoice['Status'] ?? '')));
+        $number = null;
+
+        if ($status === 'I') {
+            $documentName = (string) ($invoice['Document']['Name'] ?? '');
+            if (preg_match('/št\.:\s*(\S+)/u', $documentName, $match) === 1) {
+                $number = $match[1];
+            } elseif (!empty($invoice['InvoiceNumber'])) {
+                $number = sprintf(
+                    '%s-%d%06d',
+                    (string) ($invoice['DocumentNumbering']['Name'] ?? ''),
+                    (int) ($invoice['Year'] ?? 0),
+                    (int) $invoice['InvoiceNumber'],
+                );
+            }
+        }
+
+        return ['found' => true, 'status' => $status, 'number' => $number];
+    }
+
+    /**
+     * The invoice on our numbering series filed under this reference (the shop
+     * order number), if any.
+     *
+     * The issuedinvoices list ignores DocumentReference, DocumentNumberingID and
+     * the date filters (verified 2026-11-03: they answer the unfiltered list);
+     * Status, Year and SortField work. And a list row carries no
+     * DocumentReference. So: every draft, plus the newest page of issued
+     * invoices this year, narrowed to our numbering series, each fetched once
+     * per run and its DocumentReference compared exactly. Drafts are where a
+     * lost-answer POST ends up; the issued page covers one that staff issued
+     * before the next run.
+     *
+     * Throws instead of answering null whenever the lookup fails — a wrong "not
+     * found" means a duplicate invoice.
+     */
+    public function findInvoiceIdByReference(string $reference, string $numberingCode): ?int
+    {
+        $this->ensureAuthenticated();
+        $orgId       = $this->getOrganizationId();
+        $numberingId = $numberingCode !== '' ? $this->resolveDocumentNumberingId($numberingCode, $orgId) : null;
+
+        $candidates = [];
+
+        $page = 1;
+        do {
+            $data = $this->get($this->url($orgId, 'issuedinvoices', [
+                'Status'      => 'O',
+                'PageSize'    => self::PAGE_SIZE,
+                'CurrentPage' => $page,
+            ]));
+            $rows = $this->rows($data);
+            foreach ($rows as $row) {
+                $candidates[] = $row;
+            }
+            $total = (int) ($data['TotalRows'] ?? count($rows));
+            ++$page;
+        } while ($rows !== [] && ($page - 1) * self::PAGE_SIZE < $total && $page <= 20);
+
+        $data = $this->get($this->url($orgId, 'issuedinvoices', [
+            'Status'      => 'I',
+            'Year'        => (int) date('Y'),
+            'SortField'   => 'IssuedInvoiceId',
+            'Order'       => 'D',
+            'PageSize'    => self::PAGE_SIZE,
+            'CurrentPage' => 1,
+        ]));
+        foreach ($this->rows($data) as $row) {
+            $candidates[] = $row;
+        }
+
+        foreach ($candidates as $row) {
+            $invoiceId = (int) ($row['IssuedInvoiceId'] ?? 0);
+            if ($invoiceId <= 0) {
+                continue;
+            }
+
+            // A draft may not have its numbering filled in the list row; only
+            // skip a row that names a different series.
+            $rowNumberingId = (int) ($row['DocumentNumbering']['ID'] ?? 0);
+            if ($numberingId !== null && $rowNumberingId > 0 && $rowNumberingId !== $numberingId) {
+                continue;
+            }
+
+            if (!array_key_exists($invoiceId, $this->invoiceReferenceCache)) {
+                $invoice = $this->get($this->url($orgId, 'issuedinvoices/' . $invoiceId));
+                $this->invoiceReferenceCache[$invoiceId] = trim((string) ($invoice['DocumentReference'] ?? ''));
+            }
+
+            if ($this->invoiceReferenceCache[$invoiceId] === $reference) {
+                return $invoiceId;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Build the Minimax invoice payload without sending it.
+     *
+     * Used by createInvoice() and by the export's dry-run mode, so a dry run
+     * exercises the same customer/item/currency resolution as a real export.
+     *
+     * Only createInvoice() passes $createMissingCustomer: everything else (dry
+     * run, export switched off) must stay read-only, so an unknown customer is
+     * not created but reported in the payload as `Customer.WouldCreate`.
+     */
+    public function buildInvoicePayload(array $invoiceData, bool $createMissingCustomer = false): array
+    {
+        $this->ensureAuthenticated();
+        $orgId = $this->getOrganizationId();
+
+        $customer   = $invoiceData['customer'] ?? [];
+        $customerId = $this->findCustomer($customer, $orgId);
+        // Only a company (VAT ID) gets its own partner; the shared B2C customer
+        // must already exist and is never created.
+        $mayCreate = trim((string) ($customer['vatId'] ?? '')) !== '';
+        if ($customerId === null && $mayCreate && $createMissingCustomer) {
+            $customerId = $this->createCustomer($customer, $orgId);
+        }
+        if ($customerId === null && !$mayCreate) {
+            throw new \RuntimeException(sprintf('Minimax end customer "%s" not found', (string) ($customer['endCustomerCode'] ?? '')));
+        }
+
+        $grossPrices = $this->pricesIncludeVat();
+        $currencyId  = $this->resolveCurrencyId((string) ($invoiceData['currencyIso'] ?? 'EUR'), $orgId);
+        $numberingId = $this->resolveDocumentNumberingId((string) ($invoiceData['numbering'] ?? ''), $orgId);
+        // Stock is discharged straight from the invoice, as on the shop's own
+        // till invoices (warehouse 29738 on every TRG-01 row).
+        $warehouseId = $this->resolveWarehouseId((string) ($invoiceData['warehouse'] ?? ''), $orgId);
+
+        $invoiceRows = [];
+        foreach ($invoiceData['lines'] ?? [] as $line) {
+            $sku    = trim((string) ($line['sku'] ?? ''));
+            $itemId = $sku !== '' ? $this->findItemIdByCode($sku, $orgId) : null;
+
+            // A row without a shop SKU (shipping) can name its Minimax item by code or name.
+            $itemReference = trim((string) ($line['itemReference'] ?? ''));
+            if ($itemId === null && $itemReference !== '') {
+                $itemId = $this->findItemIdByCodeOrName($itemReference, $orgId);
+                if ($itemId === null) {
+                    $this->warn(sprintf('Minimax item "%s" not found — "%s" exported as a free-text row.', $itemReference, (string) ($line['name'] ?? '')));
+                }
+            }
+
+            $vatPercent = (float) ($line['vatPercent'] ?? 0);
+            $unitPrice  = (float) ($line['unitPrice'] ?? 0);
+
+            $row = [
+                'ItemCode'   => $sku,
+                'ItemName'   => (string) ($line['name'] ?? ''),
+                'Quantity'   => (float) ($line['quantity'] ?? 1),
+                'VATPercent' => $vatPercent,
+            ];
+            $row[$grossPrices ? 'PriceWithVAT' : 'Price'] = $unitPrice;
+
+            $vatRateId = $this->resolveVatRateId($vatPercent, $orgId);
+            if ($vatRateId !== null) {
+                $row['VatRate'] = ['ID' => $vatRateId];
+            } else {
+                $this->warn(sprintf('No Minimax VAT rate with %s %% — row "%s" sent with the percent only.', $vatPercent, (string) ($line['name'] ?? '')));
+            }
+
+            // Reference the Minimax item when the SKU resolves; otherwise keep
+            // the row as a free-text line so nothing — shipping, discounts,
+            // custom items — is silently dropped from the invoice.
+            if ($itemId !== null) {
+                $row['Item']      = ['ID' => $itemId];
+                $row['Warehouse'] = ['ID' => $warehouseId];
+            } elseif ($sku !== '') {
+                $this->warn(sprintf('SKU "%s" not found in Minimax — exported as a free-text row.', $sku));
+            }
+
+            $invoiceRows[] = $row;
+        }
+
+        if (empty($invoiceRows)) {
+            throw new \RuntimeException('No invoice rows to export');
+        }
+
+        $date            = (new \DateTimeImmutable((string) ($invoiceData['date'] ?? 'now')))->format('Y-m-d');
+        $transactionDate = (new \DateTimeImmutable((string) ($invoiceData['transactionDate'] ?? $date)))->format('Y-m-d');
+
+        $payload = [
+            'DocumentNumbering' => ['ID' => $numberingId],
+            'Customer'          => $customerId !== null
+                ? ['ID' => $customerId]
+                : ['ID' => null, 'WouldCreate' => $this->buildCustomerPayload($customer, $orgId)],
+            'DateIssued'        => $date,
+            'DateTransaction'   => $transactionDate,
+            'DateDue'           => $date,
+            'Currency'          => ['ID' => $currencyId],
+            'PricesOnInvoice'   => $grossPrices ? 'D' : 'N',
+            'InvoiceType'       => 'R',   // issued invoice (P would be a proforma)
+            'IssuedInvoiceRows' => $invoiceRows,
+        ];
+
+        if (!empty($invoiceData['reference'])) {
+            $payload['DocumentReference'] = (string) $invoiceData['reference'];
+        }
+        if (!empty($invoiceData['note'])) {
+            $payload['Notes'] = (string) $invoiceData['note'];
+        }
+
+        $payment    = $invoiceData['payment'] ?? [];
+        $methodName = trim((string) ($payment['method'] ?? ''));
+        if ($methodName !== '') {
+            $methodId = $this->resolvePaymentMethodId($methodName, $orgId);
+            if ($methodId !== null) {
+                $payload['IssuedInvoicePaymentMethods'] = [[
+                    'PaymentMethod' => ['ID' => $methodId],
+                    'Amount'        => round((float) ($payment['amount'] ?? 0), 2),
+                    'AlreadyPaid'   => !empty($payment['paid']) ? 'D' : 'N',
+                ]];
+            } else {
+                $this->warn(sprintf('Minimax payment method "%s" not found — invoice sent without a payment method.', $methodName));
+            }
+        }
+
+        $this->applyAddress($payload, 'Addressee', $customer, $orgId);
+        $this->applyAddress($payload, 'Recipient', $invoiceData['recipient'] ?? [], $orgId);
+
+        return $payload;
+    }
+
+    /**
      * The status of a Minimax order: P confirmed, O draft, Z terminated
-     * (completed), R invalidated.
+     * (completed), R invalidated. Only for orders exported before the switch to
+     * invoices (2026-11), which the status sync still follows.
      *
      * GET api/orgs/{orgId}/orders/{orderId}
      */
@@ -532,170 +787,12 @@ class MinimaxClient implements ClientInterface
     }
 
     /**
-     * The Minimax order filed under this reference (the shop order number), if any.
-     *
-     * GET api/orgs/{orgId}/orders?Reference=…&Year=… — both are documented
-     * filters. The search rows carry no Reference, so every candidate is fetched
-     * and its Reference compared exactly. Issued and received orders are both
-     * searched: an order filed under either must not be sent again.
-     *
-     * Throws instead of answering null whenever the result cannot be trusted
-     * (lookup failed, or so many rows that the filter was evidently ignored) —
-     * a wrong "not found" means a duplicate document.
-     */
-    public function findOrderIdByReference(string $reference, int $year): ?int
-    {
-        $this->ensureAuthenticated();
-        $orgId = $this->getOrganizationId();
-
-        $data = $this->get($this->url($orgId, 'orders', array_filter([
-            'Reference'   => $reference,
-            'Year'        => $year > 0 ? $year : null,
-            'PageSize'    => self::PAGE_SIZE,
-            'CurrentPage' => 1,
-        ], static fn ($value) => $value !== null)));
-
-        $rows      = $this->rows($data);
-        $totalRows = (int) ($data['TotalRows'] ?? count($rows));
-
-        if ($totalRows > self::MAX_REFERENCE_MATCHES || $totalRows > count($rows)) {
-            throw new \RuntimeException(sprintf(
-                'Minimax order lookup for reference "%s" returned %d orders — the Reference filter looks ignored, not sending',
-                $reference,
-                $totalRows,
-            ));
-        }
-
-        foreach ($rows as $row) {
-            $orderId = (int) ($row['OrderId'] ?? $row['OrderID'] ?? 0);
-            if ($orderId <= 0) {
-                continue;
-            }
-
-            $order = $this->get($this->url($orgId, 'orders/' . $orderId));
-            if (trim((string) ($order['Reference'] ?? '')) === $reference) {
-                return $orderId;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Build the Minimax order payload without sending it.
-     *
-     * Used by createOrder() and by the export's dry-run mode, so a dry run
-     * exercises the same customer/item/currency resolution as a real export.
-     *
-     * Only createOrder() passes $createMissingCustomer: everything else (dry run,
-     * export switched off) must stay read-only, so an unknown customer is not
-     * created but reported in the payload as `Customer.WouldCreate`.
-     */
-    public function buildOrderPayload(array $orderData, bool $createMissingCustomer = false): array
-    {
-        $this->ensureAuthenticated();
-        $orgId = $this->getOrganizationId();
-
-        $customer   = $orderData['customer'] ?? [];
-        $customerId = $this->findCustomer($customer, $orgId);
-        // Only a company (VAT ID) gets its own partner; the shared B2C customer
-        // must already exist and is never created.
-        $mayCreate = trim((string) ($customer['vatId'] ?? '')) !== '';
-        if ($customerId === null && $mayCreate && $createMissingCustomer) {
-            $customerId = $this->createCustomer($customer, $orgId);
-        }
-        if ($customerId === null && !$mayCreate) {
-            throw new \RuntimeException(sprintf('Minimax end customer "%s" not found', (string) ($customer['endCustomerCode'] ?? '')));
-        }
-        $currencyId = $this->resolveCurrencyId((string) ($orderData['currencyIso'] ?? 'EUR'), $orgId);
-        // Stock is discharged straight from a received order, so Minimax
-        // rejects (409) any item row without a warehouse.
-        $warehouseId = $this->resolveWarehouseId((string) ($orderData['warehouse'] ?? ''), $orgId);
-
-        $orderRows = [];
-        foreach ($orderData['lines'] ?? [] as $line) {
-            $sku    = trim((string) ($line['sku'] ?? ''));
-            $itemId = $sku !== '' ? $this->findItemIdByCode($sku, $orgId) : null;
-
-            // A row without a shop SKU (shipping) can name its Minimax item by code or name.
-            $reference = trim((string) ($line['itemReference'] ?? ''));
-            if ($itemId === null && $reference !== '') {
-                $itemId = $this->findItemIdByCodeOrName($reference, $orgId);
-                if ($itemId === null) {
-                    $this->warn(sprintf('Minimax item "%s" not found — "%s" exported as a free-text row without VAT rate.', $reference, (string) ($line['name'] ?? '')));
-                }
-            }
-
-            $row = [
-                'ItemCode' => $sku,
-                'ItemName' => (string) ($line['name'] ?? ''),
-                'Quantity' => (float) ($line['quantity'] ?? 1),
-                'Price'    => (float) ($line['unitPrice'] ?? 0),
-            ];
-
-            // Reference the Minimax item when the SKU resolves; otherwise keep
-            // the row as a free-text line so nothing — shipping, discounts,
-            // custom items — is silently dropped from the order.
-            if ($itemId !== null) {
-                $row['Item']      = ['ID' => $itemId];
-                $row['Warehouse'] = ['ID' => $warehouseId];
-            } elseif ($sku !== '') {
-                $this->warn(sprintf('SKU "%s" not found in Minimax — exported as a free-text row.', $sku));
-            }
-
-            if ((float) ($line['discountPercent'] ?? 0) > 0) {
-                $row['DiscountPercent'] = (float) $line['discountPercent'];
-            }
-            if (!empty($line['unitOfMeasurement'])) {
-                $row['UnitOfMeasurement'] = (string) $line['unitOfMeasurement'];
-            }
-            if (!empty($line['description'])) {
-                $row['Description'] = (string) $line['description'];
-            }
-
-            $orderRows[] = $row;
-        }
-
-        if (empty($orderRows)) {
-            throw new \RuntimeException('No order rows to export');
-        }
-
-        $date = (new \DateTimeImmutable((string) ($orderData['date'] ?? 'now')))->format('Y-m-d');
-        $year = (int) ($orderData['year'] ?? substr($date, 0, 4));
-
-        $payload = [
-            'ReceivedIssued' => 'P',   // received order — a customer's order to us (I is a purchase order to a supplier)
-            'Year'           => $year,
-            'Date'           => $date,
-            'Customer'       => $customerId !== null
-                ? ['ID' => $customerId]
-                : ['ID' => null, 'WouldCreate' => $this->buildCustomerPayload($customer, $orgId)],
-            'Currency'       => ['ID' => $currencyId],
-            'Status'         => 'O',   // draft
-            'OrderRows'      => $orderRows,
-        ];
-
-        if (!empty($orderData['reference'])) {
-            $payload['Reference'] = (string) $orderData['reference'];
-        }
-        if (!empty($orderData['note'])) {
-            $payload['Notes'] = (string) $orderData['note'];
-        }
-
-        $this->applyAddress($payload, 'Customer', $customer, $orgId);
-        $this->applyAddress($payload, 'Recipient', $orderData['recipient'] ?? [], $orgId);
-
-        return $payload;
-    }
-
-    /**
      * Populate the free-text address fields for one address block, either the
-     * `Customer…` (billing) or the `Recipient…` (delivery) set.
+     * `Addressee…` (billing) or the `Recipient…` (delivery) set.
      *
      * The country goes in as an mMApiFkField by ID when it resolves; only when
      * it does not do we fall back to the free-text name — the reference
-     * explicitly prohibits RecipientCountryName when RecipientCountry is the
-     * home country.
+     * explicitly prohibits …CountryName when …Country is the home country.
      */
     private function applyAddress(array &$payload, string $prefix, array $address, string $orgId): void
     {
@@ -720,6 +817,66 @@ class MinimaxClient implements ClientInterface
         } else {
             $payload[$prefix . 'CountryName'] = $countryIso;
         }
+    }
+
+    /**
+     * Document numbering by code or exact name (Sivanka: "WEB-02" = 61902,
+     * "TRG-01" = 61901). GET api/orgs/{orgId}/document-numbering.
+     */
+    private function resolveDocumentNumberingId(string $reference, string $orgId): int
+    {
+        $reference = trim($reference);
+        if (isset($this->numberingCache[$reference])) {
+            return $this->numberingCache[$reference];
+        }
+
+        foreach ($this->rows($this->get($this->url($orgId, 'document-numbering', ['PageSize' => self::PAGE_SIZE]))) as $row) {
+            if (strtoupper(trim((string) ($row['Document'] ?? 'IR'))) !== 'IR') {
+                continue;
+            }
+            if ($reference === trim((string) ($row['Code'] ?? '')) || $reference === trim((string) ($row['Name'] ?? ''))) {
+                return $this->numberingCache[$reference] = (int) $row['DocumentNumberingId'];
+            }
+        }
+
+        throw new \RuntimeException("Minimax: invoice numbering '$reference' not found");
+    }
+
+    /**
+     * Invoice payment method by exact name (case-insensitive), e.g. "Kartica".
+     * GET api/orgs/{orgId}/issuedinvoices/paymentmethods.
+     */
+    private function resolvePaymentMethodId(string $name, string $orgId): ?int
+    {
+        if ($this->paymentMethodCache === null) {
+            $this->paymentMethodCache = [];
+            foreach ($this->rows($this->get($this->url($orgId, 'issuedinvoices/paymentmethods', ['PageSize' => self::PAGE_SIZE]))) as $row) {
+                if (($row['Usage'] ?? 'D') === 'N') {
+                    continue;
+                }
+                $this->paymentMethodCache[mb_strtolower(trim((string) ($row['Name'] ?? '')))] = (int) $row['PaymentMethodId'];
+            }
+        }
+
+        return $this->paymentMethodCache[mb_strtolower(trim($name))] ?? null;
+    }
+
+    /**
+     * The Minimax VAT rate with this percent. Several codes can share a percent
+     * (O and N are both 0 %), so the first one in the list wins — for a
+     * non-zero rate there is exactly one (S 22, Z 9.5, P 8, "0" 5).
+     */
+    private function resolveVatRateId(float $percent, string $orgId): ?int
+    {
+        $this->loadVatRates($orgId);
+
+        foreach ($this->vatPercentCache as $id => $ratePercent) {
+            if ($ratePercent !== null && abs($ratePercent - $percent) < 0.001) {
+                return (int) $id;
+            }
+        }
+
+        return null;
     }
 
     // -------------------------------------------------------------------------
