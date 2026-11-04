@@ -34,4 +34,7 @@
             </sw-help-text>
         </sw-label>
     </template>
+    <template #column-customFields.optiwebMinimaxInvoiceNumber="{ item }">
+        {{ item.customFields?.optiwebMinimaxInvoiceNumber || '' }}
+    </template>
 {% endblock %}

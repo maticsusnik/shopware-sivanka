@@ -84,7 +84,7 @@ class OptiwebSync extends Plugin
                 $this->field(
                     'b1b2c3d4e5f60718293a4b5c6d7e8f91',
                     GlobalVariables::CUSTOM_FIELD_OPTIWEB_KEY,
-                    'Minimax order id',
+                    'Minimax document id (invoice, or order before 2026-11)',
                     2,
                 ),
                 $this->field(
@@ -92,6 +92,18 @@ class OptiwebSync extends Plugin
                     GlobalVariables::CUSTOM_FIELD_OPTIWEB_ERROR,
                     'Minimax export error',
                     3,
+                ),
+                $this->field(
+                    'd2b2c3d4e5f60718293a4b5c6d7e8f94',
+                    GlobalVariables::CUSTOM_FIELD_OPTIWEB_INVOICE_NUMBER,
+                    'Minimax invoice number',
+                    0,
+                ),
+                $this->field(
+                    'e2b2c3d4e5f60718293a4b5c6d7e8f95',
+                    GlobalVariables::CUSTOM_FIELD_OPTIWEB_DOCUMENT,
+                    'Minimax document type',
+                    4,
                 ),
             ],
             'relations' => [[

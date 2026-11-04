@@ -27,20 +27,28 @@ use Shopware\Core\Framework\DataAbstractionLayer\Search\Sorting\FieldSorting;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
 
 /**
- * Exports open Shopware orders to Minimax as received customer orders (Prejeta naročila).
+ * Exports open Shopware orders to Minimax as DRAFT issued invoices (Izdani
+ * računi) on the shop's own numbering series — WEB-02 "SPLETNA TRG. davčna
+ * blagajna" for Sivanka. Staff issue (number and fiscalise) them in Minimax;
+ * OrderStatusSync then brings the invoice number back and completes the order.
  *
  * Which orders: order state "open" only. Offline payment methods (cash on
  * delivery, invoice, prepayment, direct debit) go over as soon as the order is
- * open; any other method — card and other online payments (Stripe) — only once
- * its payment state is "paid". Always judged on the order's current (primary)
- * transaction, so after a customer switches the payment method the new one counts.
+ * open; any other method — card and other online payments (Stripe, PayPal) —
+ * only once its payment state is "paid". Always judged on the order's current
+ * (primary) transaction, so after a customer switches the payment method the
+ * new one counts.
+ *
+ * The shop payment method is mapped onto a Minimax invoice payment method
+ * (Kartica, Transakcijski račun, Gotovina po povzetju, …), marked "already
+ * paid" when the shop transaction is paid.
  *
  * Reads and writes through the DAL — one query with the associations it needs,
  * rather than a chain of admin-API round-trips per order.
  *
- * A Minimax order computes no VAT and its rows carry no VAT rate, so row prices
- * are written in the form the organisation keeps its item prices in — gross for
- * Sivanka (items/settings PricesIncludeVAT = D). See rowUnitPrice().
+ * Rows are written in the form the organisation keeps its item prices in —
+ * gross for Sivanka (items/settings PricesIncludeVAT = D) — each with its VAT
+ * percent, which an invoice requires. See rowUnitPrice().
  */
 class OrderExportSync extends AbstractSyncBase
 {
@@ -66,8 +74,27 @@ class OrderExportSync extends AbstractSyncBase
     /** Minimax warehouse (code) the goods are taken from: "1" = Skladišče. */
     private const DEFAULT_WAREHOUSE = '1';
 
+    /** Minimax invoice numbering series (code or name) the drafts are filed on. */
+    private const DEFAULT_NUMBERING = 'WEB-02';
+
+    /**
+     * Shop payment method → Minimax invoice payment method (config key, default
+     * name). Matched in this order on the handler identifier or technical name;
+     * anything unmatched is an online payment and counts as "card".
+     */
+    private const PAYMENT_METHOD_MAP = [
+        'CashPayment'    => ['paymentMethodCashOnDelivery', 'Gotovina po povzetju'],
+        'InvoicePayment' => ['paymentMethodBankTransfer', 'Transakcijski račun'],
+        'PrePayment'     => ['paymentMethodBankTransfer', 'Transakcijski račun'],
+        'DebitPayment'   => ['paymentMethodBankTransfer', 'Transakcijski račun'],
+        'paypal'         => ['paymentMethodPaypal', 'Drugo'],
+    ];
+    private const PAYMENT_METHOD_CARD = ['paymentMethodCard', 'Kartica'];
+
     /** Code of the shared Minimax customer every order without a VAT ID goes to. */
     private string $endCustomerCode = self::DEFAULT_END_CUSTOMER;
+
+    private string $numbering = self::DEFAULT_NUMBERING;
 
     /** Code or exact name of the Minimax item every shipping row references. */
     private string $shippingItem = self::DEFAULT_SHIPPING_ITEM;
@@ -134,6 +161,7 @@ class OrderExportSync extends AbstractSyncBase
             ?: self::DEFAULT_END_CUSTOMER;
         $this->warehouse = trim((string) ($this->systemConfigService->get('OptiwebSync.config.warehouseCode') ?? ''))
             ?: self::DEFAULT_WAREHOUSE;
+        $this->numbering = $this->configString('documentNumbering', self::DEFAULT_NUMBERING);
         $this->grossPrices = $this->minimaxClient->pricesIncludeVat();
     }
 
@@ -241,7 +269,8 @@ class OrderExportSync extends AbstractSyncBase
         if (!empty($existingKey)) {
             ++$this->skipped;
             OwLogger::addVisibleLog($this->logger, "Order $orderNumber already exported (Minimax id $existingKey) — skipping.");
-            $this->markOrder($order, GlobalVariables::STATUS_SENT, (string) $existingKey, null);
+            // The key is already stored; passing null leaves it — and its document type — untouched.
+            $this->markOrder($order, GlobalVariables::STATUS_SENT, null, null);
 
             return;
         }
@@ -264,18 +293,19 @@ class OrderExportSync extends AbstractSyncBase
             return;
         }
 
-        $orderData = $this->buildOrderData($order, $transaction, $delivery);
+        $invoiceData = $this->buildInvoiceData($order, $transaction, $delivery);
+        $reference   = $invoiceData['reference'];
 
         if (!$send) {
-            $existingId = $this->minimaxClient->findOrderIdByReference($orderData['reference'], $orderData['year']);
+            $existingId = $this->minimaxClient->findInvoiceIdByReference($reference, $this->numbering);
             if ($existingId !== null) {
-                OwLogger::addVisibleLog($this->logger, "DRY RUN — order $orderNumber is already Minimax order $existingId, would only link it.");
+                OwLogger::addVisibleLog($this->logger, "DRY RUN — order $orderNumber is already Minimax invoice $existingId, would only link it.");
 
                 return;
             }
 
-            $payload = $this->minimaxClient->buildOrderPayload($orderData);
-            OwLogger::addVisibleLog($this->logger, "DRY RUN — order $orderNumber payload:");
+            $payload = $this->minimaxClient->buildInvoicePayload($invoiceData);
+            OwLogger::addVisibleLog($this->logger, "DRY RUN — order $orderNumber invoice payload:");
             OwLogger::addLog($this->logger, 'Minimax payload', ['payload' => $payload]);
             OwLogger::addVisibleLog($this->logger, (string) json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
 
@@ -285,11 +315,11 @@ class OrderExportSync extends AbstractSyncBase
         // An earlier POST may have been applied: only ever link it, never resend
         // on our own. Setting the status back to "waiting" resends it.
         if (($customFields[GlobalVariables::CUSTOM_FIELD_OPTIWEB_STATUS] ?? null) === GlobalVariables::STATUS_UNCONFIRMED) {
-            $existingId = $this->minimaxClient->findOrderIdByReference($orderData['reference'], $orderData['year']);
+            $existingId = $this->minimaxClient->findInvoiceIdByReference($reference, $this->numbering);
             if ($existingId !== null) {
                 ++$this->skipped;
                 $this->markOrder($order, GlobalVariables::STATUS_SENT, (string) $existingId, null);
-                OwLogger::addVisibleLog($this->logger, "Order $orderNumber found as Minimax order $existingId — linked.");
+                OwLogger::addVisibleLog($this->logger, "Order $orderNumber found as Minimax invoice $existingId — linked.");
 
                 return;
             }
@@ -300,15 +330,15 @@ class OrderExportSync extends AbstractSyncBase
             return;
         }
 
-        OwLogger::addVisibleLog($this->logger, "Sending order $orderNumber to Minimax.");
-        $response = $this->minimaxClient->createOrder($orderData);
+        OwLogger::addVisibleLog($this->logger, "Sending order $orderNumber to Minimax as a draft invoice on {$this->numbering}.");
+        $response = $this->minimaxClient->createInvoice($invoiceData);
 
         $status = $response['status'] ?? '';
 
         if ($status === 'ok') {
             ++$this->exported;
-            $this->markOrder($order, GlobalVariables::STATUS_SENT, (string) $response['orderId'], null);
-            OwLogger::addVisibleLog($this->logger, "Order $orderNumber exported as Minimax order " . $response['orderId'] . '.');
+            $this->markOrder($order, GlobalVariables::STATUS_SENT, (string) $response['invoiceId'], null);
+            OwLogger::addVisibleLog($this->logger, "Order $orderNumber exported as Minimax draft invoice " . $response['invoiceId'] . '.');
 
             return;
         }
@@ -316,8 +346,8 @@ class OrderExportSync extends AbstractSyncBase
         // Filed by an earlier attempt whose answer was lost: link it, never resend.
         if ($status === 'existing') {
             ++$this->skipped;
-            $this->markOrder($order, GlobalVariables::STATUS_SENT, (string) $response['orderId'], null);
-            OwLogger::addVisibleLog($this->logger, "Order $orderNumber is already Minimax order " . $response['orderId'] . ' — linked, not sent again.');
+            $this->markOrder($order, GlobalVariables::STATUS_SENT, (string) $response['invoiceId'], null);
+            OwLogger::addVisibleLog($this->logger, "Order $orderNumber is already Minimax invoice " . $response['invoiceId'] . ' — linked, not sent again.');
 
             return;
         }
@@ -341,9 +371,9 @@ class OrderExportSync extends AbstractSyncBase
     // -------------------------------------------------------------------------
 
     /**
-     * Build the neutral order array consumed by MinimaxClient::createOrder().
+     * Build the neutral invoice array consumed by MinimaxClient::createInvoice().
      */
-    private function buildOrderData(
+    private function buildInvoiceData(
         OrderEntity $order,
         OrderTransactionEntity $transaction,
         ?OrderDeliveryEntity $delivery,
@@ -368,24 +398,31 @@ class OrderExportSync extends AbstractSyncBase
         $this->reconcile($order, $lines, $orderNumber);
 
         $note = implode(' | ', array_filter([
-            'Order: ' . $orderNumber,
-            $paymentName !== '' ? 'Payment: ' . $paymentName : '',
-            $shippingName !== '' ? 'Shipping: ' . $shippingName : '',
+            'Spletno naročilo: ' . $orderNumber,
+            $paymentName !== '' ? 'Plačilo: ' . $paymentName : '',
+            $shippingName !== '' ? 'Dostava: ' . $shippingName : '',
             $order->getCustomerComment() !== null && $order->getCustomerComment() !== ''
-                ? 'Comment: ' . $order->getCustomerComment()
+                ? 'Komentar: ' . $order->getCustomerComment()
                 : '',
         ]));
 
-        $orderDate = $order->getOrderDateTime();
+        $isPaid = $transaction->getStateMachineState()?->getTechnicalName() === OrderTransactionStates::STATE_PAID;
 
         return [
-            'date'        => $orderDate->format('Y-m-d'),
-            'year'        => (int) $orderDate->format('Y'),
-            'reference'   => $orderNumber,
-            'note'        => $note,
-            'currencyIso' => (string) ($order->getCurrency()?->getIsoCode() ?? 'EUR'),
-            'warehouse'   => $this->warehouse,
-            'customer'    => [
+            // Dated the day it lands in Minimax; staff issue it from there.
+            'date'            => (new \DateTimeImmutable())->format('Y-m-d'),
+            'transactionDate' => $order->getOrderDateTime()->format('Y-m-d'),
+            'reference'       => $orderNumber,
+            'note'            => $note,
+            'currencyIso'     => (string) ($order->getCurrency()?->getIsoCode() ?? 'EUR'),
+            'numbering'       => $this->numbering,
+            'warehouse'       => $this->warehouse,
+            'payment'         => [
+                'method' => $this->minimaxPaymentMethod($transaction),
+                'amount' => $order->getAmountTotal(),
+                'paid'   => $isPaid,
+            ],
+            'customer'        => [
                 'name'       => $billing['name'] !== '' ? $billing['name'] : ($email !== '' ? $email : $orderNumber),
                 'email'      => $email,
                 // Minimax has no e-mail field on a customer, and Code is unique
@@ -396,19 +433,41 @@ class OrderExportSync extends AbstractSyncBase
                 'city'       => $billing['city'],
                 'countryIso' => $billing['countryIso'] !== '' ? $billing['countryIso'] : 'SI',
                 'vatId'      => $vatId,
-                // Without a VAT ID the order goes to the shared B2C customer; the
-                // buyer's name and address still go on the document (Customer* fields).
+                // Without a VAT ID the invoice goes to the shared B2C customer; the
+                // buyer's name and address still go on it (Addressee* fields).
                 'endCustomerCode' => $vatId === '' ? $this->endCustomerCode : '',
             ],
-            'recipient'   => [
+            'recipient'       => [
                 'name'       => $shipping['name'],
                 'address'    => $shipping['address'],
                 'postalCode' => $shipping['postalCode'],
                 'city'       => $shipping['city'],
                 'countryIso' => $shipping['countryIso'],
             ],
-            'lines'       => $lines,
+            'lines'           => $lines,
         ];
+    }
+
+    /** The Minimax invoice payment method name for the order's payment method. */
+    private function minimaxPaymentMethod(OrderTransactionEntity $transaction): string
+    {
+        $method     = $transaction->getPaymentMethod();
+        $identifier = (string) $method?->getHandlerIdentifier() . ' ' . (string) $method?->getTechnicalName();
+
+        [$configKey, $default] = self::PAYMENT_METHOD_CARD;
+        foreach (self::PAYMENT_METHOD_MAP as $needle => $target) {
+            if (stripos($identifier, $needle) !== false) {
+                [$configKey, $default] = $target;
+                break;
+            }
+        }
+
+        return $this->configString($configKey, $default);
+    }
+
+    private function configString(string $key, string $default): string
+    {
+        return trim((string) ($this->systemConfigService->get('OptiwebSync.config.' . $key) ?? '')) ?: $default;
     }
 
     /**
@@ -416,7 +475,9 @@ class OrderExportSync extends AbstractSyncBase
      *
      * Promotions, credits and custom items are included as free-text rows: they
      * change what the customer paid, so leaving them out would hand Minimax a
-     * document that cannot be reconciled against the shop.
+     * document that cannot be reconciled against the shop. A row whose price
+     * spans several VAT rates (a cart-wide promotion over 22 % and 9,5 % goods)
+     * is split into one row per rate, since an invoice row has exactly one.
      *
      * @return array<int, array<string, mixed>>
      */
@@ -438,15 +499,24 @@ class OrderExportSync extends AbstractSyncBase
                 continue;
             }
 
-            $payload  = $lineItem->getPayload() ?? [];
+            $payload = $lineItem->getPayload() ?? [];
+            $sku     = trim((string) ($payload['productNumber'] ?? ''));
+            $name    = (string) ($lineItem->getLabel() ?? '');
+
+            $split = $this->splitByTaxRate($price, $taxStatus, $name);
+            if ($split !== null) {
+                array_push($rows, ...$split);
+                continue;
+            }
+
             $quantity = (float) $lineItem->getQuantity();
 
             $rows[] = [
-                'sku'             => trim((string) ($payload['productNumber'] ?? '')),
-                'name'            => (string) ($lineItem->getLabel() ?? ''),
-                'quantity'        => $quantity !== 0.0 ? $quantity : 1.0,
-                'unitPrice'       => $this->rowUnitPrice($price, $taxStatus),
-                'discountPercent' => 0.0,
+                'sku'        => $sku,
+                'name'       => $name,
+                'quantity'   => $quantity !== 0.0 ? $quantity : 1.0,
+                'unitPrice'  => $this->rowUnitPrice($price->getUnitPrice(), $this->taxRate($price), $taxStatus),
+                'vatPercent' => $this->rowVatPercent($this->taxRate($price), $taxStatus),
             ];
         }
 
@@ -454,60 +524,94 @@ class OrderExportSync extends AbstractSyncBase
     }
 
     /**
-     * The shipping cost as its own row.
+     * The shipping cost as its own row (one per VAT rate when it spans several).
      *
      * @return array<int, array<string, mixed>>
      */
     private function shippingRows(OrderEntity $order, string $taxStatus, string $shippingName): array
     {
         $shippingCosts = $order->getShippingCosts();
-        $total         = $shippingCosts->getTotalPrice();
 
-        if (abs($total) < 0.0001) {
+        if (abs($shippingCosts->getTotalPrice()) < 0.0001) {
             return [];
         }
 
-        $taxes = $shippingCosts->getCalculatedTaxes()->getAmount();
-        if ($this->grossPrices) {
-            $rowPrice = $taxStatus === CartPrice::TAX_STATE_NET ? $total + $taxes : $total;
-        } else {
-            $rowPrice = $taxStatus === CartPrice::TAX_STATE_GROSS ? $total - $taxes : $total;
+        $name = $shippingName !== '' ? $shippingName : 'Poštnina';
+        $rows = $this->splitByTaxRate($shippingCosts, $taxStatus, $name) ?? [[
+            'name'       => $name,
+            'quantity'   => 1.0,
+            'unitPrice'  => $this->rowUnitPrice($shippingCosts->getTotalPrice(), $this->taxRate($shippingCosts), $taxStatus),
+            'vatPercent' => $this->rowVatPercent($this->taxRate($shippingCosts), $taxStatus),
+        ]];
+
+        // Point every shipping row at Minimax's shipping item ("POŠTNINA", no
+        // Code, hence the name lookup), so it books like the till's shipping.
+        foreach ($rows as &$row) {
+            $row['sku']           = '';
+            $row['itemReference'] = $this->shippingItem;
         }
 
-        return [[
-            // A Minimax order row inherits its VAT rate from the referenced item
-            // and has no rate of its own, so the row must point at the shipping
-            // item. Minimax's "POŠTNINA" has no Code, hence the name lookup.
-            'sku'             => '',
-            'itemReference'   => $this->shippingItem,
-            'name'            => $shippingName !== '' ? $shippingName : 'Poštnina',
-            'quantity'        => 1.0,
-            'unitPrice'       => round($rowPrice, 4),
-            'discountPercent' => 0.0,
-        ]];
+        return $rows;
     }
 
     /**
-     * Unit price for a Minimax order row.
+     * One quantity-1 row per VAT rate for a price that carries several, or null
+     * when it carries at most one.
      *
-     * A Minimax order computes no VAT: its confirmation lists the row prices and
-     * their sum, nothing else. So the rows are written the way the organisation
-     * keeps its item prices — with VAT when items/settings says "D" (Sivanka:
-     * the item ZADRGA costs 5,10 there, as in the shop), without otherwise.
+     * A CalculatedTax's price is the part of the total that rate applies to — in
+     * the order's own form (gross for a gross order, net for a net one).
+     *
+     * @return array<int, array<string, mixed>>|null
+     */
+    private function splitByTaxRate(CalculatedPrice $price, string $taxStatus, string $name): ?array
+    {
+        $taxes = $price->getCalculatedTaxes()->getElements();
+        if (count($taxes) < 2 || $taxStatus === CartPrice::TAX_STATE_FREE) {
+            return null;
+        }
+
+        $rows = [];
+        foreach ($taxes as $tax) {
+            $rate = $tax->getTaxRate();
+            $rows[] = [
+                'sku'        => '',
+                'name'       => sprintf('%s (DDV %s %%)', $name, str_replace('.', ',', (string) $rate)),
+                'quantity'   => 1.0,
+                'unitPrice'  => $this->rowUnitPrice($tax->getPrice(), $rate, $taxStatus),
+                'vatPercent' => $rate,
+            ];
+        }
+
+        return $rows;
+    }
+
+    private function taxRate(CalculatedPrice $price): float
+    {
+        foreach ($price->getCalculatedTaxes() as $tax) {
+            return $tax->getTaxRate();
+        }
+        foreach ($price->getTaxRules() as $taxRule) {
+            return $taxRule->getTaxRate();
+        }
+
+        return 0.0;
+    }
+
+    private function rowVatPercent(float $rate, string $taxStatus): float
+    {
+        return $taxStatus === CartPrice::TAX_STATE_FREE ? 0.0 : $rate;
+    }
+
+    /**
+     * Unit price for a Minimax invoice row, in the form the organisation keeps
+     * its item prices in — with VAT when items/settings says "D" (Sivanka), the
+     * invoice then going out with PricesOnInvoice D — without otherwise.
      *
      * A gross order stores gross unit prices, a net order net ones; a tax-free
      * order has no VAT either way.
      */
-    private function rowUnitPrice(CalculatedPrice $price, string $taxStatus): float
+    private function rowUnitPrice(float $unitPrice, float $rate, string $taxStatus): float
     {
-        $unitPrice = $price->getUnitPrice();
-
-        $rate = 0.0;
-        foreach ($price->getTaxRules() as $taxRule) {
-            $rate = $taxRule->getTaxRate();
-            break;
-        }
-
         if ($taxStatus === CartPrice::TAX_STATE_FREE || $rate <= 0.0) {
             return round($unitPrice, 4);
         }
@@ -659,7 +763,8 @@ class OrderExportSync extends AbstractSyncBase
         $customFields[GlobalVariables::CUSTOM_FIELD_OPTIWEB_STATUS] = $status;
 
         if ($minimaxId !== null) {
-            $customFields[GlobalVariables::CUSTOM_FIELD_OPTIWEB_KEY] = $minimaxId;
+            $customFields[GlobalVariables::CUSTOM_FIELD_OPTIWEB_KEY]      = $minimaxId;
+            $customFields[GlobalVariables::CUSTOM_FIELD_OPTIWEB_DOCUMENT] = GlobalVariables::MINIMAX_DOCUMENT_INVOICE;
         }
 
         $customFields[GlobalVariables::CUSTOM_FIELD_OPTIWEB_ERROR] = $error;

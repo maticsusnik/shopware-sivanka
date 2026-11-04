@@ -10,7 +10,8 @@
 .DS_Store
 .idea
 /docs
-/tools/
+/tools/*
+!/tools/catalog-enrichment/
 /SIVANKA-V2-HANDOFF.md
 /.playwright-mcp/
 /favicon/

@@ -25,4 +25,10 @@ class GlobalVariables
     public const CUSTOM_FIELD_OPTIWEB_STATUS_CODE = 'optiwebOrderStatusCode';
     public const CUSTOM_FIELD_OPTIWEB_ERROR = 'optiwebOrderError';
     public const CUSTOM_FIELD_OPTIWEB_KEY = 'optiwebOrderKey';
+    /** Which Minimax document optiwebOrderKey points at: "invoice"; absent = a received order (before 2026-11). */
+    public const CUSTOM_FIELD_OPTIWEB_DOCUMENT = 'optiwebMinimaxDocument';
+    /** The issued invoice's number as printed (and barcoded) on it, e.g. WEB-02-2026000012. */
+    public const CUSTOM_FIELD_OPTIWEB_INVOICE_NUMBER = 'optiwebMinimaxInvoiceNumber';
+
+    public const MINIMAX_DOCUMENT_INVOICE = 'invoice';
 }
