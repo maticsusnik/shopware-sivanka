@@ -176,6 +176,31 @@ if fams:
     n = write_csv(os.path.join(imp, '07-variant-children.csv'), ['id', 'parent_id', 'product_number', 'optionIds'], children)
     steps.append(('07-variant-children.csv', 'Default product (`default_product`)', n,
                   'Attaches existing products to their parent. They keep their own number, name, price and stock.'))
+    # 12 parent covers: a parent (parent_…) shows the photo of its best variant (active, with a photo, most stock).
+    # Every parent of the shop that has none, plus this run's families. cover.media.id reuses the variant's media
+    # file, nothing is uploaded.
+    kids = collections.defaultdict(list)
+    for p in c.products:
+        if p['kind'] == 'variant':
+            kids[p['parent']].append(p)
+    for f in fams:
+        for m in f['members']:
+            kids[f['parent_id']] = [k for k in kids[f['parent_id']] if k['id'] != m['id']] + [c.by_id[m['id']]]
+            for other in f.get('merged_parents') or []:
+                kids[other] = [k for k in kids[other] if k['id'] != m['id']]
+    covers = []
+    targets = {p['id']: p['number'] for p in c.products if p['kind'] == 'parent' and str(p['number']).startswith('parent_')
+               and not p.get('cover_media_id')}
+    targets.update({f['parent_id']: f['parent_number'] for f in fams})
+    for pid, number in sorted(targets.items(), key=lambda x: x[1]):
+        best = sorted((k for k in kids.get(pid, []) if k.get('cover_media_id')),
+                      key=lambda k: (not k['active'], -(k['stock'] or 0), k['number']))
+        if best and (pid not in c.by_id or not c.by_id[pid].get('cover_media_id')):
+            covers.append([pid, number, best[0]['cover_media_id']])
+    if covers:
+        n = write_csv(os.path.join(imp, '12-parent-covers.csv'), ['id', 'product_number', 'cover_media_id'], covers)
+        steps.append(('12-parent-covers.csv', 'Default product (`default_product`)', n,
+                      'Cover image of each variant parent = photo of its best variant (reuses the media file).'))
     emptied = sorted({pid for f in fams for pid in f.get('merged_parents') or []})
     if emptied:
         json.dump([dict(id=pid, number=c.by_id[pid]['number'], name=c.by_id[pid]['name'],

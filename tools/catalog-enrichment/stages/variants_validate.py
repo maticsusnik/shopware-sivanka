@@ -17,6 +17,7 @@ import unicodedata
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'lib'))
 from catalog import Catalog, decision_key, load_state, squash, stable_id, strip_html, write_csv  # noqa: E402
 from values import FMT, ENUM, canonical, clean_value  # noqa: E402
+from numbercodes import _colour_of, value_from_number  # noqa: E402
 
 run = sys.argv[1]
 c = Catalog(run)
@@ -62,6 +63,28 @@ def readable(p, value, evidence):
     # two-word colours: every word (inflected) must be there, e.g. Staro zlato, Temno modra, Svetlo siva
     words = [w for w in re.split(r'\s+', value.casefold()) if w]
     return len(words) > 1 and all(w[:4] in hay2 or w[:3] in hay2 for w in words)
+
+
+def number_ok(p, opts, ref, members):
+    """Value read from the product number (lib/numbercodes.py): `ref` is a member's number (its pattern minus the
+    value equals this number minus its value), or a template with {} for new families."""
+    if '{}' in ref:
+        rx = '^' + re.escape(ref).replace(r'\{\}', r'(.+)') + '$'
+        mm = re.match(rx, p['number'])
+        if not mm or len(opts) != 1:
+            return False
+        tok, v = mm.group(1), next(iter(opts.values()))
+        return (_colour_of(tok) == v) or (v.startswith('b. ') and squash(v[3:]) == squash(tok.replace('B.', '')))
+    for m in members:
+        q = c.by_id.get(m.get('id'))
+        if not q or q['number'] != ref:
+            continue
+        qo = m.get('options') or {}
+        for g, v in opts.items():
+            if g in qo and value_from_number(p['number'], ref, qo[g]) == v and all(
+                    opts[x] == qo.get(x) for x in opts if x != g):
+                return True
+    return False
 
 
 rows, accepted, taken = [], [], {}
@@ -130,6 +153,9 @@ for f in sorted(os.listdir(os.path.join(run, 'variants', 'out'))):
                 m['options'] = opts
                 if any(not v for v in opts.values()):
                     why.append(f'{p["number"]}: missing value')
+                elif str(m.get('evidence') or '').startswith('number:'):
+                    if not number_ok(p, opts, m['evidence'][7:].strip(), members):
+                        why.append(f'{p["number"]}: value {"/".join(opts.values())} not in its number pattern')
                 elif not all(readable(p, v, m.get('evidence')) or
                              (p['kind'] == 'variant' and current[p['parent']].get(p['id'], {}).get(g) == v)
                              for g, v in opts.items()):

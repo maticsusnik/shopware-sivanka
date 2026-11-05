@@ -48,6 +48,8 @@ for r in json.load(open(p, encoding='utf-8')) if os.path.exists(p) else []:
     else:
         text_ids.add(r['product_id'])
 
+p = os.path.join(run, 'import', '12-parent-covers.csv')
+cover_ids = {r['id'] for r in read_csv(p)} if os.path.exists(p) else set()
 children, parents_new = {}, set()
 p = os.path.join(run, 'import', '07-variant-children.csv')
 for r in read_csv(p) if os.path.exists(p) else []:
@@ -77,6 +79,8 @@ for pid in before.keys() & after.keys() - parents_new:      # our own parents: n
         if col == 'text' and (pid in seo_ids or pid in text_ids):
             continue
         if col == 'categories' and pid in cat_ids:
+            continue
+        if col in ('cover', 'media') and pid in cover_ids:
             continue
         if pid in children and col == 'parent' and a[col] == children[pid][0]:
             continue
