@@ -30,6 +30,9 @@ SELECT UNHEX('0b7e1f4a9c2d4e6f8a1b3c5d7e9f0a21'), id, 'Sivanka – variant listi
 SQL
 fi
 
+# the workers re-index while we write and deadlock some rows: pause them for the import
+"${COMPOSE[@]}" stop async_worker low_priority_worker scheduler >/dev/null 2>&1 || true
+trap '"${COMPOSE[@]}" start async_worker low_priority_worker scheduler >/dev/null 2>&1 || true' EXIT
 "${COMPOSE[@]}" exec -T "$APP_SERVICE" mkdir -p /tmp/ce-import
 for f in "$I"/[0-9][0-9]-*.csv; do
     b="$(basename "$f")"; p="$(profile_for "$b")"
