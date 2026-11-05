@@ -1,6 +1,13 @@
 @import "~scss/variables";
 
 .optiweb-variant-builder {
+    // Only the dot and its text switch the mode, not the empty rest of the line.
+    &__mode .sw-field__radio-option {
+        width: max-content;
+        max-width: 100%;
+        grid-template-columns: var(--scale-size-16) auto;
+    }
+
     &__parent-fields {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -64,8 +71,21 @@
         margin-top: 16px;
     }
 
+    &__add {
+        margin-bottom: 24px;
+    }
+
+    &__remove {
+        width: 1%;
+        text-align: right;
+    }
+
     &__status {
         white-space: nowrap;
+
+        &.is--pending {
+            color: $color-darkgray-200;
+        }
 
         .mt-icon {
             color: $color-emerald-500;

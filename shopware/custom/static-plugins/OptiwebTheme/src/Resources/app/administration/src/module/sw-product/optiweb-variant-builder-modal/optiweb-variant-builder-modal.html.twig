@@ -13,7 +13,11 @@
         @update:value="onModeChange"
     />
 
-    <template v-if="mode === 'new'">
+    <div
+        v-if="mode === 'new'"
+        key="mode-new"
+        class="optiweb-variant-builder__mode-fields"
+    >
         <sw-entity-multi-id-select
             class="optiweb-variant-builder__groups"
             :label="$t('optiweb-variant-builder.groups')"
@@ -25,9 +29,11 @@
 
         <div class="optiweb-variant-builder__parent-fields">
             <mt-text-field
-                v-model="parentName"
+                :model-value="parentName"
                 :label="$t('optiweb-variant-builder.parentName')"
+                :help-text="$t('optiweb-variant-builder.parentNameHelp')"
                 required
+                @update:model-value="onParentNameInput"
             />
             <mt-text-field
                 :model-value="parentNumber"
@@ -37,9 +43,13 @@
                 @update:model-value="onParentNumberInput"
             />
         </div>
-    </template>
+    </div>
 
-    <template v-else>
+    <div
+        v-else
+        key="mode-existing"
+        class="optiweb-variant-builder__mode-fields"
+    >
         <sw-entity-single-select
             class="optiweb-variant-builder__parent"
             entity="product"
@@ -63,7 +73,7 @@
             {{ $t('optiweb-variant-builder.parentGroups') }}
             <strong>{{ preview.groups.map((group) => group.name).join(', ') }}</strong>
         </p>
-    </template>
+    </div>
 
     <mt-switch
         v-model="inheritData"
@@ -72,11 +82,28 @@
         :help-text="$t('optiweb-variant-builder.inheritDataHelp')"
     />
 
+    <div class="optiweb-variant-builder__add">
+        <sw-entity-single-select
+            :key="addSelectKey"
+            entity="product"
+            :label="$t('optiweb-variant-builder.addProduct')"
+            :placeholder="$t('optiweb-variant-builder.addProductPlaceholder')"
+            :help-text="$t('optiweb-variant-builder.addProductHelp')"
+            :criteria="addProductCriteria"
+            :value="null"
+            @update:value="onAddProduct"
+        >
+            <template #result-label-property="{ item }">
+                {{ item.translated?.name || item.name }} ({{ item.productNumber }})
+            </template>
+        </sw-entity-single-select>
+    </div>
+
     <sw-loader v-if="isLoading" />
 
     <template v-if="preview">
         <mt-banner
-            v-for="error in preview.errors"
+            v-for="error in visibleErrors()"
             :key="error.code"
             variant="attention"
         >
@@ -102,13 +129,14 @@
                         {{ group.name }}
                     </th>
                     <th>{{ $t('optiweb-variant-builder.columnStatus') }}</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
                 <tr
                     v-for="row in preview.rows"
                     :key="row.id"
-                    :class="{ 'is--invalid': !row.valid }"
+                    :class="{ 'is--invalid': !row.valid && !row.pending }"
                 >
                     <td>{{ row.productNumber }}</td>
                     <td>{{ row.name }}</td>
@@ -118,8 +146,14 @@
                     >
                         {{ optionName(row, group.id) }}
                     </td>
-                    <td class="optiweb-variant-builder__status">
-                        <template v-if="row.valid">
+                    <td
+                        class="optiweb-variant-builder__status"
+                        :class="{ 'is--pending': row.pending }"
+                    >
+                        <template v-if="row.pending">
+                            {{ pendingText() }}
+                        </template>
+                        <template v-else-if="row.valid">
                             <mt-icon
                                 name="regular-checkmark-xs"
                                 size="12px"
@@ -134,6 +168,21 @@
                                 {{ errorText(error) }}
                             </div>
                         </template>
+                    </td>
+                    <td class="optiweb-variant-builder__remove">
+                        <mt-button
+                            size="x-small"
+                            variant="secondary"
+                            square
+                            :title="$t('optiweb-variant-builder.removeProduct')"
+                            :aria-label="$t('optiweb-variant-builder.removeProduct')"
+                            @click="onRemoveProduct(row.id)"
+                        >
+                            <mt-icon
+                                name="regular-times-s"
+                                size="10px"
+                            />
+                        </mt-button>
                     </td>
                 </tr>
             </tbody>

@@ -225,8 +225,8 @@
     "title": "Ustvari variante iz izbranih izdelkov",
     "modeNew": "Nov starševski izdelek",
     "modeExisting": "Dodaj obstoječemu staršu",
-    "groups": "Lastnosti, po katerih se variante razlikujejo",
-    "groupsHelp": "Vsak izbran izdelek mora imeti za vsako od teh lastnosti natanko eno vrednost; ta postane opcija variante.",
+    "groups": "Lastnosti, po katerih se variante razlikujejo (ena ali več)",
+    "groupsHelp": "Izberite jih, kolikor jih potrebujete, npr. barvo, višino in dolžino. Vsak izdelek mora imeti za vsako od njih natanko eno vrednost; skupaj postanejo opcije variante.",
     "parentName": "Ime starševskega izdelka",
     "parentNumber": "Številka starševskega izdelka",
     "parentNumberHelp": "Predlagana iz skupnega začetka številk izbranih izdelkov; lahko jo spremenite.",
@@ -266,6 +266,13 @@
       "deleteParentHelp": "Starš po razdružitvi nima več variant. Izklopite, če ga želite obdržati kot samostojen izdelek.",
       "confirm": "Razdruži ({count})",
       "success": "Razdruženih starševskih izdelkov: {parents}, samostojnih izdelkov: {variants}."
-    }
+    },
+    "addProduct": "Dodaj še izdelke",
+    "addProductPlaceholder": "Iščite po imenu ali številki izdelka…",
+    "addProductHelp": "Doda samostojen izdelek na ta seznam, poleg tistih, ki ste jih izbrali na seznamu izdelkov.",
+    "removeProduct": "Odstrani s seznama",
+    "parentNameHelp": "Predlagano iz imen izbranih izdelkov brez vrednosti variant (npr. \"100 g\"); lahko ga spremenite. Starš dobi tudi sliko prve variante.",
+    "statusPendingGroups": "Najprej izberite lastnosti",
+    "statusPendingParent": "Najprej izberite starša"
   }
 }

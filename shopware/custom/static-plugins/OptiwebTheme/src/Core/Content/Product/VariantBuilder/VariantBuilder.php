@@ -82,6 +82,10 @@ class VariantBuilder
         $groups = $this->loadGroups($groupIds, $context);
         $products = $this->loadProducts(array_diff($productIds, $parentId !== null ? [$parentId] : []), $context);
 
+        // Nothing to vary by yet: the products are listed, but none is checked
+        // against the others or counted as valid.
+        $pending = $groupIds === [];
+
         $rows = [];
         $seen = $existingCombinations;
         foreach ($productIds as $productId) {
@@ -91,8 +95,9 @@ class VariantBuilder
             }
 
             $row = $this->row($product, $groupIds, $groups);
+            $row['pending'] = $pending && $row['errors'] === [];
 
-            if ($row['errors'] === []) {
+            if ($row['errors'] === [] && !$pending) {
                 $key = $this->combinationKey(array_column($row['options'], 'optionId'));
                 if (isset($seen[$key])) {
                     $row['errors'][] = ['code' => self::ERROR_DUPLICATE_COMBINATION, 'productNumber' => $seen[$key]];
@@ -101,13 +106,13 @@ class VariantBuilder
                 }
             }
 
-            $row['valid'] = $row['errors'] === [];
+            $row['valid'] = $row['errors'] === [] && !$pending;
             $rows[] = $row;
         }
 
         $valid = array_values(array_filter($rows, static fn (array $row): bool => $row['valid']));
         $minimum = $parentId !== null ? 1 : 2;
-        if (\count($valid) < $minimum && $errors === []) {
+        if (\count($valid) < $minimum && $errors === [] && !$pending) {
             $errors[] = ['code' => 'notEnoughProducts', 'minimum' => $minimum];
         }
 
@@ -125,7 +130,7 @@ class VariantBuilder
                 'name'          => $parent->getTranslation('name') ?? $parent->getName(),
             ] : null,
             'suggestedNumber' => $parentId === null && $valid !== [] ? $this->suggestNumber(array_column($valid, 'productNumber'), $context) : null,
-            'suggestedName'   => $parentId === null && $valid !== [] ? $this->suggestName(array_column($valid, 'name')) : null,
+            'suggestedName'   => $parentId === null && $valid !== [] ? $this->suggestName($valid) : null,
         ];
     }
 
@@ -169,6 +174,15 @@ class VariantBuilder
             $template = $products->get($valid[0]['id']);
             \assert($template instanceof ProductEntity);
 
+            // The parent's image: the cover of the first variant that has one.
+            $coverMediaId = null;
+            foreach ($valid as $row) {
+                $coverMediaId = $products->get($row['id'])?->getCover()?->getMediaId();
+                if ($coverMediaId !== null) {
+                    break;
+                }
+            }
+
             $parentId = Uuid::randomHex();
             $writes[] = $this->newParent(
                 $parentId,
@@ -178,6 +192,7 @@ class VariantBuilder
                 $preview['groups'],
                 array_unique(array_merge(...array_map(static fn (array $row) => array_column($row['options'], 'optionId'), $valid))),
                 $valid[0]['id'],
+                $coverMediaId,
             );
         } else {
             $parent = $this->loadParent($parentId, $context);
@@ -297,7 +312,8 @@ class VariantBuilder
     /**
      * An empty parent: name and number from the dialog; tax, price and sales
      * channels from the first variant, because a parent cannot be saved — or
-     * listed — without them. Everything else is left for the editor.
+     * listed — without them; the cover image of a variant, so the parent is not
+     * imageless in the admin and in search. Everything else is left for the editor.
      *
      * @param array<int, array{id: string, name: string}> $groups
      * @param array<int, string> $optionIds
@@ -312,8 +328,18 @@ class VariantBuilder
         array $groups,
         array $optionIds,
         string $mainVariantId,
+        ?string $coverMediaId,
     ): array {
-        return [
+        $media = [];
+        if ($coverMediaId !== null) {
+            $productMediaId = Uuid::randomHex();
+            $media = [
+                'media'   => [['id' => $productMediaId, 'mediaId' => $coverMediaId, 'position' => 0]],
+                'coverId' => $productMediaId,
+            ];
+        }
+
+        return $media + [
             'id'            => $parentId,
             'productNumber' => $number,
             'name'          => $name,
@@ -374,6 +400,7 @@ class VariantBuilder
         $criteria->addAssociation('properties');
         $criteria->addAssociation('visibilities');
         $criteria->addAssociation('translations');
+        $criteria->addAssociation('cover');
 
         /** @var ProductCollection $products */
         $products = $this->productRepository->search($criteria, $context)->getEntities();
@@ -487,16 +514,31 @@ class VariantBuilder
     }
 
     /**
-     * The words every name starts with ("ZADRGA SKRITA 22cm", "ZADRGA SKRITA 18cm"
-     * → "ZADRGA SKRITA"); the first name when they share none.
+     * A variant's name without its option values: "MERINOS EXTRA PREJA 100G"
+     * with Teža "100 g" → "MERINOS EXTRA PREJA". When the variants' cleaned
+     * names differ, the words they all start with; the first cleaned name when
+     * they share none.
      *
-     * @param array<int, string> $names
+     * @param array<int, array<string, mixed>> $rows valid preview rows
      */
-    private function suggestName(array $names): string
+    private function suggestName(array $rows): string
     {
+        $names = array_map(fn (array $row): string => $this->stripOptionValues(
+            (string) $row['name'],
+            array_column($row['options'], 'name'),
+        ), $rows);
+        $names = array_values(array_filter($names, static fn (string $name) => $name !== ''));
+        if ($names === []) {
+            return (string) $rows[0]['name'];
+        }
+
+        if (\count(array_unique(array_map('mb_strtolower', $names))) === 1) {
+            return $names[0];
+        }
+
         $words = null;
         foreach ($names as $name) {
-            $current = preg_split('/\s+/u', trim($name)) ?: [];
+            $current = preg_split('/\s+/u', $name) ?: [];
             if ($words === null) {
                 $words = $current;
 
@@ -505,7 +547,7 @@ class VariantBuilder
 
             $common = [];
             foreach ($words as $i => $word) {
-                if (($current[$i] ?? null) !== $word) {
+                if (mb_strtolower($current[$i] ?? '') !== mb_strtolower($word)) {
                     break;
                 }
                 $common[] = $word;
@@ -513,9 +555,40 @@ class VariantBuilder
             $words = $common;
         }
 
-        $name = rtrim(implode(' ', $words ?? []), " -_,./");
+        $name = $this->tidyName(implode(' ', $words ?? []));
 
         return $name !== '' ? $name : $names[0];
+    }
+
+    /**
+     * Removes each option value from the name as a whole word, ignoring case
+     * and spaces inside the value ("100 g" also matches "100G", "100g").
+     *
+     * @param array<int, string> $values
+     */
+    private function stripOptionValues(string $name, array $values): string
+    {
+        foreach ($values as $value) {
+            $value = trim($value);
+            if ($value === '') {
+                continue;
+            }
+
+            $parts = preg_split('/\s+/u', $value) ?: [];
+            $pattern = implode('\s*', array_map(static fn (string $part) => preg_quote($part, '/'), $parts));
+            $name = (string) preg_replace('/(?<![\p{L}\p{N}])' . $pattern . '(?![\p{L}\p{N}])/iu', ' ', $name);
+        }
+
+        return $this->tidyName($name);
+    }
+
+    private function tidyName(string $name): string
+    {
+        $name = (string) preg_replace('/\s+/u', ' ', $name);
+        // Separators the value left behind: "ZADRGA - 22cm" → "ZADRGA", "(, 50g)" → "".
+        $name = (string) preg_replace('/\(\s*[,;\/\-]?\s*\)/u', '', $name);
+
+        return trim($name, " \t-_,./;:|");
     }
 
     /**

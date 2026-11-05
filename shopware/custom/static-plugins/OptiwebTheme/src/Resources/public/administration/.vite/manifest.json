@@ -1,6 +1,6 @@
 {
   "main.js": {
-    "file": "assets/optiweb-theme-HwqJmIjA.js",
+    "file": "assets/optiweb-theme-CYCr_0Lh.js",
     "name": "optiweb-theme",
     "src": "main.js",
     "isEntry": true,
@@ -9,7 +9,7 @@
       "module/optiweb-notice-bar/snippet/en-GB.json"
     ],
     "css": [
-      "assets/optiweb-theme-DuxgAWhW.css"
+      "assets/optiweb-theme-DcKGzQtk.css"
     ]
   },
   "module/optiweb-notice-bar/snippet/en-GB.json": {
