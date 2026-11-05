@@ -165,8 +165,10 @@ if fams:
     n = write_csv(os.path.join(imp, '05-variant-parents.csv'),
                   ['id', 'product_number', 'active', 'stock', 'name', 'price_net', 'price_gross', 'tax_id',
                    'categories', 'sales_channel'], parents)
+    n_existing = sum(1 for f in fams if f.get('existing'))
     steps.append(('05-variant-parents.csv', 'Default product (`default_product`)', n,
-                  'New empty parents, numbers `parent_…`. Minimax does not know them and leaves them alone.'))
+                  'Empty parents, numbers `parent_…` (Minimax does not know them and leaves them alone): '
+                  f'{n - n_existing} new, {n_existing} existing ones updated (name, price, categories).'))
     n = write_csv(os.path.join(imp, '06-variant-configurator.csv'), ['id', 'product_id', 'option_id', 'position', 'media_id'], conf)
     steps.append(('06-variant-configurator.csv', 'Default variant configuration settings (`default_variant_configuration_settings`)',
                   n, f'Selector options per parent in natural order; {media_options} colour/motif options show the variant photo. '
@@ -174,6 +176,14 @@ if fams:
     n = write_csv(os.path.join(imp, '07-variant-children.csv'), ['id', 'parent_id', 'product_number', 'optionIds'], children)
     steps.append(('07-variant-children.csv', 'Default product (`default_product`)', n,
                   'Attaches existing products to their parent. They keep their own number, name, price and stock.'))
+    emptied = sorted({pid for f in fams for pid in f.get('merged_parents') or []})
+    if emptied:
+        json.dump([dict(id=pid, number=c.by_id[pid]['number'], name=c.by_id[pid]['name'],
+                        merged_into=next(f['parent_number'] for f in fams if pid in (f.get('merged_parents') or [])))
+                   for pid in emptied],
+                  open(os.path.join(imp, 'delete-emptied-parents.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+        steps.append(('delete-emptied-parents.json', 'not importable: delete after 07 (they have no variants left)',
+                      len(emptied), 'Parents whose variants moved into another family by a merge.'))
     n = write_csv(os.path.join(imp, '08-variant-listing.csv'), ['id', 'product_number', 'variant_listing_config'], listing)
     steps.append(('08-variant-listing.csv', 'Sivanka – variant listing (`sivanka_variant_listing`, create once: '
                   'product, update only, mapping id / productNumber / variantListingConfig → variant_listing_config)', n,

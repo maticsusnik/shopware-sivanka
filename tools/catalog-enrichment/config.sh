@@ -4,7 +4,12 @@
 CE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(cd "$CE_DIR/../.." && pwd)"
 
-COMPOSE=(docker compose --project-directory "$PROJECT_DIR")
+# Matic's local-setup wrapper layers the Caddy override (no host ports 80/8025); plain compose clashes with it.
+if command -v ow >/dev/null 2>&1; then
+    COMPOSE=(ow sivanka)
+else
+    COMPOSE=(docker compose --project-directory "$PROJECT_DIR")
+fi
 DB_SERVICE=database
 DB_NAME=shopware
 # services that write to the DB and must be stopped during a restore

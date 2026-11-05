@@ -41,6 +41,12 @@ for f in "$I"/[0-9][0-9]-*.csv; do
     echo "$out" | grep -q "Successfully imported" || die "$b failed, stopping (later files depend on it)"
 done
 
+if [[ -f "$I/delete-emptied-parents.json" ]]; then
+    info "delete-emptied-parents.json (php/delete-emptied-parents.php)"
+    "${COMPOSE[@]}" cp "$CE_DIR/php/delete-emptied-parents.php" "$APP_SERVICE:/tmp/delete-emptied-parents.php" >/dev/null 2>&1
+    "${COMPOSE[@]}" cp "$I/delete-emptied-parents.json" "$APP_SERVICE:/tmp/delete-emptied-parents.json" >/dev/null 2>&1
+    "${COMPOSE[@]}" exec -T "$APP_SERVICE" php /tmp/delete-emptied-parents.php /tmp/delete-emptied-parents.json --apply | tail -n 3 >&2
+fi
 if [[ -f "$I/fixes-manual.json" ]]; then
     info "fixes-manual.json (php/apply-fixes.php)"
     "${COMPOSE[@]}" cp "$CE_DIR/php/apply-fixes.php" "$APP_SERVICE:/tmp/apply-fixes.php" >/dev/null 2>&1
