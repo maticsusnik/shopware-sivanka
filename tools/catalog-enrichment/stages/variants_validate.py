@@ -49,9 +49,19 @@ def readable(p, value, evidence):
     if nums:
         return all(n.replace('.', ',') in hay.replace('.', ',') for n in nums)
     v = squash(value)
-    if v == 'prozorna' and ('transparent' in hay or 'prozor' in hay):
-        return True
-    return v[:4] in hay or v[:3] in hay           # colour words are inflected: zlat/zlata/zlato
+    # common abbreviations / foreign spellings in Minimax names: ST.ZLATO, T.MODER, SV.SIV, beige, beš
+    raw = ' '.join(x or '' for x in (p['name'], strip_html(p['short_description']), strip_html(p['description']))).casefold()
+    raw = re.sub(r'(?<![a-zčšž])st\.?\s?(?=zlat)', 'staro ', raw)
+    raw = re.sub(r'(?<![a-zčšž])t\.\s?(?=[a-zčšž])', 'temno ', raw)
+    raw = re.sub(r'(?<![a-zčšž])sv\.\s?(?=[a-zčšž])', 'svetlo ', raw)
+    raw = raw.replace('beige', 'bež').replace('beš', 'bež').replace('transparent', 'prozor')
+    hay2 = squash(raw)
+    for h in (hay, hay2):
+        if v[:4] in h or v[:3] in h:              # colour words are inflected: zlat/zlata/zlato
+            return True
+    # two-word colours: every word (inflected) must be there, e.g. Staro zlato, Temno modra, Svetlo siva
+    words = [w for w in re.split(r'\s+', value.casefold()) if w]
+    return len(words) > 1 and all(w[:4] in hay2 or w[:3] in hay2 for w in words)
 
 
 rows, accepted, taken = [], [], {}

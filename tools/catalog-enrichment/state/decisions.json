@@ -19299,10 +19299,20 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: inactive pass, medium/low approved for local check"
  },
+ "variant|parent_ADDI-PLETILKE-ZA-NOGAVICE-20-CM|family|2012020-025,2012020-03,2012020-035,2012020-040,2012020-045,2012020-050": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_ADDI-PLETILKE-ZA-NOGAVICE-20-CM|family|2012020-03,2012020-035,2012020-040,2012020-050": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: high-confidence families approved"
+ },
+ "variant|parent_ADDI-PREMIUM-LACE-KROZNE-PLETILKE|family|7757060-040,7757060-20,7757060-25,7757060-30,7757060-35,7757080-20,7757080-25,7757080-275,7757080-30,7757080-325,7757080-35,7757080-375,7757080-40,7757080-45,7757080-50,7757080-55,7757080-60,7757080-70,7757080-80,7757100-25,7757100-30,7757100-35,7757100-40,7757100-45,7757100-50": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_ADDI-PREMIUM-LACE-KROZNE-PLETILKE|family|7757060-20,7757060-25,7757060-30,7757060-35,7757080-20,7757080-25,7757080-275,7757080-30,7757080-35,7757080-375,7757080-40,7757080-45,7757080-50,7757080-55,7757080-60,7757080-70,7757080-80,7757100-25,7757100-30,7757100-35,7757100-40,7757100-45,7757100-50": {
   "date": "2026-11-03",
@@ -19313,6 +19323,16 @@
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: high-confidence families approved"
+ },
+ "variant|parent_AMIGURUMI-SAFARI-BABY-KITS-KOMPLET-ZA-KV|family|429961-01,429961-02,429961-03,429961-04,429961-05": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_ARCOBALENO-ELASTIKE-MESANE-300-KOS|family|695020-1,695020-2,695020-3,695020-4,695020-5": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_AUSTERMANN-KID-SILK-PREJA-25-G|family|kid silk b.02,kid silk b.06,kid silk b.07,kid silk b.10,kid silk b.15,kid silk b.18,kid silk b.21,kid silk b.23,kid silk b.24,kid silk b.26,kid silk b.27,kid silk b.28,kid silk b.29,kid silk b.35,kid silk b.36,kid silk b.37,kid silk b.39": {
   "date": "2026-11-03",
@@ -19334,6 +19354,11 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: high-confidence families approved"
  },
+ "variant|parent_AUSTERMANN-STEP-6-PREJA-ZA-PLETENJE-150-|family|step6 150g b.605,step6 150g b.612,step6 150g b.613,step6 150g b.614,step6 150g b.620,step6 150g b.623,step6 150g b.624,step6 150g b.626,step6 150g b.627,step6 150g b.629,step6 150g b.679,step6 150g b.682,step6 150g b.713,step6 150g b.715,step6 150g b.717,step6 150g b.720,step6 150g b.731,step6 150g b.732,step6 150g b.733,step6 150g b.734,step6 150g b.736,step6 150g b.742,step6 150g b.743,step6 150g b.782,step6 150g b.785,step6 150g b.786,step6 150g b.788,step6 150g b.800,step6 150g b.805,step6 150g b.807,step6 150g b.811,step6 150g b.812,step6 150g b.813,step6 150g b.814,step6 150g b.815,step6 150g b.818,step6 150g b.819,step6 150g b.822,step6 150g b.825,step6 150g b.826,step6 150g b.828,step6 150g b.829,step6 150g b.830,step6 150g b.831,step6 150g b.832,step6 150g b.833,step6 150g b.834,step6 150g b.835,step6 150g b.863,step6 150g b.866,step6 b.628,step6 b.827,step6 b.867,step6 b.869": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_AUSTERMANN-STEP-6-PREJA-ZA-PLETENJE-150-|family|step6 150g b.605,step6 150g b.800,step6 150g b.812,step6 150g b.834": {
   "date": "2026-11-03",
   "decision": "approve",
@@ -19343,6 +19368,11 @@
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: high-confidence families approved"
+ },
+ "variant|parent_AUSTERMANN-STEP-PREJA-ZA-PLETENJE-100-G|family|step 100g b.016,step 100g b.018,step 100g b.046,step 100g b.136,step 100g b.256,step 100g b.259,step 100g b.265,step 100g b.288,step 100g b.297,step4 b.043,step4 100g b.359,step4 100g b.456,step4 100g b.457,step4 100g b.467,step4 100g b.474,step4 100g b.477,step4 b.1000,step4 b.1003,step4 b.1004,step4 b.1007,step4 b.1009,step4 b.1010,step4 b.1015,step4 b.1018,step4 b.1019,step4 b.1020,step4 b.1021,step4 b.1023,step4 b.1037,step4 b.1038,step4 b.341,step4 b.361,step4 b.454,step4 b.468,step4 b.469,step4 b.470,step4 b.471,step4 b.472,step4 b.473,step4 b.484,step4 b.486,step4 b.489,step4 b.500,step4 b.501,step4 b.502,step4 b.503,step4 b.505,step4 b.506,step4 b.507,step4 b.517,step4 b.518": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_AUSTERMANN-STEP-PREJA-ZA-PLETENJE-100-G|family|step 100g b.046,step 100g b.259": {
   "date": "2026-11-03",
@@ -19364,6 +19394,11 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: high-confidence families approved"
  },
+ "variant|parent_BARVA-ZA-POVRSINO-USNJA-ISTANTANEO-250-M|family|750301,750302,750307": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_BOMBAZNA-GURTNA-30-MM|family|700103,700330": {
   "date": "2026-11-03",
   "decision": "approve",
@@ -19379,15 +19414,45 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
  },
+ "variant|parent_BUCIKE-JEKLO-PISANE|family|24284,29153,29265,29560": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_BUCIKE-JEKLO-PISANE|family|24284,29265,29560": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
  },
+ "variant|parent_BUCIKE|family|11205,11215,24120,24164,24175": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_CAMELLIA-KVACKANEC|family|200220,201220": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: medium-confidence families approved"
+ },
+ "variant|parent_CENTELIN-202|family|515011,515031": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_CENTELIN-316|family|544001,544021": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_CEVLJARSKI-COPIC|family|30513,30710,30810,31836": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_CIRCULO-AMIGURUMI-DOLL-KIT-KOMPLET-ZA-KV|family|412422-01,412422-04,amigurumi 02": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_CIRCULO-AMIGURUMI-KITS-CATS-AND-DOGS|family|429970-02,429970-03,429970-04": {
   "date": "2026-11-03",
@@ -19434,6 +19499,11 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
  },
+ "variant|parent_DEKORATIVNA-ZAPONKA|family|417740,417741": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_DNO-ZA-TORBICO|family|335890,335892,335899": {
   "date": "2026-11-03",
   "decision": "approve",
@@ -19454,6 +19524,11 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: high-confidence families approved"
  },
+ "variant|parent_DRUKER-25-MM|family|341830,341832,341834,341836,341838,341840": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_DRUKER-25-MM|family|341830,341832,341838,341840": {
   "date": "2026-11-03",
   "decision": "approve",
@@ -19468,6 +19543,11 @@
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
+ },
+ "variant|parent_ELASTICNI-TRAK-PRYM-25-MM|family|9574500,957462,957464,957466,957468": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_ELASTICNI-TRAK-PRYM-25-MM|family|957462,957466": {
   "date": "2026-11-03",
@@ -19514,6 +19594,11 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
  },
+ "variant|parent_ELASTIKA-ZA-NARAMNICE|family|117558,117833": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_EVEREST-MELIRANA-VOLNA-200-G|family|everest b.7023,everest b.7035,everest b.7050,everest b.7051,everest b.7052": {
   "date": "2026-11-03",
   "decision": "approve",
@@ -19523,6 +19608,11 @@
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
+ },
+ "variant|parent_FIO-NAUTICO-PREJA-500-G|family|fio naut. b.2856,fio naut. b.3402,fio naut. b.5363,fio naut. b.6185,fio naut. b.6581,fio naut. b.7382,fio naut. b.7404,fio naut. b.7679,fio naut. b.7684,fio naut. b.8001,fio naut. b.8333,fio naut. b.8990,fio nautico 3mm 500g b.6011,fio nautico 500g b.7831": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_FIO-NAUTICO-PREJA-500-G|family|fio naut. b.2856,fio naut. b.3402,fio naut. b.5363,fio naut. b.6185,fio naut. b.6581,fio naut. b.7382,fio naut. b.7404,fio naut. b.7679,fio naut. b.7684,fio naut. b.8001,fio naut. b.8333,fio naut. b.8990,fio nautico 500g b.7831": {
   "date": "2026-11-03",
@@ -19544,10 +19634,20 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: high-confidence families approved"
  },
+ "variant|parent_GOBELIN-PRAZEN|family|11494-p,12964-p,20331": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_GOBELIN-PRAZEN|family|11494-p,20331": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
+ },
+ "variant|parent_GOBELIN-S-PREJICAMI-PUNCKA-FANTEK|family|129010,129020,129110,129120": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_GOBELIN-S-PREJICO-10-5-X-10-5-CM|family|6722,6724,6742,6751,6753": {
   "date": "2026-11-03",
@@ -19569,10 +19669,20 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: high-confidence families approved"
  },
+ "variant|parent_GOSPODINJSKE-IGLE-SCHMETZ-STRETCH|family|1036124,139251,139252,407721": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_GOSPODINJSKE-IGLE-SCHMETZ-STRETCH|family|1036124,139252,407721": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: high-confidence families approved"
+ },
+ "variant|parent_GOSPODINJSKE-IGLE-SCHMETZ-UNIVERSAL|family|1036122,139248,139249,139250,407683,407946,407989": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_GOSPODINJSKE-IGLE-SCHMETZ-UNIVERSAL|family|1036122,139249,139250,407683,407946,407989": {
   "date": "2026-11-03",
@@ -19594,6 +19704,11 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
  },
+ "variant|parent_GUMA-DIAMANTINO-ZA-PETE|family|705505 bež,706202 caramel,706202 rjava": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_GUMA-MIKRO-SVIG-ZEPHIR|family|705426,705626": {
   "date": "2026-11-03",
   "decision": "approve",
@@ -19603,6 +19718,16 @@
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
+ },
+ "variant|parent_GUMA-SVIG-CLASSIC-RUBBER-CRNA|family|705222,706201": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_GUMA-SVIG-COMP-GOLD-1-2-MM|family|705121 caramel,705121 črna": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_GUMA-VIBRAM-7373|family|705137,705636": {
   "date": "2026-11-03",
@@ -19664,10 +19789,25 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
  },
+ "variant|parent_GUMB-ZA-MOSKO-OBLEKO-MELIRAN|family|4246079,4326079": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_GUMB-ZA-MOSKO-OBLEKO|family|4248046,4328046": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_GUMB-ZA-POSTELJNINO|family|422700,424700,426700,428700": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: medium-confidence families approved"
+ },
+ "variant|parent_GUMB-ZA-POSTELJNINO|family|422700,424700,426700,428700,4307000,4327000": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_GURTNA-ANTIBAKTERIJSKA|family|300225,300525": {
   "date": "2026-11-03",
@@ -19683,6 +19823,31 @@
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: medium-confidence families approved"
+ },
+ "variant|parent_GURTNA-PP|family|700114,700125,720220": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_HOT-SPOTS|family|534454,534457": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_IGLE-ZA-POLSTENJE|family|131160,131161": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_IGLE-ZA-SIVALNI-STROJ-ORGAN|family|404308,404312,404314,404328,404337,404340": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_IMPREGNACIJA-ZA-NUBUK|family|750380 neutro,750380 rjav,750380 črn": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_IMPREGNACIJA-ZA-NUBUK|family|750380 rjav,750380 črn": {
   "date": "2026-11-03",
@@ -19719,6 +19884,11 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
  },
+ "variant|parent_INFERNO-BARVA-ZA-USNJE-75-ML|family|750300,750303,750304,750305": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_INFERNO-BARVA-ZA-USNJE-75-ML|family|750303,750304,750305": {
   "date": "2026-11-03",
   "decision": "approve",
@@ -19728,6 +19898,11 @@
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
+ },
+ "variant|parent_JEANS-PATENT-GUMB|family|622237,622239": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_KARABIN-2-CM-0-8|family|8000061,8000261": {
   "date": "2026-11-03",
@@ -19754,6 +19929,11 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: high-confidence families approved"
  },
+ "variant|parent_KAVELJCKI-ST-1|family|261194,261216,263844,263849": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_KAVELJCKI-ST-1|family|263844,263849": {
   "date": "2026-11-03",
   "decision": "approve",
@@ -19779,6 +19959,11 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
  },
+ "variant|parent_KEPER-BOMBAZNI-TRAK|family|700210,700215,700216,700220,700222,700223": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_KEPER-BOMBAZNI-TRAK|family|700210,700216,700222": {
   "date": "2026-11-03",
   "decision": "approve",
@@ -19794,6 +19979,26 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: high-confidence families approved"
  },
+ "variant|parent_KONCNIK-ZA-VRVICO|family|220739,240409,700815": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_KOPIRNI-PAPIR|family|501030,501040": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_KOSARA-ZA-SIVILJSKI-PRIBOR|family|612234,612237": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_KOVINSKA-ZANKA-25-MM|family|30552,700308,700725,700820,700925,708589": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_KOVINSKA-ZANKA-25-MM|family|700725,700925": {
   "date": "2026-11-03",
   "decision": "approve",
@@ -19804,20 +20009,55 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: medium-confidence families approved"
  },
+ "variant|parent_KOVINSKA-ZAPONKA-ZA-PAS-40-MM|family|8000033,8000034": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_KOVINSKE-RINCICE|family|700505,700509,700510,700606,700611,700750,700777": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_KOVINSKI-DRSNIK-REGULATOR-ZA-TRAKOVE|family|700300,700301,700440,700520 nikelj,700520 st.zlato,700520 črn,700525,701125": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_KOVINSKI-DRSNIK-REGULATOR-ZA-TRAKOVE|family|700300,700520 nikelj,700520 st.zlato,700520 črn,700525,701125": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: medium-confidence families approved"
+ },
+ "variant|parent_KOVINSKI-KARABIN-SREBRN|family|700010,700025,700145,700152,700850": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_KOVINSKI-KARABIN-SREBRN|family|700010,700025,700152,700850": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: high-confidence families approved"
  },
+ "variant|parent_KOVINSKI-NOSILEC-NIKELJ|family|800260,800270": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_KOVINSKI-OBROC-ART-505|family|30101,30104": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: high-confidence families approved"
+ },
+ "variant|parent_KOVINSKI-OBROC|family|700562,700564": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_KOVINSKI-POLOBROC|family|700250,700700,700712,700722,700723,700724,700729,700732,700733,700734,70110,705720,800120": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_KOVINSKI-POLOBROC|family|700700,700712,700722,700723,700724,700729,700732,700733,700734,70110,705720,800120": {
   "date": "2026-11-03",
@@ -19828,6 +20068,16 @@
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: medium-confidence families approved"
+ },
+ "variant|parent_KOVINSKO-OVALNO-VRTLJIVO-ZAPIRALO-ZA-TOR|family|30543,800295": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_KOVINSKO-ZAPIRALO-ZA-TORBE-40X40-MM|family|30544,703575,703593,703595,703833": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_KOVINSKO-ZAPIRALO-ZA-TORBE-40X40-MM|family|30544,703595,703833": {
   "date": "2026-11-03",
@@ -19849,10 +20099,25 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: high-confidence families approved"
  },
+ "variant|parent_KREMA-ZA-USNJE-SILICON-POLISH-75-ML|family|750311,750312,750313": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_KROJASKE-SKARJE-KAI-SERIJA-5000|family|2741,30521,3220,35220,35230,5275": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_KVACKA-ADDI-2|family|148200,148600": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: high-confidence families approved"
+ },
+ "variant|parent_KVACKA-ADDI|family|148200,148250,148350,148550,148600": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_KVACKA-ADDI|family|148250,148350,148550": {
   "date": "2026-11-03",
@@ -19879,6 +20144,11 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
  },
+ "variant|parent_KVACKA-ERGONOMSKA|family|218483,218484,218485,218486,218487,218488,218489,218490,218491,218492,218493,218494": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_KVACKA-ERGONOMSKA|family|218483,218485,218487,218488,218489,218490,218491,218492,218493,218494": {
   "date": "2026-11-03",
   "decision": "approve",
@@ -19888,6 +20158,16 @@
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: high-confidence families approved"
+ },
+ "variant|parent_KVACKA-KNITPRO-WAVES-2|family|30939,30940,30941": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_KVACKA-KNITPRO-WAVES|family|30912,30933,30937,30945": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_KVACKA-Z-ERGONOMSKIM-GUMIJASTIM-ROCAJEM-2|family|175620,175621,175622,175625,195173,195175": {
   "date": "2026-11-03",
@@ -19899,6 +20179,11 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: high-confidence families approved"
  },
+ "variant|parent_KVACKA-Z-ERGONOMSKIM-GUMIJASTIM-ROCAJEM|family|175620,175621,175622,175623,175624,175625,195172,195173,195174,195175,195176,195177,195178,195179": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_KVACKA-Z-ERGONOMSKIM-GUMIJASTIM-ROCAJEM|family|175620,175621,175622,175625,195173,195175": {
   "date": "2026-11-03",
   "decision": "approve",
@@ -19908,6 +20193,11 @@
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
+ },
+ "variant|parent_KVACKA-ZA-DEBELO-PREJO|family|218499,218500,218501,218502,218503,218505,218506": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_KVACKA-ZA-DEBELO-PREJO|family|218501,218503": {
   "date": "2026-11-03",
@@ -19959,15 +20249,30 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
  },
+ "variant|parent_LESENO-DNO|family|380606,380610,380613": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_LESENO-DNO|family|380610,380613": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: high-confidence families approved"
  },
+ "variant|parent_MAGNETNA-ZAPONKA|family|700014,700018": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_MARFIM-PREJA-200-G|family|442100-9009,442100-9012,442100-9199": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
+ },
+ "variant|parent_MEDVLOGA-POLNILO-VLIESELINE-90-CM|family|530099,530190,530640": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_MERINO-160-EXP-VOLNA-50-G|family|merino 160 b.202 50g,merino 160 b.206 50g,merino 160 b.211 50g,merino 160 b.213 50g,merino 160 b.220 50g,merino 160 b.230 50g": {
   "date": "2026-11-03",
@@ -19999,10 +20304,20 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
  },
+ "variant|parent_NADOMESTNA-VEZILNA-IGLA|family|108803,108804": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_NAPETNIK-S-STIFTOM-SVIG|family|705308 krem,705308 črn,705310 krem,705310 črn,705312 krem,705312 črn,705314 krem,705314 črn,705316 krem,705316 črn,705318 krem,705318 črn": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: high-confidence families approved"
+ },
+ "variant|parent_NAPRSTNIK-2|family|431859,431862,431864": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_NAPRSTNIK-PRYM-ERGONOMIC|family|431140,431141,431142,431143": {
   "date": "2026-11-03",
@@ -20018,6 +20333,16 @@
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
+ },
+ "variant|parent_NARAMNICE|family|944000,944300,944560": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_NASITEK-TRIKOTNIK-VECJI|family|925466,925468,925469,925470,925472,925475": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_NASITEK-TRIKOTNIK-VECJI|family|925466,925468,925469,925475": {
   "date": "2026-11-03",
@@ -20038,6 +20363,11 @@
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
+ },
+ "variant|parent_NATURAL-COTTON-SPARKLE-SILVER-400-G-B-20|family|nat.cot.spar.4g,nat.cot.spar.4s,nat.cot.spar.6g,nat.cot.spar.6s": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_NATURAL-COTTON-SPARKLE-SILVER-400-G-B-20|family|nat.cot.spar.4s,nat.cot.spar.6s": {
   "date": "2026-11-03",
@@ -20074,20 +20404,40 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
  },
+ "variant|parent_OBROCI-VLITI-20MM|family|8000027,8000069": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_OCI-SAMOLEPILNE-GIBLJIVE|family|10024,10838": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: high-confidence families approved"
+ },
+ "variant|parent_OCI-ZA-IGRACE-1-PAR|family|172801,172802,172803": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_OCI-ZA-IGRACE-1-PAR|family|172802,172803": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
  },
+ "variant|parent_OLJE-ZA-SIVALNE-STROJE-SPIRIT-2|family|1033245,1033302": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_OMNIFIL-NIT|family|146649,146650,147129,147210,147228": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: medium-confidence families approved"
+ },
+ "variant|parent_OTROSKI-GOBELIN-Z-VOLNO-11X13-CM|family|9605,9709,9713,9715,9720,9726": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_OTROSKI-GOBELIN-Z-VOLNO-11X13-CM|family|9713,9715,9720": {
   "date": "2026-11-03",
@@ -20109,10 +20459,20 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
  },
+ "variant|parent_PATENT-CEVAST-70-CM|family|patent moder,patent sv.siv,patent t.siv,patent črn": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_PATENT-CEVAST-70-CM|family|patent t.siv,patent črn": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: high-confidence families approved"
+ },
+ "variant|parent_PLATNO|family|platno 140-150,platno 240,platno 280,platno 300cm": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_PLATNO|family|platno 240,platno 280,platno 300cm": {
   "date": "2026-11-03",
@@ -20144,10 +20504,20 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
  },
+ "variant|parent_PLETILKE-BAMBUS-20-CM-5-1|family|222211,222212,222213": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_PLETILKE-DOLGE-KNITPRO-35-CM|family|223624,223626,223628,223629,223630,223632,223634,223635": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
+ },
+ "variant|parent_PLETILKE-DOLGE-KNITPRO-35-CM|family|223624,223626,223628,223629,223630,223632,223634,223635,223654": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_PLETILKE-DOLGE-KNITPRO-35-CM|family|223624,223626,223634,223635": {
   "date": "2026-11-03",
@@ -20164,6 +20534,11 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: high-confidence families approved"
  },
+ "variant|parent_PLETILKE-KNITPRO-5-KOS-20-CM|family|223121,223122,223123,223124,223140,223141,223142,223143,223144,223145,223146,223147,223148,223150,223151": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_PLETILKE-KNITPRO-5-KOS-20-CM|family|223140,223141,223142,223143,223144,223145,223146,223147,223148": {
   "date": "2026-11-03",
   "decision": "approve",
@@ -20173,6 +20548,11 @@
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: high-confidence families approved"
+ },
+ "variant|parent_PLETILKE-KNITPRO-SYMFONIE-ZA-NOGAVICE-5-|family|20105,20107,20109,20111": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_PLETILKE-KNITPRO-ZAMENLJIVE|family|223322,223323,223324,223325,223326,223327,223328,223329,223330,223331,223332,223333": {
   "date": "2026-11-03",
@@ -20209,6 +20589,16 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: medium-confidence families approved"
  },
+ "variant|parent_PLETILNI-MLINCEK|family|624168,624170": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_PLOSCATA-ELASTIKA|family|116260,200120,200180,200185,200206,200215,200240,200260,200314,200325,200440,200486,200487,200525,200530,200535,200540,200910,200912,225225,230230": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_PLOSCATA-ELASTIKA|family|200120,200180,200185,200206,200215,200240,200260,200314,200325,200440,200486,200487,200525,200530,200535,200540,200910,200912,225225,230230": {
   "date": "2026-11-03",
   "decision": "approve",
@@ -20223,6 +20613,11 @@
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: medium-confidence families approved"
+ },
+ "variant|parent_PODALJSEK-ZA-NEDRCEK|family|992120,992121,992131,992132,992133,992140,992141,992142,992145,992146,992147,992148,992150": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_PODALJSEK-ZA-NEDRCEK|family|992120,992121,992131,992132,992133,992140,992141,992145,992146,992148,992150": {
   "date": "2026-11-03",
@@ -20264,6 +20659,21 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: high-confidence families approved"
  },
+ "variant|parent_POLPODPLATI-MS320A-3-5-MM-CRNI|family|703203,703205": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_POLPODPLATI-PAR|family|705202,705203,705215": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_POLPODPLAT|family|707202,707203,707204,707205": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_POMOZNE-PLETILKE-KOMPLET-2-KOSOV|family|191101,191102": {
   "date": "2026-11-03",
   "decision": "approve",
@@ -20274,15 +20684,35 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
  },
+ "variant|parent_POSEVNI-SATEN-TRAK|family|111262,2611220": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_PREBIJAC-SFERA-ZA-TEKSTIL|family|30519,30520": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: medium-confidence families approved"
  },
+ "variant|parent_PREDNAPETI-OKVIR-2-KOS|family|21010,21011": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_PREJA-BABY-HAPPY-50-G|family|baby happy b.12,baby happy b.15,baby happy b.20": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_PRITISKAC-CRN|family|341161,341168": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
+ },
+ "variant|parent_PRITISKAC-KOVINSKI|family|341161,341164,341168,341169,341172,341180,341244,341246,341248,341249,341252,341253,341254,341260,341811,341812": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_PRITISKAC-KOVINSKI|family|341164,341169,341172,341180,341244,341246,341248,341249,341252,341253,341254,341260,341811,341812": {
   "date": "2026-11-03",
@@ -20304,6 +20734,11 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: high-confidence families approved"
  },
+ "variant|parent_PRITISKACI-ANORAK|family|390301,390307,390310,390314,390330,390332,390334,390339,390376": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_PRITISKACI-ANORAK|family|390301,390307,390314,390330,390332,390339,390376": {
   "date": "2026-11-03",
   "decision": "approve",
@@ -20314,10 +20749,20 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: high-confidence families approved"
  },
+ "variant|parent_PRITISKACI-JERSEY|family|390100,390107,390110": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_PRITISKACI-RINCICE-BRUNIR|family|541376,541381,541384,542371,542402": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
+ },
+ "variant|parent_PRITISKACI-RINCICE-S-PRILOZENIM-ORODJEM|family|541370,541371,541373,541374,541375,541376,541381,541383,541384,542371,542400,542401,542402,542410,542411,542412": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_PRITISKACI-RINCICE-S-PRILOZENIM-ORODJEM|family|541370,541371,541373,541374,541375,541383": {
   "date": "2026-11-03",
@@ -20328,6 +20773,16 @@
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: medium-confidence families approved"
+ },
+ "variant|parent_PRITISKACI-SPORT-15-MM|family|390199,390200": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_PRT-ZA-VEZENJE|family|201347,201358,201359,570007,570009,570012,570015,570025,570027,570032,570034,570036,570048,570080": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_PRT-ZA-VEZENJE|family|570007,570009,570012,570015,570025,570027,570032,570034,570036,570048,570080": {
   "date": "2026-11-03",
@@ -20343,6 +20798,11 @@
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
+ },
+ "variant|parent_PRYM-JEKLENE-VARNOSTNE-ZAPONKE-MESANE-VE|family|85120,85121": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_PRYM-OKVIR-ZA-VEZENJE|family|611675,611676,611677,611678,611679": {
   "date": "2026-11-03",
@@ -20379,6 +20839,11 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
  },
+ "variant|parent_RAVNILO-ZA-QUILTING|family|1026941,1033688,1035970,1035971": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_RAVNILO-ZA-QUILTING|family|1035970,1035971": {
   "date": "2026-11-03",
   "decision": "approve",
@@ -20389,25 +20854,70 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: medium-confidence families approved"
  },
+ "variant|parent_REFLEKSNI-TRAK|family|500081,500098": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_RIBS-TRAK|family|480010,480014,480018,480025,480038,480048": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
+ },
+ "variant|parent_RIBS-TRAK|family|480010,480014,480018,480025,480038,480048,706020": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_RINKE-ZA-KLJUCE|family|750400,750401,750402,750403": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: high-confidence families approved"
  },
+ "variant|parent_RIPS-TRAK-22-MM|family|706120,707322,709322": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_RIPS-TRAK-22-MM|family|707322,709322": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
  },
+ "variant|parent_ROCNA-IGLA-ZA-FILCANJE|family|1035658,1035660": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_ROCNE-IGLE|family|2121101,2121104,2121107": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
+ },
+ "variant|parent_ROCNE-IGLE|family|2121101,2121104,2121107,2121121,2121312": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_ROCNE-TAPETNISKE-SIVANKE|family|131107,131120": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_ROCNI-KROZNI-NOZ|family|1026945,1036331": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_ROL-ZAPONKA-IN-POLOBROC-SREBRNA-2-KOMPLE|family|8000055,8000056": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_ROL-ZAPONKA-Z-VALJCKOM-4-KOS|family|8000035,8000083,8000085": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_ROL-ZAPONKA-Z-VALJCKOM|family|30311,30525,30526,30527,30531,30549 nikel,30549 st.zlato": {
   "date": "2026-11-03",
@@ -20429,10 +20939,20 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
  },
+ "variant|parent_SATEN-TRAK|family|182838,982200,982300,982400,982515,982525": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_SATEN-TRAK|family|982200,982300,982400,982515,982525": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
+ },
+ "variant|parent_SCHOELLER-STAHL-BABY-HAPPY-COLOR-PREJA-5|family|ba.hap.col b.101,ba.hap.col b.102,ba.hap.col b.103,ba.hap.col b.104,ba.hap.col b.106,ba.hap.col b.107,ba.hap.col b.108,ba.hap.col b.109": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_SCHOELLER-STAHL-BABY-HAPPY-COLOR-PREJA-5|family|ba.hap.col b.101,ba.hap.col b.102,ba.hap.col b.103,ba.hap.col b.104,ba.hap.col b.106,ba.hap.col b.107,ba.hap.col b.109": {
   "date": "2026-11-03",
@@ -20454,6 +20974,16 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
  },
+ "variant|parent_SLIKA-IZ-FILCA-10-X-10-CM|family|4411,4412,4413,4414,4415,4416": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_SLIKA-ZA-VEZENJE-AIDA-Z-OKVIRJEM-17-CM|family|19724,19812": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_SPICE-MALE-558-Z-VIJAKOM|family|700558,700559": {
   "date": "2026-11-03",
   "decision": "approve",
@@ -20474,10 +21004,25 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: high-confidence families approved"
  },
+ "variant|parent_SPRIMNI-TRAK-LEPILNI-TRDI|family|801320,801330,801350,801450,820200": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_SPRIMNI-TRAK-LEPILNI-TRDI|family|801320,801330,801350,820200": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: high-confidence families approved"
+ },
+ "variant|parent_SPRIMNI-TRAK-PS|family|801110,801325": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_SPRIMNI-TRAK-ST-20-MM-BARVNI|family|810120,820120": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_SPRIMNI-TRAK-ST-B-200|family|825200,838200": {
   "date": "2026-11-03",
@@ -20499,6 +21044,11 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
  },
+ "variant|parent_STISKAC-KOVINSKI|family|700040,700040 zlat,700165,700170,700175,700499": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_STISKAC-KOVINSKI|family|700165,700175,700499": {
   "date": "2026-11-03",
   "decision": "approve",
@@ -20514,10 +21064,30 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
  },
+ "variant|parent_SUKANEC-ASTRA|family|astra 120,astra 120-5000 b,astra 50 barvast,astra 80 barvast": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_SUKANEC-EPIC-120|family|epic 120,epic 120-5000m": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: high-confidence families approved"
+ },
+ "variant|parent_SUKANEC-EPIC-120|family|epic 120,epic 120-5000m,epic 50 barv,epic 80": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_SUKANEC-LEPTIR|family|204014,204018,204050": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_SUKANEC-MOON-120-BARVNI|family|600300,moon 5000m": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_SUKANEC-MOON-5000-M-120|family|moon 5000m bel,moon 5000m črn": {
   "date": "2026-11-03",
@@ -20544,15 +21114,35 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
  },
+ "variant|parent_TINGILEDER-BARVA-ZA-POVRSINO-USNJA-1-L|family|750308,750309": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_TORBICA-VJ|family|torbica 1,torbica 2,torbica 3,torbica 4,torbica 5,torbica 6": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_TRAK-KARO-5-M|family|513830,513840,513850": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
  },
+ "variant|parent_TRAK-RIPS-TROBOJKA|family|116101,116120,116144": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_TRAK-RIPS-TROBOJKA|family|116120,116144": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: medium-confidence families approved"
+ },
+ "variant|parent_TUNIZIJSKA-KVACKA-30-CM|family|30820,30821,30822,30823,30824,30825,30826": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_TUNIZIJSKA-KVACKA-30-CM|family|30822,30823,30824,30826": {
   "date": "2026-11-03",
@@ -20568,6 +21158,16 @@
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
+ },
+ "variant|parent_TUNIZIJSKA-KVACKA|family|195213,195214,195215,195216,195217,195218": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_USNJENA-VRVICA-CRNA|family|700123,700124,700522,700522 črna,700533": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_USNJENA-VRVICA-CRNA|family|700124,700522 črna,700533": {
   "date": "2026-11-03",
@@ -20589,6 +21189,11 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: medium-confidence families approved"
  },
+ "variant|parent_VARNOSTNA-SPONKA-76-MM|family|71276,71602,71603,81605": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_VARNOSTNA-SPONKA-76-MM|family|71603,81605": {
   "date": "2026-11-03",
   "decision": "approve",
@@ -20603,6 +21208,11 @@
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
+ },
+ "variant|parent_VARNOSTNA-ZAPONKA-144-KOS|family|233505,9979,9981": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_VARNOSTNA-ZAPONKA-144-KOS|family|9979,9981": {
   "date": "2026-11-03",
@@ -20639,6 +21249,11 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
  },
+ "variant|parent_VEZALKE-2|family|10210,10220,10240,10260,10266,10299,10999,708100,709070": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_VEZALKE|family|708100,709070": {
   "date": "2026-11-03",
   "decision": "approve",
@@ -20654,15 +21269,30 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
  },
+ "variant|parent_VOGALI|family|30554,30555": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_VOSKASTA-BARVA-ZA-ROBOVE-500-ML|family|750306,750316": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: high-confidence families approved"
  },
+ "variant|parent_VOSKASTA-BARVA-ZA-ROBOVE-500-ML|family|750306,750316,750326": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_VRVICA-FI|family|10460,10496": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
+ },
+ "variant|parent_VRVICA-FI|family|10460,10496,10520": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_YARN-ART-TWEED-PREJA-100-G|family|tweed b.220,tweed b.221,tweed b.225,tweed b.227,tweed b.228,tweed b.229,tweed b.230,tweed b.231,tweed b.232,tweed b.233,tweed b.234": {
   "date": "2026-11-03",
@@ -20679,6 +21309,11 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
  },
+ "variant|parent_ZADRGA-3CFC|family|300210,300214,300216,300218,300220,300345,300616,300620": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_ZADRGA-3CFO|family|300340,300350,300360,300365,300370,300375,300380": {
   "date": "2026-11-03",
   "decision": "approve",
@@ -20688,6 +21323,11 @@
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
+ },
+ "variant|parent_ZADRGA-6CF-O-METALIZIRANA|family|301440,301450,301460,301465,301470,303440,303460": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_ZADRGA-6CFC|family|300616,300620": {
   "date": "2026-11-03",
@@ -20703,6 +21343,11 @@
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: high-confidence families approved"
+ },
+ "variant|parent_ZADRGA-6CFMO-METALIZIRANA|family|301480,301485,301490,301495,301500,301550,301570,301575": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_ZADRGA-6CFMO-METALIZIRANA|family|301480,301485,301490,301495,301500,301570,301575": {
   "date": "2026-11-03",
@@ -20759,6 +21404,11 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
  },
+ "variant|parent_ZADRGA-DEKOR|family|300180,300850": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_ZADRGA-DELJIVA-5MP|family|320560,320570,320580": {
   "date": "2026-11-03",
   "decision": "approve",
@@ -20773,6 +21423,11 @@
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
+ },
+ "variant|parent_ZADRGA-NEDELJIVA-5MP|family|320308,320314,320514,320516": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_ZADRGA-NEDELJIVA-5MP|family|320514,320516": {
   "date": "2026-11-03",
@@ -20808,6 +21463,11 @@
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: medium-confidence families approved"
+ },
+ "variant|parent_ZAKOVICA-034-DVOJNA|family|700634,700634 siv,710634,720634": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_ZAKOVICA-034-DVOJNA|family|700634,710634,720634": {
   "date": "2026-11-03",
@@ -20859,10 +21519,25 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
  },
+ "variant|parent_ZANKA-2-0|family|8000008,8000118": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_ZANKA-30-MM|family|800130,800330": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_ZANKA-KOVINSKA-20-MM|family|700821,700822": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: high-confidence families approved"
+ },
+ "variant|parent_ZANKA-KOVINSKA-50X20-MM|family|700555,700591,700592,700595,700596,700625,708590": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_ZANKA-KOVINSKA-50X20-MM|family|700595,700596": {
   "date": "2026-11-03",
@@ -20884,6 +21559,16 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
  },
+ "variant|parent_ZAPIRALO-ZA-TORBO|family|703665-01,703665-02,703665-03,703665-04,703665-05,703665-06,703665-08,703665-09,703665-10,703665-11,703665-12": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_ZAPONKA-DVOJNA-2-5|family|8000071,8000082": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_ZAPONKA-DVOJNA|family|30722,30723,30726,30727": {
   "date": "2026-11-03",
   "decision": "approve",
@@ -20904,15 +21589,30 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: medium-confidence families approved"
  },
+ "variant|parent_ZAPONKA-ZA-HLACE-JEKLO|family|265225,265227,265230,265242,265811": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_ZAPONKA-ZA-HLACE-JEKLO|family|265225,265227,265230,265811": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
  },
+ "variant|parent_ZAPONKA-ZA-KOPALKE-PROZORNA|family|416121,416130,416158,416160,416163": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_ZAPONKA-ZA-KOPALKE-PROZORNA|family|416158,416160": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
+ },
+ "variant|parent_ZAPONKA-ZA-NARAMNICE|family|405207,405220,405224,405228,405270": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_ZAPONKA-ZA-NARAMNICE|family|405220,405224,405228,405270": {
   "date": "2026-11-03",
@@ -20934,15 +21634,40 @@
   "decision": "approve",
   "note": "Matic 2026-11-03: medium-confidence families approved"
  },
+ "variant|parent_ZAPONKA-ZA-PAS-NIKELJ|family|700240,700255,700277,700540,700735,700930": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_ZAPONKA-ZA-PAS-NIKELJ|family|700540,700735,700930": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: medium-confidence families approved"
  },
+ "variant|parent_ZAPONKA-ZA-PAS|family|416295,416296": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
  "variant|parent_ZAPONKA-ZLATA|family|30610,30615": {
   "date": "2026-11-03",
   "decision": "approve",
   "note": "Matic 2026-11-03: round two (inactive + merges), all confidence levels approved for local check"
+ },
+ "variant|parent_ZAPONKA-ZLATA|family|30610,30615,700180,700535": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_ZAPONKE-15-MM|family|8000062,800562": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
+ },
+ "variant|parent_ZAPONKE-2-0|family|8000079,8000080,800579": {
+  "date": "2026-11-05",
+  "decision": "approve",
+  "note": ""
  },
  "variant|parent_ZAPONKE-ZA-NOGAVICE-19-MM|family|933810,933812": {
   "date": "2026-11-03",
