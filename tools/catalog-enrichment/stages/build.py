@@ -178,6 +178,32 @@ if fams:
     steps.append(('08-variant-listing.csv', 'Sivanka – variant listing (`sivanka_variant_listing`, create once: '
                   'product, update only, mapping id / productNumber / variantListingConfig → variant_listing_config)', n,
                   'Listings show every variant as its own card, split by all variant groups; no parent card.'))
+    # 11 the variant's own option values as properties: the product page's Specifications table lists properties
+    # only, so without this a colour variant shows no "Barva" there. Only groups the variant has no value for yet
+    # (an existing colour name such as Bela next to the option "b. 01" stays, and nothing is removed).
+    have_groups = collections.defaultdict(set)
+    for fam in fams:
+        for m in fam['members']:
+            have_groups[m['id']] |= set(c.existing(c.by_id[m['id']]))
+    for a in props:
+        have_groups[a['product_id']].add(a['group'])
+    var_props = []
+    for fam in fams:
+        for m in fam['members']:
+            for g in fam['groups']:
+                if g not in have_groups[m['id']]:
+                    oid = c.resolve_option(g, m['options'][g])[1]
+                    var_props.append(dict(product_id=m['id'], number=m['number'], group=g, value=m['options'][g], option_id=oid))
+    if var_props:
+        per_var = collections.defaultdict(list)
+        for a in var_props:
+            per_var[a['product_id']].append(a['option_id'])
+        n = write_csv(os.path.join(imp, '11-variant-properties.csv'), ['id', 'product_number', 'propertyIds'],
+                      [[pid, c.by_id[pid]['number'], '|'.join(ids)] for pid, ids in per_var.items()])
+        steps.append(('11-variant-properties.csv', 'Default product (`default_product`)', n,
+                      f'{len(var_props)} variant option values also as properties, so Specifications show them (after 04 and 07).'))
+        write_csv(os.path.join(rb, '11-variant-properties-added.csv'), ['product_id', 'product_number', 'option_id', 'group', 'value'],
+                  [[a['product_id'], a['number'], a['option_id'], a['group'], a['value']] for a in var_props])
     write_csv(os.path.join(rb, '05-variant-parents-created.csv'), ['parent_id', 'parent_number', 'members'],
               [[f['parent_id'], f['parent_number'], ' '.join(m['number'] for m in f['members'])] for f in fams])
     open(os.path.join(rb, 'README.md'), 'w', encoding='utf-8').write(
