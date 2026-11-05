@@ -289,8 +289,8 @@
     "title": "Make variants from the selected products",
     "modeNew": "New parent product",
     "modeExisting": "Add to an existing parent",
-    "groups": "Properties the variants differ in",
-    "groupsHelp": "Every selected product needs exactly one value for each of these properties; it becomes the variant's option.",
+    "groups": "Properties the variants differ in (one or more)",
+    "groupsHelp": "Pick as many as you need, e.g. colour, height and length. Every product needs exactly one value for each of them; together they become the variant's options.",
     "parentName": "Parent product name",
     "parentNumber": "Parent product number",
     "parentNumberHelp": "Suggested from the common start of the selected product numbers; you can change it.",
@@ -330,6 +330,13 @@
       "deleteParentHelp": "After the split the parent has no variants left. Switch off to keep it as a standalone product.",
       "confirm": "Split ({count})",
       "success": "{parents} parent products split into {variants} standalone products."
-    }
+    },
+    "addProduct": "Add more products",
+    "addProductPlaceholder": "Search by name or product number…",
+    "addProductHelp": "Adds a standalone product to this list, in addition to the ones selected in the product list.",
+    "removeProduct": "Remove from the list",
+    "parentNameHelp": "Taken from the selected products' names without their variant values (e.g. \"100 g\"); you can change it. The parent also gets the first variant's image.",
+    "statusPendingGroups": "Choose the properties first",
+    "statusPendingParent": "Choose the parent first"
   }
 }

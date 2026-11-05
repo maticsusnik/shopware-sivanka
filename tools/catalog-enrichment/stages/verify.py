@@ -28,9 +28,10 @@ def ids(s):
 
 before, after = load(os.path.join(run, 'snapshot.tsv')), load(after_path)
 added = collections.defaultdict(set)
-p = os.path.join(run, 'rollback', '02-product-properties-added.csv')
-for r in read_csv(p) if os.path.exists(p) else []:
-    added[r['product_id']].add(r['option_id'])
+for name in ('02-product-properties-added.csv', '11-variant-properties-added.csv'):
+    p = os.path.join(run, 'rollback', name)
+    for r in read_csv(p) if os.path.exists(p) else []:
+        added[r['product_id']].add(r['option_id'])
 seo_ids = set()
 p = os.path.join(run, 'import', '03-product-seo.csv')
 seo_ids = {r['id'] for r in read_csv(p)} if os.path.exists(p) else set()
@@ -47,22 +48,26 @@ for r in json.load(open(p, encoding='utf-8')) if os.path.exists(p) else []:
     else:
         text_ids.add(r['product_id'])
 
+p = os.path.join(run, 'import', '12-parent-covers.csv')
+cover_ids = {r['id'] for r in read_csv(p)} if os.path.exists(p) else set()
 children, parents_new = {}, set()
 p = os.path.join(run, 'import', '07-variant-children.csv')
 for r in read_csv(p) if os.path.exists(p) else []:
     children[r['id']] = (r['parent_id'], set(r['optionIds'].split('|')))
 p = os.path.join(run, 'import', '05-variant-parents.csv')
-parents_new = {r['id'] for r in read_csv(p)} if os.path.exists(p) else set()
+parents_new = {r['id'] for r in read_csv(p)} if os.path.exists(p) else set()   # new and updated parents
+p = os.path.join(run, 'import', 'delete-emptied-parents.json')
+emptied = {r['id'] for r in json.load(open(p, encoding='utf-8'))} if os.path.exists(p) else set()
 
 problems = collections.Counter()
 examples = collections.defaultdict(list)
-for pid in before.keys() - after.keys():
+for pid in before.keys() - after.keys() - emptied:
     problems['product deleted'] += 1
     examples['product deleted'].append(before[pid]['number'])
 for pid in after.keys() - before.keys() - parents_new:
     problems['product created'] += 1
     examples['product created'].append(after[pid]['number'])
-for pid in before.keys() & after.keys():
+for pid in before.keys() & after.keys() - parents_new:      # our own parents: name/children/categories change
     b, a = before[pid], after[pid]
     for col in COLS[2:]:
         if b[col] == a[col] or col == 'stock':       # stock: the Minimax sync may run in between
@@ -75,9 +80,11 @@ for pid in before.keys() & after.keys():
             continue
         if col == 'categories' and pid in cat_ids:
             continue
+        if col in ('cover', 'media') and pid in cover_ids:
+            continue
         if pid in children and col == 'parent' and a[col] == children[pid][0]:
             continue
-        if pid in children and col == 'options' and ids(a[col]) == children[pid][1]:
+        if pid in children and col == 'options' and children[pid][1] <= ids(a[col]):
             continue
         problems[f'{col} changed'] += 1
         if len(examples[f'{col} changed']) < 5:
@@ -85,6 +92,8 @@ for pid in before.keys() & after.keys():
 missing = [pid for pid, want in added.items() if pid in after and not want <= ids(after[pid]['properties'])]
 if missing:
     problems['expected properties missing'] = len(missing)
+for pid in emptied & after.keys():
+    problems['emptied parent still there'] += 1
 for pid in parents_new:
     if pid not in after:
         problems['variant parent missing'] += 1

@@ -65,7 +65,9 @@ and the content hashes of the 1,276 products read back then.
   same namespace as September), so importing a file twice changes nothing.
 - Existing values win. Imports only add properties; they never remove or overwrite.
 - A property needs a verbatim quote from the product's own text (`props_validate.py`).
-- Variants are never given properties; parents only get groups that cannot differ per variant.
+- Agents never propose properties for variant parents beyond groups that cannot differ per variant. The build
+  copies each variant's own option values (Barva, Velikost, …) into its properties (`11-variant-properties.csv`),
+  because the Specifications table lists properties only; it only adds groups the variant has no value for yet.
 - Import/Export gotchas: blank cells never clear a value; never use `--rollbackOnError` with
   `import:entity` (it never commits).
 

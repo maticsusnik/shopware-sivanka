@@ -67,7 +67,23 @@ Built with the steps below from `~/Desktop/backup_sivanka_04_11_2026.sql` (note:
   defaults to true!) + sync delete of the 77, profile `sivanka_variant_listing` created, files 01–08, 10, 09
   imported in the Admin Import screen (all 0 errors, counts identical to local), fixes-manual applied via the
   sync API (65 links, 5 short descriptions). Prod storefront checked. `./enrich.sh finish` run; the next run
-  only reads products changed after this.
+  only reads products changed after this. 2026-11-05: `11-variant-properties.csv` (395 variant option values as
+  properties, so Specifications show Barva etc.) imported on prod, 0 errors.
+
+## Variant re-scan (2026-11-05): runs `2026-11-05-1959` + `2026-11-05-2030`, on prod
+
+- Dump `~/Desktop/sivanka/backup_sivanka_05_11_2026.sql`. New clustering (`variants_prepare.py`) takes all products incl.
+  current variants; agents (20 Opus, `variants_SPEC.md`) extend/merge existing families (`keep_parent_id`) and may add a
+  second group. 145 changes approved by Matic (72 existing incl. 16 merges, 73 new); review list
+  `variants/review.csv`, left out with reasons `variants/left-out.csv`.
+- Run 2030: `variants_numbers.py` adds products whose number equals a member's number except for the value (Matic's
+  rule, `lib/numbercodes.py`): 17 Step colours. Plus the KnitPro Waves merge (13 sizes, `out/batch-manual.json`) and
+  `12-parent-covers.csv` (parent cover = best variant's photo; 160 of 329 parents, the rest have no variant photo).
+- Matic's review: "St. zlato" -> "Staro zlato", PLATNO 165 left out.
+- Prod 2026-11-05 ~21:15 via the Admin (Playwright, Matic logged in, every step approved): both packages, all files 0
+  errors, 17 emptied parents deleted via the sync API after checking 0 variants. Prod after: 4,122 products,
+  329 parents, 1,667 variants. The local DB matches (plus nothing else).
+- Local imports deadlock with the workers: `import-local` now pauses them. On prod no deadlock happened.
 
 ## How the 2026-11-04 package was built (repeat for a newer dump)
 

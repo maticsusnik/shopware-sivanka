@@ -3,14 +3,14 @@
   "entryPoints": {
     "optiweb-theme": {
       "css": [
-        "/bundles/optiwebtheme/administration/assets/optiweb-theme-DuxgAWhW.css"
+        "/bundles/optiwebtheme/administration/assets/optiweb-theme-DcKGzQtk.css"
       ],
       "dynamic": [
         "/bundles/optiwebtheme/administration/assets/sl-SI-BCpb9lbH.js",
         "/bundles/optiwebtheme/administration/assets/en-GB-CjVGshjj.js"
       ],
       "js": [
-        "/bundles/optiwebtheme/administration/assets/optiweb-theme-HwqJmIjA.js"
+        "/bundles/optiwebtheme/administration/assets/optiweb-theme-CYCr_0Lh.js"
       ],
       "legacy": false,
       "preload": []

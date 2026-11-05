@@ -30,6 +30,9 @@ SELECT UNHEX('0b7e1f4a9c2d4e6f8a1b3c5d7e9f0a21'), id, 'Sivanka – variant listi
 SQL
 fi
 
+# the workers re-index while we write and deadlock some rows: pause them for the import
+"${COMPOSE[@]}" stop async_worker low_priority_worker scheduler >/dev/null 2>&1 || true
+trap '"${COMPOSE[@]}" start async_worker low_priority_worker scheduler >/dev/null 2>&1 || true' EXIT
 "${COMPOSE[@]}" exec -T "$APP_SERVICE" mkdir -p /tmp/ce-import
 for f in "$I"/[0-9][0-9]-*.csv; do
     b="$(basename "$f")"; p="$(profile_for "$b")"
@@ -38,9 +41,18 @@ for f in "$I"/[0-9][0-9]-*.csv; do
     out="$("${COMPOSE[@]}" exec -T "$APP_SERVICE" php bin/console import:entity "/tmp/ce-import/$b" "+1 day" \
         --profile-technical-name="$p" --printErrors 2>&1 || true)"
     echo "$out" | grep -v '▓\|░\|^\s*$\|^ ---\|Starting\|^====' | tail -n 12 >&2
-    echo "$out" | grep -q "Successfully imported" || die "$b failed, stopping (later files depend on it)"
+    echo "$out" | grep -c "Successfully imported" >/dev/null || die "$b failed, stopping (later files depend on it)"
+    if echo "$out" | grep -c "Not all records could be imported" >/dev/null; then
+        die "$b: some records failed (see above; a deadlock with the workers is transient: rerun import-local)"
+    fi
 done
 
+if [[ -f "$I/delete-emptied-parents.json" ]]; then
+    info "delete-emptied-parents.json (php/delete-emptied-parents.php)"
+    "${COMPOSE[@]}" cp "$CE_DIR/php/delete-emptied-parents.php" "$APP_SERVICE:/tmp/delete-emptied-parents.php" >/dev/null 2>&1
+    "${COMPOSE[@]}" cp "$I/delete-emptied-parents.json" "$APP_SERVICE:/tmp/delete-emptied-parents.json" >/dev/null 2>&1
+    "${COMPOSE[@]}" exec -T "$APP_SERVICE" php /tmp/delete-emptied-parents.php /tmp/delete-emptied-parents.json --apply | tail -n 3 >&2
+fi
 if [[ -f "$I/fixes-manual.json" ]]; then
     info "fixes-manual.json (php/apply-fixes.php)"
     "${COMPOSE[@]}" cp "$CE_DIR/php/apply-fixes.php" "$APP_SERVICE:/tmp/apply-fixes.php" >/dev/null 2>&1

@@ -24,7 +24,7 @@ FMT = {
     'Dimenzije': r'\d+(?:,\d+)? x \d+(?:,\d+)?(?: x \d+(?:,\d+)?)? (?:mm|cm|m)',
     'Teža': r'\d+(?:,\d+)? (?:g|kg)', 'Dolžina niti': r'\d+(?:,\d+)? m', 'Količina v pakiranju': r'\d+ kos',
     'Priporočene pletilke': RANGE_MM, 'Priporočena kvačka': RANGE_MM, 'Velikost igle': RANGE_MM,
-    'Debelina': r'\d+(?:,\d+)? mm',
+    'Debelina': r'\d+(?:,\d+)? mm', 'Prostornina': r'\d+(?:,\d+)? (?:ml|l)',
 }
 ENUM = {'Barva': BARVA, 'Vrsta zadrge': ['Deljiva', 'Nedeljiva', 'Skrita', 'Reverzibilna'],
         'Oblika': ['Kvadrat', 'Pravokotna', 'U oblika', 'Okrogla', 'Ovalna', 'Trikotna', 'Srce'],
@@ -51,7 +51,9 @@ def numbers(s):
 def clean_value(group, v):
     v = re.sub(r'\s+', ' ', (v or '').strip())
     if group in FMT:
-        v = re.sub(r'(?<=[\d\s])(MM|CM|KG|G|M)$', lambda m: m.group(1).lower(), v)
+        v = re.sub(r'(?<=[\d\s])(MM|CM|KG|ML|G|M|L)$', lambda m: m.group(1).lower(), v)
+        if group == 'Prostornina':
+            v = re.sub(r'(?<=\d)\s*(ml|l)$', r' \1', v, flags=re.I).lower()
         v = v.replace('.', ',').replace('–', '-').replace('—', '-')
         v = re.sub(r'\s*-\s*', '-', v)
         v = re.sub(r'\s*[x×X]\s*', ' x ', v)

@@ -165,8 +165,10 @@ if fams:
     n = write_csv(os.path.join(imp, '05-variant-parents.csv'),
                   ['id', 'product_number', 'active', 'stock', 'name', 'price_net', 'price_gross', 'tax_id',
                    'categories', 'sales_channel'], parents)
+    n_existing = sum(1 for f in fams if f.get('existing'))
     steps.append(('05-variant-parents.csv', 'Default product (`default_product`)', n,
-                  'New empty parents, numbers `parent_…`. Minimax does not know them and leaves them alone.'))
+                  'Empty parents, numbers `parent_…` (Minimax does not know them and leaves them alone): '
+                  f'{n - n_existing} new, {n_existing} existing ones updated (name, price, categories).'))
     n = write_csv(os.path.join(imp, '06-variant-configurator.csv'), ['id', 'product_id', 'option_id', 'position', 'media_id'], conf)
     steps.append(('06-variant-configurator.csv', 'Default variant configuration settings (`default_variant_configuration_settings`)',
                   n, f'Selector options per parent in natural order; {media_options} colour/motif options show the variant photo. '
@@ -174,10 +176,69 @@ if fams:
     n = write_csv(os.path.join(imp, '07-variant-children.csv'), ['id', 'parent_id', 'product_number', 'optionIds'], children)
     steps.append(('07-variant-children.csv', 'Default product (`default_product`)', n,
                   'Attaches existing products to their parent. They keep their own number, name, price and stock.'))
+    # 12 parent covers: a parent (parent_…) shows the photo of its best variant (active, with a photo, most stock).
+    # Every parent of the shop that has none, plus this run's families. cover.media.id reuses the variant's media
+    # file, nothing is uploaded.
+    kids = collections.defaultdict(list)
+    for p in c.products:
+        if p['kind'] == 'variant':
+            kids[p['parent']].append(p)
+    for f in fams:
+        for m in f['members']:
+            kids[f['parent_id']] = [k for k in kids[f['parent_id']] if k['id'] != m['id']] + [c.by_id[m['id']]]
+            for other in f.get('merged_parents') or []:
+                kids[other] = [k for k in kids[other] if k['id'] != m['id']]
+    covers = []
+    targets = {p['id']: p['number'] for p in c.products if p['kind'] == 'parent' and str(p['number']).startswith('parent_')
+               and not p.get('cover_media_id')}
+    targets.update({f['parent_id']: f['parent_number'] for f in fams})
+    for pid, number in sorted(targets.items(), key=lambda x: x[1]):
+        best = sorted((k for k in kids.get(pid, []) if k.get('cover_media_id')),
+                      key=lambda k: (not k['active'], -(k['stock'] or 0), k['number']))
+        if best and (pid not in c.by_id or not c.by_id[pid].get('cover_media_id')):
+            covers.append([pid, number, best[0]['cover_media_id']])
+    if covers:
+        n = write_csv(os.path.join(imp, '12-parent-covers.csv'), ['id', 'product_number', 'cover_media_id'], covers)
+        steps.append(('12-parent-covers.csv', 'Default product (`default_product`)', n,
+                      'Cover image of each variant parent = photo of its best variant (reuses the media file).'))
+    emptied = sorted({pid for f in fams for pid in f.get('merged_parents') or []})
+    if emptied:
+        json.dump([dict(id=pid, number=c.by_id[pid]['number'], name=c.by_id[pid]['name'],
+                        merged_into=next(f['parent_number'] for f in fams if pid in (f.get('merged_parents') or [])))
+                   for pid in emptied],
+                  open(os.path.join(imp, 'delete-emptied-parents.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+        steps.append(('delete-emptied-parents.json', 'not importable: delete after 07 (they have no variants left)',
+                      len(emptied), 'Parents whose variants moved into another family by a merge.'))
     n = write_csv(os.path.join(imp, '08-variant-listing.csv'), ['id', 'product_number', 'variant_listing_config'], listing)
     steps.append(('08-variant-listing.csv', 'Sivanka – variant listing (`sivanka_variant_listing`, create once: '
                   'product, update only, mapping id / productNumber / variantListingConfig → variant_listing_config)', n,
                   'Listings show every variant as its own card, split by all variant groups; no parent card.'))
+    # 11 the variant's own option values as properties: the product page's Specifications table lists properties
+    # only, so without this a colour variant shows no "Barva" there. Only groups the variant has no value for yet
+    # (an existing colour name such as Bela next to the option "b. 01" stays, and nothing is removed).
+    have_groups = collections.defaultdict(set)
+    for fam in fams:
+        for m in fam['members']:
+            have_groups[m['id']] |= set(c.existing(c.by_id[m['id']]))
+    for a in props:
+        have_groups[a['product_id']].add(a['group'])
+    var_props = []
+    for fam in fams:
+        for m in fam['members']:
+            for g in fam['groups']:
+                if g not in have_groups[m['id']]:
+                    oid = c.resolve_option(g, m['options'][g])[1]
+                    var_props.append(dict(product_id=m['id'], number=m['number'], group=g, value=m['options'][g], option_id=oid))
+    if var_props:
+        per_var = collections.defaultdict(list)
+        for a in var_props:
+            per_var[a['product_id']].append(a['option_id'])
+        n = write_csv(os.path.join(imp, '11-variant-properties.csv'), ['id', 'product_number', 'propertyIds'],
+                      [[pid, c.by_id[pid]['number'], '|'.join(ids)] for pid, ids in per_var.items()])
+        steps.append(('11-variant-properties.csv', 'Default product (`default_product`)', n,
+                      f'{len(var_props)} variant option values also as properties, so Specifications show them (after 04 and 07).'))
+        write_csv(os.path.join(rb, '11-variant-properties-added.csv'), ['product_id', 'product_number', 'option_id', 'group', 'value'],
+                  [[a['product_id'], a['number'], a['option_id'], a['group'], a['value']] for a in var_props])
     write_csv(os.path.join(rb, '05-variant-parents-created.csv'), ['parent_id', 'parent_number', 'members'],
               [[f['parent_id'], f['parent_number'], ' '.join(m['number'] for m in f['members'])] for f in fams])
     open(os.path.join(rb, 'README.md'), 'w', encoding='utf-8').write(
