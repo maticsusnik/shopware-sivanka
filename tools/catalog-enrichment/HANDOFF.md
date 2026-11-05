@@ -67,7 +67,8 @@ Built with the steps below from `~/Desktop/backup_sivanka_04_11_2026.sql` (note:
   defaults to true!) + sync delete of the 77, profile `sivanka_variant_listing` created, files 01–08, 10, 09
   imported in the Admin Import screen (all 0 errors, counts identical to local), fixes-manual applied via the
   sync API (65 links, 5 short descriptions). Prod storefront checked. `./enrich.sh finish` run; the next run
-  only reads products changed after this.
+  only reads products changed after this. 2026-11-05: `11-variant-properties.csv` (395 variant option values as
+  properties, so Specifications show Barva etc.) imported on prod, 0 errors.
 
 ## How the 2026-11-04 package was built (repeat for a newer dump)
 
