@@ -218,6 +218,9 @@ class ProductSync extends AbstractSyncBase
                     'taxId'         => $taxId,
                     'stock'         => $stock,
                     'price'         => $this->pricePayload($gross, $net),
+                    // Clearance sale: no orders once stock hits 0. Only set on
+                    // create, so an editor's later change in the Admin survives.
+                    'isCloseout'    => true,
                     // Created deactivated on purpose: an editor decides when a
                     // freshly imported product is fit to go live.
                     'active'        => false,
