@@ -1,7 +1,7 @@
 {% sw_extends '@Storefront/storefront/page/checkout/finish/finish-details.html.twig' %}
 
 {% block page_checkout_finish_data %}
-    <div class="finish-success-card">
+    <div class="finish-success-card" data-checkout-customer-storage-reset="true">
         <div class="finish-success-icon" aria-hidden="true">
             {% sw_icon 'checkmark' style { size: 'xl' } %}
         </div>

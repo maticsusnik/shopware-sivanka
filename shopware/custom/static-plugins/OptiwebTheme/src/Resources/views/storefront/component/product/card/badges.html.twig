@@ -26,7 +26,9 @@
             {% set price = product.calculatedPrices.last %}
         {% endif %}
 
-        {% set listPrice = price.listPrice.percentage > 0 %}
+        {# Same reference as core: the regulation price (lowest of the last 30 days) wins over the list price. #}
+        {% set referencePrice = price.regulationPrice ?? price.listPrice %}
+        {% set hasDiscount = referencePrice.percentage > 0 %}
         {% set hasRange = product.calculatedPrices.count > 1 %}
 
         {% set displayParent = product.variantListingConfig.displayParent and product.parentId === null %}
@@ -34,9 +36,9 @@
             {% set displayFromVariants = displayParent and price.unitPrice !== product.calculatedCheapestPrice.unitPrice %}
         {% endif %}
 
-        {% if listPrice and not hasRange and not displayFromVariants %}
+        {% if hasDiscount and not hasRange and not displayFromVariants %}
             <span class="badge bg-danger badge-discount">
-                <span aria-hidden="true">-{{ price.listPrice.percentage }}%</span>
+                <span aria-hidden="true">-{{ referencePrice.percentage }}%</span>
             </span>
         {% endif %}
     {% endif %}
