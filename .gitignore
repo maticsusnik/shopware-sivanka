@@ -15,3 +15,6 @@
 /SIVANKA-V2-HANDOFF.md
 /.playwright-mcp/
 /favicon/
+
+# Vite dependency cache from watch-admin
+shopware/custom/static-plugins/*/src/Resources/app/administration/.tmp/
