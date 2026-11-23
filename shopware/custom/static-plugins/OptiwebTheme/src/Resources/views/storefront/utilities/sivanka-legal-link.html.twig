@@ -22,3 +22,10 @@
 {% macro close(configKey) %}
     {{- sv_legal_page_category(config(configKey)) ? '</a>' : '</button>' -}}
 {% endmacro %}
+
+{# Plain URL to the legal page: the category carrying the text, else the bare CMS page. #}
+{% macro url(configKey) %}
+    {%- set cmsPageId = config(configKey) -%}
+    {%- set categoryId = sv_legal_page_category(cmsPageId) -%}
+    {{- categoryId ? seoUrl('frontend.navigation.page', { navigationId: categoryId }) : path('frontend.cms.page.full', { id: cmsPageId }) -}}
+{% endmacro %}

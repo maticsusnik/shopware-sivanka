@@ -1,13 +1,54 @@
 {% sw_extends '@Storefront/storefront/layout/cookie/cookie-configuration.html.twig' %}
 
-{# "Save" is the secondary action next to "Accept all cookies", so it gets the outline
-   button instead of a second solid one. #}
-{% block layout_cookie_configuration_button %}
-    <div class="d-grid">
-        <button
-            type="submit"
-            class="btn btn-outline-primary js-offcanvas-cookie-submit">
-            {{ 'global.default.save'|trans|sw_sanitize }}
-        </button>
+{# Core's content block, copied: the privacy text sits in it without a block of its own. #}
+{% block utilities_offcanvas_content %}
+    {% set acceptAllCookies = config('core.basicInformation.acceptAllCookies') %}
+    <div class="offcanvas-cookie" role="region" aria-labelledby="offcanvas-cookie-headline">
+        <div class="offcanvas-cookie-description">
+            <p>
+                {# The privacy link goes to the real page (the category), see sivanka-legal-link #}
+                {% import '@OptiwebTheme/storefront/utilities/sivanka-legal-link.html.twig' as legal %}
+                {{ 'cookie.messageTextPage'|trans({
+                    '%url%': legal.url('core.basicInformation.privacyPage')
+                })|raw }}
+            </p>
+
+            <h2 class="offcanvas-cookie-header h5" id="offcanvas-cookie-headline">
+                {{ 'cookie.headline'|trans|sw_sanitize }}
+            </h2>
+        </div>
+
+        <div class="offcanvas-cookie-list">
+            {% for cookieGroup in cookieGroups %}
+                {% sw_include '@Storefront/storefront/layout/cookie/cookie-configuration-group.html.twig' with {
+                    themeIconConfig: themeIconConfig,
+                    cookieGroup: cookieGroup
+                } only %}
+            {% endfor %}
+        </div>
+
+        {% if acceptAllCookies %}
+            {% block layout_cookie_configuration_allow_all_button %}
+                <div class="d-grid mb-2">
+                    <button
+                        type="submit"
+                        class="btn btn-primary btn-block js-offcanvas-cookie-accept-all">
+                        {{ 'cookie.acceptAll'|trans|sw_sanitize }}
+                    </button>
+                </div>
+            {% endblock %}
+        {% endif %}
+
+        {# "Save" is the secondary action next to "Accept all cookies", so it gets the
+           outline button instead of a second solid one. #}
+        {% block layout_cookie_configuration_button %}
+            <div class="d-grid">
+                <button
+                    type="submit"
+                    class="btn btn-outline-primary js-offcanvas-cookie-submit">
+                    {{ 'global.default.save'|trans|sw_sanitize }}
+                </button>
+            </div>
+        {% endblock %}
     </div>
 {% endblock %}

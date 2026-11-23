@@ -1,0 +1,11 @@
+{% sw_extends '@Storefront/storefront/layout/cookie/cookie-permission.html.twig' %}
+
+{# The privacy link goes to the real page (the category), see sivanka-legal-link #}
+{% block layout_cookie_permission_inner_content %}
+    {% import '@OptiwebTheme/storefront/utilities/sivanka-legal-link.html.twig' as legal %}
+    <div class="col cookie-permission-content">
+        {{ 'cookie.messageTextPage'|trans({
+            '%url%': legal.url('core.basicInformation.privacyPage')
+        })|raw }}
+    </div>
+{% endblock %}

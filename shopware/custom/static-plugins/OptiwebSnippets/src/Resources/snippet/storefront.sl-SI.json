@@ -769,7 +769,7 @@
   },
   "cookie": {
     "messageText": "Ta spletna stran uporablja piškotke, da zagotovi najboljšo možno izkušnjo. <a data-ajax-modal=\"true\" data-url=\"%url%\" href=\"%url%\" title=\"More information\">Več informacij...</a>",
-    "messageTextPage": "Ta spletna stran uporablja piškotke, da zagotovi najboljšo možno izkušnjo. <a href=\"%url%\" title=\"More information\">Več informacij...</a>",
+    "messageTextPage": "Ta spletna stran uporablja piškotke, da zagotovi najboljšo možno izkušnjo. <a href=\"%url%\" target=\"_blank\" rel=\"noopener\" title=\"Politika zasebnosti\">Več informacij...</a>",
     "deny": "Zavrni",
     "configure": "Konfiguracija",
     "configuration": "Nastavitve",
