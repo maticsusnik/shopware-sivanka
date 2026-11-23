@@ -29,10 +29,6 @@
                         </div>
                     {% endif %}
 
-                    <div class="sv-cart-unit">
-                        {{ lineItem.price.unitPrice|currency }} / {{ 'checkout.lineItemUnitPriceDescriptor'|trans|sw_sanitize }}
-                    </div>
-
                     {% if lineItem.referencedId %}
                         {{ block('component_line_item_type_product_garan_label') }}
                     {% endif %}
