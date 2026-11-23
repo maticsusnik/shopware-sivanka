@@ -1,0 +1,31 @@
+{#
+ # Opening/closing tag for a link to a legal page (privacy, terms, revocation).
+ #
+ # The page's real text lives on the category that uses the layout selected in
+ # Settings › Basic information, so link to that category in a new tab. Only when
+ # no active category uses the layout fall back to core's ajax modal of the bare
+ # layout.
+ #
+ # Usage: {% import '@OptiwebTheme/storefront/utilities/sivanka-legal-link.html.twig' as legal %}
+ #        legal.open('core.basicInformation.privacyPage'), legal.close('core.basicInformation.privacyPage')
+ #}
+{% macro open(configKey, extraClass) %}
+    {%- set cmsPageId = config(configKey) -%}
+    {%- set categoryId = sv_legal_page_category(cmsPageId) -%}
+    {%- if categoryId -%}
+        <a class="btn btn-link-inline {{ extraClass }}" href="{{ seoUrl('frontend.navigation.page', { navigationId: categoryId }) }}" target="_blank" rel="noopener">
+    {%- else -%}
+        <button type="button" class="btn btn-link-inline {{ extraClass }}" aria-haspopup="dialog" data-ajax-modal="true" data-url="{{ path('frontend.cms.page', { id: cmsPageId }) }}">
+    {%- endif -%}
+{% endmacro %}
+
+{% macro close(configKey) %}
+    {{- sv_legal_page_category(config(configKey)) ? '</a>' : '</button>' -}}
+{% endmacro %}
+
+{# Plain URL to the legal page: the category carrying the text, else the bare CMS page. #}
+{% macro url(configKey) %}
+    {%- set cmsPageId = config(configKey) -%}
+    {%- set categoryId = sv_legal_page_category(cmsPageId) -%}
+    {{- categoryId ? seoUrl('frontend.navigation.page', { navigationId: categoryId }) : path('frontend.cms.page.full', { id: cmsPageId }) -}}
+{% endmacro %}

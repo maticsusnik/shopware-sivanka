@@ -94,13 +94,16 @@
                form="confirmOrderForm"
                name="tos">
         <span class="checkout-confirm-tos-label">
-            {% set cmsPath = 'frontend.cms.page' %}
+            {# Legal links open the real page in a new tab, see sivanka-legal-link #}
+            {% import '@OptiwebTheme/storefront/utilities/sivanka-legal-link.html.twig' as legal %}
             {% set showLegalGuaranteeNotice = config('core.cart.showLegalGuaranteeNotice') %}
             {{ (showLegalGuaranteeNotice ? 'optiweb.checkout.confirmTermsTextWithGuarantee' : 'optiweb.checkout.confirmTermsText')|trans({
-                '%tosModalTagOpen%': '<button type="button" class="checkout-confirm-terms-modal btn btn-link-inline" aria-haspopup="dialog" data-ajax-modal="true" data-url="' ~ path(cmsPath, { id: config('core.basicInformation.tosPage') }) ~ '">',
-                '%tosModalTagClose%': '</button>',
-                '%revocationModalTagOpen%': '<button type="button" class="btn btn-link-inline" aria-haspopup="dialog" data-ajax-modal="true" data-url="' ~ path(cmsPath, { id: config('core.basicInformation.revocationPage') }) ~ '">',
-                '%revocationModalTagClose%': '</button>',
+                '%tosModalTagOpen%': legal.open('core.basicInformation.tosPage', 'checkout-confirm-terms-modal'),
+                '%tosModalTagClose%': legal.close('core.basicInformation.tosPage'),
+                '%revocationModalTagOpen%': legal.open('core.basicInformation.revocationPage'),
+                '%revocationModalTagClose%': legal.close('core.basicInformation.revocationPage'),
+                '%privacyModalTagOpen%': legal.open('core.basicInformation.privacyPage'),
+                '%privacyModalTagClose%': legal.close('core.basicInformation.privacyPage'),
                 '%legalGuaranteeNoticeModalTagOpen%': '<button type="button" class="btn btn-link-inline" aria-haspopup="dialog" data-bs-toggle="modal" data-bs-target="#legalGuaranteeNoticeModal">',
                 '%legalGuaranteeNoticeModalTagClose%': '</button>',
             })|raw }}
