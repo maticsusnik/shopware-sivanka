@@ -203,4 +203,90 @@ Fr 08:00-14:00</defaultValue>
         </input-field>
     </card>
 
+    <card>
+        <title>UPN QR za plačilo po predračunu</title>
+        <title lang="en-GB">UPN QR for bank transfer</title>
+
+        <input-field type="bool">
+            <name>upnQrEnabled</name>
+            <label>Prikaži UPN QR kodo pri plačilu po predračunu</label>
+            <label lang="en-GB">Show a UPN QR code for bank transfer orders</label>
+            <helpText>Naročila s plačilom "Predračun" dobijo UPN QR kodo na strani zahvale in kot prilogo (PNG) v potrditvi naročila. Kupec jo slika v mobilni banki in plača točen znesek s pravilnim sklicem. Potrebna sta vsaj IBAN in kraj spodaj.</helpText>
+            <helpText lang="en-GB">Orders paid by "Predračun" (bank transfer) get a UPN QR code on the thank-you page and as a PNG attachment to the order confirmation mail. Customers scan it in their banking app to pay the exact amount with the right reference. Needs at least the IBAN and the city below.</helpText>
+            <defaultValue>false</defaultValue>
+        </input-field>
+
+        <input-field type="text">
+            <name>upnQrRecipientName</name>
+            <label>Ime prejemnika</label>
+            <label lang="en-GB">Recipient name</label>
+            <helpText>Največ 33 znakov.</helpText>
+            <helpText lang="en-GB">Max 33 characters.</helpText>
+            <defaultValue>Andreja Prevodnik s.p.</defaultValue>
+        </input-field>
+
+        <input-field type="text">
+            <name>upnQrRecipientStreet</name>
+            <label>Ulica in hišna številka prejemnika</label>
+            <label lang="en-GB">Recipient street and number</label>
+            <helpText>Največ 33 znakov.</helpText>
+            <helpText lang="en-GB">Max 33 characters.</helpText>
+            <defaultValue>Cesta Staneta Žagarja 32</defaultValue>
+        </input-field>
+
+        <input-field type="text">
+            <name>upnQrRecipientCity</name>
+            <label>Poštna številka in kraj prejemnika</label>
+            <label lang="en-GB">Recipient postcode and city</label>
+            <helpText>Največ 33 znakov, npr. "4000 Kranj".</helpText>
+            <helpText lang="en-GB">Max 33 characters, e.g. "4000 Kranj".</helpText>
+            <defaultValue>4000 Kranj</defaultValue>
+        </input-field>
+
+        <input-field type="text">
+            <name>upnQrIban</name>
+            <label>IBAN prejemnika (TRR)</label>
+            <label lang="en-GB">Recipient IBAN</label>
+            <helpText>Račun, na katerega gredo plačila. Presledki so dovoljeni. Pri neveljavnem IBAN-u (kontrolna številka) se QR koda ne prikaže, napaka se zapiše v dnevnik.</helpText>
+            <helpText lang="en-GB">The account payments go to. Spaces are allowed. An invalid IBAN (checksum) shows no QR code and is logged.</helpText>
+            <defaultValue>SI56 6100 0000 7837 074</defaultValue>
+        </input-field>
+
+        <input-field type="text">
+            <name>upnQrReferenceModel</name>
+            <label>Model sklica</label>
+            <label lang="en-GB">Reference model</label>
+            <helpText>Sklic je ta model, ki mu sledijo števke številke naročila, npr. SI00 + 10023 = "SI00 10023".</helpText>
+            <helpText lang="en-GB">The reference is this model followed by the digits of the order number, e.g. SI00 + 10023 = "SI00 10023".</helpText>
+            <defaultValue>SI00</defaultValue>
+        </input-field>
+
+        <input-field type="text">
+            <name>upnQrPurposeCode</name>
+            <label>Koda namena</label>
+            <label lang="en-GB">Purpose code</label>
+            <helpText>Štiri črke. GDSV = nakup blaga in storitev.</helpText>
+            <helpText lang="en-GB">Four letters. GDSV = purchase of goods and services.</helpText>
+            <defaultValue>GDSV</defaultValue>
+        </input-field>
+
+        <input-field type="text">
+            <name>upnQrPurpose</name>
+            <label>Namen plačila</label>
+            <label lang="en-GB">Payment purpose</label>
+            <helpText>Največ 42 znakov. %orderNumber% se zamenja s številko naročila.</helpText>
+            <helpText lang="en-GB">Max 42 characters. %orderNumber% is replaced with the order number.</helpText>
+            <defaultValue>Naročilo %orderNumber%</defaultValue>
+        </input-field>
+
+        <input-field type="int">
+            <name>upnQrDueDays</name>
+            <label>Rok plačila (dni po naročilu)</label>
+            <label lang="en-GB">Payment deadline (days after the order)</label>
+            <helpText>Splošni pogoji: če plačila ne prejmemo v 7 dneh, lahko naročilo prekličemo.</helpText>
+            <helpText lang="en-GB">Terms of business: an order not paid within 7 days may be cancelled.</helpText>
+            <defaultValue>7</defaultValue>
+        </input-field>
+    </card>
+
 </config>

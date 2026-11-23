@@ -13,6 +13,7 @@
         "shopware/elasticsearch": "*",
         "shopware/storefront": "*",
         "store.shopware.com/stripepaymentsapp": "^1.5",
+        "store.shopware.com/swagplatformsecurity": "^4.0.18",
         "symfony/flex": "~2"
     },
     "repositories": [

@@ -29,3 +29,216 @@
         }
     }
 }
+
+// ============================================================
+// Address manager modal (confirm page → "Spremeni naslov …"): the same look as the
+// checkout step cards. Cream surface, white address cards and fields, eyebrow
+// section titles, the step form's field rhythm (label 5px → field, 12px between
+// fields, 8px column gap) and 46px fields.
+// ============================================================
+.modal-content:has(> .address-manager-modal) {
+    background: $sv-cream;
+    border: 1px solid $sv-border;
+    border-radius: $sv-r-panel;
+    overflow: hidden;
+}
+
+.modal .address-manager-modal {
+    background: $sv-cream;
+
+    .modal-header {
+        padding: 24px 24px 0;
+        border: 0;
+        align-items: center !important;
+
+        h1,
+        .fs-2 {
+            font-family: $sv-serif;
+            font-weight: 600;
+            font-size: 24px !important;
+            line-height: 1.25;
+            color: $sv-bordo-head;
+            margin: 0;
+        }
+
+        @include media-breakpoint-down(md) { padding: 18px 16px 0; }
+    }
+
+    // Core pins the body at 550px so the dialog keeps its height between list and
+    // form; with the tighter fields that left an empty band above the footer.
+    // Size to the content instead and scroll only when it is taller than that.
+    .modal-body {
+        height: auto;
+        max-height: min(550px, calc(100vh - 220px));
+        overflow-y: auto;
+        padding: 20px 24px 8px;
+
+        @include media-breakpoint-down(md) { padding: 16px 16px 8px; }
+    }
+
+    .address-manager-modal-content-wrapper { margin-top: 0 !important; }
+
+    // "Trenutno dostavo na" / "Vsi naslovi" → eyebrows, like "NASLOV ZA DOSTAVO"
+    .tab-pane > h5,
+    .address-manager-list-base h2 {
+        font-family: $sv-sans;
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 1.3;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        color: $sv-ink-muted;
+        margin: 0 0 10px;
+    }
+
+    .address-manager-list-base h2 { margin-top: 24px !important; }
+
+    // Address cards
+    ul.row {
+        --bs-gutter-x: 12px;
+        --bs-gutter-y: 12px;
+        margin-bottom: 0 !important;
+    }
+
+    .address-manager-select-address {
+        min-height: 0;
+        padding: 16px !important;
+        background: $sv-white;
+        border: 1px solid $sv-border !important;
+        border-radius: $sv-r-field;
+        font-size: 14px;
+        line-height: 1.5;
+        color: $sv-ink;
+        transition: border-color .15s, box-shadow .15s;
+
+        &:hover { border-color: $sv-border-strong !important; }
+
+        &:has(.form-check-input:checked) {
+            border-color: $sv-bordo !important;
+            box-shadow: inset 0 0 0 1px $sv-bordo;
+        }
+
+        .form-check-input { margin-top: 3px; }
+    }
+
+    .address-item-default-badge {
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        padding: 3px 10px !important;
+    }
+
+    // Search + "Dodaj naslov"
+    .address-manager-list-base > .d-flex,
+    .address-manager-list-base .d-flex.flex-wrap { gap: 8px !important; margin-bottom: 14px !important; }
+
+    .address-manager-modal-address-form.btn {
+        min-height: 46px;
+        padding: 0 16px;
+        font-size: 14px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border-radius: $sv-r-field;
+    }
+
+    // Form: the checkout step's field treatment
+    // 8px column gap at every width (a mobile rule widens it to 32px otherwise)
+    .row.g-2 {
+        --bs-gutter-y: 0;
+        margin-left: -4px;
+        margin-right: -4px;
+
+        > [class*="col-"] { padding-left: 4px; padding-right: 4px; }
+    }
+
+    .form-group {
+        margin-top: 0;
+        margin-bottom: 12px;
+    }
+
+    .form-label {
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1.3;
+        color: $sv-ink-muted;
+        margin-bottom: 5px;
+    }
+
+    .form-control,
+    .form-select {
+        height: 46px;
+        padding: 0 14px;
+        font-size: 14.5px;
+        background-color: $sv-white;
+        border: 1px solid $sv-border;
+        border-radius: $sv-r-field;
+        box-shadow: none;
+
+        &:focus {
+            border-color: $sv-bordo;
+            box-shadow: $sv-focus-ring;
+        }
+    }
+
+    select.form-select { padding-right: 40px; }
+
+    // Postcode / city: core's 4/8 split wraps "Poštna številka" onto two lines on a
+    // phone and drops the city field out of line. Half and half, as in step 1.
+    @include media-breakpoint-down(md) {
+        .row > .form-group:has(input[id$="Zipcode"]),
+        .row > .form-group:has(input[id$="City"]) {
+            flex: 0 0 50%;
+            max-width: 50%;
+            width: 50%;
+        }
+    }
+
+    .address-required-info {
+        margin: 4px 0 0;
+        font-size: 13px;
+        color: $sv-ink-muted;
+    }
+
+    // Footer: same surface, a hairline above, buttons the size of the step buttons
+    .modal-footer {
+        background: $sv-cream;
+        border-top: 1px solid $sv-border;
+        padding: 16px 24px;
+        gap: 10px;
+
+        > * { margin: 0; }
+
+        .btn {
+            min-height: 48px;
+            padding: 10px 22px;
+            font-size: 15px;
+            line-height: 1.4;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon,
+        .icon svg { width: 16px; height: 16px; }
+
+        // "Zapri" / "Nazaj": the neutral outline used for cancel actions
+        .btn-secondary,
+        .btn-outline-dark {
+            background-color: $sv-white;
+            border-color: $sv-border;
+            color: $sv-ink;
+
+            &:hover,
+            &:focus {
+                background-color: $sv-bordo-tint;
+                border-color: $sv-bordo;
+                color: $sv-bordo;
+            }
+        }
+
+        @include media-breakpoint-down(md) { padding: 14px 16px; }
+    }
+}

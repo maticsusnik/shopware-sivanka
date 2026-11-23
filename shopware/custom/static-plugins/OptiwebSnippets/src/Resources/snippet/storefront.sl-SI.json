@@ -70,7 +70,8 @@
       "last": "Zadnja stran",
       "page": "Stran",
       "title": "Paginacija"
-    }
+    },
+    "privacyNoticeInformation": "Upoštevajte našo %privacyModalTagOpen%politiko zasebnosti%privacyModalTagClose% in %tosModalTagOpen%splošne pogoje poslovanja%tosModalTagClose%."
   },
   "header": {
     "logoLink": "Pojdi na domačo stran",
@@ -397,7 +398,8 @@
     "addressNewBilling": "Dodajanje novega naslova za obračunavanje",
     "addressSaveAndUse": "Shranite in uporabite",
     "addressSuccessfulChange": "Naslov je bil uspešno spremenjen",
-    "addressSearchPlaceholder": "Išči naslove..."
+    "addressSearchPlaceholder": "Išči naslove...",
+    "privacyNoticeTextModal": "Z nastavitvijo gesla potrjujete, da ste prebrali našo %privacyModalTagOpen%politiko zasebnosti%privacyModalTagClose% in sprejeli naše %tosModalTagOpen%splošne pogoje poslovanja%tosModalTagClose%."
   },
   "address": {
     "streetLabel": "Ulica naslov",
@@ -497,10 +499,10 @@
     "confirmRevocationNoticeModal": "Upoštevajte našo politiko odpovedi %revocationModalTagOpen%%revocationModalTagClose%.",
     "confirmRevocationNoticePage": "Upoštevajte našo politiko odpovedi <a href=\"%url%\"></a>.",
     "confirmTermsText": "Prebral sem in sprejel <a data-ajax-modal=\"true\" data-url=\"%url%\" href=\"%url%\" title=\"general terms and conditions\">splošnih pogojev</a>.",
-    "confirmTermsTextModal": "Prebral sem in sprejel splošne pogoje %toSmodaltagOpen%g%tosModalTagClose%.",
+    "confirmTermsTextModal": "Prebral sem in sprejemam %tosModalTagOpen%splošne pogoje poslovanja%tosModalTagClose%.",
     "confirmTermsTextPage": "Prebral sem in sprejel splošne pogoje <a href=\"%url%\"></a>.",
     "confirmTermsReminderText": "Sprejeli ste že <a data-ajax-modal=\"true\" data-url=\"%url%\" href=\"%url%\" title=\"general terms and conditions\">splošnih pogojev</a>.",
-    "confirmTermsReminderTextModal": "Sprejeli ste že splošne pogoje %toSmodaltagOpen%g%tosModalTagClose%.",
+    "confirmTermsReminderTextModal": "Sprejeli ste že %tosModalTagOpen%splošne pogoje poslovanja%tosModalTagClose%.",
     "confirmRevocationTerms": "Želim takojšen dostop do digitalnih vsebin in potrjujem, da se s tem odpovem svoji pravici do odpovedi.",
     "confirmRevocationReminder": "Izjavili ste že, da se odpovedujete pravici do odstopa od pogodbe.",
     "finishInfoPayment": "Način plačila:",
@@ -527,7 +529,9 @@
     "customerCommentPlaceholder": "Komentar tukaj...",
     "cart-merged-hint": "Trenutni nakupovalni voziček morda vsebuje dodatne izdelke, ki so bili dodani in shranjeni med prejšnjim obiskom.",
     "collapseTriggerMore": "Prikaži več",
-    "collapseTriggerLess": "Prikaži manj"
+    "collapseTriggerLess": "Prikaži manj",
+    "confirmLegalGuaranteeNotice": "Upoštevajte vaše %legalGuaranteeNoticeModalTagOpen%zakonske pravice iz jamstva%legalGuaranteeNoticeModalTagClose%.",
+    "autoConfirmTermsTextWithGuarantee": "Z oddajo naročila sprejemate naše %tosModalTagOpen%splošne pogoje poslovanja%tosModalTagClose%, %revocationModalTagOpen%politiko odstopa%revocationModalTagClose% in %legalGuaranteeNoticeModalTagOpen%zakonske pravice iz jamstva%legalGuaranteeNoticeModalTagClose%."
   },
   "listing": {
     "filterTitleText": "Filter",
@@ -610,10 +614,11 @@
     "commentLabel": "Komentar",
     "commentPlaceholder": "Vnesite komentar...",
     "privacyNoticeText": "Z izbiro Nadaljuj potrjujete, da ste prebrali in se strinjate z našimi <a data-ajax-modal=\"true\" data-url=\"%privacyUrl%\" href=\"%privacyUrl%\" title=\"Data protection information\">informacijami o varstvu podatkov</a>.",
-    "privacyNoticeTextModal": "Z izbiro nadaljuj potrjujete, da ste prebrali in se strinjate z našimi %pRivacyModalTagOpen%data zaščitnimi informacijami%privacyModalTagClose%.",
+    "privacyNoticeTextModal": "Z izbiro nadaljuj potrjujete, da ste prebrali in se strinjate z našo %privacyModalTagOpen%politiko zasebnosti%privacyModalTagClose%.",
     "privacyNoticeTextPage": "Z izbiro nadaljuj potrjujete, da ste prebrali in se strinjate z našimi informacijami o varstvu podatkov <a href=\"%privacyUrl%\" title=\"Data protection information\"></a>.",
     "formSubmit": "Pošlji",
-    "success": "Prejeli smo vašo zahtevo za stik in jo bomo čim prej obdelali."
+    "success": "Prejeli smo vašo zahtevo za stik in jo bomo čim prej obdelali.",
+    "privacyNoticeInformation": "Upoštevajte našo %privacyModalTagOpen%politiko zasebnosti%privacyModalTagClose%."
   },
   "search": {
     "headline": "{0} 0 izdelkov najdenih za \"%searchTerm%\" | {1} En izdelek najden za \"%searchTerm%\" |[0, Inf [ %count% izdelki najdeni za \"%searchTerm%«",
@@ -892,5 +897,8 @@
         "success": "Kompilacija za prodajni kanal %salesChannelName% končana"
       }
     }
+  },
+  "revocationRequest": {
+    "privacyNoticeTextModal": "Naša politika zasebnosti je na voljo %privacyModalTagOpen%tukaj%privacyModalTagClose%."
   }
 }

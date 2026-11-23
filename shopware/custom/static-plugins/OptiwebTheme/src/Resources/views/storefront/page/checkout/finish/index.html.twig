@@ -1,19 +1,188 @@
 {% sw_extends '@Storefront/storefront/page/checkout/finish/index.html.twig' %}
 
 {#
-    No step indicator here. The cart → checkout steps describe a flow that is already
-    over on the thank-you page, and it is hidden on the register / confirm pages too,
-    so it was the only place it ever showed up.
+    Thank-you page (PAM Viličar's structure, Sivanka's look).
+
+    Sivanka's success card stays on top (finish-details.html.twig: icon, title, order number,
+    confirmation text, buttons). Below it two columns:
+      left   the order — rows and totals
+      right  UPN QR (bank transfer only), "Kaj sledi", shipping address, payment and shipping
+             with the order note, and the help card
+
+    No step indicator here. The cart → checkout steps describe a flow that is already over on
+    the thank-you page, and it is hidden on the register / confirm pages too.
+
+    "Kaj sledi" follows the payment method: the payment step only exists for bank transfer
+    ("Predračun"); card payments and cash on delivery go straight to packing.
+
+    The QR comes from CheckoutFinishPageSubscriber (`page.extensions.owUpnQr`), only for bank
+    transfer orders and only when it is switched on in the theme config (UPN QR card).
 #}
 
-{% block page_checkout_finish_product_table %}
-    <div class="finish-products">
-        {% block page_checkout_finish_product_table_header %}
-            <h2 class="finish-section-title">
-                {{ 'optiweb.checkout.confirmProductsHeader'|trans|sw_sanitize }}
-            </h2>
+{% block page_checkout_container %}
+    {% set order = page.order %}
+    {% set svIso = order.currency.isoCode %}
+    {% set svDelivery = order.deliveries.first %}
+    {% set svShippingAddress = svDelivery ? svDelivery.shippingOrderAddress : order.billingAddress %}
+    {% set svPayment = order.transactions.last ? order.transactions.last.paymentMethod : null %}
+    {% set svBankTransfer = svPayment and svPayment.technicalName in ['payment_invoicepayment', 'payment_prepayment'] %}
+    {% set svPhone = 'optiweb.checkout.supportPhone'|trans|striptags|trim %}
+    {% set svEmail = 'optiweb.checkout.supportEmail'|trans|striptags|trim %}
+
+    <div class="checkout-container sv-finish">
+        {{ block('base_flashbags_checkout') }}
+
+        {% block page_checkout_finish_details %}
+            {% sw_include '@Storefront/storefront/page/checkout/finish/finish-details.html.twig' %}
         {% endblock %}
 
-        {{ parent() }}
+        <div class="sv-finish-grid">
+            {% block page_checkout_finish_sv_summary %}
+                <section class="sv-finish-panel sv-finish-summary" aria-labelledby="sv-finish-summary-title">
+                    <h2 class="finish-section-title" id="sv-finish-summary-title">
+                        {{ 'optiweb.checkout.confirmSummaryHeader'|trans|sw_sanitize }}
+                    </h2>
+
+                    {% block page_checkout_finish_product_table %}
+                        <ul class="checkout-product-table list-unstyled">
+                            {% for lineItem in order.nestedLineItems %}
+                                {% block page_checkout_finish_item %}
+                                    {% sw_include '@Storefront/storefront/component/line-item/line-item.html.twig' with {
+                                        showRemoveButton: false,
+                                        displayMode: 'order',
+                                        order: order
+                                    } %}
+                                {% endblock %}
+                            {% endfor %}
+                        </ul>
+                    {% endblock %}
+
+                    <div class="sv-finish-totals">
+                        {% sw_include '@Storefront/storefront/page/checkout/summary.html.twig' %}
+                    </div>
+                </section>
+            {% endblock %}
+
+            {% block page_checkout_finish_sv_aside %}
+                <aside class="sv-finish-aside">
+                    {% block page_checkout_finish_sv_upn_qr %}
+                        {% set svQr = page.extensions.owUpnQr ?? null %}
+                        {% if svQr %}
+                            <section class="sv-finish-panel sv-upnqr" aria-labelledby="sv-upnqr-title">
+                                <h2 class="sv-finish-aside-title" id="sv-upnqr-title">{{ 'optiweb.checkout.upnQrTitle'|trans|sw_sanitize }}</h2>
+                                <p class="sv-upnqr-intro">{{ 'optiweb.checkout.upnQrIntro'|trans|sw_sanitize }}</p>
+
+                                <div class="sv-upnqr-code" role="img" aria-label="UPN QR">{{ svQr.svg|raw }}</div>
+
+                                <dl class="sv-upnqr-data">
+                                    <dt>{{ 'optiweb.checkout.upnQrAmount'|trans|sw_sanitize }}</dt>
+                                    <dd><strong>{{ svQr.amount|currency(svIso) }}</strong></dd>
+
+                                    <dt>{{ 'optiweb.checkout.upnQrRecipient'|trans|sw_sanitize }}</dt>
+                                    <dd>
+                                        {% if svQr.recipient.name %}{{ svQr.recipient.name }}<br>{% endif %}
+                                        {% if svQr.recipient.street %}{{ svQr.recipient.street }}<br>{% endif %}
+                                        {{ svQr.recipient.city }}
+                                    </dd>
+
+                                    <dt>{{ 'optiweb.checkout.upnQrIban'|trans|sw_sanitize }}</dt>
+                                    <dd>{{ svQr.iban }}</dd>
+
+                                    <dt>{{ 'optiweb.checkout.upnQrReference'|trans|sw_sanitize }}</dt>
+                                    <dd>{{ svQr.reference }}</dd>
+
+                                    {% if svQr.purpose %}
+                                        <dt>{{ 'optiweb.checkout.upnQrPurpose'|trans|sw_sanitize }}</dt>
+                                        <dd>{{ svQr.purpose }}</dd>
+                                    {% endif %}
+
+                                    <dt>{{ 'optiweb.checkout.upnQrDueDate'|trans|sw_sanitize }}</dt>
+                                    <dd>{{ svQr.dueDate|date('d. m. Y') }}</dd>
+                                </dl>
+                            </section>
+                        {% endif %}
+                    {% endblock %}
+
+                    {% block page_checkout_finish_sv_next %}
+                        <section class="sv-finish-panel">
+                            <h2 class="sv-finish-aside-title">{{ 'optiweb.checkout.finishNextTitle'|trans|sw_sanitize }}</h2>
+                            <ol class="sv-next list-unstyled">
+                                <li class="sv-next-step is-done">
+                                    <span class="sv-next-when">{{ 'optiweb.checkout.finishStep1When'|trans|sw_sanitize }}</span>
+                                    <strong>{{ 'optiweb.checkout.finishStep1Title'|trans|sw_sanitize }}</strong>
+                                    <p>{{ 'optiweb.checkout.finishStep1Text'|trans|sw_sanitize }}</p>
+                                </li>
+                                {% if svBankTransfer %}
+                                    <li class="sv-next-step is-next">
+                                        <span class="sv-next-when">{{ 'optiweb.checkout.finishStep2When'|trans|sw_sanitize }}</span>
+                                        <strong>{{ 'optiweb.checkout.finishStep2Title'|trans|sw_sanitize }}</strong>
+                                        <p>{{ 'optiweb.checkout.finishStep2Text'|trans|sw_sanitize }}</p>
+                                    </li>
+                                {% endif %}
+                                <li class="sv-next-step{% if not svBankTransfer %} is-next{% endif %}">
+                                    <span class="sv-next-when">{{ (svBankTransfer ? 'optiweb.checkout.finishStep3When' : 'optiweb.checkout.finishStep3WhenDirect')|trans|sw_sanitize }}</span>
+                                    <strong>{{ 'optiweb.checkout.finishStep3Title'|trans|sw_sanitize }}</strong>
+                                    <p>{{ 'optiweb.checkout.finishStep3Text'|trans|sw_sanitize }}</p>
+                                </li>
+                                <li class="sv-next-step">
+                                    <span class="sv-next-when">{{ 'optiweb.checkout.finishStep4When'|trans|sw_sanitize }}</span>
+                                    <strong>{{ 'optiweb.checkout.finishStep4Title'|trans|sw_sanitize }}</strong>
+                                    <p>{{ 'optiweb.checkout.finishStep4Text'|trans|sw_sanitize }}</p>
+                                </li>
+                            </ol>
+                        </section>
+                    {% endblock %}
+
+                    {% block page_checkout_finish_sv_address %}
+                        {% if svShippingAddress %}
+                            <section class="sv-finish-panel sv-finish-info">
+                                <h2 class="sv-finish-eyebrow">{{ 'optiweb.checkout.finishShippingAddress'|trans|sw_sanitize }}</h2>
+                                <address>
+                                    {% if svShippingAddress.company %}{{ svShippingAddress.company }}<br>{% endif %}
+                                    {{ svShippingAddress.firstName }} {{ svShippingAddress.lastName }}<br>
+                                    {{ svShippingAddress.street }}<br>
+                                    {{ svShippingAddress.zipcode }} {{ svShippingAddress.city }}{% if svShippingAddress.country %}, {{ svShippingAddress.country.translated.name }}{% endif %}
+                                    {% if svShippingAddress.phoneNumber %}<br>{{ svShippingAddress.phoneNumber }}{% endif %}
+                                </address>
+                            </section>
+                        {% endif %}
+                    {% endblock %}
+
+                    {% block page_checkout_finish_sv_payment_shipping %}
+                        <section class="sv-finish-panel sv-finish-info">
+                            <h2 class="sv-finish-eyebrow">{{ 'optiweb.checkout.finishPaymentShipping'|trans|sw_sanitize }}</h2>
+                            {% if svPayment %}<strong>{{ svPayment.translated.name }}</strong>{% endif %}
+                            {% if svDelivery and svDelivery.shippingMethod %}
+                                <p>
+                                    {{ svDelivery.shippingMethod.translated.name }}
+                                    {%- if svDelivery.shippingMethod.deliveryTime %} · {{ svDelivery.shippingMethod.deliveryTime.translated.name }}{% endif %}
+                                </p>
+                            {% endif %}
+                            {% if order.customerComment %}
+                                <p class="sv-finish-comment">{{ order.customerComment|sw_sanitize|nl2br }}</p>
+                            {% endif %}
+                        </section>
+                    {% endblock %}
+
+                    {% block page_checkout_finish_sv_help %}
+                        <section class="sv-finish-help">
+                            <h2 class="sv-finish-help-title">{{ 'optiweb.checkout.finishHelpTitle'|trans|sw_sanitize }}</h2>
+                            <p class="sv-finish-help-text">{{ 'optiweb.checkout.finishHelpText'|trans|sw_sanitize }}</p>
+                            <div class="sv-finish-help-actions">
+                                {% if svPhone %}
+                                    <a class="btn btn-light" href="tel:{{ svPhone|replace({ ' ': '' }) }}">{{ svPhone }}</a>
+                                {% endif %}
+                                {% if svEmail %}
+                                    <a class="btn btn-outline-light" href="mailto:{{ svEmail }}">{{ svEmail }}</a>
+                                {% endif %}
+                            </div>
+                        </section>
+                    {% endblock %}
+                </aside>
+            {% endblock %}
+        </div>
     </div>
 {% endblock %}
+
+{# The order note is shown in the "Plačilo in dostava" card above #}
+{% block page_checkout_additional %}{% endblock %}

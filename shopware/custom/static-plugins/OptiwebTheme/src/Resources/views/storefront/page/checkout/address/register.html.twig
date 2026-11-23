@@ -1,0 +1,20 @@
+{% sw_extends '@Storefront/storefront/page/checkout/address/register.html.twig' %}
+
+{#
+    Checkout registration form, inside the "Gost" tab of step 1. Core's form and fields;
+    only the wording follows PAM: the account box reads as an offer and the submit says
+    where it leads.
+#}
+{% block page_checkout_register_personal_guest_label %}
+    <label class="custom-control-label" for="personalGuest">
+        {{ 'optiweb.checkout.createAccount'|trans|sw_sanitize }}
+    </label>
+{% endblock %}
+
+{% block component_account_register_submit %}
+    <div class="register-submit d-grid">
+        <button type="submit" class="btn btn-primary btn-lg">
+            {{ 'optiweb.checkout.registerSubmit'|trans|sw_sanitize }}
+        </button>
+    </div>
+{% endblock %}

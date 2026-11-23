@@ -8,9 +8,12 @@
         <div class="container">
             <div class="sv-co-header-row">
                 {% block layout_header_minimal_logo %}
-                    <a href="{{ path('frontend.home.page') }}" class="sv-co-logo">
+                    {# logo.html.twig brings its own home link; wrapping it in another <a>
+                       made the browser split the nested links and drop the image out of
+                       .sv-co-logo (so it lost the left alignment and height cap) #}
+                    <div class="sv-co-logo">
                         {% sw_include '@Storefront/storefront/layout/header/logo.html.twig' %}
-                    </a>
+                    </div>
                 {% endblock %}
 
                 {% block layout_header_minimal_contact %}

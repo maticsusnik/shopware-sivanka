@@ -3,6 +3,7 @@
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use OptiwebTheme\Core\Checkout\Cart\MinimumOrderValueValidator;
+use OptiwebTheme\Core\Checkout\UpnQr\UpnQrService;
 use OptiwebTheme\Core\Content\Cms\CmsLink;
 use OptiwebTheme\Core\Content\Cms\DataResolvers\BannersResolver;
 use OptiwebTheme\Core\Content\Cms\DataResolvers\CatalogsResolver;
@@ -22,9 +23,11 @@ use OptiwebTheme\Core\Content\Cms\DataResolvers\SivankaServiceCardResolver;
 use OptiwebTheme\Core\Content\Product\SalesChannel\CrossSelling\FallbackCrossSellingRoute;
 use OptiwebTheme\Services\ShippingMethodRouteDecorator;
 use OptiwebTheme\Storefront\Subscriber\CartLineItemAddedEvent;
+use OptiwebTheme\Storefront\Subscriber\CheckoutFinishPageSubscriber;
 use OptiwebTheme\Storefront\Subscriber\HeaderMenuSubscriber;
 use OptiwebTheme\Storefront\Subscriber\NoParentProductsSubscriber;
 use OptiwebTheme\Storefront\Subscriber\ProductAvailabilitySubscriber;
+use OptiwebTheme\Storefront\Subscriber\UpnQrMailSubscriber;
 use OptiwebTheme\Storefront\Twig\GlobalTwigVariables;
 use OptiwebTheme\Storefront\Twig\JsonDecodeExtension;
 use Shopware\Core\Checkout\Cart\Delivery\DeliveryCalculator;
@@ -125,6 +128,18 @@ return static function (ContainerConfigurator $configurator): void {
             service(CurrencyFormatter::class),
         ])
         ->tag('shopware.cart.validator');
+
+    // UPN QR for bank transfer ("Predračun"): thank-you page + order confirmation mail
+    $services->set(UpnQrService::class)
+        ->args([service(SystemConfigService::class), service('logger')]);
+
+    $services->set(CheckoutFinishPageSubscriber::class)
+        ->args([service(UpnQrService::class)])
+        ->tag('kernel.event_subscriber');
+
+    $services->set(UpnQrMailSubscriber::class)
+        ->args([service(UpnQrService::class), service(\Doctrine\DBAL\Connection::class)])
+        ->tag('kernel.event_subscriber');
 
     // Twig
     $services->set(GlobalTwigVariables::class)

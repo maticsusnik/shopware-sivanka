@@ -1,7 +1,136 @@
 {% sw_extends '@Storefront/storefront/page/checkout/address/index.html.twig' %}
 
-{% block page_checkout_address_header %}
-    <h1 class="address-main-header">
-        {{ 'checkout.addressHeader'|trans|sw_sanitize }}
-    </h1>
+{#
+    First checkout step for a visitor who is not logged in. PAM Viličar's structure in
+    Sivanka's look, with the same three steps as the confirm page:
+      1  Podatki plačnika     "Gost" / "Obstoječa stranka" tabs over core's checkout
+                              registration form and core's login form
+      2  Plačilo in dostava   locked preview of the next step
+      3  Povzetek naročila    cart rows and totals
+
+    Both forms post to core's routes with core's redirect fields, so after either one the
+    customer lands on the confirm page (steps 2 and 3 become live there).
+    A failed login (`loginError`) opens the login tab again.
+    Styles: scss/pages/checkout/_checkout-flow.scss (CHECKOUT STEPS).
+#}
+
+{% block page_checkout_container %}
+    {% set svLoginActive = loginError|default(false) %}
+
+    <div class="checkout-container sv-steps-page">
+        {{ block('base_flashbags_checkout') }}
+
+        <h1 class="address-main-header">{{ 'optiweb.checkout.title'|trans|sw_sanitize }}</h1>
+
+        <div class="sv-steps">
+            <section class="sv-step sv-step--customer" aria-labelledby="sv-step-1">
+                <div class="confirm-section-header">
+                    <span class="confirm-section-number">1</span>
+                    <h2 class="confirm-section-title" id="sv-step-1">{{ 'optiweb.checkout.stepCustomer'|trans|sw_sanitize }}</h2>
+                </div>
+
+                <div class="sv-tabs nav" role="tablist">
+                    <button class="sv-tabs-btn{% if not svLoginActive %} active{% endif %}"
+                            id="sv-tab-guest"
+                            type="button"
+                            role="tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#sv-pane-guest"
+                            aria-controls="sv-pane-guest"
+                            aria-selected="{{ svLoginActive ? 'false' : 'true' }}">
+                        {{ 'optiweb.checkout.tabGuest'|trans|sw_sanitize }}
+                    </button>
+                    <button class="sv-tabs-btn{% if svLoginActive %} active{% endif %}"
+                            id="sv-tab-login"
+                            type="button"
+                            role="tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#sv-pane-login"
+                            aria-controls="sv-pane-login"
+                            aria-selected="{{ svLoginActive ? 'true' : 'false' }}">
+                        {{ 'optiweb.checkout.tabLogin'|trans|sw_sanitize }}
+                    </button>
+                </div>
+
+                <div class="tab-content">
+                    <div class="tab-pane fade{% if not svLoginActive %} show active{% endif %}"
+                         id="sv-pane-guest"
+                         role="tabpanel"
+                         aria-labelledby="sv-tab-guest">
+                        <div class="sv-step-note">
+                            <strong>{{ 'optiweb.checkout.guestTitle'|trans|sw_sanitize }}</strong>
+                            <p>{{ 'optiweb.checkout.guestText'|trans|sw_sanitize }}</p>
+                        </div>
+
+                        {% block page_checkout_address_register %}
+                            {% sw_include '@Storefront/storefront/page/checkout/address/register.html.twig' with {
+                                cardTitle: ''
+                            } %}
+                        {% endblock %}
+                    </div>
+
+                    <div class="tab-pane fade{% if svLoginActive %} show active{% endif %}"
+                         id="sv-pane-login"
+                         role="tabpanel"
+                         aria-labelledby="sv-tab-login">
+                        <div class="sv-step-note">
+                            <strong>{{ 'optiweb.checkout.loginTitle'|trans|sw_sanitize }}</strong>
+                            <p>{{ 'optiweb.checkout.loginText'|trans|sw_sanitize }}</p>
+                        </div>
+
+                        {% block page_checkout_address_login %}
+                            {% sw_include '@Storefront/storefront/component/account/login.html.twig' with {
+                                cardTitle: ''
+                            } %}
+                        {% endblock %}
+                    </div>
+                </div>
+            </section>
+
+            <section class="sv-step sv-step--locked" aria-labelledby="sv-step-2">
+                <div class="confirm-section-header">
+                    <span class="confirm-section-number">2</span>
+                    <h2 class="confirm-section-title" id="sv-step-2">{{ 'optiweb.checkout.stepPaymentShipping'|trans|sw_sanitize }}</h2>
+                </div>
+                <p class="sv-step-locked">{{ 'optiweb.checkout.stepLockedText'|trans|sw_sanitize }}</p>
+            </section>
+
+            <aside class="sv-step sv-step--summary checkout-aside-container" aria-labelledby="sv-step-3">
+                <div class="confirm-section-header">
+                    <span class="confirm-section-number">3</span>
+                    <h2 class="confirm-section-title" id="sv-step-3">{{ 'optiweb.checkout.confirmSummaryHeader'|trans|sw_sanitize }}</h2>
+                </div>
+
+                {# Read-only rows in the confirm page's compact layout: quantities are changed
+                   in the cart, not here #}
+                {% block page_checkout_address_products %}
+                    <ul class="sv-step-items list-unstyled">
+                        {% for lineItem in page.cart.lineItems %}
+                            <li class="sv-confirm-line sv-step-line">
+                                <div class="sv-confirm-thumb">
+                                    {% sw_include '@Storefront/storefront/component/line-item/element/image.html.twig' with {
+                                        lineItemLink: false,
+                                        fallbackIcon: 'placeholder'
+                                    } %}
+                                </div>
+                                <div class="sv-confirm-meta">
+                                    <span class="sv-confirm-name">{{ lineItem.label|u.truncate(80, '…') }}</span>
+                                    <div class="sv-confirm-unit">
+                                        {{ lineItem.quantity }} × {{ lineItem.price.unitPrice|currency }}
+                                    </div>
+                                </div>
+                                <div class="sv-confirm-total">
+                                    <span class="line-item-total-price-value">{{ lineItem.price.totalPrice|currency }}</span>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endblock %}
+
+                <div class="checkout-aside-summary">
+                    {% sw_include '@Storefront/storefront/page/checkout/summary.html.twig' %}
+                </div>
+            </aside>
+        </div>
+    </div>
 {% endblock %}

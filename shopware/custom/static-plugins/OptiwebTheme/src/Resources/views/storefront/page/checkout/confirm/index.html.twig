@@ -1,5 +1,17 @@
 {% sw_extends '@Storefront/storefront/page/checkout/confirm/index.html.twig' %}
 
+{#
+    Three columns (PAM Viličar's checkout structure, Sivanka's look):
+      1  Podatki plačnika     who orders, then the billing / shipping address cards
+      2  Plačilo in dostava   payment and shipping forms, then the order note
+      3  Povzetek naročila    rows, totals, terms and the submit button (core's aside, sticky)
+    Below xl the summary drops under columns 1 + 2, below lg everything stacks.
+
+    Only core's blocks move, every form and field name stays core's: the order note and the
+    terms checkbox reach #confirmOrderForm through their `form` attribute, as in core.
+    The grid itself is in scss/pages/checkout/_checkout-flow.scss (CONFIRM PAGE).
+#}
+
 {% block page_checkout_confirm_header %}
     <h1 class="confirm-main-header">
         {{ 'optiweb.checkout.title'|trans|sw_sanitize }}
@@ -18,8 +30,12 @@
     <div class="confirm-section confirm-section--address">
         <div class="confirm-section-header">
             <span class="confirm-section-number">1</span>
-            <h2 class="confirm-section-title">{{ 'optiweb.checkout.confirmAddressHeader'|trans|sw_sanitize }}</h2>
+            <h2 class="confirm-section-title">{{ 'optiweb.checkout.stepCustomer'|trans|sw_sanitize }}</h2>
         </div>
+        <p class="sv-step-customer">
+            <strong>{{ context.customer.firstName }} {{ context.customer.lastName }}</strong>
+            <span>{{ context.customer.email }}</span>
+        </p>
         {{ parent() }}
     </div>
 {% endblock %}
@@ -28,19 +44,43 @@
     <div class="confirm-section confirm-section--payment-shipping">
         <div class="confirm-section-header">
             <span class="confirm-section-number">2</span>
-            <h2 class="confirm-section-title">{{ 'optiweb.checkout.confirmPaymentShippingHeader'|trans|sw_sanitize }}</h2>
+            <h2 class="confirm-section-title">{{ 'optiweb.checkout.stepPaymentShipping'|trans|sw_sanitize }}</h2>
         </div>
         {{ parent() }}
+
+        {# The order note joins column 2 instead of core's own row under the main column #}
+        {% if config('core.cart.showCustomerComment') %}
+            <div class="checkout-additional">
+                {{ block('page_checkout_finish_customer_comment') }}
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
 
-{% block page_checkout_confirm_product_table %}
-    <div class="confirm-section confirm-section--products">
-        <div class="confirm-section-header">
-            <span class="confirm-section-number">3</span>
-            <h2 class="confirm-section-title">{{ 'optiweb.checkout.confirmProductsHeader'|trans|sw_sanitize }}</h2>
-        </div>
-        {{ parent() }}
+{# Rendered in column 2 above #}
+{% block page_checkout_additional %}{% endblock %}
+
+{# The rows move into the summary column (page_checkout_summary_header below) #}
+{% block page_checkout_confirm_product_table %}{% endblock %}
+
+{% block page_checkout_summary_header %}
+    <div class="confirm-section-header">
+        <span class="confirm-section-number">3</span>
+        <h2 class="confirm-section-title">{{ 'optiweb.checkout.confirmSummaryHeader'|trans|sw_sanitize }}</h2>
+    </div>
+
+    <div class="confirm-product">
+        <ul class="list-unstyled">
+            {% for lineItem in page.cart.lineItems %}
+                {% block page_checkout_confirm_table_item %}
+                    {% sw_include '@Storefront/storefront/component/line-item/line-item.html.twig' with {
+                        redirectTo: 'frontend.checkout.confirm.page',
+                        showTaxPrice: showTaxPrice,
+                        showSubtotal: showSubtotal
+                    } %}
+                {% endblock %}
+            {% endfor %}
+        </ul>
     </div>
 {% endblock %}
 

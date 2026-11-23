@@ -132,6 +132,12 @@ cmd_deploy() {
     # Runs update() and the migrations of every plugin whose composer version is
     # higher than the installed one - bump the plugin version to ship a migration.
     console plugin:update:all
+    # Store plugins that arrive through composer.lock: plugin:update:all only touches
+    # installed plugins, so a newly added one would sit there inactive. A no-op
+    # ("already installed, skipping", exit 0) on every later deploy.
+    for plugin in SwagPlatformSecurity; do
+        console plugin:install --activate "$plugin"
+    done
     console assets:install
     console theme:compile --active-only
     console translation:install --locales=sl-SI || log "translation:install failed - keeping the installed translations"
