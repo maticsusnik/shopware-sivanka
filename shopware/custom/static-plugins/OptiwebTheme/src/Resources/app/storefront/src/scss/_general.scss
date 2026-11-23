@@ -238,3 +238,15 @@ header, footer, .nav-main {
     height: 0;
     overflow: hidden;
 }
+
+// Quantity [+]/[-] disabled at the stock/min limit (OwQuantitySelectorPlugin).
+// Wins over the per-page hover tints so a dead button never looks clickable.
+.quantity-selector-group {
+    .btn-plus:disabled,
+    .btn-minus:disabled {
+        opacity: .3;
+        cursor: not-allowed;
+        pointer-events: none;
+        background: transparent;
+    }
+}

@@ -881,12 +881,12 @@
 //  card's top, the fieldset its body.
 // ============================================================
 .is-act-checkoutregisterpage {
-    // The h2 and the fieldset are siblings that read as one card. The radius
-    // therefore lives on the shared wrapper with `overflow: hidden`, so neither
-    // child needs an asymmetric shorthand — the system has none.
+    // The h2 and the fieldset are siblings that read as one card. No
+    // `overflow: hidden` on the wrapper to round them: it cut the 3px focus ring
+    // of every input and the left border of every checkbox, which sit flush
+    // with the card's edge. The h2 rounds its own top corners instead.
     .register-card > .card-body {
         border-radius: $sv-r-panel;
-        overflow: hidden;
     }
 
     .register-card > .card-body > h2.card-title {
@@ -895,6 +895,8 @@
         border: 1px solid $sv-border;
         border-bottom: 0;
         border-radius: 0;
+        border-top-left-radius: $sv-r-panel;
+        border-top-right-radius: $sv-r-panel;
         background: $sv-white;
         font-family: $sv-serif;
         font-size: 20px;

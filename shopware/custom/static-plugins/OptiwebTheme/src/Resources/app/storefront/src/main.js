@@ -24,6 +24,7 @@ PluginManager.register('SearchClear', SearchClearPlugin, '[data-search-widget]')
 PluginManager.register('SvRail', SvRailPlugin, '[data-sv-rail]');
 PluginManager.register('GaAccountEvents', GaAccountEventsPlugin, 'form.register-form, form.login-form');
 PluginManager.override('Listing', () => import("./js/ow-listing.plugin"), '[data-listing]');
+PluginManager.override('QuantitySelector', () => import('./js/ow-quantity-selector.plugin'), '[data-quantity-selector]');
 PluginManager.register('OwMegaMenu', () => import('./js/ow-mega-menu.plugin'), '[data-ow-mega-menu="true"]');
 
 // core only registers GoogleAnalytics when tracking is on, and override() needs it registered
