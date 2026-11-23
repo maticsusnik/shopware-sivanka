@@ -1,0 +1,59 @@
+{% sw_extends '@Storefront/storefront/component/privacy-notice.html.twig' %}
+
+{#
+    Privacy / terms links open the real page (the category carrying the text) in a
+    new tab instead of core's ajax modal of the bare layout, which only shows the
+    layout's placeholder text. See utilities/sivanka-legal-link.html.twig.
+#}
+{% block component_privacy_dpi %}
+    {% import '@OptiwebTheme/storefront/utilities/sivanka-legal-link.html.twig' as legal %}
+
+    {% set requiresTermsOfService = requiresTermsOfService ?? true %}
+    {% set showLegalGuaranteeNotice = requiresTermsOfService and config('core.cart.showLegalGuaranteeNotice') %}
+    {% set legalGuaranteeNoticeModalId = 'legalGuaranteeNoticeModal' %}
+    {% set legalGuaranteeNoticeModalTagOpen = '<button type="button" class="btn btn-link-inline" aria-haspopup="dialog" data-bs-toggle="modal" data-bs-target="#' ~ legalGuaranteeNoticeModalId ~ '">' %}
+    {% set legalGuaranteeNoticeModalTagClose = '</button>' %}
+
+    {% set legalLinkTags = {
+        '%privacyModalTagOpen%': legal.open('core.basicInformation.privacyPage'),
+        '%privacyModalTagClose%': legal.close('core.basicInformation.privacyPage'),
+        '%tosModalTagOpen%': legal.open('core.basicInformation.tosPage'),
+        '%tosModalTagClose%': legal.close('core.basicInformation.tosPage'),
+    } %}
+
+    {% block component_privacy_legal_guarantee_notice_paragraph %}
+        {% if showLegalGuaranteeNotice %}
+            <p class="legal-guarantee-notice">
+                {{ 'checkout.confirmLegalGuaranteeNotice'|trans({
+                    '%legalGuaranteeNoticeModalTagOpen%': legalGuaranteeNoticeModalTagOpen,
+                    '%legalGuaranteeNoticeModalTagClose%': legalGuaranteeNoticeModalTagClose,
+                })|raw }}
+            </p>
+        {% endif %}
+    {% endblock %}
+
+    {% if config('core.loginRegistration.requireDataProtectionCheckbox') == 1 %}
+        {% set privacyNoticeSnippet = requiresTermsOfService ? 'general.privacyNoticeTextModal' : 'contact.privacyNoticeTextModal' %}
+
+        {% sw_include '@Storefront/storefront/component/form/form-checkbox.html.twig' with {
+            label: privacyNoticeSnippet|trans(legalLinkTags)|raw,
+            id: 'acceptedDataProtection',
+            name: 'acceptedDataProtection',
+            validationRules: 'required',
+        } %}
+    {% else %}
+        {% set privacyNoticeSnippet = requiresTermsOfService ? 'general.privacyNoticeInformation' : 'contact.privacyNoticeInformation' %}
+
+        <div class="data-protection-information">
+            {% block component_privacy_label %}
+                <div>
+                    {{ privacyNoticeSnippet|trans(legalLinkTags)|raw }}
+                </div>
+            {% endblock %}
+        </div>
+    {% endif %}
+
+    {% block component_privacy_legal_guarantee_notice_modal %}
+        {{ parent() }}
+    {% endblock %}
+{% endblock %}

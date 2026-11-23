@@ -30,6 +30,7 @@ use OptiwebTheme\Storefront\Subscriber\ProductAvailabilitySubscriber;
 use OptiwebTheme\Storefront\Subscriber\UpnQrMailSubscriber;
 use OptiwebTheme\Storefront\Twig\GlobalTwigVariables;
 use OptiwebTheme\Storefront\Twig\JsonDecodeExtension;
+use OptiwebTheme\Storefront\Twig\LegalPageExtension;
 use Shopware\Core\Checkout\Cart\Delivery\DeliveryCalculator;
 use Shopware\Core\Checkout\Cart\SalesChannel\CartService;
 use Shopware\Core\Checkout\Shipping\SalesChannel\ShippingMethodRoute;
@@ -151,6 +152,10 @@ return static function (ContainerConfigurator $configurator): void {
         ->tag('twig.extension');
 
     $services->set(JsonDecodeExtension::class)
+        ->tag('twig.extension');
+
+    $services->set(LegalPageExtension::class)
+        ->args([service(\Doctrine\DBAL\Connection::class)])
         ->tag('twig.extension');
 
     // Decorators
