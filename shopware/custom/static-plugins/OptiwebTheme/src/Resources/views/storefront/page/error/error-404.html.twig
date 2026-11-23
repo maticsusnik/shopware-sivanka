@@ -2,7 +2,7 @@
 
 
 {% block base_content %}
-    <main class="error_404">
+    <div class="error_404">
         {% block not_found_error_content %}
             <div class="container">
                 <h1>{{ 'general.404ErrorPageHeader'|trans|sw_sanitize }}</h1>
@@ -40,5 +40,5 @@
                 </div>
             </div>
         {% endblock %}
-    </main>
+    </div>
 {% endblock %}

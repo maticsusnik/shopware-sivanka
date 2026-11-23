@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!--
-    Notice bar ("Obvestilo") — the dismissible message above the header.
-
-    Deliberately a separate file from config.xml: it becomes the system-config domain
-    OptiwebTheme.noticeBar, which the admin module "Vsebine > Obvestilo" renders on its
-    own. Shop staff can then be given a role that edits this bar without seeing (or
-    being able to break) the rest of the theme configuration.
--->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/trunk/src/Core/System/SystemConfig/Schema/config.xsd">
+    <!--
+        Notice bar ("Obvestilo") — the dismissible message above the header.
+
+        Deliberately a separate file from config.xml: it becomes the system-config domain
+        OptiwebTheme.noticeBar, which the admin module "Vsebine > Obvestilo" renders on its
+        own. Shop staff can then be given a role that edits this bar without seeing (or
+        being able to break) the rest of the theme configuration.
+    -->
 
     <card>
         <title>Obvestilo</title>

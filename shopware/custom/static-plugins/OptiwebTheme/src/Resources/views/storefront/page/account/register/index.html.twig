@@ -1,7 +1,7 @@
 {% sw_extends '@Storefront/storefront/page/account/register/index.html.twig' %}
 
 {% block base_main_inner %}
-    <div class="login-container" data-login-container="true">
+    <div class="login-container" data-login-container="true" data-checkout-customer-storage-reset="true">
         {% sw_include "@Storefront/storefront/component/account/register-tabs.html.twig" %}
     </div>
 {% endblock %}

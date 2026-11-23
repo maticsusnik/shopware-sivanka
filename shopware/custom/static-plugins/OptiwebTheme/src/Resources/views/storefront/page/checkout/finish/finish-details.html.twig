@@ -1,7 +1,7 @@
 {% sw_extends '@Storefront/storefront/page/checkout/finish/finish-details.html.twig' %}
 
 {% block page_checkout_finish_data %}
-    <div class="finish-success-card">
+    <div class="finish-success-card" data-checkout-customer-storage-reset="true">
         <div class="finish-success-icon" aria-hidden="true">
             {% sw_icon 'checkmark' style { size: 'xl' } %}
         </div>
@@ -67,19 +67,31 @@
             <div class="finish-content">
                 {% block page_checkout_finish_teaser %}
                     {% if page.changedPayment != true %}
-                        <p class="finish-teaser">{{ 'checkout.finishInfoConfirmationMail'|trans|sw_sanitize }}</p>
+                        <p class="finish-teaser">
+                            {{ 'optiweb.checkout.finishText'|trans({
+                                '%email%': page.order.orderCustomer.email,
+                                '%phone%': 'optiweb.checkout.supportPhone'|trans|striptags|trim,
+                            })|sw_sanitize }}
+                        </p>
                     {% endif %}
                 {% endblock %}
 
+                {# Buttons as on PAM: back to the shop, plus the orders (or, for a guest, the
+                   "create an account" offer that core puts here) #}
                 {% block page_checkout_finish_create_account %}
-                    {% if context.customer.guest %}
-                        <div class="finish-create-account-container">
-                            <h5>{{ 'checkout.createAccountHeading'|trans|sw_sanitize }}</h5>
+                    <div class="finish-actions">
+                        <a class="btn btn-primary" href="{{ path('frontend.home.page') }}">{{ 'optiweb.checkout.continueShopping'|trans|sw_sanitize }}</a>
+                        {% if context.customer.guest %}
                             <a class="btn btn-outline-primary" href="{{ url('frontend.account.convert.page') }}">{{ 'checkout.createAccountButton'|trans|sw_sanitize }}</a>
-                        </div>
-                    {% endif %}
+                        {% else %}
+                            <a class="btn btn-outline-primary" href="{{ path('frontend.account.order.page') }}">{{ 'account.ordersTitle'|trans|sw_sanitize }}</a>
+                        {% endif %}
+                    </div>
                 {% endblock %}
             </div>
         {% endblock %}
     </div>
 {% endblock %}
+
+{# Address, payment and shipping move into the right column of finish/index.html.twig #}
+{% block page_checkout_finish_order %}{% endblock %}

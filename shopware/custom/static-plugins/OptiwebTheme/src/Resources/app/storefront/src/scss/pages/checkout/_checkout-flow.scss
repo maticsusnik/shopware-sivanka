@@ -6,10 +6,42 @@
 // ------------------------------------------------------------
 // Minimal checkout header
 // ------------------------------------------------------------
+// Header and footer rows line up with the page's content column: the same
+// max-width as the checkout container (1320px on register / confirm, 1160px on the
+// thank-you page), inside the page gutter, with the container's 32px inset.
+// Below md the checkout container drops its inset, so the rows do too.
+// The content's left edge = the page gutter (`.container`: 20px, 16px ≤720, 12px
+// ≤380) + the checkout container's inset (32px, 24px below lg, 0 below md); both
+// steps are mirrored here.
+.sv-co-header,
+.footer-minimal {
+    --sv-co-width: 1320px;
+    --sv-co-gutter: #{$sv-gutter};
+    --sv-co-inset: 32px;
+
+    .is-act-finishpage & { --sv-co-width: 1160px; }
+
+    @include media-breakpoint-down(lg) { --sv-co-inset: 24px; }
+    @include media-breakpoint-down(md) { --sv-co-inset: 0px; }
+    @media (max-width: $sv-bp-phone) { --sv-co-gutter: #{$sv-gutter-sm}; }
+    @media (max-width: $sv-bp-tiny) { --sv-co-gutter: #{$sv-gutter-xs}; }
+}
+
+.sv-co-header .sv-co-header-row,
+.footer-minimal .footer-bottom .footer-copyright.row {
+    width: min(var(--sv-co-width), 100% - 2 * var(--sv-co-gutter));
+    max-width: none;
+    margin-inline: auto;
+    padding-inline: var(--sv-co-inset);
+}
+
 .sv-co-header {
     border-bottom: 1px solid $sv-border;
 
-    .container { max-width: 1160px; }
+    .container {
+        max-width: none;
+        padding-inline: 0;
+    }
 
     .sv-co-header-row {
         display: flex;
@@ -17,19 +49,41 @@
         flex-wrap: wrap;
         row-gap: 12px;
         gap: 24px;
-        padding: 22px 0;
+        padding-block: 22px;
 
         @include media-breakpoint-down(md) {
-            padding: 14px 0;
+            padding-block: 14px;
             gap: 12px;
         }
     }
 
+    // Logo flush with the content column's left edge
     .sv-co-logo {
         flex-shrink: 0;
-        display: inline-flex;
+        display: flex;
+        margin: 0;
+        padding: 0;
 
-        img { max-height: 46px; width: auto; }
+        .header-logo-main,
+        .header-logo-main-link,
+        .header-logo-picture {
+            display: block;
+            margin: 0 !important;
+            padding: 0 !important;
+            text-align: left !important;
+        }
+
+        img {
+            display: block;
+            max-height: 46px;
+            width: auto;
+            max-width: none;
+            object-position: left center;
+            // The logo JPG carries 21px of white left of the "Š" (of 433px = 4.85%).
+            // Shift by that fraction of its own width so the lettering, not the white
+            // box, sits on the content edge at every logo size.
+            transform: translateX(-4.85%);
+        }
 
         // A 224px desktop logo plus the pill does not fit a 375px screen
         @include media-breakpoint-down(md) {
@@ -69,6 +123,44 @@
         transition: all 0.16s;
 
         &:hover { background: $sv-bordo; color: $sv-white; }
+    }
+}
+
+// ------------------------------------------------------------
+// Minimal checkout footer: copyright left, legal links right with room between them
+// (the main footer's link spacing is scoped to `.footer-main`)
+// ------------------------------------------------------------
+.footer-minimal {
+    border-top: 1px solid $sv-border;
+
+    .footer-bottom { padding-block: 20px; }
+
+    .footer-bottom > .mb-3:empty,
+    .footer-bottom > .mb-3:not(:has(*)) { display: none; }
+
+    .footer-copyright {
+        align-items: center;
+        row-gap: 10px;
+        font-size: 14px;
+        line-height: 21px;
+        color: $sv-ink-muted;
+    }
+
+    .footer-copyright-links {
+        display: flex;
+        flex-wrap: wrap;
+        column-gap: 32px;
+        row-gap: 8px;
+    }
+
+    .footer-copyright-link {
+        color: $sv-ink;
+
+        &:hover { color: $sv-bordo; }
+    }
+
+    @include media-breakpoint-down(md) {
+        .footer-copyright-links { column-gap: 24px; }
     }
 }
 
@@ -179,11 +271,16 @@
         }
     }
 
-    .checkout-main {
+    // `.checkout` in the selector: core's confirm stylesheet gives
+    // `.checkout .checkout-main` a 20px column gutter, which outranked a two-class rule
+    // and inset steps 1–2 by 20px against the summary below 992px.
+    .checkout .checkout-main {
         display: contents;
 
-        @include media-breakpoint-down(lg) { display: block; }
-        @include media-breakpoint-down(md) { padding-inline: 0; }
+        @include media-breakpoint-down(lg) {
+            display: block;
+            padding-inline: 0;
+        }
     }
 
     .flashbags { grid-column: 1 / -1; }
@@ -418,8 +515,9 @@
         width: 100%;
     }
 
-    // Form fields
-    .checkout-main {
+    // Form fields (`.sv-step--customer` = step 1 of the three-step page)
+    .checkout-main,
+    .sv-step--customer {
         .form-group { margin-bottom: 16px; }
 
         label,
@@ -1149,6 +1247,11 @@
 
         &:hover { color: $sv-bordo; }
     }
+    // Confirm + thank-you rows show quantity and line total in their own columns, so
+    // the "2,65 € / enota" line was noise. (The register step's summary rows keep
+    // theirs: "5 × 2,65 €" is the only place the quantity shows there.)
+    .sv-confirm-line:not(.sv-step-line) & .sv-confirm-unit { display: none; }
+
     .sv-confirm-unit {
         font-size: 12.5px;
         color: $sv-ink-muted;
@@ -1231,4 +1334,729 @@
         font-size: 15px;
         color: $sv-bordo-head;
     }
+}
+
+// ============================================================
+// CONFIRM — three columns (PAM Viličar structure, Sivanka look)
+//   1 addresses · 2 payment, shipping, order note · 3 sticky summary
+// xl: three columns; lg: 1 + 2 side by side, summary full width below;
+// below lg the shared shell already stacks everything (display: block).
+// ============================================================
+.is-act-confirmpage {
+    @include media-breakpoint-up(lg) {
+        .checkout-container {
+            max-width: 1320px;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            column-gap: 24px;
+        }
+
+        .confirm-section {
+            margin-bottom: 0;
+            min-width: 0;
+        }
+
+        .confirm-section--address { grid-column: 1; grid-row: 3; }
+        .confirm-section--payment-shipping { grid-column: 2; grid-row: 3; }
+
+        .checkout-aside {
+            grid-column: 1 / -1;
+            grid-row: 4;
+            position: static;
+            margin-top: 32px !important;
+            // core's `.row > *` gutter would inset the card from columns 1 and 2
+            padding-inline: 0 !important;
+        }
+
+        // One card per row inside the narrower columns
+        .confirm-address .row,
+        .confirm-payment-shipping .row { grid-template-columns: 1fr; }
+
+        .confirm-address .checkout-card,
+        .confirm-payment-shipping .checkout-card { height: auto; }
+    }
+
+    @include media-breakpoint-up(xl) {
+        .checkout-container {
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.1fr);
+        }
+
+        .checkout-aside {
+            grid-column: 3;
+            grid-row: 3 / span 30;
+            position: sticky;
+            top: 20px;
+            margin-top: 0 !important;
+        }
+    }
+
+    // Order note, now under the payment / shipping cards in column 2
+    .confirm-section--payment-shipping .checkout-additional {
+        margin-top: 16px;
+
+        .checkout-card {
+            border: 1px solid $sv-border !important;
+            border-radius: $sv-r-panel;
+            background: $sv-white;
+            box-shadow: none;
+
+            .card-body { padding: 22px; }
+        }
+
+        .card-title {
+            font-family: $sv-sans;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: $sv-ink-muted;
+            margin-bottom: 12px;
+        }
+
+        .form-label { font-size: 13.5px; color: $sv-ink-muted; }
+        textarea { min-height: 92px; }
+    }
+
+    // ---- column 3: the summary card holds the rows, totals, terms and the button ----
+    .checkout-aside-summary > .confirm-section-header { margin-bottom: 14px; }
+
+    .checkout-aside .confirm-product {
+        margin: 0 0 14px;
+        border-bottom: 1px solid $sv-border;
+
+        ul { margin: 0; padding: 0; }
+    }
+
+    // Compact row, the phone layout of the shared line: thumb | name | total, quantity below
+    .checkout-aside .sv-confirm-line {
+        grid-template-columns: 56px minmax(0, 1fr) auto;
+        grid-template-areas: "thumb meta total" "thumb qty qty";
+        column-gap: 14px;
+        row-gap: 8px;
+        padding: 14px 0;
+        background: none;
+
+        .sv-confirm-thumb { grid-area: thumb; width: 56px; height: 56px; background: $sv-white; }
+        .sv-confirm-meta { grid-area: meta; }
+        .sv-confirm-qty { grid-area: qty; justify-content: flex-start; }
+        .sv-confirm-total { grid-area: total; }
+    }
+}
+
+// ============================================================
+// FINISH — PAM Viličar structure, Sivanka look
+// Success card on top, then the order (left) and the aside (right):
+// UPN QR, "Kaj sledi", address, payment / shipping, help card.
+// The page no longer uses the shared two-column shell grid.
+// ============================================================
+.is-act-finishpage {
+    .checkout-container.sv-finish {
+        display: block !important;
+    }
+
+    .finish-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 22px;
+
+        .btn {
+            min-height: 0;
+            padding: 10px 20px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+    }
+
+    .sv-finish-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 360px;
+        gap: 24px;
+        align-items: start;
+
+        @include media-breakpoint-down(lg) { grid-template-columns: minmax(0, 1fr); }
+    }
+
+    .sv-finish-panel {
+        background: $sv-white;
+        border: 1px solid $sv-border;
+        border-radius: $sv-r-panel;
+        padding: 24px;
+        min-width: 0;
+
+        @include media-breakpoint-down(md) { padding: 20px 18px; }
+    }
+
+    // ---- left: the order ----
+    .sv-finish-summary {
+        .finish-section-title { margin: 0 0 6px; }
+
+        // The older finish rule above frames the list with `!important`; inside the
+        // panel the rows sit on the panel itself.
+        .checkout-product-table {
+            border: 0 !important;
+            border-radius: 0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .sv-confirm-line { padding-inline: 0; }
+    }
+
+    .sv-finish-totals {
+        margin-top: 8px;
+        padding: 20px 22px;
+        background: $sv-cream;
+        border-radius: $sv-r-panel;
+    }
+
+    // ---- right column ----
+    .sv-finish-aside {
+        display: grid;
+        gap: 16px;
+        min-width: 0;
+    }
+
+    .sv-finish-aside-title {
+        font-family: $sv-serif;
+        font-weight: 600;
+        font-size: 20px;
+        color: $sv-bordo-head;
+        margin: 0 0 14px;
+    }
+
+    .sv-finish-eyebrow {
+        font-family: $sv-sans;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        color: $sv-ink-muted;
+        margin: 0 0 10px;
+    }
+
+    .sv-finish-info {
+        font-size: 14px;
+        line-height: 1.55;
+        color: $sv-ink;
+
+        address { margin: 0; font-style: normal; }
+        p { margin: 4px 0 0; color: $sv-ink-muted; }
+        strong { font-weight: 600; }
+    }
+
+    .sv-finish-comment {
+        margin-top: 12px !important;
+        padding-top: 12px;
+        border-top: 1px solid $sv-border;
+        font-style: italic;
+    }
+
+    // UPN QR — the one thing to act on, so it gets the cream card
+    .sv-upnqr {
+        background: $sv-cream;
+        text-align: center;
+    }
+
+    .sv-upnqr-intro {
+        font-size: 13.5px;
+        line-height: 1.5;
+        color: $sv-ink-muted;
+        margin: 0 0 16px;
+    }
+
+    .sv-upnqr-code {
+        max-width: 240px;
+        margin: 0 auto 18px;
+        padding: 12px;
+        background: $sv-white;
+        border: 1px solid $sv-border;
+        border-radius: $sv-r-field;
+
+        svg {
+            display: block;
+            width: 100%;
+            height: auto;
+            shape-rendering: crispEdges;
+        }
+    }
+
+    .sv-upnqr-data {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 6px 14px;
+        margin: 0;
+        text-align: left;
+        font-size: 13.5px;
+
+        dt { font-weight: 400; color: $sv-ink-muted; }
+        dd { margin: 0; color: $sv-ink; overflow-wrap: anywhere; }
+        dd strong { color: $sv-bordo-head; font-size: 15px; }
+    }
+
+    // "Kaj sledi" — a vertical timeline
+    .sv-next { margin: 0; padding: 0; }
+
+    .sv-next-step {
+        position: relative;
+        padding: 0 0 18px 26px;
+        font-size: 13.5px;
+
+        &::before {
+            content: "";
+            position: absolute;
+            left: 4px;
+            top: 5px;
+            width: 11px;
+            height: 11px;
+            border-radius: $sv-r-round;
+            border: 2px solid $sv-border-strong;
+            background: $sv-white;
+        }
+
+        &::after {
+            content: "";
+            position: absolute;
+            left: 9px;
+            top: 20px;
+            bottom: 2px;
+            width: 1px;
+            background: $sv-border;
+        }
+
+        &:last-child { padding-bottom: 0; }
+        &:last-child::after { display: none; }
+
+        &.is-done::before { background: $sv-bordo; border-color: $sv-bordo; }
+        &.is-next::before { border-color: $sv-bordo; }
+
+        strong { display: block; color: $sv-ink; font-weight: 600; }
+        p { margin: 2px 0 0; color: $sv-ink-muted; line-height: 1.45; }
+    }
+
+    .sv-next-when {
+        display: block;
+        font-size: 11.5px;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        color: $sv-bordo;
+        margin-bottom: 2px;
+    }
+
+    // Help card — the dark accent, Sivanka bordo
+    .sv-finish-help {
+        background: $sv-bordo-head;
+        color: $sv-white;
+        border-radius: $sv-r-panel;
+        padding: 24px;
+    }
+
+    .sv-finish-help-title {
+        font-family: $sv-serif;
+        font-weight: 600;
+        font-size: 20px;
+        color: $sv-white;
+        margin: 0 0 6px;
+    }
+
+    .sv-finish-help-text {
+        font-size: 13.5px;
+        line-height: 1.5;
+        color: rgba(255, 255, 255, .8);
+        margin: 0 0 16px;
+    }
+
+    .sv-finish-help-actions {
+        display: grid;
+        gap: 8px;
+
+        .btn { min-height: 0; padding: 10px 16px; font-size: 14px; }
+    }
+}
+
+// ============================================================
+// CHECKOUT STEPS — the three numbered step cards of PAM Viličar's
+// checkout, shared by the register step and the confirm page:
+//   1 Podatki plačnika · 2 Plačilo in dostava · 3 Povzetek naročila
+// ============================================================
+.is-act-checkoutregisterpage,
+.is-act-confirmpage {
+    .sv-step,
+    .confirm-section--address,
+    .confirm-section--payment-shipping {
+        background: $sv-cream;
+        border: 1px solid $sv-border;
+        border-radius: $sv-r-panel;
+        padding: 24px;
+        min-width: 0;
+
+        @include media-breakpoint-down(md) { padding: 20px 16px; }
+    }
+
+    .sv-step .confirm-section-header,
+    .confirm-section--address .confirm-section-header,
+    .confirm-section--payment-shipping .confirm-section-header { margin-bottom: 18px; }
+
+    // Step 1 on the confirm page: who is ordering, above the address cards
+    .sv-step-customer {
+        margin: 0 0 14px;
+        font-size: 14px;
+        line-height: 1.45;
+        color: $sv-ink;
+
+        strong { display: block; font-weight: 600; }
+        span { color: $sv-ink-muted; }
+    }
+}
+
+// ---- register step: layout ----
+.is-act-checkoutregisterpage {
+    // Numbered step headers — the confirm page's, which are scoped to that page above
+    .confirm-section-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 0;
+        border: 0;
+    }
+
+    .confirm-section-number {
+        width: 28px;
+        height: 28px;
+        border-radius: $sv-r-round;
+        background: $sv-bordo;
+        color: $sv-white;
+        font-family: $sv-sans;
+        font-weight: 700;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .confirm-section-title {
+        font-family: $sv-serif;
+        font-weight: 600;
+        font-size: 21px;
+        color: $sv-bordo-head;
+        margin: 0;
+    }
+
+    // Summary rows: thumb | name + quantity × price | total
+    .sv-step-line {
+        grid-template-columns: 56px minmax(0, 1fr) auto;
+        grid-template-areas: "thumb meta total";
+        column-gap: 14px;
+        padding: 12px 0;
+
+        .sv-confirm-thumb { grid-area: thumb; width: 56px; height: 56px; background: $sv-white; }
+        .sv-confirm-meta { grid-area: meta; }
+        .sv-confirm-total { grid-area: total; }
+        .sv-confirm-name { font-size: 14px; }
+    }
+
+    // Core leaves empty placeholder columns and a 48px `mb-5` under the address block;
+    // in the narrow step that read as a hole above the privacy note. (The reCAPTCHA box
+    // in between is empty locally but shows the checkbox on prod, so it stays.)
+    .sv-step--customer {
+        .form-group:empty { display: none; }
+        .register-address { margin-bottom: 16px !important; }
+        .privacy-notice { margin-top: 12px; }
+    }
+    .checkout-container.sv-steps-page {
+        display: block !important;
+        max-width: 1320px;
+    }
+
+    .sv-steps {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.1fr);
+        gap: 24px;
+        align-items: start;
+
+        @include media-breakpoint-down(xl) {
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+
+            .sv-step--summary { grid-column: 1 / -1; }
+        }
+
+        @include media-breakpoint-down(md) { grid-template-columns: minmax(0, 1fr); }
+    }
+
+    .sv-step--summary {
+        @include media-breakpoint-up(xl) {
+            position: sticky;
+            top: 20px;
+        }
+    }
+
+    // Guest / existing customer tabs
+    .sv-tabs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        margin: 0 0 16px;
+        background: $sv-white;
+        border: 1px solid $sv-border;
+        border-radius: $sv-r-field;
+        overflow: hidden;
+    }
+
+    .sv-tabs-btn {
+        border: 0;
+        border-bottom: 3px solid transparent;
+        background: none;
+        padding: 12px 8px 9px;
+        font-family: $sv-sans;
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 1.3;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        color: $sv-ink-muted;
+
+        &:hover { color: $sv-bordo; }
+
+        &.active {
+            background: $sv-bordo-tint;
+            border-bottom-color: $sv-bordo;
+            color: $sv-bordo-head;
+        }
+
+        &:focus-visible { outline: none; box-shadow: inset $sv-focus-ring; }
+    }
+
+    .sv-step-note {
+        margin: 0 0 20px;
+        padding: 14px 16px;
+        background: $sv-white;
+        border: 1px solid $sv-border;
+        border-radius: $sv-r-field;
+
+        strong { display: block; font-size: 14px; color: $sv-ink; }
+        p { margin: 4px 0 0; font-size: 13px; line-height: 1.5; color: $sv-ink-muted; }
+    }
+
+    // Core's form cards flatten into the step: the step card is the frame
+    .sv-step--customer {
+        fieldset.register-personal,
+        fieldset.register-billing,
+        fieldset.register-shipping,
+        .login-card,
+        .card {
+            border: 0;
+            border-radius: 0;
+            padding: 0;
+            margin: 0 0 6px;
+            background: none;
+            box-shadow: none;
+        }
+
+        .card-body { padding: 0; }
+
+        // Section titles become eyebrows, as on PAM ("VAŠ NASLOV")
+        .register-personal .card-title,
+        .register-billing .card-title,
+        .register-shipping .card-title,
+        .login-card .card-title {
+            font-family: $sv-sans;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: $sv-ink-muted;
+            margin: 6px 0 14px;
+        }
+
+        .register-personal .card-title { display: none; }
+
+        // One field per row in the narrow column; first/last name and postcode/city pair up
+        .row > [class*="col-"] {
+            flex: 0 0 100%;
+            max-width: 100%;
+            width: 100%;
+        }
+
+        .row > [class*="col-"]:has(input[id$="FirstName"]),
+        .row > [class*="col-"]:has(input[id$="LastName"]),
+        .row > [class*="col-"]:has(input[id$="Zipcode"]),
+        .row > [class*="col-"]:has(input[id$="City"]) {
+            flex: 0 0 50%;
+            max-width: 50%;
+            width: 50%;
+        }
+
+        .form-control,
+        .form-select { background-color: $sv-white; }
+
+        // Tighter rhythm than core's: 12px between fields, 5px label → input.
+        // Core stacks a 16px group margin on an 8px vertical row gutter.
+        // Same 8px column gap at every width (a mobile rule widens it to 32px otherwise)
+        .row { --bs-gutter-y: 0; margin-left: -4px; margin-right: -4px; }
+        .row > [class*="col-"] { padding-left: 4px; padding-right: 4px; }
+        .row > .form-group { margin-top: 0; margin-bottom: 12px; }
+
+        .form-label {
+            line-height: 1.3;
+            margin-bottom: 5px;
+        }
+
+        // Box and text side by side whatever size the box is (it grows to 24px on mobile)
+        .form-check {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding-left: 0;
+            margin: 2px 0 12px !important;
+            min-height: 0;
+
+            .form-check-input {
+                float: none;
+                flex-shrink: 0;
+                margin: 1px 0 0;
+            }
+
+            .form-check-label,
+            .custom-control-label { line-height: 1.4; margin-bottom: 0; }
+        }
+
+        // "Prijava z e-poštnim naslovom in geslom" repeats the step note above it
+        .login-form-description { display: none; }
+
+        .register-required-info { margin: 12px 0 0; }
+
+        // Both panes end with the same button: same gap above, same size
+        .register-submit,
+        .login-submit { margin-top: 16px !important; }
+
+        .register-submit .btn,
+        .login-submit .btn {
+            min-height: 52px;
+            padding: 12px 20px;
+            font-size: 16px;
+            line-height: 1.5;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .register-billing .card-title,
+        .register-shipping .card-title,
+        .login-card .card-title { margin: 10px 0 10px; }
+
+        .register-submit .btn,
+        .login-submit .btn { width: 100%; }
+    }
+
+    // Step 2 is a preview of what comes after the details
+    .sv-step--locked {
+        .confirm-section-number { background: $sv-border-strong; color: $sv-ink-muted; }
+        .confirm-section-title { color: $sv-ink-muted; }
+    }
+
+    .sv-step-locked {
+        margin: 0;
+        padding: 16px;
+        border: 1px dashed $sv-border-strong;
+        border-radius: $sv-r-field;
+        font-size: 13.5px;
+        line-height: 1.5;
+        color: $sv-ink-muted;
+    }
+
+    // Step 3: rows, then the totals
+    .sv-step-items {
+        margin: 0 0 14px;
+        padding: 0 0 6px;
+        border-bottom: 1px solid $sv-border;
+    }
+}
+
+// ============================================================
+// MOBILE / TABLET ALIGNMENT (register, confirm, finish)
+// ============================================================
+.is-act-checkoutregisterpage,
+.is-act-confirmpage,
+.is-act-finishpage {
+    // Core's `.row > *` gutter (20px) on the aside inset the summary card against the
+    // step cards once the columns stack. At lg+ the grid rules already zero it.
+    @include media-breakpoint-down(lg) {
+        .checkout .checkout-aside { padding-inline: 0 !important; }
+    }
+
+    // Links inside running text (privacy note, terms checkbox). The touch-target floor
+    // in _reset.scss makes `.btn`, `.form-text a` and `.checkout-aside a` 46px
+    // inline-flex boxes, which tore these sentences apart with 40px line gaps. They
+    // stay inline; the sentence's line is the target.
+    @media (max-width: $sv-bp-touch) {
+        .privacy-notice .btn-link-inline,
+        .privacy-notice a,
+        .form-text a,
+        .form-check-label a,
+        .checkout-confirm-tos a,
+        .checkout-confirm-tos-label a,
+        .checkout-aside .form-check-label a {
+            display: inline;
+            min-height: 0;
+            padding: 0;
+            vertical-align: baseline;
+        }
+
+        // Address-card buttons wrap to two lines on a phone; keep the lines together
+        .confirm-address .btn,
+        .confirm-section--address .btn {
+            line-height: 1.35;
+            padding-block: 10px;
+            white-space: normal;
+            text-align: center;
+        }
+    }
+
+    // Core puts a <br> after the "Privatnost" legend: an empty 24px line under it
+    .privacy-notice > br { display: none; }
+
+    // Order rows (thank-you page): article number at the meta size, not body size
+    .sv-order-line .sv-cart-sku {
+        font-size: 12.5px;
+        line-height: 1.4;
+        color: $sv-ink-muted;
+        margin-top: 2px;
+    }
+}
+
+// Header on phones: logo left, "Nazaj v trgovino" right, on one row (the contact
+// block is already hidden below md)
+@include media-breakpoint-down(md) {
+    .sv-co-header {
+        .sv-co-header-row {
+            flex-wrap: nowrap;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .sv-co-back {
+            margin-left: auto;
+            padding: 8px 14px;
+            font-size: 13px;
+            gap: 6px;
+            white-space: nowrap;
+        }
+    }
+
+    // Footer: left-aligned like everything above it
+    .footer-minimal {
+        .footer-copyright { justify-content: flex-start !important; text-align: left; }
+        .footer-copyright-text { text-align: left !important; }
+        .footer-copyright-links { justify-content: flex-start; }
+    }
+}
+
+@media (max-width: $sv-bp-tiny) {
+    .sv-co-header .sv-co-logo img { max-height: 28px; }
+}
+
+// The touch floor makes the phone link a 46px box, which pushed the number 30px away
+// from "Vprašanja v zvezi …". Keep the tap area, pull it back visually.
+@media (max-width: $sv-bp-touch) {
+    .sv-co-header .sv-co-contact-line a { margin-block: -12px -14px; }
 }

@@ -9,12 +9,12 @@
         "optiweb/sync": "*",
         "optiweb/theme": "^1.0",
         "shopware/administration": "*",
-        "shopware/core": "v6.7.14.1",
+        "shopware/core": "v6.7.16.1",
         "shopware/elasticsearch": "*",
         "shopware/storefront": "*",
         "store.shopware.com/stripepaymentsapp": "^1.5",
-        "symfony/flex": "~2",
-        "twig/twig": "~3.28.0"
+        "store.shopware.com/swagplatformsecurity": "^4.0.18",
+        "symfony/flex": "~2"
     },
     "repositories": [
         {
